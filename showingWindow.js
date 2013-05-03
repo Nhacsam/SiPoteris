@@ -1,7 +1,7 @@
 #pragma strict
 
 // dépendences
-private var wVideoSettings : videoSettings ;
+//private var wVideoSettings : videoSettings ;
 
 
 // Proriétés de l'objet
@@ -28,10 +28,10 @@ function InitWindow( pos : Rect, z : float ) {
 	wPos = pos ;
 	wZ = z ;
 	
-	wVideoSettings = gameObject.GetComponent("videoSettings");
+	/*wVideoSettings = gameObject.GetComponent("videoSettings");
 	if( ! wVideoSettings)
 		wVideoSettings = gameObject.AddComponent("videoSettings");
-	
+	*/
 	placeRenderingPlane();
 }
 
@@ -59,7 +59,7 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2 ) {
 		case WINDOWTYPES.VIDEO :
 			
 			chageObjSizeToOptimal(size);
-			wVideoSettings.putVideo( wObj, path );
+			//wVideoSettings.putVideo( wObj, path );
 			wVideoIsPlaying= true ;
 			break ;
 		
@@ -67,7 +67,7 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2 ) {
 		case WINDOWTYPES.IMG :
 			
 			if( wVideoIsPlaying ) {
-				wVideoSettings.stopVideo( wObj );
+				//wVideoSettings.stopVideo( wObj );
 				wVideoIsPlaying= false ;
 			}
 			
