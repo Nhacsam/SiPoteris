@@ -24,8 +24,6 @@ private var DatTriangles : Array;
 
 private var surface : GameObject ;
 
-// contain all meshes created
-var AllPieceOfCircle  = new Array();
 
 // test
 private var firstTime : boolean = true;
@@ -33,23 +31,10 @@ private var firstTime : boolean = true;
 
 
 /*
-	*get surface
+ * get surface
 */
 function SetSurface( s : GameObject ) {
 	surface = s ;
-}
-
-
-/*
-	*get gameobjects from array to gameobject[]
-*/
-function getGO(t : Array){
-	var destination : GameObject[] = new GameObject[t.length];
-
-	for( var i = 0; i < t.length ; i++)
-		destination[i] = t[i] as GameObject;
-	
-	return destination;
 }
 
 
@@ -79,8 +64,6 @@ function placeMesh( thetaMin : float, thetaMax : float, RatioRmin : float, Ratio
 	obj.transform.position.y = surface.transform.position.y - 1;
 	// add script to the plane
 	obj.AddComponent ("scriptForPlane");
-	
-	AllPieceOfCircle.Push(obj);
 	
 	return obj;
 }

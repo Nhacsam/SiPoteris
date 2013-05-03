@@ -9,7 +9,7 @@ private var move : moveSurface;
 
 
 
-var AllGO : GameObject[];
+var AllGO : Array = Array();
 
 
 private var mouseLook : MouseLook ;
@@ -20,7 +20,6 @@ private var Zoom : Zoom ;
 
 private var VideoFull : FullScreen ;
 
-//private var sound : controlAUDIO ;
 
 
 function Start () {
@@ -64,9 +63,6 @@ function Start () {
 	
 	// create pieces of circle for Diane
 	xml.getElementFromXML( placeMeshHash );
-	
-	// create all meshes
-	AllGO = createPolar.getGO(createPolar.AllPieceOfCircle);
 
 	
 	//fin debug test
@@ -102,19 +98,20 @@ function Update () {
 	
 	Zoom.UpDateZoom ();
 	VideoFull.UpDateFullScreen();
-	move.moveSurface( AllGO );
-//	sound.updateSounds(myPlanes);
+	
+	for( var i =0; i < AllGO.length; i++)
+		move.moveSurface( AllGO[i] );
 	
 }
 
 
 function enableMouseLook( b : boolean ) {
-	
+	/*
 	if( isOnIpad() )
 		control.enabled = b ;
 	else
 		mouseLook.enabled = b ;
-	
+	*/
 }
 
 
@@ -146,9 +143,16 @@ function switchFiealdOfView() {
 
 function placeMeshHash ( t : Hashtable ){
 	
-	var obj = createPolar.placeMesh(float.Parse(t['theta_min']) , float.Parse( t['theta_max'] ) , float.Parse( t['ratioRmin']) , float.Parse( t['ratioRmax']) , t['name'] );
+	var obj = createPolar.placeMesh(	float.Parse(t['theta_min']) ,
+										float.Parse( t['theta_max']) ,
+										float.Parse( t['ratioRmin']) ,
+										float.Parse( t['ratioRmax']) ,
+										t['name'] );
+	
 	createPolar.InitScript( obj , t );
-
+	
+	
+	AllGO.Push(obj);
 }
 
 
