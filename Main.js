@@ -7,7 +7,9 @@ private var xml : getXML;
 private var createPolar : createPolarMesh;
 private var move : moveSurface;
 
-var AllGO : GameObject[];
+
+
+var AllGO : Array = Array();
 
 
 private var mouseLook : MouseLook ;
@@ -18,7 +20,6 @@ private var Zoom : Zoom ;
 
 private var VideoFull : FullScreen ;
 
-//private var sound : controlAUDIO ;
 
 
 function Start () {
@@ -29,6 +30,9 @@ function Start () {
 		control = gameObject.AddComponent("CameraControl");
 		control.enabled=false;
 	
+	} else {
+		mouseLook = gameObject.AddComponent("MouseLook");
+		mouseLook.enabled = false ;
 	}
 	
 	
@@ -53,14 +57,12 @@ function Start () {
 	
 	// create plane and place camera
 	var s : GameObject = Videos.videoSettings();
+	
 	// give access to this gameobject in createPolarMesh script
 	createPolar.SetSurface(s);
 	
 	// create pieces of circle for Diane
 	xml.getElementFromXML( placeMeshHash );
-	
-	// create all meshes
-	AllGO = createPolar.getGO(createPolar.AllPieceOfCircle);
 
 	
 	//fin debug test
@@ -76,8 +78,7 @@ function Start () {
 	Zoom.AddOnLeave( Videos.videoHDZoomQuit );
 	Zoom.AddOnEndZoom(VideoFull.EnterOnFullScreen);
 	
-//	Zoom.AddOnZoom( changeLight );
-//	Zoom.AddOnLeave( changeLight );
+	
 	Zoom.AddOnZoom( switchFiealdOfView );
 	Zoom.AddOnLeave( switchFiealdOfView );
 	
@@ -98,22 +99,24 @@ function Update () {
 	Zoom.UpDateZoom ();
 	VideoFull.UpDateFullScreen();
 	
+//	sound.updateSounds(myPlanes);
 	
-	move.moveSurface( AllGO , Videos.OnPlay() );
+	for( var i =0; i < AllGO.length; i++)
+		move.moveSurface( AllGO[i], Videos.OnPlay() );
 	
 	if( Videos.getFlagEndVideo() )
 		move.resetPlanes();
-
-	
-//	sound.updateSounds(myPlanes);
 	
 }
 
 
 function enableMouseLook( b : boolean ) {
-	
-
-	
+	/*
+	if( isOnIpad() )
+		control.enabled = b ;
+	else
+		mouseLook.enabled = b ;
+	*/
 }
 
 
@@ -130,15 +133,13 @@ function CreateLight () {
 	light.intensity=0.88;
 	
 }
-/*
-function changeLight() {
-	light.type = ( light.type == LightType.Spot ) ? LightType.Point : LightType.Spot ;
-	light.cookie = (light.cookie == null ) ? Resources.Load("camMask") : null ;
-}*/
+
+
 
 function switchFiealdOfView() {
 	camera.fieldOfView  = ( camera.fieldOfView == 80 ) ? 60 : 80 ;
 }
+
 
 /*
 	*place piece of circle according to xml
@@ -147,8 +148,15 @@ function switchFiealdOfView() {
 
 function placeMeshHash ( t : Hashtable ){
 	
-	var obj = createPolar.placeMesh(float.Parse(t['theta_min']) , float.Parse( t['theta_max'] ) , float.Parse( t['ratioRmin']) , float.Parse( t['ratioRmax']) , t['name'] );
+	var obj = createPolar.placeMesh(	float.Parse(t['theta_min']) ,
+										float.Parse( t['theta_max']) ,
+										float.Parse( t['ratioRmin']) ,
+										float.Parse( t['ratioRmax']) ,
+										t['name'] );
+	
 	createPolar.InitScript( obj , t );
-
+	
+	
+	AllGO.Push(obj);
 }
 

@@ -21,6 +21,9 @@ private var rotPlane : Vector3;
 // speed of plane
 private var delta : float = 0;
 
+// Time when the object have been moved last
+private var lastMoveTime : float = 0;
+
 
 /********************** METHODS **********************/
 
@@ -113,6 +116,23 @@ public function getDelta(){
 	return delta;
 
 }
+
+
+/*
+ * Accessors of lastMoveTime
+ */
+
+public function updateLastMoveTime() {
+	lastMoveTime = Time.time ;
+}
+
+public function getLastMoveTime() : float {
+	return lastMoveTime ;
+}
+
+
+
+
 
 
 
