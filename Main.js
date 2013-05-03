@@ -7,6 +7,8 @@ private var xml : getXML;
 private var createPolar : createPolarMesh;
 private var move : moveSurface;
 
+
+
 var AllGO : GameObject[];
 
 
@@ -29,6 +31,9 @@ function Start () {
 		control = gameObject.AddComponent("CameraControl");
 		control.enabled=false;
 	
+	} else {
+		mouseLook = gameObject.AddComponent("MouseLook");
+		mouseLook.enabled = false ;
 	}
 	
 	
@@ -53,6 +58,7 @@ function Start () {
 	
 	// create plane and place camera
 	var s : GameObject = Videos.videoSettings();
+	
 	// give access to this gameobject in createPolarMesh script
 	createPolar.SetSurface(s);
 	
@@ -76,8 +82,7 @@ function Start () {
 	Zoom.AddOnLeave( Videos.videoHDZoomQuit );
 	Zoom.AddOnEndZoom(VideoFull.EnterOnFullScreen);
 	
-//	Zoom.AddOnZoom( changeLight );
-//	Zoom.AddOnLeave( changeLight );
+	
 	Zoom.AddOnZoom( switchFiealdOfView );
 	Zoom.AddOnLeave( switchFiealdOfView );
 	
@@ -105,7 +110,10 @@ function Update () {
 
 function enableMouseLook( b : boolean ) {
 	
-
+	if( isOnIpad() )
+		control.enabled = b ;
+	else
+		mouseLook.enabled = b ;
 	
 }
 
@@ -123,15 +131,13 @@ function CreateLight () {
 	light.intensity=0.88;
 	
 }
-/*
-function changeLight() {
-	light.type = ( light.type == LightType.Spot ) ? LightType.Point : LightType.Spot ;
-	light.cookie = (light.cookie == null ) ? Resources.Load("camMask") : null ;
-}*/
+
+
 
 function switchFiealdOfView() {
 	camera.fieldOfView  = ( camera.fieldOfView == 80 ) ? 60 : 80 ;
 }
+
 
 /*
 	*place piece of circle according to xml
