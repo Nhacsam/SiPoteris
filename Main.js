@@ -97,7 +97,14 @@ function Update () {
 	
 	Zoom.UpDateZoom ();
 	VideoFull.UpDateFullScreen();
-	move.moveSurface( AllGO );
+	
+	
+	move.moveSurface( AllGO , Videos.OnPlay() );
+	
+	if( Videos.getFlagEndVideo() )
+		move.resetPlanes();
+
+	
 //	sound.updateSounds(myPlanes);
 	
 }
@@ -144,5 +151,4 @@ function placeMeshHash ( t : Hashtable ){
 	createPolar.InitScript( obj , t );
 
 }
-
 

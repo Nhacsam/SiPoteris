@@ -9,14 +9,17 @@ private var scene2D:boolean;
 private var plane2D = GameObject.CreatePrimitive(PrimitiveType.Plane);
 //ref to the sphere 3D
 private var sphere3D:GameObject;
-//ref to the plugin 2D
-private var movie2D:MobileMovieTexture;
+
 //to access accelerometer
 private var control:CameraControl;
 private var button:boolean=true;
 
 
+function OnPlay(){
 
+	return button;
+
+}
 
 
 //function to set the parameters of the 2D scene
@@ -235,3 +238,10 @@ function stopVideo(focus: GameObject){
 
 }
 
+
+function getFlagEndVideo(){
+	var controllerScene:SceneController;
+	controllerScene = MovieController.GetComponent("SceneController");  
+	return controllerScene.movieClass[0].movieFinished;
+	
+}
