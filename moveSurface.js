@@ -16,16 +16,17 @@ private var lastTime : float = 0 ;
 
 public function moveSurface( t : GameObject , OnPlay : boolean){
 	
+	var s : scriptForPlane = t.GetComponent( "scriptForPlane" );
+	
     if( OnPlay ){
-        var s : scriptForPlane = t.GetComponent( "scriptForPlane" );
 	
         var n  : String = s.getName();
         var dt = Time.time-s.getLastMoveTime();
 	
-        t.transform.eulerAngles += Vector3( 0 , -s.getDelta()*dt , 0 );
+        t.transform.eulerAngles += Vector3( 0 , -s.getDelta()*dt*20 , 0 );
 	
         s.updateLastMoveTime();
-    } else
+    } else 
         s.updateLastMoveTime();
 }
 
@@ -34,12 +35,12 @@ public function moveSurface( t : GameObject , OnPlay : boolean){
 /*
 	*reset planes
 */
-public function resetPlanes( t : GameObject ){
+public function resetPlane( t : GameObject ){
 
 	var s : scriptForPlane = GetComponent("scriptForPlane");
-	var ht : Hashtable = getHT();
+	var ht : Hashtable = s.getHT();
 	
-	t.transform.eulerAngles = Vector3( 0 , ht["theta_min"] + ( ht["theta_max"] - ht["theta_min"] )/2 , 0);
+	t.transform.eulerAngles = Vector3( 0 , float.Parse(ht["theta_min"]) + ( float.Parse(ht["theta_max"]) - float.Parse(ht["theta_min"]) )/2 , 0);
 	
 	
 }

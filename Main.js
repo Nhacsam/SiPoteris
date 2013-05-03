@@ -101,12 +101,12 @@ function Update () {
 	
 //	sound.updateSounds(myPlanes);
 	
-	for( var i =0; i < AllGO.length; i++)
+	for( var i =0; i < AllGO.length; i++) {
 		move.moveSurface( AllGO[i], Videos.OnPlay() );
 	
-	if( Videos.getFlagEndVideo() )
-		move.resetPlanes();
-	
+		if( Videos.getFlagEndVideo() )
+			move.resetPlane(AllGO[i]);
+	}
 }
 
 
