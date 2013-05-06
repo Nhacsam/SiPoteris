@@ -52,10 +52,11 @@ private var toJustify = new Array();
 // number of lines
 private var nbLines : int = 0;
 
-function Start(){
 
-	placeText(Screen.height/10, Screen.height * 0.26, Screen.width/20, Screen.width * 0.55); // u d l r
-}
+
+
+
+
 
 /*
 	*this function will create label for each letter and place at the right position them to justify the text

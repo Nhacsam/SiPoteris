@@ -171,12 +171,15 @@ function UpDateSlideShow() {
 		
 }
 
+
 /*
  * Récupère les infos du plan courant
  */
 function getCurrentAssociedInfo() {
 	return elmtsInfo[ effectiveCurrentPage ];
 }
+
+
 
 /*
  * instancie le plan
@@ -206,6 +209,8 @@ function AddElmt( texture : String, info ) : boolean {
 
 
 
+
+
 /*
  * Crée un nouveau plan
  */
@@ -218,6 +223,8 @@ function AddElmtPlane( i : int ) {
 	
 	mobilesElmts[i].name = "SlideShow Plane "+i ;
 }
+
+
 
 
 
@@ -254,6 +261,8 @@ private function isMovingUpdate() : boolean {
 
 
 
+
+
 /*
  * Les Callbacks de gestion des événemments
  */
@@ -280,60 +289,7 @@ function OnSwipe ( info : SwipeInfo) {
 	}
 }
 
-/*/ Déplacement
-function OnDrag ( info : DragInfo) {
-	
-	if( position.Contains(info.pos) ) {
-			
-		isMoving = false ;
-		
-		// démarrage
-		if( ! isDragging && info.delta.x > 0 )
-			decalRight();
-		else if( ! isDragging )
-			decalLeft();
-			
-		// ajout
-		delta += info.delta.x ;
-			
-			
-		// On a passé une limite
-		if( delta > GetDistance() ) {
-			
-			if ( currentPage == 0 )
-				delta = GetDistance() ;
-			else {
-				delta -= GetDistance() ;
-				decalRight();
-			}
-			
-			
-		} else if (delta < - GetDistance() ) {
-			
-			if ( currentPage == nbElmts-1 )
-				delta = -GetDistance() ;
-			else {
-			
-				delta += GetDistance() ;
-				decalLeft();
-			}
-			
-		} else if( delta > 0 && delta - info.delta.x < 0)
-			decalTo( currentPage - 2 );
-		else if( delta < 0 && delta - info.delta.x > 0)
-			decalTo( currentPage +2
-			 );
-		
-		
-		isMoving = true ;
-		useSpeed = false ;
-		isDragging = true ;
-		print(delta);
-		print(currentPage);
-	}
-		
-}*/
-
+// Déplacement
 function OnDrag ( info : DragInfo) {
 	
 	if( position.Contains(info.pos) ) {
@@ -371,11 +327,7 @@ function OnDrag ( info : DragInfo) {
 				decalLeftfromLeft();
 			}
 			
-		} /*else if( delta > 0 && delta - info.delta.x < 0)
-			decalTo( currentPage - 2 );
-		else if( delta < 0 && delta - info.delta.x > 0)
-			decalTo( currentPage +2
-			 );*/
+		}
 		
 		
 		isMoving = true ;
@@ -399,15 +351,11 @@ function onUp(pos : Vector2) {
 		print(delta);
 		print(currentPage);
 		
-		if (delta > GetDistance()/2 ) {
-			
-			print('nothing');
-		} else {
+		if (delta < GetDistance()/2 ) {
 			decalLeft();
-			print('decalLeft');
 		}
 		
-		beginTime -= delta* transitionTime/GetDistance() ;
+		beginTime = Time.time - delta* transitionTime/GetDistance() ;
 		
 		print(currentPage);
 		print( delta* transitionTime/GetDistance() );

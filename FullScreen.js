@@ -4,14 +4,19 @@
 // dépendances
 private var slideshow  : slideShow ;
 private var windows  : showingWindow ;
+private var audioPlayer : sound ;
+private var textViewer : text ;
 
 
+// On est en mode plein écran ?
 private var onFullScreen : boolean ;
 
 
 // isolation de l'élément par rapport à la sphère complete
 private var isolate : boolean = true ;
 private var toMove : Vector3 = new Vector3( -2000, -2000, -2000) ;
+
+
 
 // Position et rotation quand au début
 private var VideoInitialPos : Vector3 ;
@@ -20,33 +25,6 @@ private var CameraInitialPos : Vector3 ;
 private var CameraInitialOrthographic : boolean ;
 
 
-
-/*
- * Ajoute les listener d'envenements
- */
-
-function OnEnable(){
-	Gesture.onSwipeE += OnSwipe;
-	Gesture.onDraggingE += OnDrag;
-	Gesture.onPinchE += OnPinch ;// zoom
-		
-	Gesture.onShortTapE += OnTap;
-	Gesture.onLongTapE += OnTap;
-	Gesture.onDoubleTapE += OnTap;
-	
-	
-}
-
-
-function OnDisable(){
-	Gesture.onSwipeE -= OnSwipe;
-	Gesture.onDraggingE -= OnDrag;
-	Gesture.onPinchE -= OnPinch ;// zoom
-		
-	Gesture.onShortTapE -= OnTap;
-	Gesture.onLongTapE -= OnTap;
-	Gesture.onDoubleTapE -= OnTap;
-}
 
 
 
@@ -59,8 +37,10 @@ function OnDisable(){
 
 function InitFullScreen( ) {
 	
-	slideshow = gameObject.AddComponent("slideShow") as slideShow ;
-	windows = gameObject.AddComponent("showingWindow") as showingWindow ;
+	slideshow =		gameObject.AddComponent("slideShow")		as slideShow ;
+	windows =		gameObject.AddComponent("showingWindow")	as showingWindow ;
+	audioPlayer =	gameObject.AddComponent("sound")			as sound ;
+	textViewer =	gameObject.AddComponent("text")				as text ;
 	
 	onFullScreen = false ;
 }
@@ -108,16 +88,21 @@ function EnterOnFullScreen( Video : GameObject ) {
 		//Video.transform.position += toMove ;
 	}
 	
+	
+	// Configuration de la camera et de la lumière
 	camera.orthographic = true ;
 	gameObject.light.type = LightType.Directional ;
 	gameObject.light.intensity = 0.4 ;
+	
+	
+	onFullScreen = true ;
+	
 	
 	var margin : Vector2 = new Vector2(	0, 0.04 );
 	
 	
 	
 	var lol : Array = new Array() ;
-	
 	lol.Push("lol_imgs/akali");
 	lol.Push("lol_imgs/cho");
 	lol.Push("lol_imgs/garen");
@@ -145,7 +130,12 @@ function EnterOnFullScreen( Video : GameObject ) {
 		slideshow.AddElmt( (lol[i] as String) + "_min", lol[i] );
 	
 	
-	onFullScreen = true ;
+	
+	textViewer.placeText(Screen.height/10, Screen.height * 0.26, Screen.width/20, Screen.width * 0.55); // u d l r
+	
+	audioPlayer.placeMusic (Screen.height * 0.74 + 10, Screen.height/10, Screen.width/20, Screen.width * 0.45, "son"); // Coordinates of the music layout. U D L R. The button is always a square
+	
+	
 	
 }
 
@@ -159,45 +149,6 @@ function LeaveFullScreen( Video : GameObject ) {
 	
 	onFullScreen = false ;
 }
-
-
-
-
-
-
-
-
-
-
-/*
- * Les Callbacks de gestion des événemments
- */
-
-
-function OnSwipe ( info : SwipeInfo) {
-	
-}
-
-
-
-function OnDrag ( info : DragInfo) {
-}
-
-
-// Zoom avec les doigts
-function OnPinch ( amp : float ) {
-
-}
-
-
-// Click
-function OnTap (pos : Vector2 ) {
-
-}
-
-
-
-
 
 
 

@@ -25,18 +25,17 @@ private var currentBtn : Texture;
 
 private var songName : String;
 
-function Start () {
-	placeMusic (Screen.height * 0.74 + 10, Screen.height/10, Screen.width/20, Screen.width * 0.45, "Bob_Marley-Jamming"); // Coordinates of the music layout. U D L R. The button is always a square
-	/* 10 is the margin between text and music */
-}
 
-function Update () {
 
-}
+
+
 
 function OnGUI() {
 	displayMusic();
 }
+
+
+
 
 function placeMusic (u, d, l, r, name) {
 
@@ -73,7 +72,14 @@ function placeMusic (u, d, l, r, name) {
     }
 }
 
+
+
+
 function displayMusic() {
+	
+	if( !playBtn )
+		return;
+	
 	var buttonSize = (Screen.height - uBorder - dBorder ) * buttonSizeFactor;  // size of the square
 	GUI.skin = customGUISkin; // Transparent buttons
 	
