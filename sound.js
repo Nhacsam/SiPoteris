@@ -1,5 +1,5 @@
 /* sound.js
-Creation: 25/04/13 byte Kevin Guillaumond
+Creation: 25/04/13 by Kevin Guillaumond
 
 Purpose: Manages the sound at the bottom left of the screen in 2D view
 */
@@ -23,8 +23,11 @@ private var playBtn : Texture;
 private var pauseBtn : Texture;
 private var currentBtn : Texture;
 
-private var soundName : GUIText;
 private var soundNameStr: String;
+
+/* width and height of a letter */
+private var widthLetter : int = 11;
+private var heightLetter : int = 20;
 
 private var onFullScreen : boolean;
 
@@ -36,8 +39,6 @@ function OnGUI() {
 }
 
 
-
-
 function placeMusic (u, d, l, r, name) {
 
 	onFullScreen = true;
@@ -46,10 +47,6 @@ function placeMusic (u, d, l, r, name) {
 	audio.clip = Resources.Load("Audio/" + name) as AudioClip;
 	audio.Play();
 	
-	soundNameStr = name;
-	gameObject.AddComponent(typeof(GUIText));
-	guiText.material.color = Color.white;
-
 	playBtn = Resources.Load("Pictures/play");
 	pauseBtn = Resources.Load("Pictures/pause");
 	currentBtn = pauseBtn;
@@ -64,6 +61,7 @@ function placeMusic (u, d, l, r, name) {
 	lBorder = l;
 	rBorder = r;
 	
+	soundNameStr = name;
 	audio.loop = true;
 	
 	if (!playBtn) {
@@ -110,11 +108,20 @@ function displayMusic() {
 	 	}
 		
 		/* Name of the song */
-		guiText.text = soundNameStr;
-		guiText.pixelOffset = Vector2 (lBorder + buttonSize + 10, - (uBorder + buttonSize/(2*buttonSizeFactor)));
-		guiText.anchor = TextAnchor.MiddleLeft;
+		/*GUI.Label( Rect( lBorder + buttonSize + 10,
+						(uBorder + buttonSize/(2*buttonSizeFactor)),
+						soundNameStr.Length * widthLetter,
+						heightLetter
+						),
+					soundNameStr);*/
+					
+		GUI.Label( Rect(lBorder + buttonSize + 10,
+						uBorder + buttonSize/(2*buttonSizeFactor) - widthLetter,
+						Screen.width - lBorder - rBorder,
+						heightLetter
+						),
+					soundNameStr);
 	}
-		
 }
 
 function changeMusic(newName) {
