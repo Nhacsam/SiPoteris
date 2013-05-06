@@ -39,7 +39,7 @@ function OnGUI() {
 }
 
 
-function placeMusic (u, d, l, r, name) {
+function placeMusic (u: int, d: int, l: int, r: int, name: String) {
 
 	onFullScreen = true;
 
