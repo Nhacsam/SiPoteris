@@ -25,7 +25,7 @@ private var currentBtn : Texture;
 
 private var songName : String;
 
-
+private var onFullScreen : boolean;
 
 
 
@@ -39,12 +39,14 @@ function OnGUI() {
 
 function placeMusic (u, d, l, r, name) {
 
+	onFullScreen = true;
+
 	gameObject.AddComponent("AudioSource");
 	audio.clip = Resources.Load("Audio/" + name) as AudioClip;
 	audio.Play();
 	
 	songName = name;
-	gameObject.AddComponent("GUIText");	
+	gameObject.AddComponent("GUIText");
 
 	playBtn = Resources.Load("Pictures/play");
 	pauseBtn = Resources.Load("Pictures/pause");
@@ -83,30 +85,34 @@ function displayMusic() {
 	var buttonSize = (Screen.height - uBorder - dBorder ) * buttonSizeFactor;  // size of the square
 	GUI.skin = customGUISkin; // Transparent buttons
 	
-	/* The button is centered regarding the y axis */
-	if (GUI.Button(Rect(lBorder, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), currentBtn)) { // Rect: left top width height
-		if (currentBtn == pauseBtn) { // Sound playing
-			currentBtn = playBtn;
-			audio.Pause();
+	if (onFullScreen) {
+	
+		/* The button is centered regarding the y axis */
+		if (GUI.Button(Rect(lBorder, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), currentBtn)) { // Rect: left top width height
+			if (currentBtn == pauseBtn) { // Sound playing
+				currentBtn = playBtn;
+				audio.Pause();
+			}
+			else {
+				currentBtn = pauseBtn;
+				audio.Play();
+			}
 		}
-		else {
-			currentBtn = pauseBtn;
-			audio.Play();
-		}
+		
+		/* TEEEEEEEEEEEEEST */
+		if (GUI.Button(Rect(lBorder + 3 * buttonSize, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), 200, buttonSize), "Changer musique :)")) {
+			if (songName == "byebyebeautiful")
+				changeMusic("Bob_Marley-Jamming");
+			else
+				changeMusic("byebyebeautiful");
+	 	}
+		
+		/* Name of the song */
+		guiText.text = songName;
+		guiText.pixelOffset = Vector2 (lBorder + buttonSize + 10, - (uBorder + buttonSize/(2*buttonSizeFactor)));
+		guiText.anchor = TextAnchor.MiddleLeft;
+		
 	}
-	
-	/* TEEEEEEEEEEEEEST */
-	if (GUI.Button(Rect(250, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), 300, buttonSize), "Changer musique :)")) {
-		if (songName == "byebyebeautiful")
-			changeMusic("Bob_Marley-Jamming");
-		else
-			changeMusic("byebyebeautiful");
- 	}
-	
-	/* Name of the song */
-	guiText.text = songName;
-	guiText.pixelOffset = Vector2 (lBorder + buttonSize + 10, - (uBorder + buttonSize/(2*buttonSizeFactor)));
-	guiText.anchor = TextAnchor.MiddleLeft;
 		
 }
 
@@ -123,4 +129,9 @@ function changeMusic(newName) {
 		audio.Pause();
 		currentBtn = playBtn;
 	}
+}
+
+function removeMusic() {
+	onFullScreen = false;
+	Destroy(GetComponent(GUIText));
 }

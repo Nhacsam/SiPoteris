@@ -52,7 +52,7 @@ private var toJustify = new Array();
 // number of lines
 private var nbLines : int = 0;
 
-
+private var onFullScreen : boolean;
 
 
 
@@ -67,6 +67,8 @@ function OnGUI(){
 }
 
 private function initText(u: int, d: int, l: int, r: int) {
+
+	onFullScreen = true;
 
 	/* Calculate margin sizes */
 	uBorder = u;
@@ -218,11 +220,18 @@ function JustifyText(numLine : int){
 }
 	
 function displayText() {
-	for (var i : int = 0; i < textToDisplay.Length; i++) {
-		if (letterSpots[i].y >= uBorder && (letterSpots[i].y + heightLetter) <= Screen.height - dBorder)
-			GUI.Label (letterSpots[i], ""+textToDisplay[i], styleLetterMiddle);
+	if (onFullScreen) {
+		for (var i : int = 0; i < textToDisplay.Length; i++) {
+			if (letterSpots[i].y >= uBorder && (letterSpots[i].y + heightLetter) <= Screen.height - dBorder)
+				GUI.Label (letterSpots[i], ""+textToDisplay[i], styleLetterMiddle);
+		}
 	}
 }
+
+function removeText() {
+	onFullScreen = false;
+}
+
 	
 /* Enable touch events */
 function OnEnable(){

@@ -147,6 +147,9 @@ function LeaveFullScreen( Video : GameObject ) {
 	camera.transform.position = CameraInitialPos ;
 	camera.orthographic = CameraInitialOrthographic ;
 	
+	audioPlayer.removeMusic();
+	textViewer.removeText();
+	
 	onFullScreen = false ;
 }
 
