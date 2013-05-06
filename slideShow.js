@@ -178,8 +178,10 @@ function UpDateSlideShow() {
 function destuctSlideShow() {
 	
 	for(var i = 0 ; i < nbElmts; i++) {
-		Destroy( mobilesElmts[i] );
+		if( mobilesElmts[i]  )
+			Destroy( mobilesElmts[i] );
 	}
+	nbElmts = 0 ;
 	
 	
 }
