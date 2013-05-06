@@ -348,10 +348,6 @@ function OnDrag ( info : DragInfo) {
 			
 		} else if (delta <0 ) {
 			
-			print('Hello world !');
-			print(currentPage);
-			print(nbElmts);
-			
 			if ( currentPage == nbElmts -2) {
 				delta = 0 ;
 			} else {
@@ -361,13 +357,7 @@ function OnDrag ( info : DragInfo) {
 			}
 			
 		}
-		
-		print('-------------');
-		print(currentPage);
-		
-		print(delta);
-		
-		
+				
 		isMoving = true ;
 		useSpeed = false ;
 		isDragging = true ;
@@ -383,17 +373,24 @@ function onUp(pos : Vector2) {
 	if( isDragging ) {
 		
 		isMoving = false ;
+		
+		
 		print(' ******************* ');
 		print(delta);
-		print(currentPage);
 		
 		if (delta < GetDistance()/2 ) {
 			decalLeft();
 		}
 		
+		print(beginTime);
+		print(beginTime + transitionTime);
+		print(Time.time / transitionTime);
+		
 		beginTime = Time.time - delta* transitionTime/GetDistance() ;
 		
-		print(currentPage);
+		
+		
+		
 		print( delta* transitionTime/GetDistance() );
 		
 		

@@ -32,7 +32,11 @@ function InitWindow( pos : Rect, z : float ) {
 	if( ! wVideoSettings)
 		wVideoSettings = gameObject.AddComponent("videoSettings");
 	*/
+	
+	// Création et position
+	wObj = new GameObject.CreatePrimitive(PrimitiveType.Plane);
 	placeRenderingPlane();
+	
 }
 
 function InitWindowFactor( pos : Rect, z : float ) {
@@ -92,7 +96,7 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2 ) {
 /*
 	 * crée et dimentionne le plan
 	 */
-private function placeRenderingPlane() {
+public function placeRenderingPlane() {
 	
 	// Dimensions
 	
@@ -100,13 +104,11 @@ private function placeRenderingPlane() {
 											Vector2( wPos.x, wPos.y ),
 											wZ, camera ) ;
 	
-	// Création et position
-	wObj = new GameObject.CreatePrimitive(PrimitiveType.Plane);
-	
 	// Application des dimentions
 	var size = wObj.renderer.bounds.size ;
 	wObj.transform.localScale= Vector3( elmtsSize.x/size.x, 1, elmtsSize.y/size.z ) ;
 	
+	// position et rotation
 	wObj.transform.rotation = camera.transform.rotation ;
 	wObj.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
 	wObj.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );

@@ -42,6 +42,9 @@ function InitFullScreen( ) {
 	audioPlayer =	gameObject.AddComponent("sound")			as sound ;
 	textViewer =	gameObject.AddComponent("text")				as text ;
 	
+	var margin : Vector2 = new Vector2(	0, 0.04 );
+	windows.InitWindowFactor( Rect( 0.55 + margin.x , 0.1 + margin.y , 0.4 - 2*margin.x , 0.64 - 2*margin.y), 20 );
+	
 	onFullScreen = false ;
 }
 
@@ -121,7 +124,6 @@ function EnterOnFullScreen( Video : GameObject ) {
 	//slideshow.InitSlideShowFactor(lol.length, Rect( 0.55 + margin.x , 0.1 + margin.y , 0.4 - 2*margin.x , 0.16 - 2*margin.y), 20);
 	
 	slideshow.InitSlideShowFactor(lol.length, Rect( 0.55 + margin.x , 0.1 + margin.y , 0.4 - 2*margin.x , 0.18 - 2*margin.y), 20);
-	windows.InitWindowFactor( Rect( 0.55 + margin.x , 0.1 + margin.y , 0.4 - 2*margin.x , 0.64 - 2*margin.y), 20 );
 	
 	
 	windows.SetNewTexture( "RocketBunnies", WINDOWTYPES.VIDEO, Vector2(2,1) );
@@ -129,7 +131,7 @@ function EnterOnFullScreen( Video : GameObject ) {
 	for (var i = 0; i < lol.length; i++ )
 		slideshow.AddElmt( (lol[i] as String) + "_min", lol[i] );
 	
-	
+	windows.placeRenderingPlane();
 	
 	textViewer.placeText(Screen.height/10, Screen.height * 0.26, Screen.width/20, Screen.width * 0.55); // u d l r
 	
