@@ -25,6 +25,13 @@ private var currentBtn : Texture;
 
 private var soundNameStr: String;
 
+/* Sounds to play */
+private var nbSounds: int;
+private var tabOfSounds: Array;
+
+/* Index of song currently playing, starting 0 */
+private var currentIndex: int;
+
 /* width and height of a letter */
 private var widthLetter : int = 11;
 private var heightLetter : int = 20;
@@ -39,12 +46,21 @@ function OnGUI() {
 }
 
 
-function placeMusic (u: int, d: int, l: int, r: int, name: String) {
+function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins + an array of sound names
 
+	nbSounds = tab.length;
+	
+	if (nbSounds == 0)
+		return;
+	
+	/* Init array of sound names */
+	tabOfSounds = tab;
+	currentIndex = 0;
+		
 	onFullScreen = true;
 
 	gameObject.AddComponent("AudioSource");
-	audio.clip = Resources.Load("Audio/" + name) as AudioClip;
+	audio.clip = Resources.Load("Audio/" + tab[0]) as AudioClip;
 	audio.Play();
 	
 	playBtn = Resources.Load("Pictures/play");
@@ -61,7 +77,7 @@ function placeMusic (u: int, d: int, l: int, r: int, name: String) {
 	lBorder = l;
 	rBorder = r;
 	
-	soundNameStr = name;
+	soundNameStr = tab[0];
 	audio.loop = true;
 	
 	if (!playBtn) {
@@ -74,12 +90,9 @@ function placeMusic (u: int, d: int, l: int, r: int, name: String) {
     }
 }
 
-
-
-
 function displayMusic() {
 	
-	if( !playBtn )
+	if( !playBtn || (nbSounds == 0))
 		return;
 	
 	var buttonSize = (Screen.height - uBorder - dBorder ) * buttonSizeFactor;  // size of the square
@@ -101,20 +114,20 @@ function displayMusic() {
 		
 		/* TEEEEEEEEEEEEEST */
 		if (GUI.Button(Rect(lBorder + 3 * buttonSize, /* test */ buttonSize + /* fin test */uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), 200, buttonSize), "Changer musique :)")) {
-			if (soundNameStr == "byebyebeautiful")
-				changeMusic("Bob_Marley-Jamming");
-			else
-				changeMusic("byebyebeautiful");
+			//var randomIndex = Math.floor(Math.random()*nbSounds);
+			
+						
+			if (currentIndex == nbSounds - 1) { // end of playlist
+				changeMusic(tabOfSounds[0]);
+				currentIndex = 0;
+			}
+			else {
+				changeMusic(tabOfSounds[currentIndex+1]);
+				currentIndex++;
+			}
 	 	}
 		
 		/* Name of the song */
-		/*GUI.Label( Rect( lBorder + buttonSize + 10,
-						(uBorder + buttonSize/(2*buttonSizeFactor)),
-						soundNameStr.Length * widthLetter,
-						heightLetter
-						),
-					soundNameStr);*/
-					
 		GUI.Label( Rect(lBorder + buttonSize + 10,
 						uBorder + buttonSize/(2*buttonSizeFactor) - widthLetter,
 						Screen.width - lBorder - rBorder,
