@@ -47,8 +47,8 @@ function placeMusic (u, d, l, r, name) {
 	audio.Play();
 	
 	soundNameStr = name;
-	soundName = gameObject.AddComponent("GUIText") as GUIText;
-	soundName.material.color = Color.white;
+	gameObject.AddComponent(typeof(GUIText));
+	guiText.material.color = Color.white;
 
 	playBtn = Resources.Load("Pictures/play");
 	pauseBtn = Resources.Load("Pictures/pause");
@@ -110,12 +110,9 @@ function displayMusic() {
 	 	}
 		
 		/* Name of the song */
-		soundName.text = soundNameStr;
-		soundName.pixelOffset = Vector2 (lBorder + buttonSize + 10, - (uBorder + buttonSize/(2*buttonSizeFactor)));
-		soundName.anchor = TextAnchor.MiddleLeft;
-		
-		Debug.Log(soundNameStr);
-		
+		guiText.text = soundNameStr;
+		guiText.pixelOffset = Vector2 (lBorder + buttonSize + 10, - (uBorder + buttonSize/(2*buttonSizeFactor)));
+		guiText.anchor = TextAnchor.MiddleLeft;
 	}
 		
 }
