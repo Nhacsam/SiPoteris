@@ -46,6 +46,14 @@ function InitWindowFactor( pos : Rect, z : float ) {
 }
 
 
+
+function destuctWindow() {
+	if( wObj)
+		Destroy(wObj);
+}
+
+
+
 /*
  * Définit ce qui est affiché dans la fenetre
  */

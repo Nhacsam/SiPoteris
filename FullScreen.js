@@ -150,6 +150,7 @@ function LeaveFullScreen( Video : GameObject ) {
 	audioPlayer.removeMusic();
 	textViewer.removeText();
 	slideshow.destuctSlideShow();
+	windows.destuctWindow();
 	
 	onFullScreen = false ;
 }
