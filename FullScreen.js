@@ -6,6 +6,7 @@ private var slideshow  : slideShow ;
 private var windows  : showingWindow ;
 private var audioPlayer : sound ;
 private var textViewer : text ;
+private var strip : displayStrip;
 
 
 // On est en mode plein écran ?
@@ -41,9 +42,18 @@ function InitFullScreen( ) {
 	windows =		gameObject.AddComponent("showingWindow")	as showingWindow ;
 	audioPlayer =	gameObject.AddComponent("sound")			as sound ;
 	textViewer =	gameObject.AddComponent("text")				as text ;
+	strip = 		gameObject.AddComponent("displayStrip")		as displayStrip;
 	
 	onFullScreen = false ;
 }
+
+function OnGUI(){
+
+	audioPlayer.OnGUISound();
+	strip.OnGUIStrip();
+
+}
+
 
 
 /*
@@ -70,7 +80,7 @@ function UpDateFullScreen() {
 
 
 /*
- * Les CallBack des entrée et sorties
+ * Les CallBack des entrées et sorties
  */
 
 
@@ -135,7 +145,8 @@ function EnterOnFullScreen( Video : GameObject ) {
 	
 	audioPlayer.placeMusic (Screen.height * 0.74 + 10, Screen.height/10, Screen.width/20, Screen.width * 0.45, "son"); // Coordinates of the music layout. U D L R. The button is always a square
 	
-	
+	// init sprite display
+	strip.initStrip( Rect( -Screen.width/2 , 0 , 2*Screen.width , Screen.height ) , Rect( Screen.width/2 , 0 , Screen.width/2 , Screen.height/8 ) );
 	
 }
 
@@ -149,6 +160,7 @@ function LeaveFullScreen( Video : GameObject ) {
 	
 	audioPlayer.removeMusic();
 	textViewer.removeText();
+	strip.removeStrip();
 	
 	onFullScreen = false ;
 }

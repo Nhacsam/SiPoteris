@@ -30,7 +30,8 @@ private var onFullScreen : boolean;
 
 
 
-function OnGUI() {
+
+function OnGUISound() {
 	displayMusic();
 }
 
