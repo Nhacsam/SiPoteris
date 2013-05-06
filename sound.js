@@ -23,7 +23,8 @@ private var playBtn : Texture;
 private var pauseBtn : Texture;
 private var currentBtn : Texture;
 
-private var songName : String;
+private var soundName : GUIText;
+private var soundNameStr: String;
 
 private var onFullScreen : boolean;
 
@@ -45,8 +46,9 @@ function placeMusic (u, d, l, r, name) {
 	audio.clip = Resources.Load("Audio/" + name) as AudioClip;
 	audio.Play();
 	
-	songName = name;
-	gameObject.AddComponent("GUIText");
+	soundNameStr = name;
+	soundName = gameObject.AddComponent("GUIText") as GUIText;
+	soundName.material.color = Color.white;
 
 	playBtn = Resources.Load("Pictures/play");
 	pauseBtn = Resources.Load("Pictures/pause");
@@ -100,17 +102,19 @@ function displayMusic() {
 		}
 		
 		/* TEEEEEEEEEEEEEST */
-		if (GUI.Button(Rect(lBorder + 3 * buttonSize, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), 200, buttonSize), "Changer musique :)")) {
-			if (songName == "byebyebeautiful")
+		if (GUI.Button(Rect(lBorder + 3 * buttonSize, /* test */ buttonSize + /* fin test */uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), 200, buttonSize), "Changer musique :)")) {
+			if (soundNameStr == "byebyebeautiful")
 				changeMusic("Bob_Marley-Jamming");
 			else
 				changeMusic("byebyebeautiful");
 	 	}
 		
 		/* Name of the song */
-		guiText.text = songName;
-		guiText.pixelOffset = Vector2 (lBorder + buttonSize + 10, - (uBorder + buttonSize/(2*buttonSizeFactor)));
-		guiText.anchor = TextAnchor.MiddleLeft;
+		soundName.text = soundNameStr;
+		soundName.pixelOffset = Vector2 (lBorder + buttonSize + 10, - (uBorder + buttonSize/(2*buttonSizeFactor)));
+		soundName.anchor = TextAnchor.MiddleLeft;
+		
+		Debug.Log(soundNameStr);
 		
 	}
 		
@@ -118,7 +122,7 @@ function displayMusic() {
 
 function changeMusic(newName) {
 	var audioIsPlaying = audio.isPlaying;
-	songName = newName;
+	soundNameStr = newName;
 	audio.clip = Resources.Load("Audio/" + newName) as AudioClip;
 	
 	if (audioIsPlaying) {
@@ -133,5 +137,6 @@ function changeMusic(newName) {
 
 function removeMusic() {
 	onFullScreen = false;
+	audio.Stop();
 	Destroy(GetComponent(GUIText));
 }
