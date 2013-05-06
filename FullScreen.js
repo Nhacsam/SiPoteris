@@ -149,6 +149,7 @@ function LeaveFullScreen( Video : GameObject ) {
 	
 	audioPlayer.removeMusic();
 	textViewer.removeText();
+	slideshow.destuctSlideShow();
 	
 	onFullScreen = false ;
 }
