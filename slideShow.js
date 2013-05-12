@@ -173,6 +173,22 @@ function UpDateSlideShow() {
 
 
 /*
+ * Destruction du slideShow
+ */
+function destuctSlideShow() {
+	
+	for(var i = 0 ; i < nbElmts; i++) {
+		if( mobilesElmts[i]  )
+			Destroy( mobilesElmts[i] );
+	}
+	nbElmts = 0 ;
+	
+	
+}
+
+
+
+/*
  * Récupère les infos du plan courant
  */
 function getCurrentAssociedInfo() {
@@ -296,12 +312,27 @@ function OnDrag ( info : DragInfo) {
 			
 		isMoving = false ;
 		
-		// démarrage
-		if( ! isDragging && info.delta.x > 0 )
-			decalRight();
-		else if( ! isDragging )
-			delta = GetDistance() ;
 		
+		// démarrage
+		if( ! isDragging ) {
+			
+			if( info.delta.x > 0  && currentPage > 0 )
+				decalRight();
+				
+			else if( info.delta.x > 0 ) {
+				delta = GetDistance() ;
+				
+			} else if(currentPage < nbElmts -1 ) {
+				currentPage ++ ;
+				decalRight();
+				delta = GetDistance() ;
+		
+			} else {
+				print('wtf');
+				decalRight();
+				delta = 0 ;
+			}
+		}
 		// ajout
 		delta += info.delta.x ;
 			
@@ -319,22 +350,19 @@ function OnDrag ( info : DragInfo) {
 			
 		} else if (delta <0 ) {
 			
-			if ( currentPage == nbElmts-1 )
+			if ( currentPage == nbElmts -2) {
 				delta = 0 ;
-			else {
+			} else {
 			
 				delta += GetDistance() ;
 				decalLeftfromLeft();
 			}
 			
 		}
-		
-		
+				
 		isMoving = true ;
 		useSpeed = false ;
 		isDragging = true ;
-		print(delta);
-		print(currentPage);
 	}
 		
 }
@@ -347,17 +375,24 @@ function onUp(pos : Vector2) {
 	if( isDragging ) {
 		
 		isMoving = false ;
+		
+		
 		print(' ******************* ');
 		print(delta);
-		print(currentPage);
 		
 		if (delta < GetDistance()/2 ) {
 			decalLeft();
 		}
 		
+		print(beginTime);
+		print(beginTime + transitionTime);
+		print(Time.time / transitionTime);
+		
 		beginTime = Time.time - delta* transitionTime/GetDistance() ;
 		
-		print(currentPage);
+		
+		
+		
 		print( delta* transitionTime/GetDistance() );
 		
 		
@@ -463,14 +498,13 @@ private function moveGradualy(pos : Vector3[], rot : Quaternion[] ) {
 			// drag
 			timeFactor = Mathf.Abs(delta)  / GetDistance() ;
 	}
-	
+		
 	// Maj des pos/rot
 	for( var i = 0 ; i < nbElmts; i++) {
-		
-		mobilesElmts[i].transform.position = Vector3.Slerp(
-		InitialElmtsPos[i],
-		pos[i],
-		timeFactor ) ;
+	
+		mobilesElmts[i].transform.position =Vector3.Slerp( 	InitialElmtsPos[i],
+															pos[i],
+															timeFactor ) ;
 		mobilesElmts[i].transform.rotation = Quaternion.Slerp( InitialElmtsRot[i], rot[i], timeFactor );
 		
 	}

@@ -245,7 +245,7 @@ function OnDisable(){
 	Gesture.onDraggingE -= onDragging;
 }
 
-/* Scrolling text with swipe event ! (Finger OK Mouse KO)*/
+/* Scrolling text with swipe event ! (Finger OK Mouse KO) */
 function OnSwipe(swipeData : SwipeInfo) {
 	Debug.Log("Direction: " + swipeData.direction);
 	
@@ -274,7 +274,7 @@ function onDragging(dragData : DragInfo) {
 	/* If finger/mouse on the text and if not blocked */	
 	if (dragData.pos.x > lBorder && dragData.pos.x < Screen.width - rBorder && dragData.pos.y < Screen.height - uBorder && dragData.pos.y > dBorder && !block) {
 		for (var i : int = 0; i < textToDisplay.Length; i++) {
-			letterSpots[i].y -= dragData.delta.y;
+			letterSpots[i].y -= dragData.delta.y/2;
 		}
 	}
 }	

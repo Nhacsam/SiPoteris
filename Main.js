@@ -2,13 +2,14 @@
 
 private var myPlanes : GameObject[] ;
 
-
+// instantiate scripts
 private var xml : getXML;
 private var createPolar : createPolarMesh;
 private var move : moveSurface;
 
 
 
+// array of GO - meshes over movie
 var AllGO : Array = Array();
 
 
@@ -40,12 +41,12 @@ function Start () {
 	 * Instanciate the objects
 	 */
 	
-	Videos = gameObject.AddComponent("videoSettings2");
-	Zoom = gameObject.AddComponent("Zoom");
-	createPolar = gameObject.AddComponent("createPolarMesh");
-	xml = gameObject.AddComponent("getXML");
-	move = gameObject.AddComponent("moveSurface");
-	VideoFull= gameObject.AddComponent("FullScreen");
+	Videos = gameObject.AddComponent("videoSettings2") as videoSettings2;
+	Zoom = gameObject.AddComponent("Zoom") as Zoom;
+	createPolar = gameObject.AddComponent("createPolarMesh") as createPolarMesh;
+	xml = gameObject.AddComponent("getXML") as getXML;
+	move = gameObject.AddComponent("moveSurface") as moveSurface;
+	VideoFull= gameObject.AddComponent("FullScreen") as FullScreen;
 
 	
 	/*
@@ -108,7 +109,6 @@ function Update () {
 			move.resetPlane(AllGO[i]);
 	}
 }
-
 
 function enableMouseLook( b : boolean ) {
 	/*

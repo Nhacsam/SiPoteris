@@ -162,6 +162,9 @@ function LeaveFullScreen( Video : GameObject ) {
 	textViewer.removeText();
 	strip.removeStrip();
 	
+	slideshow.destuctSlideShow();
+	windows.destuctWindow();
+	
 	onFullScreen = false ;
 }
 
