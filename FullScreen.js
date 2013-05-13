@@ -48,9 +48,12 @@ function InitFullScreen( ) {
 }
 
 function OnGUI(){
-
-	audioPlayer.OnGUISound();
-	strip.OnGUIStrip();
+	
+	if( audioPlayer ) {
+	
+		audioPlayer.OnGUISound();
+		strip.OnGUIStrip();
+	}
 
 }
 
@@ -113,7 +116,6 @@ function EnterOnFullScreen( Video : GameObject ) {
 	
 	var Datas : scriptForPlane = Video.GetComponent('scriptForPlane');
 	
-	print( Datas.getText() );
 	
 	var lol : Array = new Array() ;
 	lol.Push("lol_imgs/akali");

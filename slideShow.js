@@ -190,7 +190,10 @@ function destuctSlideShow() {
  * Récupère les infos du plan courant
  */
 function getCurrentAssociedInfo() {
-	return elmtsInfo[ effectiveCurrentPage ];
+	if( elmtsInfo )
+		if( elmtsInfo.length > effectiveCurrentPage )
+			return elmtsInfo[ effectiveCurrentPage ];
+	return null ;
 }
 
 

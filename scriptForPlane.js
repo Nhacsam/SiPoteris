@@ -138,7 +138,7 @@ public function getLastMoveTime() : float {
 /*********************/
 
 public function getText() {
-	
+	/*
 	for (var entry : DictionaryEntry in HT)
 		print( 'HT [ ' +entry.Key + ' ] = ' + entry.Value );
 	
@@ -157,7 +157,7 @@ public function getText() {
 		} else
 			return '' ;
 	} else
-		return '' ;
+		return '' ;*/
 }
 /*
 public function getSounds() : Array {
