@@ -100,7 +100,7 @@ private function exploreRecursively ( list : XmlNodeList , Htab : Hashtable){
 			} else if( Htab.ContainsKey( nodeList.Name ) && typeof( Htab[ nodeList.Name ] ) == typeof( Array ) ){ // if key already exists and this is an array
 			
 				// add another element
-				Htab[ nodeList.Name ].Push( nodeList.InnerText );
+				( Htab[ nodeList.Name ] as Array).Push( nodeList.InnerText );
 			
 			} else // if key does not exist already
 				Htab[ nodeList.Name ] = nodeList.InnerText ;

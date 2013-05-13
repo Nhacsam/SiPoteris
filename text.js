@@ -280,5 +280,5 @@ function onDragging(dragData : DragInfo) {
 			letterSpots[i].y -= dragData.delta.y/2;
 		}
 	}
-}	
-	
+}
+
