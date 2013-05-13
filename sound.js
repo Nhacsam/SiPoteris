@@ -1,5 +1,5 @@
 /* sound.js
-Creation: 25/04/13 byte Kevin Guillaumond
+Creation: 25/04/13 by Kevin Guillaumond
 
 Purpose: Manages the sound at the bottom left of the screen in 2D view
 */
@@ -23,33 +23,47 @@ private var playBtn : Texture;
 private var pauseBtn : Texture;
 private var currentBtn : Texture;
 
-private var soundName : GUIText;
 private var soundNameStr: String;
+
+/* Sounds to play */
+private var nbSounds: int;
+private var tabOfSounds: Array;
+
+/* Index of song currently playing, starting 0 */
+private var currentIndex: int;
+
+/* width and height of a letter */
+private var widthLetter : int = 11;
+private var heightLetter : int = 20;
 
 private var onFullScreen : boolean;
 
 
 
 
-function OnGUI() {
+
+function OnGUISound() {
 	displayMusic();
 }
 
 
+function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins + an array of sound names
 
-
-function placeMusic (u, d, l, r, name) {
-
+	nbSounds = tab.length;
+	
+	if (nbSounds == 0)
+		return;
+	
+	/* Init array of sound names */
+	tabOfSounds = tab;
+	currentIndex = 0;
+		
 	onFullScreen = true;
 
 	gameObject.AddComponent("AudioSource");
-	audio.clip = Resources.Load("Audio/" + name) as AudioClip;
+	audio.clip = Resources.Load("Audio/" + tab[0]) as AudioClip;
 	audio.Play();
 	
-	soundNameStr = name;
-	soundName = gameObject.AddComponent("GUIText") as GUIText;
-	soundName.material.color = Color.white;
-
 	playBtn = Resources.Load("Pictures/play");
 	pauseBtn = Resources.Load("Pictures/pause");
 	currentBtn = pauseBtn;
@@ -64,6 +78,7 @@ function placeMusic (u, d, l, r, name) {
 	lBorder = l;
 	rBorder = r;
 	
+	soundNameStr = tab[0];
 	audio.loop = true;
 	
 	if (!playBtn) {
@@ -76,12 +91,9 @@ function placeMusic (u, d, l, r, name) {
     }
 }
 
-
-
-
 function displayMusic() {
 	
-	if( !playBtn )
+	if( !playBtn || (nbSounds == 0))
 		return;
 	
 	var buttonSize = (Screen.height - uBorder - dBorder ) * buttonSizeFactor;  // size of the square
@@ -103,21 +115,27 @@ function displayMusic() {
 		
 		/* TEEEEEEEEEEEEEST */
 		if (GUI.Button(Rect(lBorder + 3 * buttonSize, /* test */ buttonSize + /* fin test */uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), 200, buttonSize), "Changer musique :)")) {
-			if (soundNameStr == "byebyebeautiful")
-				changeMusic("Bob_Marley-Jamming");
-			else
-				changeMusic("byebyebeautiful");
+			//var randomIndex = Math.floor(Math.random()*nbSounds);
+			
+						
+			if (currentIndex == nbSounds - 1) { // end of playlist
+				changeMusic(tabOfSounds[0]);
+				currentIndex = 0;
+			}
+			else {
+				changeMusic(tabOfSounds[currentIndex+1]);
+				currentIndex++;
+			}
 	 	}
 		
 		/* Name of the song */
-		soundName.text = soundNameStr;
-		soundName.pixelOffset = Vector2 (lBorder + buttonSize + 10, - (uBorder + buttonSize/(2*buttonSizeFactor)));
-		soundName.anchor = TextAnchor.MiddleLeft;
-		
-		Debug.Log(soundNameStr);
-		
+		GUI.Label( Rect(lBorder + buttonSize + 10,
+						uBorder + buttonSize/(2*buttonSizeFactor) - widthLetter,
+						Screen.width - lBorder - rBorder,
+						heightLetter
+						),
+					soundNameStr);
 	}
-		
 }
 
 function changeMusic(newName) {
