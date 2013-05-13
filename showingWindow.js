@@ -21,6 +21,21 @@ private var wType : WINDOWTYPES = WINDOWTYPES.NONE;
 // VIdeo en lecture ?
 private var wVideoIsPlaying : boolean = false ;
 
+// Informations sur un éléments
+class SLIDESHOWELMT extends System.ValueType{
+  var type : WINDOWTYPES ;
+  var path : String ;
+  var size : Vector2 ;
+ 
+  public function SLIDESHOWELMT(p : String, t : WINDOWTYPES, s : Vector2){
+     this.type = t;
+     this.path = p;
+	 this.size = s;
+  }
+}
+
+
+
 
 
 function InitWindow( pos : Rect, z : float ) {
@@ -54,9 +69,16 @@ function destuctWindow() {
 
 
 
+
+
+
 /*
  * Définit ce qui est affiché dans la fenetre
  */
+
+function SetNewTextureObj( e : SLIDESHOWELMT ) {
+	SetNewTexture( e.path, e.type, e.size);
+}
 
 function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2 ) {
 	wType = type ;

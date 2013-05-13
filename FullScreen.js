@@ -57,7 +57,7 @@ function UpDateFullScreen() {
 		
 		slideshow.UpDateSlideShow();
 		
-		windows.SetNewTexture( slideshow.getCurrentAssociedInfo(), WINDOWTYPES.IMG, Vector2(260, 390));
+		windows.SetNewTextureObj( slideshow.getCurrentAssociedInfo() );
 		
 	}
 	
@@ -101,6 +101,9 @@ function EnterOnFullScreen( Video : GameObject ) {
 	var margin : Vector2 = new Vector2(	0, 0.04 );
 	
 	
+	var Datas : scriptForPlane = Video.GetComponent('scriptForPlane');
+	
+	print( Datas.getText() );
 	
 	var lol : Array = new Array() ;
 	lol.Push("lol_imgs/akali");
@@ -126,9 +129,12 @@ function EnterOnFullScreen( Video : GameObject ) {
 	
 	windows.SetNewTexture( "RocketBunnies", WINDOWTYPES.VIDEO, Vector2(2,1) );
 	
-	for (var i = 0; i < lol.length; i++ )
-		slideshow.AddElmt( (lol[i] as String) + "_min", lol[i] );
+	var lolelmt : SLIDESHOWELMT ;
 	
+	for (var i = 0; i < lol.length; i++ ) {
+		lolelmt = new SLIDESHOWELMT( lol[i], WINDOWTYPES.IMG, Vector2(260, 390) ) ;
+		slideshow.AddElmt( (lol[i] as String) + "_min", lolelmt );
+	}
 	
 	
 	textViewer.placeText(Screen.height/10, Screen.height * 0.26, Screen.width/20, Screen.width * 0.55); // u d l r

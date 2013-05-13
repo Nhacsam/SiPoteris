@@ -144,9 +144,7 @@ function InitSlideShowFactor ( nbOfElmts : int, pos : Rect, Z : float ) {
 function UpDateSlideShow() {
 	
 	// Pour test sur PC
-	if( Input.GetMouseButtonDown(0) )
-		OnTap(Input.mousePosition);
-		
+	
 	
 	// positions et rotations finales
 	var pos = GetElmtsPosition();
@@ -376,25 +374,13 @@ function onUp(pos : Vector2) {
 		
 		isMoving = false ;
 		
-		
-		print(' ******************* ');
-		print(delta);
-		
+		// transfert la ou on en était pour le décalage progressif
 		if (delta < GetDistance()/2 ) {
 			decalLeft();
+			delta = GetDistance() - delta ;
 		}
 		
-		print(beginTime);
-		print(beginTime + transitionTime);
-		print(Time.time / transitionTime);
-		
 		beginTime = Time.time - delta* transitionTime/GetDistance() ;
-		
-		
-		
-		
-		print( delta* transitionTime/GetDistance() );
-		
 		
 		delta = 0 ;
 		isDragging = false ;
@@ -413,7 +399,9 @@ function OnPinch ( amp : float ) {
 // appuie
 function OnTap (pos : Vector2 ) {
 	
-	
+	if( isDragging )
+		return ;
+		
 	var ray : Ray = camera.ScreenPointToRay(pos);
 	var hit : RaycastHit = new RaycastHit() ;
 	
@@ -599,7 +587,7 @@ private function GetElmtsRotation() : Quaternion[] {
 
 // Récupère la distance entre l'element central et le suivant
 private function GetDistance() : float {
-	return ((spacingFactor-1)*(position.xMax - position.xMin)/(2*spacingFactor)) ;
+	return ((spacingFactor-1)*(position.xMax - position.xMin)/(spacingFactor)) ;
 }
 
 

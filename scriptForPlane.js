@@ -133,6 +133,51 @@ public function getLastMoveTime() : float {
 
 
 
+/*********************/
+/******** GUI ********/
+/*********************/
+
+public function getText() {
+	
+	for (var entry : DictionaryEntry in HT)
+		print( 'HT [ ' +entry.Key + ' ] = ' + entry.Value );
+	
+	
+	print(HT);
+	print(HT['GUI']);
+	if( HT.Contains('GUI') ) {
+		
+		
+		
+		var GUI : Hashtable = HT['GUI'] ;
+		
+		if( GUI.Contains('text') ) {
+			print(GUI['text']);
+			return GUI['text'] ;
+		} else
+			return '' ;
+	} else
+		return '' ;
+}
+/*
+public function getSounds() : Array {
+	
+	if( HT.Contains('sounds') )
+	return new Array();
+}
+
+public function slideShowElemt() : Array {
+	
+	return new Array() ;
+}
+
+
+
+
+*/
+
+
+
 
 
 
