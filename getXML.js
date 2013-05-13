@@ -1,7 +1,7 @@
 /*
 	Creation : 19/04/2013
 	Author : Fabien Daoulas
-	Last update : 26/04/2013
+	Last update : 08/05/2013
 This script parses xml files, informations about videos.
 	
 */
@@ -16,11 +16,12 @@ private var mFile : XmlDocument ;
 
 
 	
-function InitXml(XMLToLoad : String ) {
+function InitXml( XMLToLoad : String ) {
 	
-	var textAsset : TextAsset = Resources.Load( XMLToLoad , typeof( TextAsset ) ) as TextAsset;
+	var textAsset : TextAsset = Resources.Load( XMLToLoad , typeof(TextAsset) ) as TextAsset;
 	mFile = new XmlDocument();
 	mFile.Load( new StringReader( textAsset.text ) );
+	
 }
 
 
@@ -33,7 +34,8 @@ function getElementFromXML( f : function(Hashtable) ) : Array {
 	
 	var Data = new Array();
 	
-	var TempTab : Hashtable ;
+	// root hashtable
+	var rootTab : Hashtable ;
 
 	var elementList : XmlNodeList = mFile.GetElementsByTagName( "root" );
 	
@@ -51,15 +53,15 @@ function getElementFromXML( f : function(Hashtable) ) : Array {
 		 if(  nodeList.Name == '#comment' )
 		 	continue ;
 		 
-		TempTab = new Hashtable();
+		rootTab = new Hashtable();
 		var elementContent : XmlNodeList = nodeList.ChildNodes;
 		
-		exploreRecursively( elementContent , TempTab );
+		exploreRecursively( elementContent , rootTab );
 		
-		Data.Push(TempTab);
+		Data.Push( rootTab );
 		
 		// do stuff
-		f( TempTab );
+		f( rootTab );
 	}
 	
 	return Data ;
@@ -75,16 +77,38 @@ private function exploreRecursively ( list : XmlNodeList , Htab : Hashtable){
 	
 		var elementContent : XmlNodeList = nodeList.ChildNodes;
 		
-		
 		// if there are childNodes
 		if( elementContent.Count > 1 ){
-			exploreRecursively( elementContent , Htab );
+			
+			var nextHT : Hashtable = new Hashtable();
+			
+			// fill nextHT
+			exploreRecursively( elementContent , nextHT );
+			
+			Htab[ nodeList.Name ] = nextHT;
 		
 		}
-		else // if there are no childNodes
-			Htab[ nodeList.Name ] = nodeList.InnerText ;
+		else {// if there are no childNodes
+		
+			if( Htab.ContainsKey( nodeList.Name ) && typeof( Htab[ nodeList.Name ] ) != typeof( Array ) ){ // if key already exists and this is not an array
+			
+				var array : Array = new Array();
+				array.Push( Htab[ nodeList.Name ] );
+				array.Push( nodeList.InnerText );
+				Htab[ nodeList.Name ] = array;
+				
+			} else if( Htab.ContainsKey( nodeList.Name ) && typeof( Htab[ nodeList.Name ] ) == typeof( Array ) ){ // if key already exists and this is an array
+			
+				// add another element
+				Htab[ nodeList.Name ].Push( nodeList.InnerText );
+			
+			} else // if key does not exist already
+				Htab[ nodeList.Name ] = nodeList.InnerText ;
+			
+		}
 	}
 }
+
 
 
 
