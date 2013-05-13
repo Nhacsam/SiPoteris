@@ -102,10 +102,14 @@ function Update () {
 //	sound.updateSounds(myPlanes);
 	
 	for( var i =0; i < AllGO.length; i++) {
+	
+		if(!Videos.getFlagEndVideo())
 		move.moveSurface( AllGO[i], Videos.OnPlay() );
 	
-		if( Videos.getFlagEndVideo() )
+		if( Videos.getFlagEndVideo() ){
 			move.resetPlane(AllGO[i]);
+			Debug.Log("i am in" + Videos.getFlagEndVideo());
+		}
 	}
 }
 

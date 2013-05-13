@@ -169,11 +169,13 @@ private function CreatePolarMesh(thetaMin : float, thetaMax : float, Rmin : floa
 	obj.GetComponent(MeshCollider).sharedMesh = meshBuilding;
 	//obj.GetComponent(MeshCollider).convex = true;
 	
+	
+	/*
 	if( firstTime && mesh_name.IndexOf("middle") != -1 ){
 		obj.renderer.enabled = true;
 		firstTime = false;
 	}
-	else
+	else*/
 		obj.renderer.enabled = false;
 
 	return obj;
