@@ -22,7 +22,9 @@ function OnPlay(){
 }
 
 
-//function to set the parameters of the 2D scene
+/*
+*function to set the parameters of the 2D scene
+*/
 function videoSettings () {
 
 	control = gameObject.AddComponent("CameraControl");
@@ -75,6 +77,10 @@ function videoSettings () {
 	return plane2D;
 }
 
+/*
+* create 2D plane
+*/
+
 function generateScene2D(){
 
     plane2D.transform.localScale=Vector3(1.1,1.1,1.1);
@@ -83,20 +89,18 @@ function generateScene2D(){
     plane2D.transform.position = Vector3(0,0,0);
     plane2D.AddComponent("PlayFileBasedMovieDefault");
   	plane2D.renderer.material = Resources.Load("MovieHD");
-  	plane2D.renderer.material.mainTexture= Resources.Load("final4k");
-  
-        
-
 
 
 
 }
-
+/*
+* create 3D sphere
+*/
 function generateScene3D(){
 
 	var rot:Quaternion=Quaternion.identity;
 	//load .fbx sphere on scene
-	sphere3D=Instantiate(Resources.Load("NewSphere"),Vector3(0,1,0),rot);
+	sphere3D=Instantiate(Resources.Load("SphereFULL"),Vector3(0,1.3,0),rot);
 	//set it at the right position
 	sphere3D.transform.Rotate(-90,0,0);
 	sphere3D.transform.localScale=Vector3(500,500,500);
@@ -104,26 +108,29 @@ function generateScene3D(){
 	
 }
 
+/*
+* button switcher interface 2D/3D and directions
+*/
 
 function  OnGUI(){
 
+	if(button){
 
-
-if(button){
-
-
-if(!button)	GUI.Label(Rect(Screen.width/4 +70 , Screen.height-33, camera.pixelWidth , camera.pixelHeight),"Click anywhere on the plane to get further information.");
-
-  	if (GUI.Button(new Rect(0, 0, 100, 100), scene2D ? "3D view" : "2D view" ))
-  		 {
+		GUI.Label(Rect(Screen.width/4 +70 , Screen.height-28, camera.pixelWidth , camera.pixelHeight),"Click anywhere on the plane to get further information.");
+	
+ 	 	if (GUI.Button(new Rect(0, 0, 100, 100), scene2D ? "3D view" : "2D view" ))
+			{
 				Change2D3D();   
-  		  }
-    
+			}
+  	  
     }
         
 }
 
 
+/*
+* Pause video while interface 
+*/
 
 function videoHDZoomON (plane : GameObject){
 
@@ -136,7 +143,9 @@ function videoHDZoomON (plane : GameObject){
 
 }
 
-
+/*
+* Resume video when leaving interface 
+*/
 
 function videoHDZoomQuit(plane : GameObject){
 
@@ -152,7 +161,9 @@ function videoHDZoomQuit(plane : GameObject){
 }
 
 
-
+/*
+* reset camera parameters on switching 2D/3D
+*/
 function Change2D3D(){
 
 	
@@ -207,6 +218,9 @@ function cameraTransition(){
 	
 }
 
+/*
+* Set the parameters for the video (see the plug to know how to do it)
+*/
 function putVideo( focus: GameObject, nom : String){
 
  	var controllerIOS:ForwardiOSMessages;
@@ -230,6 +244,9 @@ function putVideo( focus: GameObject, nom : String){
 	
 }
 
+/*
+* not used for now
+*/
 function stopVideo(focus: GameObject){
 
 	var controllerMovie:PlayFileBasedMovieDefault;
@@ -238,10 +255,52 @@ function stopVideo(focus: GameObject){
 
 }
 
-
+/*
+* return a flag to know the video has finished
+*/
 function getFlagEndVideo(){
 	var controllerScene:SceneController;
 	controllerScene = MovieController.GetComponent("SceneController");  
 	return controllerScene.movieClass[0].movieFinished;
 	
 }
+
+/*
+* part to hanlde zoom on a position
+*/
+
+
+private var pos3D:Vector3;
+
+function OnEnable(){
+
+	Gesture.onPinchE += UpdateZoom;
+	Gesture.onDownE +=  onDown;
+	
+}
+
+function UpdateZoom(amp:float){
+
+	gameObject.transform.LookAt(pos3D);
+	if(pos3D.y>-3 && pos3D.y<-10){
+		pos3D.y=amp;
+		if(pos3D.y>-3)pos3D.y=-3;
+		if(pos3D.y<-10)pos3D.y=-10;
+		gameObject.transform.Translate(pos3D*amp);
+	}
+	
+}
+
+function onDown(pos:Vector2){
+
+	pos3D=new Vector3(pos.x,0,pos.y);
+	
+}
+
+
+/*
+* clique en zoom début recule
+* reset plan et vid
+* zoom sur le 2D
+* boutons en bas
+*/
