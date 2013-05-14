@@ -165,10 +165,8 @@ private function CreatePolarMesh(thetaMin : float, thetaMax : float, Rmin : floa
 	// add mesh filter
 	obj.GetComponent(MeshFilter).mesh = meshBuilding;
 	
-	// add the convex mesh collider
+	// add mesh collider
 	obj.GetComponent(MeshCollider).sharedMesh = meshBuilding;
-	//obj.GetComponent(MeshCollider).convex = true;
-	
 	
 	/*
 	if( firstTime && mesh_name.IndexOf("middle") != -1 ){

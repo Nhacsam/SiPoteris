@@ -27,7 +27,7 @@ function InitXml( XMLToLoad : String ) {
 
 /*
 	*parse xml file
-	*for each element named "element", this method creates a hashtable containing all informations of this element, and 
+	*this method creates a hashtable containing all informations of this element, and 
 	*thanks to callback, this hashtable will be attached to the plane
 */
 function getElementFromXML( f : function(Hashtable) ) : Array {
