@@ -2,8 +2,8 @@
 
 
 
-private var MovieController:GameObject;
-private var iOS:GameObject;
+public var MovieController:GameObject;
+public var iOS:GameObject;
 private var scene2D:boolean;
 //ref to the screen 2D
 private var plane2D = GameObject.CreatePrimitive(PrimitiveType.Plane);
@@ -116,9 +116,9 @@ function  OnGUI(){
 
 	if(button){
 
-		GUI.Label(Rect(Screen.width/4 +70 , Screen.height-28, camera.pixelWidth , camera.pixelHeight),"Click anywhere on the plane to get further information.");
+		GUI.Label(Rect(Screen.width/2 +275 , Screen.height-60, camera.pixelWidth , camera.pixelHeight),"Click anywhere on the screen \n   to get further information.");
 	
- 	 	if (GUI.Button(new Rect(0, 0, 100, 100), scene2D ? "3D view" : "2D view" ))
+ 	 	if (GUI.Button(new Rect( 0, Screen.height-100, 100, 100), scene2D ? "3D view" : "2D view" ))
 			{
 				Change2D3D();   
 			}
@@ -187,6 +187,9 @@ function Change2D3D(){
 
 } 
 
+function getScene(){
+	return scene2D;
+}
 
 /**
 * Camera switch 2D/3D
@@ -260,7 +263,8 @@ function stopVideo(focus: GameObject){
 */
 function getFlagEndVideo(){
 	var controllerScene:SceneController;
-	controllerScene = MovieController.GetComponent("SceneController");  
+	controllerScene = MovieController.GetComponent("SceneController");
+	
 	return controllerScene.movieClass[0].movieFinished;
 	
 }
@@ -269,8 +273,9 @@ function getFlagEndVideo(){
 * part to hanlde zoom on a position
 */
 
-
+/*
 private var pos3D:Vector3;
+private var prevamp:float;
 
 function OnEnable(){
 
@@ -281,26 +286,31 @@ function OnEnable(){
 
 function UpdateZoom(amp:float){
 
-	gameObject.transform.LookAt(pos3D);
-	if(pos3D.y>-3 && pos3D.y<-10){
-		pos3D.y=amp;
-		if(pos3D.y>-3)pos3D.y=-3;
-		if(pos3D.y<-10)pos3D.y=-10;
-		gameObject.transform.Translate(pos3D*amp);
-	}
+
 	
+	//gameObject.transform.LookAt(pos3D);
+	if(pos3D.y>-3 && pos3D.y<-10){
+		if(pos3D.y>-3){pos3D.y=-3;}
+		if(pos3D.y<-10){pos3D.y=-10;gameObject.transform.LookAt(Vector3.zero);}
+		//gameObject.transform.Translate(pos3D*1.3);	
+		if(prevamp<amp*1.1)gameObject.transform.position.y= pos3D.y+1;//3*amp/10;
+		if(prevamp>amp*1.1)gameObject.transform.position.y= pos3D.y-1;//3*amp/10;
+		
+	}
+	prevamp=amp;
 }
 
 function onDown(pos:Vector2){
 
-	pos3D=new Vector3(pos.x,0,pos.y);
+	pos3D=camera.ScreenToWorldPoint(Vector3(pos.x,-10,pos.y));
 	
 }
 
+*/
 
 /*
-* clique en zoom début recule
-* reset plan et vid
-* zoom sur le 2D
-* boutons en bas
-*/
+ * clique en zoom début recule
+ * reset plan et vid
+ * zoom sur le 2D
+ * boutons en bas
+ */

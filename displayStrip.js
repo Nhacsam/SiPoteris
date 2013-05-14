@@ -51,8 +51,12 @@ private var disable_move : boolean = false;
 	private var speedHeight : float;
 	// first time (init speed)
 	private var firstTime : boolean = true;
+	// init video
+	private var VideoInit:boolean = true;
+	// video screen
+	private var videoScreen:GameObject;
 
-private var onFullScreen : boolean = false;
+	private var onFullScreen : boolean = false;
 
 
 
@@ -86,6 +90,7 @@ function initStrip ( rIn : Rect , rOut : Rect ) {
 	posRect = positionOfRect();
 	initSpeed();
 	onFullScreen = true;
+
 	
 }
 
@@ -108,9 +113,14 @@ function OnGUIStrip(){
 			case states.STATE_OUT : 
 					rctOfPicture = displayStrip( rectOUT , "lol_imgs/akali" );
 					rectDRAG = rectIN;
+					VideoInit = true;
 				break;
 			case states.STATE_IN :
 					rctOfPicture = displayStrip( rectDRAG , "lol_imgs/akali" );
+					if( VideoInit ){
+					putVideo(videoScreen,"lala");
+					VideoInit=false;
+					}
 				break;
 			case states.SWIPE_IN : 
 					var r  : Rect = calcRect();
@@ -434,5 +444,48 @@ private function manageStates(){
 }
 
 
+/*
+* Set the parameters for the video (see the plug to know how to do it)
+*/
+function putVideo( focus: GameObject, nom : String){
 
+	focus = new GameObject.CreatePrimitive(PrimitiveType.Plane);
+	focus.name ="videoScreen";
+	focus.transform.localScale=Vector3(11,1,1);
+	focus.transform.position = Vector3(-2000,-2000,-2000);
 
+	var access:videoSettings2 = gameObject.GetComponent("videoSettings2");
+	var iOS = access.iOS;
+	var MovieController = access.MovieController;
+	  
+ 	var controllerIOS:ForwardiOSMessages;
+	controllerIOS = iOS.GetComponent("ForwardiOSMessages");
+ 
+	var controllerScene:SceneController;
+	controllerScene = MovieController.GetComponent("SceneController");      
+	
+    focus.AddComponent("PlayFileBasedMovieDefault");
+    focus.renderer.material = Resources.Load("Video");
+    
+	controllerScene.movieClass[1] =  focus.GetComponent("PlayFileBasedMovieDefault");
+	controllerScene.movieClass[1].movieIndex=1;
+	controllerScene.movieName[1] = nom + ".mov";
+	controllerIOS.movie[1]=focus.GetComponent("PlayFileBasedMovieDefault");
+	
+	
+	var controllerMovie:PlayFileBasedMovieDefault;
+	controllerMovie=focus.GetComponent("PlayFileBasedMovieDefault");
+	controllerMovie.PlayMovie(nom + ".mov");
+	
+}
+
+/*
+* not used for now
+*/
+function stopVideo(focus: GameObject){
+
+	var controllerMovie:PlayFileBasedMovieDefault;
+	controllerMovie=focus.GetComponent("PlayFileBasedMovieDefault");
+	controllerMovie.StopMovie ();
+
+}
