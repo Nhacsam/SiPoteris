@@ -23,8 +23,6 @@ static function getChildFolder( name : String, folderName : String ) : String {
 }
 
 
-
-
 /*
  * Récupère dans un Array les noms des fichiers contenue dans
  * dans le dossier folder (chemin depuis Resources) avec l'extension extension
@@ -70,7 +68,10 @@ static function getTextFromFile( path : String ) {
 /******** Traitements sur les nom des fichiers ********/
 /******************************************************/
 
-
+/*
+ * Supprime dans le chemin d'un fichier tout ce qui précède
+ * Ressources/
+ */
 static function fromResourcesPath( path : String ) : String {
 	
 	var tofind : String =  'Resources/' ;
@@ -81,6 +82,10 @@ static function fromResourcesPath( path : String ) : String {
 		return path ;
 }
 
+/*
+ * Retire l'extension d'un fichier
+ */
+
 static function removeExtension(file : String ) : String {
 	
 	var pointPos : int = file.IndexOf( '.' );
@@ -90,3 +95,34 @@ static function removeExtension(file : String ) : String {
 		return file ;
 }
 
+/*
+ * Récupère le nom d'un fichier à partir de son adresse complète
+ */
+
+static function getName( path : String ) : String {
+	
+	var pathTab = path.Split('/'[0]);
+	if( pathTab.length > 0 )
+		return pathTab[ pathTab.length -1 ] ;
+	
+	else return path ;
+}
+
+
+
+/*
+ * Trouve la miniature associé à une image ou une video
+ * en cherchant un fichier dans le tableau
+ * qui contient le nom de celui donné en paramètre
+ */
+
+static function getAssociatedMin( img : String, minTab : Array) {
+	
+	var imgName = removeExtension( getName(img) );
+	
+	for (var i = 0; i < minTab.length; i++) {
+		if( minTab[i].IndexOf(imgName) != -1 )
+			return minTab[i] ;
+	}
+	return img ;
+}

@@ -118,35 +118,24 @@ function EnterOnFullScreen( Video : GameObject ) {
 	
 	var Datas : scriptForPlane = Video.GetComponent('scriptForPlane');
 	
-	var lol : Array = new Array() ;
-	lol.Push("lol_imgs/akali");
-	lol.Push("lol_imgs/cho");
-	lol.Push("lol_imgs/garen");
-	lol.Push("lol_imgs/irelia");
-	lol.Push("lol_imgs/janna");
-	lol.Push("lol_imgs/kata");
-	lol.Push("lol_imgs/leesin");
-	lol.Push("lol_imgs/leona");
-	lol.Push("lol_imgs/lux");
-	lol.Push("lol_imgs/panthe");
-	lol.Push("lol_imgs/shen");
-	lol.Push("lol_imgs/sona");
-	lol.Push("lol_imgs/vi");
 	
 	
-	//slideshow.InitSlideShowFactor(lol.length, Rect( 0.55 + margin.x , 0.1 + margin.y , 0.4 - 2*margin.x , 0.16 - 2*margin.y), 20);
+	var slideShowImgs : Array = Datas.getImages();
+	var slideShowMin : Array = Datas.getMiniatures();
+	var slideShowElmt : SLIDESHOWELMT ;
 	
-	slideshow.InitSlideShowFactor(lol.length, Rect( 0.55 + margin.x , 0.1 + margin.y , 0.4 - 2*margin.x , 0.18 - 2*margin.y), 20);
+	
+	slideshow.InitSlideShowFactor(slideShowImgs.length, Rect( 0.55 + margin.x , 0.1 + margin.y , 0.4 - 2*margin.x , 0.18 - 2*margin.y), 20);
 	windows.InitWindowFactor( Rect( 0.55 + margin.x , 0.1 + margin.y , 0.4 - 2*margin.x , 0.64 - 2*margin.y), 20 );
 	
 	
-	windows.SetNewTexture( "RocketBunnies", WINDOWTYPES.VIDEO, Vector2(2,1) );
-	
-	var lolelmt : SLIDESHOWELMT ;
-	
-	for (var i = 0; i < lol.length; i++ ) {
-		lolelmt = new SLIDESHOWELMT( lol[i], WINDOWTYPES.IMG, Vector2(260, 390) ) ;
-		slideshow.AddElmt( (lol[i] as String) + "_min", lolelmt );
+	for (var i = 0; i < slideShowImgs.length; i++ ) {
+		slideShowElmt = new SLIDESHOWELMT(		slideShowImgs[i],
+												WINDOWTYPES.IMG,
+												Vector2(260, 390) 	) ;
+		
+		slideshow.AddElmt(		fileSystem.getAssociatedMin( slideShowImgs[i], slideShowMin ),
+								slideShowElmt 									);
 	}
 	
 	

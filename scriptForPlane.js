@@ -170,10 +170,36 @@ public function getVideoFolder() : String {
 	return fileSystem.getChildFolder( 'video', getFolderName() );
 }
 
-// sers en cas d'erreur ou de fichier introuvable
+public function getMiniatureFolder() : String {
+	return fileSystem.getChildFolder( 'min', getFolderName() );
+}
+
+
+
+/*
+ * Récupère les chemins des dossiers
+ * Contenant les infos par défaut
+ * sers en cas d'erreur ou de fichier(s) introuvable(s)
+ */
+ 
 public function getDefaultFolder() : String {
 	Directory.CreateDirectory( fileSystem.getResourcesPath() + '/defaultDatas');
 	return 'defaultDatas' ;
+}
+public function getDefaultImgFolder() : String {
+	return fileSystem.getChildFolder( 'img', getDefaultFolder() );
+}
+
+public function getDefaultAudioFolder() : String {
+	return fileSystem.getChildFolder( 'audio', getDefaultFolder() );
+}
+
+public function getDefaultVideoFolder() : String {
+	return fileSystem.getChildFolder( 'video', getDefaultFolder() );
+}
+
+public function getDefaultMiniatureFolder() : String {
+	return fileSystem.getChildFolder( 'min', getDefaultFolder() );
 }
 
 
@@ -216,13 +242,9 @@ public function getText() : String {
 	
 	if( path ) {
 		text = fileSystem.getTextFromFile(path) ;
-		
 		if( text != -1)
 			return text ;
 	}
-		
-
-	
 	/*
 	 * sinon si un fichier de type txt est présent dans le dossier par defaut
 	 * C'est lui qu'on utilise
@@ -251,11 +273,43 @@ public function getText() : String {
  */
 
 public function getSounds() : Array {
-	return fileSystem.getFilesInArrayFromFolder( getAudioFolder(), '' );
+	
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getAudioFolder(), '' ) ;
+	
+	if( Datas.length <= 0 ) // not found
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultAudioFolder(), '' ) ;
+
+	return Datas ;
 }
+
 public function getImages() : Array {
-	return fileSystem.getFilesInArrayFromFolder( getImgFolder(), '' );
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getImgFolder(), '' ) ;
+	
+	if( Datas.length <= 0 ) // not found
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultImgFolder(), '' ) ;
+
+	return Datas ;
 }
-public function getVideo() : Array {
-	return fileSystem.getFilesInArrayFromFolder( getVideoFolder(), '' );
+
+
+public function getVideos() : Array {
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getVideoFolder(), '' ) ;
+	
+	if( Datas.length <= 0 ) // not found
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultVideoFolder(), '' ) ;
+
+	return Datas ;
 }
+
+public function getMiniatures() : Array {
+	
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getMiniatureFolder(), '' ) ;
+	
+	if( Datas.length <= 0 ) // not found
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultMiniatureFolder(), '' ) ;
+
+	return Datas ;
+}
+
+
+
