@@ -37,6 +37,9 @@ private var disable_move : boolean = false;
 	
 	// rect during dragging
 	private var rectDRAG : Rect = rectIN;
+	
+	// if rect out of the screen
+	private var stopDragging : boolean = false;
 
 // about moving picture to the center
 	// speed
@@ -259,14 +262,16 @@ private function calcRect_OnDrag( dI : DragInfo ){
 
 	var r : Rect = rectDRAG;
 	
-	
-	if( !( r.x > 0 || r.x + r.width < Screen.width ) )
+	if( !( r.x > 0 || r.x + r.width < Screen.width ) ){
 		r.x = r.x + dI.delta.x;
+	}
 	else{
-		if( r.x > 0)
+		if( r.x > 0){
 			r.x = 0;
-		if( r.x + r.width < Screen.width )
+		}
+		if( r.x + r.width < Screen.width ){
 			r.x = Screen.width - r.width;
+		}
 	}
 	
 	rectDRAG = r;
