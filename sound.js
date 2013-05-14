@@ -38,6 +38,8 @@ private var heightLetter : int = 20;
 
 private var onFullScreen : boolean;
 
+private var chooseNextSoundRandomly: boolean = true;
+
 
 
 
@@ -115,18 +117,8 @@ function displayMusic() {
 		
 		/* TEEEEEEEEEEEEEST */
 		if (GUI.Button(Rect(lBorder + 3 * buttonSize, /* test */ buttonSize + /* fin test */uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), 200, buttonSize), "Changer musique :)")) {
-			//var randomIndex = Math.floor(Math.random()*nbSounds);
-			
-						
-			if (currentIndex == nbSounds - 1) { // end of playlist
-				changeMusic(tabOfSounds[0]);
-				currentIndex = 0;
-			}
-			else {
-				changeMusic(tabOfSounds[currentIndex+1]);
-				currentIndex++;
-			}
-	 	}
+			changeMusic("");
+		}
 		
 		/* Name of the song */
 		GUI.Label( Rect(lBorder + buttonSize + 10,
@@ -138,10 +130,38 @@ function displayMusic() {
 	}
 }
 
-function changeMusic(newName) {
+/* If soundName = "", the function chooses the next sound to play (random or not). If not, plays the sound named soundName */
+function changeMusic(soundName) {
 	var audioIsPlaying = audio.isPlaying;
-	soundNameStr = newName;
-	audio.clip = Resources.Load("Audio/" + newName) as AudioClip;
+	var newSoundName = ""; // New sound to play
+	
+	/*
+	* Select the name of the next sound
+	*/
+	if (soundName != "")
+		newSoundName = soundName;		
+	else { // if no soundName, select the next sound to play
+		if (!chooseNextSoundRandomly) {
+			if (currentIndex == nbSounds - 1) { // end of playlist
+					newSoundName = tabOfSounds[0];
+					currentIndex = 0;
+				}
+				else {
+					newSoundName = tabOfSounds[currentIndex+1];
+					currentIndex++;
+				}
+		} // end if not random
+		else { // chosoe next sound randomly
+			var randomIndex = Mathf.Floor(Random.Range(0, nbSounds - 0.01));
+			newSoundName = tabOfSounds[randomIndex];
+		}
+	}
+	
+	/*
+	* Load and play the selected sound
+	*/
+	soundNameStr = newSoundName;
+	audio.clip = Resources.Load("Audio/" + newSoundName) as AudioClip;
 	
 	if (audioIsPlaying) {
 		audio.Play();

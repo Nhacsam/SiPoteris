@@ -53,6 +53,7 @@ private var toJustify = new Array();
 private var nbLines : int = 0;
 
 private var onFullScreen : boolean;
+private var textInitialized : boolean = false;
 
 
 
@@ -80,10 +81,6 @@ private function initText(u: int, d: int, l: int, r: int) {
 		
 	widthText = Screen.width - lBorder - rBorder;
 	REF_RECT = Rect(lBorder, uBorder, widthLetter, heightLetter);
-	
-	/* Enable Input Touch */
-	OnEnable();
-
 }
 
 /*
@@ -155,6 +152,8 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 		if (toJustify[i])
 			JustifyText(i);
 	}
+	
+	textInitialized = true;
 
 }
 
@@ -238,47 +237,29 @@ function removeText() {
 	
 /* Enable touch events */
 function OnEnable(){
-	//Gesture.onSwipeE += OnSwipe;
 	Gesture.onDraggingE += onDragging;
 }
 
 /* Disable touch events */
 function OnDisable(){
-	//Gesture.onSwipeE -= OnSwipe;
 	Gesture.onDraggingE -= onDragging;
-}
-
-/* Scrolling text with swipe event ! (Finger OK Mouse KO) */
-function OnSwipe(swipeData : SwipeInfo) {
-	Debug.Log("Direction: " + swipeData.direction);
-	
-	var block = false; // If true, you cannot scroll
-	if ( letterSpots[0].y >= uBorder && swipeData.direction.y < 0 ) // Blocking Up
-		block = true;
-	if ( letterSpots[textToDisplay.Length-1].y <= Screen.height - dBorder - heightLetter && swipeData.direction.y > 0 ) // Blocking Down
-		block = true;
-
-	/* If finger/mouse on the text and if not blocked */	
-	if (swipeData.startPoint.x > lBorder && swipeData.startPoint.x < Screen.width - rBorder && swipeData.startPoint.y > uBorder && swipeData.startPoint.y < Screen.height - dBorder && !block) {
-		for (var i : int = 0; i < textToDisplay.Length; i++) {
-			letterSpots[i].y -= swipeData.direction.y;
-		}
-	}
 }
 
 /* Scrolling text with dragging event ! (Finger KO Mouse OK) */
 function onDragging(dragData : DragInfo) {
-	var block = false; // If true, you cannot scroll
-	if ( letterSpots[0].y >= uBorder && dragData.delta.y < 0 ) // Blocking Up
-		block = true;
-	if ( letterSpots[textToDisplay.Length-1].y <= Screen.height - dBorder - heightLetter && dragData.delta.y > 0 ) // Blocking Down
-		block = true;
-		
-	/* If finger/mouse on the text and if not blocked */	
-	if (dragData.pos.x > lBorder && dragData.pos.x < Screen.width - rBorder && dragData.pos.y < Screen.height - uBorder && dragData.pos.y > dBorder && !block) {
-		for (var i : int = 0; i < textToDisplay.Length; i++) {
-			letterSpots[i].y -= dragData.delta.y/2;
+	if (textInitialized) {
+		var block = false; // If true, you cannot scroll
+		if ( letterSpots[0].y >= uBorder && dragData.delta.y < 0 ) // Blocking Up
+			block = true;
+		if ( letterSpots[textToDisplay.Length-1].y <= Screen.height - dBorder - heightLetter && dragData.delta.y > 0 ) // Blocking Down
+			block = true;
+			
+		/* If finger/mouse on the text and if not blocked */	
+		if (dragData.pos.x > lBorder && dragData.pos.x < Screen.width - rBorder && dragData.pos.y < Screen.height - uBorder && dragData.pos.y > dBorder && !block) {
+			for (var i : int = 0; i < textToDisplay.Length; i++) {
+				letterSpots[i].y -= dragData.delta.y/2;
+			}
 		}
 	}
-}	
-	
+}
+

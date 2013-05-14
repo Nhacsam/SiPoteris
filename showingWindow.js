@@ -21,6 +21,21 @@ private var wType : WINDOWTYPES = WINDOWTYPES.NONE;
 // VIdeo en lecture ?
 private var wVideoIsPlaying : boolean = false ;
 
+// Informations sur un éléments
+class SLIDESHOWELMT extends System.ValueType{
+  var type : WINDOWTYPES ;
+  var path : String ;
+  var size : Vector2 ;
+ 
+  public function SLIDESHOWELMT(p : String, t : WINDOWTYPES, s : Vector2){
+     this.type = t;
+     this.path = p;
+	 this.size = s;
+  }
+}
+
+
+
 
 
 function InitWindow( pos : Rect, z : float ) {
@@ -54,13 +69,40 @@ function destuctWindow() {
 
 
 
+
+
+
 /*
  * Définit ce qui est affiché dans la fenetre
+ * e : SLIDESHOWELMT
  */
 
-function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2 ) {
-	wType = type ;
+function SetNewTextureObj( e ) {
 	
+	if( typeof(e) == SLIDESHOWELMT ) {
+	
+		var t : SLIDESHOWELMT = e ;
+		SetNewTexture( t.path, t.type, t.size);
+		
+	} else {
+		wObj.renderer.enabled = false ;
+		Debug.LogWarning('Empty SLIDESHOWELMT element given at SetNewTextureObj() ');
+	}
+}
+
+
+
+
+function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2 ) {
+	
+	// erreur si chmain vide
+	if(path == '' ) {
+		Debug.LogWarning('Empty data path in SetTexture(' + path + ' ,' + type + ' ,' + size + ' ) ');
+		wObj.renderer.enabled = false ;
+		return ;
+	}
+	
+	wType = type ;
 	
 	switch( wType ) {
 	
@@ -76,16 +118,23 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2 ) {
 			
 			if( wVideoIsPlaying ) {
 				//wVideoSettings.stopVideo( wObj );
+				wObj.renderer.enabled = true ;
 				wVideoIsPlaying= false ;
 			}
 			
 			wImgTex = Resources.Load(path);
 			
+			if(! wImgTex) {
+				Debug.LogWarning('Invalid image path in SetTexture(' + path + ' ,' + type + ' ,' + size + ' ) ');
+				wObj.renderer.enabled = false ;
+				return;
+			}
+			
 			size = (size != Vector2.zero) ? size : Vector2( wImgTex.width, wImgTex.height ) ;
 			chageObjSizeToOptimal(size);
 			
 			wObj.renderer.material.mainTexture = wImgTex ;
-			
+			wObj.renderer.enabled = true ;
 			
 			
 			break ;
