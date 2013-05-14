@@ -114,33 +114,33 @@ function OnGUIStrip(){
 	if( onFullScreen ){
 		switch( states ){
 			case states.STATE_OUT : 
-					rctOfPicture = displayStrip( rectOUT , "lol_imgs/akali" );
+					rctOfPicture = displayStrip( rectOUT , "dianeIm" );
 					rectDRAG = rectIN;
 					VideoInit = true;
 				break;
 			case states.STATE_IN :
-					rctOfPicture = displayStrip( rectDRAG , "lol_imgs/akali" );
+					rctOfPicture = displayStrip( rectDRAG , "dianeIm" );
 					if( VideoInit ){
-					putVideo(videoScreen,"lala");
+					putVideo(videoScreen,"ALLdiane");
 					VideoInit=false;
 					}
 				break;
 			case states.SWIPE_IN : 
 					var r  : Rect = calcRect();
-					rctOfPicture = displayStrip( r , "lol_imgs/akali" );
+					rctOfPicture = displayStrip( r , "dianeIm" );
 			case states.SWIPE_OUT :
 					r = calcRect();
-					rctOfPicture = displayStrip( r , "lol_imgs/akali" );
+					rctOfPicture = displayStrip( r , "dianeIm" );
 				break;
 			case states.ON_DRAG :
 					r = calcRect_OnDrag( dragInf );
-					displayStrip( r , "lol_imgs/akali" );
+					displayStrip( r , "dianeIm" );
 					dragging = false;
 					manageStates();
 				break;
 			case states.MOVE_CENTER :
 					movePicture();
-					rctOfPicture = displayStrip( rctOfPicture , "lol_imgs/akali" );
+					rctOfPicture = displayStrip( rctOfPicture , "dianeIm" );
 					manageStates();
 				break;	
 			case states.ZOOM_IN :
@@ -149,7 +149,7 @@ function OnGUIStrip(){
 						initSpeedZoomIn( rctOfPicture );
 					}
 					rctOfPicture = zoomInPicture( rctOfPicture );
-					rctOfPicture = displayStrip( rctOfPicture , "lol_imgs/akali" );
+					rctOfPicture = displayStrip( rctOfPicture , "dianeIm" );
 					manageStates();
 				break;
 		}
@@ -459,7 +459,7 @@ function putVideo( focus: GameObject, nom : String){
 	focus.transform.localScale=Vector3(11,1,1);
 	focus.transform.position = Vector3(-2000,-2000,-2000);
 
-	var access:videoSettings2 = gameObject.GetComponent("videoSettings2");
+	var access:videoSettings = gameObject.GetComponent("videoSettings2");
 	var iOS = access.iOS;
 	var MovieController = access.MovieController;
 	  
