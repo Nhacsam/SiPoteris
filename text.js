@@ -87,7 +87,13 @@ private function initText(u: int, d: int, l: int, r: int) {
 	*calculate the position of rectangle for each letter. Input: Coordinates of up left (1) and bottom right (2) corners
 */
 function placeText(u: int, d: int, l: int, r: int, text: String) {
-
+	
+	if(!text) {
+		Debug.LogWarning('Empty text given');
+		return ;
+	}
+	
+	
 	textToDisplay = text;
 	initText(u, d, l, r);
 	
@@ -232,6 +238,7 @@ function displayText() {
 
 function removeText() {
 	onFullScreen = false;
+	textInitialized = false;
 }
 
 	
