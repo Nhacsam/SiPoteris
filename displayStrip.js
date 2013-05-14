@@ -459,9 +459,8 @@ function putVideo( focus: GameObject, nom : String){
 	focus.transform.localScale=Vector3(11,1,1);
 	focus.transform.position = Vector3(-2000,-2000,-2000);
 
-	var access:videoSettings = gameObject.GetComponent("videoSettings2");
-	var iOS = access.iOS;
-	var MovieController = access.MovieController;
+	var iOS = GameObject.Find("iOS");
+	var MovieController =GameObject.Find("MovieController");
 	  
  	var controllerIOS:ForwardiOSMessages;
 	controllerIOS = iOS.GetComponent("ForwardiOSMessages");
