@@ -23,7 +23,7 @@ public function moveSurface( t : GameObject , OnPlay : boolean){
         var n  : String = s.getName();
         var dt = Time.time-s.getLastMoveTime();
 	
-        t.transform.eulerAngles += Vector3( 0 , -s.getDelta()*dt*20 , 0 );
+        t.transform.eulerAngles += Vector3( 0 , -s.getDelta()*dt , 0 );
 	
         s.updateLastMoveTime();
     } else 
