@@ -63,7 +63,7 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
 	onFullScreen = true;
 
 	gameObject.AddComponent("AudioSource");
-	audio.clip = Resources.Load("Audio/" + tab[0]) as AudioClip;
+	audio.clip = Resources.Load(tab[0]) as AudioClip;
 	audio.Play();
 	
 	playBtn = Resources.Load("Pictures/play");
@@ -80,7 +80,7 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
 	lBorder = l;
 	rBorder = r;
 	
-	soundNameStr = tab[0];
+	soundNameStr = fileSystem.getName(tab[0]);
 	audio.loop = true;
 	
 	if (!playBtn) {
@@ -160,7 +160,7 @@ function changeMusic(soundName) {
 	/*
 	* Load and play the selected sound
 	*/
-	soundNameStr = newSoundName;
+	soundNameStr = fileSystem.getName(newSoundName);
 	audio.clip = Resources.Load("Audio/" + newSoundName) as AudioClip;
 	
 	if (audioIsPlaying) {
