@@ -115,7 +115,7 @@ function Update () {
 	
 		if( Videos.getFlagEndVideo() ){
 			move.resetPlane(AllGO2D[i]);
-			Debug.Log("i am in" + Videos.getFlagEndVideo());
+			//Debug.Log("i am in" + Videos.getFlagEndVideo());
 		}
 	}
 	
