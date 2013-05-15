@@ -49,7 +49,7 @@ function OnGUISound() {
 }
 
 
-function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins + an array of sound names
+function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins + an array of sound names (with path from folder Resources)
 
 	nbSounds = tab.length;
 	
@@ -94,7 +94,8 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
 }
 
 function displayMusic() {
-	
+
+	/* Do not display anything for music if play btn is not loaded or if there is no sound to play */	
 	if( !playBtn || (nbSounds == 0))
 		return;
 	
@@ -133,35 +134,35 @@ function displayMusic() {
 /* If soundName = "", the function chooses the next sound to play (random or not). If not, plays the sound named soundName */
 function changeMusic(soundName) {
 	var audioIsPlaying = audio.isPlaying;
-	var newSoundName = ""; // New sound to play
+	var newSoundPath = ""; // New sound to play
 	
 	/*
 	* Select the name of the next sound
 	*/
 	if (soundName != "")
-		newSoundName = soundName;		
+		newSoundPath = soundName;		
 	else { // if no soundName, select the next sound to play
 		if (!chooseNextSoundRandomly) {
 			if (currentIndex == nbSounds - 1) { // end of playlist
-					newSoundName = tabOfSounds[0];
+					newSoundPath = tabOfSounds[0];
 					currentIndex = 0;
 				}
 				else {
-					newSoundName = tabOfSounds[currentIndex+1];
+					newSoundPath = tabOfSounds[currentIndex+1];
 					currentIndex++;
 				}
 		} // end if not random
 		else { // chosoe next sound randomly
 			var randomIndex = Mathf.Floor(Random.Range(0, nbSounds - 0.01));
-			newSoundName = tabOfSounds[randomIndex];
+			newSoundPath = tabOfSounds[randomIndex];
 		}
 	}
 	
 	/*
 	* Load and play the selected sound
 	*/
-	soundNameStr = fileSystem.getName(newSoundName);
-	audio.clip = Resources.Load("Audio/" + newSoundName) as AudioClip;
+	audio.clip = Resources.Load(newSoundPath) as AudioClip;
+	soundNameStr = fileSystem.getName(newSoundPath);
 	
 	if (audioIsPlaying) {
 		audio.Play();
