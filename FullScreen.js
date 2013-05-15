@@ -52,7 +52,7 @@ function OnGUIFullScreen(){
 	if( onFullScreen ) {
 	
 		audioPlayer.OnGUISound();
-		strip.OnGUIStrip();
+		//strip.OnGUIStrip();
 		
 		textViewer.OnGUIText();
 	}
