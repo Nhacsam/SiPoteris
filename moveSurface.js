@@ -40,8 +40,7 @@ public function resetPlane( t : GameObject ){
 	var s : scriptForPlane = t.GetComponent("scriptForPlane");
 	var ht : Hashtable = s.getHT();
 	
-	t.transform.eulerAngles = Vector3( 0 , float.Parse(ht["theta_min"]) + ( float.Parse(ht["theta_max"]) - float.Parse(ht["theta_min"]) )/2 , 0);
-	
+	t.transform.eulerAngles = Vector3( 0 , float.Parse( ht["theta_min"] ) + ( float.Parse( ht["theta_max"] ) - float.Parse( ht["theta_min"] ) )/2 , 0);
 	
 }
 
