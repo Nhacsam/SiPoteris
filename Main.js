@@ -9,9 +9,13 @@ private var move : moveSurface;
 
 
 
-// array of GO - meshes over movie
-var AllGO : Array = Array();
+// array of GO - meshes over movie in 2D
+var AllGO2D : Array = Array();
+// array of GO - meshes over movie in 3D
+var AllGO3D : Array = Array();
 
+// first time in 3D scene ?
+private var firstIn3D : boolean = true;
 
 private var mouseLook : MouseLook ;
 private var control : CameraControl ;
@@ -21,6 +25,7 @@ private var Zoom : Zoom ;
 
 private var VideoFull : FullScreen ;
 
+private var mesh3D : createSphericMesh;
 
 
 function Start () {
@@ -47,6 +52,7 @@ function Start () {
 	xml = gameObject.AddComponent("getXML") as getXML;
 	move = gameObject.AddComponent("moveSurface") as moveSurface;
 	VideoFull= gameObject.AddComponent("FullScreen") as FullScreen;
+	mesh3D = gameObject.AddComponent("createSphericMesh") as createSphericMesh;
 
 	
 	/*
@@ -67,7 +73,7 @@ function Start () {
 
 	
 	//fin debug test
-	Zoom.Init(AllGO , enableMouseLook);
+	Zoom.Init(AllGO2D , enableMouseLook);
 	
 	
 	VideoFull.InitFullScreen();
@@ -102,16 +108,17 @@ function Update () {
 	
 //	sound.updateSounds(myPlanes);
 	
-	for( var i =0; i < AllGO.length; i++) {
+	for( var i =0; i < AllGO2D.length; i++) {
 	
 		if(!Videos.getFlagEndVideo())
-		move.moveSurface( AllGO[i], Videos.OnPlay() );
+		move.moveSurface( AllGO2D[i], Videos.OnPlay() );
 	
 		if( Videos.getFlagEndVideo() ){
-			move.resetPlane(AllGO[i]);
+			move.resetPlane(AllGO2D[i]);
 			Debug.Log("i am in" + Videos.getFlagEndVideo());
 		}
 	}
+	
 }
 
 function enableMouseLook( b : boolean ) {
@@ -163,25 +170,35 @@ function OnGUI() {
 
 function placeMeshHash ( t : Hashtable ){
 	
-	var obj = createPolar.placeMesh(	float.Parse(t['theta_min']) ,
+	var obj = createPolar.placeMesh(	float.Parse( t['theta_min'] ) ,
 										float.Parse( t['theta_max']) ,
 										float.Parse( t['ratioRmin']) ,
 										float.Parse( t['ratioRmax']) ,
 										t['name'] );
 	
-	// add script to the plane
-	var s : scriptForPlane = obj.GetComponent("scriptForPlane");
+	var obj3D = mesh3D.placeMesh3D( t );
+	
+	
+	var s = obj.GetComponent("scriptForPlane");
 	if( ! s)
 		s  = obj.AddComponent ("scriptForPlane");
-	
+		
+	var s3D : scriptForPlane = obj3D.GetComponent("scriptForPlane");
+	if( ! s3D)
+		s3D  = obj3D.AddComponent ("scriptForPlane");
 	
 	s.InitScript( t );
+	s3D.InitScript( t );
+	
 	if( t.ContainsKey( 'theta_min' ) && t.ContainsKey( 'theta_max' ) && t.ContainsKey( 'ratioRmin' ) && t.ContainsKey( 'name' ) && t.ContainsKey( 'ratioRmax' )) {
 	
 		var p : Vector3 = createPolar.getTruePosition( float.Parse( t['theta_min'] ) , float.Parse( t['theta_max'] ) , float.Parse( t['ratioRmin'] ) , float.Parse( t['ratioRmax'] ) , gameObject );
 		s.InitPosPlane( p );
 	}
 	
-	AllGO.Push(obj);
+			
+	AllGO2D.Push( obj );
+	AllGO3D.Push( obj3D );
+	
 }
 

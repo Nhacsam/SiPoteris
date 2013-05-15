@@ -1,6 +1,6 @@
 /*
 Creation : 02/04/2013
-Last update : 14/05/2013
+Last update : 15/05/2013
 
 Author : Fabien Daoulas
 Debug : Nicolas Djambazian
@@ -32,43 +32,61 @@ private var quantumOfMesh : float = 0.05f;
 private var sphere : GameObject[];
 
 // radius of piece of sphere
-private var radius : float = 10;
+private var radius : float = 5;
 
 private var DATSphere : GameObject[];
 
-/*
-function Start(){
-	DATSphere = new GameObject[1];
-	DATSphere[0] = CreateMesh(0, 0, Mathf.PI*2, Mathf.PI/6, 0);
-}
-*/
 
 /*
 	*place mesh in 3D
 */
-function placeMesh3D( ArrGO : GameObject[] ){
+function placeMesh3D( t : Hashtable ){
+		
+		Debug.Log("name : " + t['name']);
+		
+		if( float.Parse( t['ratioRmin'] )  > 0.66 || float.Parse( t['ratioRmax'] )  > 0.66 ){
+			var phiMax : float = calculatePHI( float.Parse( t['ratioRmin'] ) , true );
+			var phiMin : float = calculatePHI( float.Parse( t['ratioRmax'] ) , true );
+		}
+		else{
+			phiMax = calculatePHI( float.Parse( t['ratioRmin'] ) , false );
+			phiMin = calculatePHI( float.Parse( t['ratioRmax'] ) , false );
+		}
+		
+		Debug.Log("min : " + phiMin);
+		Debug.Log("max : " + phiMax);
+		
+		var theta_min : float = float.Parse( t['theta_min'] )* Mathf.PI/180;
+		var theta_max : float = float.Parse( t['theta_max'] )* Mathf.PI/180;
+		
+		var g : GameObject = CreateSphericMesh( theta_min , phiMin , theta_max , phiMax , t['name'] );
 
-	for ( var i = 0 ; i < ArrGO.length ; i++ ){
+		return g;
+		
+}
+
+/*
+	*init script attached to each plane
+*/
+function InitScript( obj : GameObject , t : Hashtable ){
 	
-		var s : scriptForPlane = GetComponent( "scriptForPlane" );
-		
-		var HT : Hashtable = s.getHT();
-		
-		var phiMin : float = calculatePHI( HT['ratioRmin'] );
-		var phiMax : float = calculatePHI( HT['ratioRmax'] );
-		
-		CreateSphericMesh( HT['theta_min'] , phiMin , HT['theta_max'] , phiMax , ArrGO[i] );
-
-	}
-
+	var s : scriptForPlane = obj.AddComponent( "scriptForPlane" );
+	
+	// init name, hashtable, position
+	s.InitName( t['name'] );
+	s.InitHT( t );
+	if( t.ContainsKey( 'speed' ) )
+		s.InitDelta( float.Parse( t['speed'] ) );
 }
 
 /*
 	*create a piece of sphere 
 */
-private function CreateSphericMesh( thetaMin : float , phiMin : float , thetaMax : float , phiMax : float , g : GameObject ) : GameObject {
+private function CreateSphericMesh( thetaMin : float , phiMin : float , thetaMax : float , phiMax : float , mesh_name : String ) : GameObject {
 
 	var meshSphere : Mesh = new Mesh();//this is the mesh we’re creating
+	meshSphere.name = "3D_" + mesh_name;
+	
 	
 	// coordinates of vertices
 	var newX : float;
@@ -81,7 +99,7 @@ private function CreateSphericMesh( thetaMin : float , phiMin : float , thetaMax
 	// get number of vertices
 	var numberOfVertices : int = Mathf.Floor((thetaMax - thetaMin)/quantumOfMesh + 1)*Mathf.Floor(((phiMax - phiMin)/quantumOfMesh + 1));
 	
-	VerticesLocal = new Vector3[numberOfVertices];
+	VerticesLocal = new Vector3[ numberOfVertices ];
 	
 	// coordinates of vertices
 	var numberOfColumns = numberOfVertices / numberOfLines;
@@ -93,7 +111,7 @@ private function CreateSphericMesh( thetaMin : float , phiMin : float , thetaMax
 			var longi = thetaMin + i*quantumOfMesh ;
 			
 			newX = radius * Mathf.Sin(longi) * Mathf.Cos(latt);
-			newY = radius * Mathf.Sin(latt);
+			newY = radius * Mathf.Sin(latt) + 1.3;
 			newZ = radius * Mathf.Cos(longi) * Mathf.Cos(latt);
 			
 			VerticesLocal[i*numberOfLines + j] = Vector3(newX, newY, newZ);
@@ -147,6 +165,8 @@ private function CreateSphericMesh( thetaMin : float , phiMin : float , thetaMax
 	meshSphere.RecalculateBounds();
 	meshSphere.RecalculateNormals();
 	
+	var g : GameObject = new GameObject( meshSphere.name , MeshRenderer ,  MeshFilter , MeshCollider );
+	
 	// add mesh filter
 	g.GetComponent( MeshFilter ).mesh = meshSphere;
 	
@@ -155,15 +175,29 @@ private function CreateSphericMesh( thetaMin : float , phiMin : float , thetaMax
 	
 	g.transform.position += VerticesInMiddle;
 	
+	g.renderer.enabled = true;
+
 	return g;
+	
 }
 
 /*
 	*calculate values of phi with ratio in the xml
 */
-private function calculatePHI( ratio : float ) : float {
+private function calculatePHI( ratio : float , b : boolean) : float {
 
-	var v : float = Mathf.Pi/2 - ratio*Mathf.Pi/2;
+	if( b ){
+		if( ratio > 0.66 ){
+			var v : float = 7*Mathf.PI/4 + ( 1 - ratio ) * Mathf.PI/4 / ( 1 - 0.66 );
+			Debug.Log("v: " + v);
+		}
+		else{
+			v = 2*Mathf.PI + Mathf.PI/2*((0.66-ratio)/0.66);
+			Debug.Log("i am in");
+		}
+	}
+	else
+		v = ( 1 - ratio ) * Mathf.PI / 2;
 
 	return v;
 
