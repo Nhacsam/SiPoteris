@@ -163,7 +163,7 @@ private function CreateSphericMesh( thetaMin : float , phiMin : float , thetaMax
 */
 private function calculatePHI( ratio : float ) : float {
 
-	var v : float = Mathf.Pi/2 - ratio*Mathf.Pi/2;
+	var v : float = Mathf.PI/2 - ratio*Mathf.PI/2;
 
 	return v;
 

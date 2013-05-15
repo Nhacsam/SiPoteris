@@ -187,7 +187,7 @@ function Change2D3D(){
 
 } 
 
-function getScene(){
+function isScene2D(){
 	return scene2D;
 }
 
