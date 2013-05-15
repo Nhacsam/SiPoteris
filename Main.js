@@ -53,7 +53,6 @@ function Start () {
 	move = gameObject.AddComponent("moveSurface") as moveSurface;
 	VideoFull= gameObject.AddComponent("FullScreen") as FullScreen;
 	mesh3D = gameObject.AddComponent("createSphericMesh") as createSphericMesh;
-
 	
 	/*
 	 * Inits
@@ -97,8 +96,6 @@ function Start () {
 	camera.fieldOfView  = 60 ;
 	
 	
-	
-	
 }
 
 function Update () {
@@ -115,7 +112,7 @@ function Update () {
 	
 		if( Videos.getFlagEndVideo() ){
 			move.resetPlane(AllGO2D[i]);
-			Debug.Log("i am in" + Videos.getFlagEndVideo());
+			//Debug.Log("i am in" + Videos.getFlagEndVideo());
 		}
 	}
 	

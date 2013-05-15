@@ -24,7 +24,6 @@ enum STATES_OF_STRIP { STATE_IN , STATE_OUT , SWIPE_IN , SWIPE_OUT , ON_DRAG , M
 private var states : STATES_OF_STRIP;
 
 // if true picture is switching from STATE_OUT to STATE_IN (and vice & versa)
-private var enable : boolean = false;
 private var enable_move : boolean = false;
 private var disable_move : boolean = false;
 
@@ -56,12 +55,15 @@ private var disable_move : boolean = false;
 	private var firstTime : boolean = true;
 	// init video
 	private var VideoInit:boolean = true;
-	// video screen
-	private var videoScreen:GameObject;
+	// plane for video  /  screen
+	private var videoScreen : GameObject;
 
 	private var onFullScreen : boolean = false;
 
 	private var grr:boolean = true;
+	
+	
+private var fullScreen : FullScreen;
 
 /**************** listeners ****************/
 
@@ -137,17 +139,10 @@ function OnGUIStrip(){
 					VideoInit=false;
 					}
 				break;
-			case states.SWIPE_IN : 
-					var r  : Rect = calcRect();
-					rctOfPicture = displayStrip( r , "dianeIm" );
-			case states.SWIPE_OUT :
-					r = calcRect();
-					rctOfPicture = displayStrip( r , "dianeIm" );
-				break;
 			case states.ON_DRAG :
 					moveScreen( dragInf );
 					//r = calcRect_OnDrag( dragInf );
-					displayStrip( r , "dianeIm" );
+					//displayStrip( r , "dianeIm" );
 					dragging = false;
 					manageStates();
 				break;
@@ -177,19 +172,27 @@ function OnGUIStrip(){
 */
 function OnTap( v : Vector2 ){
 	
+	var ray : Ray = getRay( v );
+	var hit : RaycastHit = new RaycastHit();
+	
+	
+	if( videoScreen.collider.Raycast( ray , hit , 2000.0f ) )
+		moveCameraToDisplay();
+	
+	
+	
+	
+	/*
 	var value : boolean = OnRect( rctOfPicture , v );
 	
-	if( (states != STATES_OF_STRIP.SWIPE_OUT || states != STATES_OF_STRIP.SWIPE_IN || states != STATES_OF_STRIP.STATE_IN) && value ){
-	
-		//enable = true;
+	if( (states != STATES_OF_STRIP.SWIPE_OUT || states != STATES_OF_STRIP.SWIPE_IN || states != STATES_OF_STRIP.STATE_IN) && value )
 		enable_move = true;
 		
-	}
 	if( states == STATES_OF_STRIP.STATE_IN && value ){
 		enable_move = false;
 		disable_move = true;
 	}
-	manageStates();
+	manageStates();*/
 	
 }
 
@@ -234,75 +237,14 @@ private function displayStrip( r : Rect , name : String ) : Rect {
 }
 
 /*
-	*calculate the new rectangle between STATE_OUT and STATE_IN 
-	
-	****for swiping move****
-	
-*/ 
-private function calcRect() : Rect {
-	
-	var r : Rect = Rect( rectIN.x + 2*rectIN.x * actual_zoom , rectIN.y , rectIN.width , rectIN.height );
-	
-	switch( states ){
-		case states.SWIPE_IN :
-				if( actual_zoom >= 0)
-					actual_zoom -= 0.004;
-				else{
-					actual_zoom = 0;
-					enable = false;
-					manageStates();
-				}
-			break;
-		case states.SWIPE_OUT :
-				if( actual_zoom <= 1 )
-					actual_zoom += 0.004;
-				else{
-					actual_zoom = 1;
-					enable = false;
-					manageStates();
-				}
-			break;
-	}
-	
-	return r;
-	
-}
-
-/*
-	*calculate new rectangle on event OnDrag
+	*move the screen on drag
 */
-/*
-private function calcRect_OnDrag( dI : DragInfo ){
-
-	var r : Rect = rectDRAG;
-	
-	if( !( r.x > 0 || r.x + r.width < Screen.width ) ){
-		r.x = r.x + dI.delta.x;
-	}
-	else{
-		if( r.x > 0){
-			r.x = 0;
-		}
-		if( r.x + r.width < Screen.width ){
-			r.x = Screen.width - r.width;
-	
-		}
-	}
-	
-	rectDRAG = r;
-
-	return r;
-	
-}*/
-
-// move the screen on drag
 private function moveScreen( dI: DragInfo){
 
 	if(  ! (videoScreen.transform.position.x < -2250 && videoScreen.transform.position.x > -1750)){
 	
 	videoScreen.transform.position.x += dI.delta.x;
 	}
-
 }
 
 /*
@@ -427,45 +369,23 @@ private function createRect( ratio : float , v : Vector2 , height : float ){
 /**************** states machines ****************/
 
 
+
 /*
 	*manage states of states machines
 */
 private function manageStates(){
 
-	/***** zoom in move *****/
 	if( enable_move && states == STATES_OF_STRIP.STATE_OUT )
 		states = STATES_OF_STRIP.MOVE_CENTER;
 		
-		
-	/***** end zoom in move *****/
-
-	if( enable && states == STATES_OF_STRIP.STATE_OUT ){
-		states = STATES_OF_STRIP.SWIPE_IN;
-	}
-		/***************/
-	if( enable && (states == STATES_OF_STRIP.STATE_IN || states == STATES_OF_STRIP.ON_DRAG ) ){
-		states = STATES_OF_STRIP.SWIPE_OUT;
-		dragging = false;
-	}
-		/***************/
-	if( !enable && states == STATES_OF_STRIP.SWIPE_IN ){
-		states = STATES_OF_STRIP.STATE_IN;
-	}
-	if( !enable_move && states == STATES_OF_STRIP.MOVE_CENTER ){
+	if( !enable_move && states == STATES_OF_STRIP.MOVE_CENTER )
 		states = STATES_OF_STRIP.ZOOM_IN;
-	}
 	
 	if( disable_move && states == STATES_OF_STRIP.STATE_IN ){
 		states = STATES_OF_STRIP.STATE_OUT;
 		disable_move = false;
 	}
 
-	if( !enable && states == STATES_OF_STRIP.SWIPE_OUT ){
-		states = STATES_OF_STRIP.STATE_OUT;
-	}
-		/***************/
-		
-	/***** for all moves *****/
 	if( dragging )
 		states = STATES_OF_STRIP.ON_DRAG;
 		
@@ -474,22 +394,82 @@ private function manageStates(){
 }
 
 
+
+/////////////////////***************************** mise en place du plan ***************************************////////////////////////////
+
+/*
+	*on the event OnFullScreen this methos is called
+*/
+function InitVideoScreen(){
+
+	createStripPlane( 0.1 , Rect( Screen.width / 2 , Screen.height / 2 , Screen.width / 4 , Screen.height / 4 ) );
+
+}
+
+/*
+	*get ratio of picture
+	*get rect to place the plane on the screen
+	*and create a plane
+*/
+private function createStripPlane( ratio : float , r : Rect ){
+
+	videoScreen = new GameObject.CreatePrimitive( PrimitiveType.Plane );
+	
+	// set position of plane
+	videoScreen.transform.position = camera.ScreenToWorldPoint( Vector3( r.x + r.width/2 , r.y + r.height/2 , camera.nearClipPlane ) );
+	videoScreen.transform.up = -videoScreen.transform.up;
+	videoScreen.transform.localRotation.eulerAngles = Vector3( 0 , 0 , 180 ); 
+	videoScreen.renderer.material.mainTexture = Resources.Load( "dianeIm" );
+	
+	// put the plane at the right ratio
+	var v : Vector3 = videoScreen.transform.localScale;
+	v.x = v.x/ratio;
+	v.y = v.y*ratio;
+	videoScreen.transform.localScale = v;
+	
+	// extend plane
+	videoScreen.transform.localScale = videoScreen.transform.localScale * 10;
+}
+
+/*
+	*get ray on tap
+*/
+private function getRay( v : Vector2 ) : Ray {
+
+	var origin : Vector3 = Vector3( v.x , v.y , 0 );
+
+	// get ray going from origin to camera
+	var ray : Ray = camera.ScreenPointToRay( origin );
+	
+	return ray;
+	
+}
+
+/*
+	*move camera 
+	*and extend plane
+	*when onTap event occured
+*/
+private function moveCameraToDisplay(){
+	
+	camera.transform.position = Vector3( -4000 , -4000 , -4000 );
+	
+	videoScreen.transform.position = camera.ScreenToWorldPoint( Vector3( Screen.width / 2 , Screen.height / 2 , camera.nearClipPlane ) );
+	
+	//putVideo(  videoScreen , "SIPO_full" );
+	
+}
+
+
+
 /*
 * Set the parameters for the video (see the plug to know how to do it)
 */
-function putVideo( focus: GameObject, nom : String){
-	
-	// plane settings
-	focus = new GameObject.CreatePrimitive(PrimitiveType.Plane);
-	focus.name ="videoScreen";
-	focus.transform.localScale=Vector3(88,8,8);
-	focus.transform.position = Vector3(-2000,-2000,-2000);
-	focus.transform.Rotate(180,0,0);
-	
+function putVideo( focus : GameObject , nom : String ){
 	
 	// plugin config
 	var iOS = GameObject.Find("iOS");
-	var MovieController =GameObject.Find("MovieController");
+	var MovieController =GameObject.Find( "MovieController" );
 	  
  	var controllerIOS:ForwardiOSMessages;
 	controllerIOS = iOS.GetComponent("ForwardiOSMessages");
