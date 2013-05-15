@@ -116,7 +116,7 @@ function displayMusic() {
 			}
 		}
 		
-		/* TEEEEEEEEEEEEEST */
+		/* Test bouton changer musique, amené à disparaitre un jour */
 		if (GUI.Button(Rect(lBorder + 3 * buttonSize, /* test */ buttonSize + /* fin test */uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), 200, buttonSize), "Changer musique :)")) {
 			changeMusic("");
 		}
@@ -134,7 +134,7 @@ function displayMusic() {
 /* If soundName = "", the function chooses the next sound to play (random or not). If not, plays the sound named soundName */
 function changeMusic(soundName) {
 	var audioIsPlaying = audio.isPlaying;
-	var newSoundPath = ""; // New sound to play
+	var newSoundPath = ""; // Path of the new sound to play
 	
 	/*
 	* Select the name of the next sound
