@@ -33,90 +33,70 @@ private var lastMoveTime : float = 0;
 	*initialize variable Name
 */
 public function InitName( s : String ){
-
 	Name = s;
-
 }
 
 /*
 	*get Name
 */
 public function getName(){
-
 	return Name;
-
 }
 
 /*
 	*initialize hashtable
 */
 public function InitHT( t : Hashtable ){
-
 	HT = t;
-
 }
 
 /*
 	*get hashtable
 */
 public function getHT(){
-
 	return HT;
-
 }
 
 /*
 	*initialize posPlane
 */
 public function InitPosPlane( v : Vector3 ){
-
 	posPlane = v;
-
 }
 
 /*
 	*get position of plane in the wordl coordinates
 */
 public function getPosPlane(){
-
 	return posPlane;
-
 }
 
 /*
 	*initialize posPlane
 */
 public function InitRotPlane( v : Vector3 ){
-
 	rotPlane = v;
-
 }
 
 /*
 	*get rotation of plane in the wordl coordinates
 */
 public function getRotPlane(){
-
 	return rotPlane;
-
 }
 
 /*
 	*initialize speed of plane
 */
 public function InitDelta( s : float ){
-
 	delta = s;
-
 }
 
 /*
 	*get speed of plane
 */
 public function getDelta(){
-
 	return delta;
-
 }
 
 
@@ -140,14 +120,6 @@ public function getLastMoveTime() : float {
 /*********************/
 
 /*
- * Retourne le chemin absolu vers le dossier Resources
- */
-static function getResourcesPath() {
-	return Application.dataPath + '/Resources';
-}
-
-
-/*
  * Retourne le nom du dossier contenant les données
  * Le crée si vide
  * crée un dossier default si vide et nom du dossier non trouvé
@@ -161,14 +133,14 @@ public function getFolderName() : String{
 			if( ( HT['GUI'] as Hashtable ).Contains('folder') ) {
 				
 				folder = ( HT['GUI'] as Hashtable )['folder'] ;
-				Directory.CreateDirectory(getResourcesPath() + '/' + folder );
+				Directory.CreateDirectory( fileSystem.getResourcesPath() + '/' + folder );
 				return folder ;
 			
 			} // Contain
 		} else if (typeof(HT['GUI']) == System.String) {
 			
 			folder = HT['GUI'] ;
-			Directory.CreateDirectory(getResourcesPath() + '/' + folder );
+			Directory.CreateDirectory( fileSystem.getResourcesPath() + '/' + folder );
 			return folder ;
 			
 		}// typeof
@@ -180,16 +152,6 @@ public function getFolderName() : String{
 	
 }
 
-/*
- * Retourne le chemin depuis Resources d'un dossier enfant au dossier principal
- * Le crée si inexistant
- */
-public function getChildFolder( name : String ) : String {
-	var folderName : String = getFolderName() ;
-	Directory.CreateDirectory(getResourcesPath() + '/' + folderName + '/' + name );
-	return folderName + '/' + name ;
-}
-
 
 
 /*
@@ -197,21 +159,47 @@ public function getChildFolder( name : String ) : String {
  * Contenant les infos
  */
 public function getImgFolder() : String {
-	return getChildFolder( 'img' );
+	return fileSystem.getChildFolder( 'img', getFolderName() );
 }
 
 public function getAudioFolder() : String {
-	return getChildFolder( 'audio' );
+	return fileSystem.getChildFolder( 'audio', getFolderName() );
 }
 
 public function getVideoFolder() : String {
-	return getChildFolder( 'video' );
+	return fileSystem.getChildFolder( 'video', getFolderName() );
 }
 
-// sers en cas d'erreur ou de fichier introuvable
+public function getMiniatureFolder() : String {
+	return fileSystem.getChildFolder( 'min', getFolderName() );
+}
+
+
+
+/*
+ * Récupère les chemins des dossiers
+ * Contenant les infos par défaut
+ * sers en cas d'erreur ou de fichier(s) introuvable(s)
+ */
+ 
 public function getDefaultFolder() : String {
-	Directory.CreateDirectory(getResourcesPath() + '/defaultDatas');
+	Directory.CreateDirectory( fileSystem.getResourcesPath() + '/defaultDatas');
 	return 'defaultDatas' ;
+}
+public function getDefaultImgFolder() : String {
+	return fileSystem.getChildFolder( 'img', getDefaultFolder() );
+}
+
+public function getDefaultAudioFolder() : String {
+	return fileSystem.getChildFolder( 'audio', getDefaultFolder() );
+}
+
+public function getDefaultVideoFolder() : String {
+	return fileSystem.getChildFolder( 'video', getDefaultFolder() );
+}
+
+public function getDefaultMiniatureFolder() : String {
+	return fileSystem.getChildFolder( 'min', getDefaultFolder() );
 }
 
 
@@ -221,7 +209,8 @@ public function getDefaultFolder() : String {
 
 public function getText() : String {
 	
-	var fileAsset : TextAsset ;
+	var path : String = '' ;
+	var text ;
 	
 	/*
 	 * Si il y a un champ text dans le xml
@@ -232,42 +221,41 @@ public function getText() : String {
 			if( ( HT['GUI'] as Hashtable ).Contains('text') ) {
 				
 				// lit le contenue du fichier
-				var path : String = getFolderName() + (( HT['GUI'] as Hashtable )['text'] as String ) ;
+				path = getFolderName() + (( HT['GUI'] as Hashtable )['text'] as String ) ;
 				
-				fileAsset = Resources.Load( path );
-				if( fileAsset )
-					return fileAsset.text ;
-				else
+				text = fileSystem.getTextFromFile(path) ;
+				if( text == -1)
 					Debug.LogWarning('Invalid text file name '+ path +' for the plane ' + Name);
+				else
+					return text ;
+					
 			} // Contains text
 		} // type of
 	} // Contains GUI
 	
-	
-	
+		
 	/*
 	 * sinon si un fichier de type txt est présent dans le dossier
 	 * C'est lui qu'on utilise
 	 */
-	var fileInfo = Directory.GetFiles(getResourcesPath() + '/' + getFolderName() + '/', "*.txt");
+	path = fileSystem.getFirstFileFromFolder( getFolderName(), '.txt' ) ;
 	
-	for (file in fileInfo) {
-		fileAsset = Resources.Load( removeExtension( fromResourcesPath( file ) ) );
-		if( fileAsset ) 
-			return fileAsset.text ;
+	if( path ) {
+		text = fileSystem.getTextFromFile(path) ;
+		if( text != -1)
+			return text ;
 	}
-	
 	/*
 	 * sinon si un fichier de type txt est présent dans le dossier par defaut
 	 * C'est lui qu'on utilise
 	 */
 	
-	fileInfo = Directory.GetFiles(getResourcesPath() + '/' + getDefaultFolder() + '/', "*.txt");
+	path = fileSystem.getFirstFileFromFolder( getDefaultFolder(), '.txt' ) ;
 	
-	for (file in fileInfo) {
-		fileAsset = Resources.Load( removeExtension( fromResourcesPath(file) ) );
-		if( fileAsset )
-			return fileAsset.text ;
+	if( path ) {
+		text = fileSystem.getTextFromFile(path) ;
+		if( text != -1)
+			return text ;
 	}
 	
 	/*
@@ -279,46 +267,49 @@ public function getText() : String {
 }
 
 
-
+/*
+ * Récupère la liste des fichiers de chaques catégorie
+ * pour l'interface graphique utilisateur
+ */
 
 public function getSounds() : Array {
 	
-	var Sounds : Array = new Array();
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getAudioFolder(), '' ) ;
 	
-	var fileInfo = Directory.GetFiles(getResourcesPath() + '/' + getAudioFolder() + '/', "*");
-	for (file in fileInfo) {
-		Sounds.Push( removeExtension( fromResourcesPath(file) )  );
-	}
+	if( Datas.length <= 0 ) // not found
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultAudioFolder(), '' ) ;
+
+	return Datas ;
+}
+
+public function getImages() : Array {
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getImgFolder(), '' ) ;
 	
-	return Sounds ;
+	if( Datas.length <= 0 ) // not found
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultImgFolder(), '' ) ;
+
+	return Datas ;
 }
 
 
-/*
-public function slideShowElemt() : Array {
+public function getVideos() : Array {
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getVideoFolder(), '' ) ;
 	
-	return new Array() ;
+	if( Datas.length <= 0 ) // not found
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultVideoFolder(), '' ) ;
+
+	return Datas ;
 }
 
-
-*/
-
-
-/***********************************************************/
-/******** Traitements sur les chaines de caractères ********/
-/***********************************************************/
-
-
-static function fromResourcesPath( path : String ) : String {
+public function getMiniatures() : Array {
 	
-	var tofind : String =  'Resources/' ;
-	return path.Substring( path.IndexOf( tofind ) + tofind.length ) ;
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getMiniatureFolder(), '' ) ;
+	
+	if( Datas.length <= 0 ) // not found
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultMiniatureFolder(), '' ) ;
+
+	return Datas ;
 }
 
-static function removeExtension(file : String ) : String {
-	
-	var pointPos : int = file.IndexOf( '.' );
-	return file.Substring( 0, pointPos ) ;
-}
 
 

@@ -17,7 +17,7 @@ private var elmtsSize : Vector2 = new Vector2(10, 10);
 private var decal : Vector2 ;
 
 // ou on en est dans les mouvements
-private var currentPage : int  = 5;
+private var currentPage : int  = 0;
 private var effectiveCurrentPage : int = currentPage ;
 
 
@@ -108,8 +108,6 @@ function InitSlideShow( nbOfElmts : int, Pos : Rect, Z : float  ) {
 				
 	// Création des elmts
 	mobilesElmts = new GameObject[ nbOfElmts ] ;
-	for( var i = 0 ; i < nbOfElmts; i++)
-		AddElmtPlane(i);
 	
 	elmtsInfo = new Array( nbOfElmts );
 	
@@ -329,7 +327,6 @@ function OnDrag ( info : DragInfo) {
 				delta = GetDistance() ;
 		
 			} else {
-				print('wtf');
 				decalRight();
 				delta = 0 ;
 			}

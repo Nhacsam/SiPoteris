@@ -110,12 +110,13 @@ private function CreatePolarMesh(thetaMin : float, thetaMax : float, Rmin : floa
 			var radius = Rmin + j*quantumOfMesh ;
 			var angle = thetaMin + i*quantumOfMesh ;
 			
-			// here you can orientate the mesh
-			coorScreen.x = radius * Mathf.Cos(angle);
-			coorScreen.y = 0;
-			coorScreen.z = radius * Mathf.Sin(angle);
+							
+				// here you can orientate the mesh
+				coorScreen.x = radius * Mathf.Cos(angle);
+				coorScreen.y = 0;
+				coorScreen.z = radius * Mathf.Sin(angle);
 
-			VerticesLocal[i*numberOfLines + j] = coorScreen;
+				VerticesLocal[i*numberOfLines + j] = coorScreen;
 		}
 	}
 	
@@ -168,12 +169,12 @@ private function CreatePolarMesh(thetaMin : float, thetaMax : float, Rmin : floa
 	// add mesh collider
 	obj.GetComponent(MeshCollider).sharedMesh = meshBuilding;
 	
-	/*
+	
 	if( firstTime && mesh_name.IndexOf("middle") != -1 ){
 		obj.renderer.enabled = true;
 		firstTime = false;
 	}
-	else*/
+	else
 		obj.renderer.enabled = false;
 
 	return obj;

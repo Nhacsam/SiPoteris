@@ -54,10 +54,14 @@ private var disable_move : boolean = false;
 	private var speedHeight : float;
 	// first time (init speed)
 	private var firstTime : boolean = true;
+	// init video
+	private var VideoInit:boolean = true;
+	// video screen
+	private var videoScreen:GameObject;
 
-private var onFullScreen : boolean = false;
+	private var onFullScreen : boolean = false;
 
-
+	private var grr:boolean = true;
 
 /**************** listeners ****************/
 
@@ -89,6 +93,7 @@ function initStrip ( rIn : Rect , rOut : Rect ) {
 	posRect = positionOfRect();
 	initSpeed();
 	onFullScreen = true;
+
 	
 }
 
@@ -109,28 +114,46 @@ function OnGUIStrip(){
 	if( onFullScreen ){
 		switch( states ){
 			case states.STATE_OUT : 
-					rctOfPicture = displayStrip( rectOUT , "lol_imgs/akali" );
+					rctOfPicture = displayStrip( rectOUT , "dianeIm" );
 					rectDRAG = rectIN;
+					if( !VideoInit ){
+					stopVideo(videoScreen);
+					VideoInit=true;
+					}
+					/*
+					if(grr){
+					var test = new GameObject.CreatePrimitive(PrimitiveType.Plane);
+					test.name ="videoScreen";
+					test.transform.localScale=Vector3(88,8,8);
+					test.transform.position = Vector3(-2000,-2000,-2000);
+					test.transform.Rotate(180,0,0);
+					grr=false;
+					}*/
 				break;
 			case states.STATE_IN :
-					rctOfPicture = displayStrip( rectDRAG , "lol_imgs/akali" );
+					rctOfPicture = displayStrip( rectDRAG , "dianeIm" );
+					if( VideoInit ){
+					putVideo(videoScreen,"ALLdiane");
+					VideoInit=false;
+					}
 				break;
 			case states.SWIPE_IN : 
 					var r  : Rect = calcRect();
-					rctOfPicture = displayStrip( r , "lol_imgs/akali" );
+					rctOfPicture = displayStrip( r , "dianeIm" );
 			case states.SWIPE_OUT :
 					r = calcRect();
-					rctOfPicture = displayStrip( r , "lol_imgs/akali" );
+					rctOfPicture = displayStrip( r , "dianeIm" );
 				break;
 			case states.ON_DRAG :
-					r = calcRect_OnDrag( dragInf );
-					displayStrip( r , "lol_imgs/akali" );
+					moveScreen( dragInf );
+					//r = calcRect_OnDrag( dragInf );
+					displayStrip( r , "dianeIm" );
 					dragging = false;
 					manageStates();
 				break;
 			case states.MOVE_CENTER :
 					movePicture();
-					rctOfPicture = displayStrip( rctOfPicture , "lol_imgs/akali" );
+					rctOfPicture = displayStrip( rctOfPicture , "dianeIm" );
 					manageStates();
 				break;	
 			case states.ZOOM_IN :
@@ -139,7 +162,7 @@ function OnGUIStrip(){
 						initSpeedZoomIn( rctOfPicture );
 					}
 					rctOfPicture = zoomInPicture( rctOfPicture );
-					rctOfPicture = displayStrip( rctOfPicture , "lol_imgs/akali" );
+					rctOfPicture = displayStrip( rctOfPicture , "dianeIm" );
 					manageStates();
 				break;
 		}
@@ -248,6 +271,7 @@ private function calcRect() : Rect {
 /*
 	*calculate new rectangle on event OnDrag
 */
+/*
 private function calcRect_OnDrag( dI : DragInfo ){
 
 	var r : Rect = rectDRAG;
@@ -261,6 +285,7 @@ private function calcRect_OnDrag( dI : DragInfo ){
 		}
 		if( r.x + r.width < Screen.width ){
 			r.x = Screen.width - r.width;
+	
 		}
 	}
 	
@@ -268,6 +293,16 @@ private function calcRect_OnDrag( dI : DragInfo ){
 
 	return r;
 	
+}*/
+
+// move the screen on drag
+private function moveScreen( dI: DragInfo){
+
+	if(  ! (videoScreen.transform.position.x < -2250 && videoScreen.transform.position.x > -1750)){
+	
+	videoScreen.transform.position.x += dI.delta.x;
+	}
+
 }
 
 /*
@@ -439,5 +474,51 @@ private function manageStates(){
 }
 
 
+/*
+* Set the parameters for the video (see the plug to know how to do it)
+*/
+function putVideo( focus: GameObject, nom : String){
+	
+	// plane settings
+	focus = new GameObject.CreatePrimitive(PrimitiveType.Plane);
+	focus.name ="videoScreen";
+	focus.transform.localScale=Vector3(88,8,8);
+	focus.transform.position = Vector3(-2000,-2000,-2000);
+	focus.transform.Rotate(180,0,0);
+	
+	
+	// plugin config
+	var iOS = GameObject.Find("iOS");
+	var MovieController =GameObject.Find("MovieController");
+	  
+ 	var controllerIOS:ForwardiOSMessages;
+	controllerIOS = iOS.GetComponent("ForwardiOSMessages");
+ 
+	var controllerScene:SceneController;
+	controllerScene = MovieController.GetComponent("SceneController");
+	
+    focus.AddComponent("PlayFileBasedMovieDefault");
+    focus.renderer.material = Resources.Load("Video");
+    
+	controllerScene.movieClass[1] =  focus.GetComponent("PlayFileBasedMovieDefault");
+	controllerScene.movieClass[1].movieIndex=1;
+	controllerScene.movieName[1] = nom + ".mov";
+	controllerIOS.movie[1]=focus.GetComponent("PlayFileBasedMovieDefault");
+	
+	
+	var controllerMovie:PlayFileBasedMovieDefault;
+	controllerMovie=focus.GetComponent("PlayFileBasedMovieDefault");
+	controllerMovie.PlayMovie(nom + ".mov");
+	
+}
 
+/*
+* not used for now
+*/
+function stopVideo(focus: GameObject){
 
+	var controllerMovie:PlayFileBasedMovieDefault;
+	controllerMovie=focus.GetComponent("PlayFileBasedMovieDefault");
+	controllerMovie.StopMovie ();
+
+}

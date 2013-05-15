@@ -20,7 +20,7 @@ private var firstIn3D : boolean = true;
 private var mouseLook : MouseLook ;
 private var control : CameraControl ;
 
-private var Videos : videoSettings2 ;
+private var Videos : videoSettings ;
 private var Zoom : Zoom ;
 
 private var VideoFull : FullScreen ;
@@ -46,7 +46,7 @@ function Start () {
 	 * Instanciate the objects
 	 */
 	
-	Videos = gameObject.AddComponent("videoSettings2") as videoSettings2;
+	Videos = gameObject.AddComponent("videoSettings") as videoSettings;
 	Zoom = gameObject.AddComponent("Zoom") as Zoom;
 	createPolar = gameObject.AddComponent("createPolarMesh") as createPolarMesh;
 	xml = gameObject.AddComponent("getXML") as getXML;
