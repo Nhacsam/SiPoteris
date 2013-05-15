@@ -150,7 +150,7 @@ function EnterOnFullScreen( Video : GameObject ) {
 	}
 	
 	
-	textViewer.placeText(Screen.height/10, Screen.height * 0.26, Screen.width/20, Screen.width * 0.55, Datas.getText() ); // u d l r
+	textViewer.placeText(Screen.height/10, Screen.height * 0.26, Screen.width/20, Screen.width * 0.55,"calo" ); // u d l r
 	
 	audioPlayer.placeMusic (Screen.height * 0.74 + 10, Screen.height/10, Screen.width/20, Screen.width * 0.45, Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
 	

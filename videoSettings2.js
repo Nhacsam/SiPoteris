@@ -3,8 +3,8 @@
 
 
 private var MovieController:GameObject;
-private var iOS:GameObject;
-private var scene2D:boolean;
+private var iOS : GameObject;
+private var scene2D : boolean;
 //ref to the screen 2D
 private var plane2D = GameObject.CreatePrimitive(PrimitiveType.Plane);
 //ref to the sphere 3D
