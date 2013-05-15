@@ -146,17 +146,13 @@ function EnterOnFullScreen( Video : GameObject ) {
 	
 	audioPlayer.placeMusic (Screen.height * 0.74 + 10, Screen.height/10, Screen.width/20, Screen.width * 0.45, Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
 	
-<<<<<<< HEAD
+
 	// create plane
 	strip.InitVideoScreen();
-	
-=======
+
 	
 	Datas.getVideos();
-	
-	// init sprite display
-	strip.initStrip( Rect( -Screen.width/2 , 0 , 2*Screen.width , Screen.height ) , Rect( Screen.width/2 , 0 , Screen.width/2 , Screen.height/8 ) );
->>>>>>> e31f13527f270f988f0844fb9714185497831682
+
 	
 }
 
