@@ -112,7 +112,7 @@ function Update () {
 	
 		if( Videos.getFlagEndVideo() ){
 			move.resetPlane(AllGO2D[i]);
-			Debug.Log("i am in" + Videos.getFlagEndVideo());
+			//Debug.Log("i am in" + Videos.getFlagEndVideo());
 		}
 	}
 	
@@ -148,6 +148,17 @@ function switchFiealdOfView() {
 	camera.fieldOfView  = ( camera.fieldOfView == 80 ) ? 60 : 80 ;
 }
 
+/*
+ * Appelle les fonctions des scripts gérant l'interface
+ */
+function OnGUI() {
+	Videos.OnGUIVideoSetting();
+	VideoFull.OnGUIFullScreen();
+	Zoom.OnGUIZoom();
+}
+
+
+
 
 /*
 	*place piece of circle according to xml
@@ -164,11 +175,27 @@ function placeMeshHash ( t : Hashtable ){
 	
 	var obj3D = mesh3D.placeMesh3D( t );
 	
-	createPolar.InitScript( obj , t );
-	mesh3D.InitScript( obj3D , t );
 	
+	var s : scriptForPlane = obj.GetComponent("scriptForPlane");
+	if( ! s)
+		s  = obj.AddComponent ("scriptForPlane");
+		
+	var s3D : scriptForPlane = obj3D.GetComponent("scriptForPlane");
+	if( ! s3D)
+		s3D  = obj3D.AddComponent ("scriptForPlane");
 	
+	s.InitScript( t );
+	s3D.InitScript( t );
+	
+	if( t.ContainsKey( 'theta_min' ) && t.ContainsKey( 'theta_max' ) && t.ContainsKey( 'ratioRmin' ) && t.ContainsKey( 'name' ) && t.ContainsKey( 'ratioRmax' )) {
+	
+		var p : Vector3 = createPolar.getTruePosition( float.Parse( t['theta_min'] ) , float.Parse( t['theta_max'] ) , float.Parse( t['ratioRmin'] ) , float.Parse( t['ratioRmax'] ) , gameObject );
+		s.InitPosPlane( p );
+	}
+	
+			
 	AllGO2D.Push( obj );
 	AllGO3D.Push( obj3D );
+	
 }
 

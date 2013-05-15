@@ -230,12 +230,6 @@ private function chageObjSizeToOptimal( size : Vector2 ) {
 	wObj.transform.rotation = rotation ;
 }
 
-/*
- * Affiche l'élément
- */
-function OnGUI () {
-}
-
 
 
 

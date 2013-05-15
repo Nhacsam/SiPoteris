@@ -29,6 +29,25 @@ private var lastMoveTime : float = 0;
 
 /********************** METHODS **********************/
 
+
+/*
+	*init script attached to each plane
+*/
+function InitScript( t : Hashtable ){
+		
+	// init name, hashtable, position
+	if( t.ContainsKey( 'name' ) )
+		InitName( t['name'] );
+	
+	InitHT( t );
+	
+	if( t.ContainsKey( 'speed' ) )
+		InitDelta( float.Parse( t['speed'] ) );
+}
+
+
+
+
 /*
 	*initialize variable Name
 */
@@ -115,6 +134,11 @@ public function getLastMoveTime() : float {
 
 
 
+
+
+
+
+
 /*********************/
 /******** GUI ********/
 /*********************/
@@ -123,8 +147,15 @@ public function getLastMoveTime() : float {
  * Retourne le nom du dossier contenant les données
  * Le crée si vide
  * crée un dossier default si vide et nom du dossier non trouvé
+ * Prend en paramètre facultatif le nom du dossier racine
  */
-public function getFolderName() : String{
+public function getFolderName	(  root : String
+								) : String{
+	
+	print(root);
+	
+	if( ! root )
+		root = fileSystem.getResourcesPath() ;
 	
 	var folder : String = '' ;
 	
@@ -133,14 +164,14 @@ public function getFolderName() : String{
 			if( ( HT['GUI'] as Hashtable ).Contains('folder') ) {
 				
 				folder = ( HT['GUI'] as Hashtable )['folder'] ;
-				Directory.CreateDirectory( fileSystem.getResourcesPath() + '/' + folder );
+				Directory.CreateDirectory( root + '/' + folder );
 				return folder ;
 			
 			} // Contain
 		} else if (typeof(HT['GUI']) == System.String) {
 			
 			folder = HT['GUI'] ;
-			Directory.CreateDirectory( fileSystem.getResourcesPath() + '/' + folder );
+			Directory.CreateDirectory( root + '/' + folder );
 			return folder ;
 			
 		}// typeof
@@ -159,19 +190,19 @@ public function getFolderName() : String{
  * Contenant les infos
  */
 public function getImgFolder() : String {
-	return fileSystem.getChildFolder( 'img', getFolderName() );
+	return fileSystem.getChildFolder( 'img', getFolderName(null) );
 }
 
 public function getAudioFolder() : String {
-	return fileSystem.getChildFolder( 'audio', getFolderName() );
+	return fileSystem.getChildFolder( 'audio', getFolderName(null) );
 }
 
 public function getVideoFolder() : String {
-	return fileSystem.getChildFolder( 'video', getFolderName() );
+	return fileSystem.getChildFolder( 'video', getFolderName(  fileSystem.getStreamingFolder() ) );
 }
 
 public function getMiniatureFolder() : String {
-	return fileSystem.getChildFolder( 'min', getFolderName() );
+	return fileSystem.getChildFolder( 'min', getFolderName(null) );
 }
 
 
@@ -221,7 +252,7 @@ public function getText() : String {
 			if( ( HT['GUI'] as Hashtable ).Contains('text') ) {
 				
 				// lit le contenue du fichier
-				path = getFolderName() + (( HT['GUI'] as Hashtable )['text'] as String ) ;
+				path = getFolderName(null) + (( HT['GUI'] as Hashtable )['text'] as String ) ;
 				
 				text = fileSystem.getTextFromFile(path) ;
 				if( text == -1)
@@ -238,7 +269,7 @@ public function getText() : String {
 	 * sinon si un fichier de type txt est présent dans le dossier
 	 * C'est lui qu'on utilise
 	 */
-	path = fileSystem.getFirstFileFromFolder( getFolderName(), '.txt' ) ;
+	path = fileSystem.getFirstFileFromFolder( getFolderName(null), '.txt' ) ;
 	
 	if( path ) {
 		text = fileSystem.getTextFromFile(path) ;

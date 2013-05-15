@@ -2,9 +2,9 @@
 
 
 
-private var MovieController:GameObject;
-private var iOS : GameObject;
-private var scene2D : boolean;
+public var MovieController:GameObject;
+public var iOS:GameObject;
+private var scene2D:boolean;
 //ref to the screen 2D
 private var plane2D = GameObject.CreatePrimitive(PrimitiveType.Plane);
 //ref to the sphere 3D
@@ -187,7 +187,7 @@ function Change2D3D(){
 
 } 
 
-function isScene2D(){
+function getScene(){
 	return scene2D;
 }
 

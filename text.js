@@ -63,7 +63,7 @@ private var textInitialized : boolean = false;
 	*this function will create label for each letter and place at the right position them to justify the text
 */
 
-function OnGUI(){
+function OnGUIText(){
 	displayText();
 }
 
@@ -89,6 +89,7 @@ private function initText(u: int, d: int, l: int, r: int) {
 function placeText(u: int, d: int, l: int, r: int, text: String) {
 	
 	if(!text) {
+		textInitialized = false; // To disable dragging
 		Debug.LogWarning('Empty text given');
 		return ;
 	}

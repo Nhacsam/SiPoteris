@@ -309,7 +309,7 @@ function UpdateZoomStep () {
  * Boutton return en full screen video
  */
 
-function OnGUI () {
+function OnGUIZoom () {
 	if( stateMachine == ZOOM_STATES.ONVIDEO ) {
 		
 		var Rectangle : Rect = new Rect(0,0,50,50) ;

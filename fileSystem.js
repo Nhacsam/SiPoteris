@@ -11,6 +11,14 @@ static function getResourcesPath() {
 	return Application.dataPath + '/Resources';
 }
 
+/*
+ * Retourne le chemin absolu vers StreamingAssets
+ */
+static function getStreamingFolder() {
+	return Application.dataPath + '/StreamingAssets';
+}
+
+
 
 
 /*
@@ -121,7 +129,7 @@ static function getAssociatedMin( img : String, minTab : Array) {
 	var imgName = removeExtension( getName(img) );
 	
 	for (var i = 0; i < minTab.length; i++) {
-		if( minTab[i].IndexOf(imgName) != -1 )
+		if( (minTab[i] as String).IndexOf(imgName) != -1 )
 			return minTab[i] ;
 	}
 	return img ;

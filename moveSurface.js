@@ -8,12 +8,12 @@
 
 private var lastTime : float = 0 ;
 
+private var numberIn : float = 0;
+
 
 /*
 	*move 2D surface to fit with the movement of the movie
 */
-
-
 public function moveSurface( t : GameObject , OnPlay : boolean){
 	
 	var s : scriptForPlane = t.GetComponent( "scriptForPlane" );
@@ -26,6 +26,8 @@ public function moveSurface( t : GameObject , OnPlay : boolean){
         t.transform.eulerAngles += Vector3( 0 , -s.getDelta()*dt , 0 );
 	
         s.updateLastMoveTime();
+        
+        
     } else 
         s.updateLastMoveTime();
 }
@@ -39,8 +41,8 @@ public function resetPlane( t : GameObject ){
 
 	var s : scriptForPlane = t.GetComponent("scriptForPlane");
 	var ht : Hashtable = s.getHT();
-	
-	t.transform.eulerAngles = Vector3( 0 , float.Parse( ht["theta_min"] ) + ( float.Parse( ht["theta_max"] ) - float.Parse( ht["theta_min"] ) )/2 , 0);
+
+	t.transform.eulerAngles = Vector3( 0 , 0 , 0);
 	
 }
 

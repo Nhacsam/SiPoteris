@@ -62,29 +62,9 @@ function placeMesh( thetaMin : float, thetaMax : float, RatioRmin : float, Ratio
 	var obj : GameObject = CreatePolarMesh(thetaMin, thetaMax, Rmin, Rmax, mesh_name);
 	
 	obj.transform.position.y = surface.transform.position.y - 1;
-	// add script to the plane
-	obj.AddComponent ("scriptForPlane");
 	
 	return obj;
 }
-
-
-/*
-	*init script attached to each plane
-*/
-function InitScript( obj : GameObject , t : Hashtable ){
-	
-	var s : scriptForPlane = obj.GetComponent( "scriptForPlane" );
-	var p : Vector3 = getTruePosition( float.Parse( t['theta_min'] ) , float.Parse( t['theta_max'] ) , float.Parse( t['ratioRmin'] ) , float.Parse( t['ratioRmax'] ) , obj );
-	
-	// init name, hashtable, position
-	s.InitName( t['name'] );
-	s.InitHT( t );
-	s.InitPosPlane( p );
-	if( t.ContainsKey( 'speed' ) )
-		s.InitDelta( float.Parse( t['speed'] ) );
-}
-
 
 
 /*
@@ -183,7 +163,7 @@ private function CreatePolarMesh(thetaMin : float, thetaMax : float, Rmin : floa
 /*
 	*give the true position of the planes in world coordinates - cause actually they are situated at ( 0 , 0 , 0 )
 */
-private function getTruePosition( thetaMin : float , thetaMax : float , RatioRmin : float , RatioRmax : float , obj : GameObject) : Vector3{
+public function getTruePosition( thetaMin : float , thetaMax : float , RatioRmin : float , RatioRmax : float , obj : GameObject) : Vector3{
 	var meshFilter : MeshFilter = surface.GetComponent("MeshFilter");
 	var mesh : Mesh = meshFilter.mesh;
 	
