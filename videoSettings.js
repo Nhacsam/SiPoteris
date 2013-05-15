@@ -112,7 +112,7 @@ function generateScene3D(){
 * button switcher interface 2D/3D and directions
 */
 
-function  OnGUI(){
+function  OnGUIVideoSetting(){
 
 	if(button){
 

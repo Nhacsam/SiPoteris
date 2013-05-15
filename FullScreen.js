@@ -47,12 +47,14 @@ function InitFullScreen( ) {
 	onFullScreen = false ;
 }
 
-function OnGUI(){
+function OnGUIFullScreen(){
 	
-	if( audioPlayer ) {
+	if( onFullScreen ) {
 	
 		audioPlayer.OnGUISound();
 		strip.OnGUIStrip();
+		
+		textViewer.OnGUIText();
 	}
 
 }
@@ -142,6 +144,9 @@ function EnterOnFullScreen( Video : GameObject ) {
 	textViewer.placeText(Screen.height/10, Screen.height * 0.26, Screen.width/20, Screen.width * 0.55, Datas.getText() ); // u d l r
 	
 	audioPlayer.placeMusic (Screen.height * 0.74 + 10, Screen.height/10, Screen.width/20, Screen.width * 0.45, Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
+	
+	
+	Datas.getVideos();
 	
 	// init sprite display
 	strip.initStrip( Rect( -Screen.width/2 , 0 , 2*Screen.width , Screen.height ) , Rect( Screen.width/2 , 0 , Screen.width/2 , Screen.height/8 ) );

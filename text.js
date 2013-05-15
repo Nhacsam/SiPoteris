@@ -63,7 +63,7 @@ private var textInitialized : boolean = false;
 	*this function will create label for each letter and place at the right position them to justify the text
 */
 
-function OnGUI(){
+function OnGUIText(){
 	displayText();
 }
 

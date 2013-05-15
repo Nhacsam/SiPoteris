@@ -11,6 +11,14 @@ static function getResourcesPath() {
 	return Application.dataPath + '/Resources';
 }
 
+/*
+ * Retourne le chemin absolu vers StreamingAssets
+ */
+static function getStreamingFolder() {
+	return Application.dataPath + '/StreamingAssets';
+}
+
+
 
 
 /*
