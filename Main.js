@@ -9,9 +9,13 @@ private var move : moveSurface;
 
 
 
-// array of GO - meshes over movie
-var AllGO : Array = Array();
+// array of GO - meshes over movie in 2D
+var AllGO2D : Array = Array();
+// array of GO - meshes over movie in 3D
+var AllGO3D : Array = Array();
 
+// first time in 3D scene ?
+private var firstIn3D : boolean = true;
 
 private var mouseLook : MouseLook ;
 private var control : CameraControl ;
@@ -21,6 +25,7 @@ private var Zoom : Zoom ;
 
 private var VideoFull : FullScreen ;
 
+private var mesh3D : createSphericMesh;
 
 
 function Start () {
@@ -47,6 +52,7 @@ function Start () {
 	xml = gameObject.AddComponent("getXML") as getXML;
 	move = gameObject.AddComponent("moveSurface") as moveSurface;
 	VideoFull= gameObject.AddComponent("FullScreen") as FullScreen;
+	mesh3D = gameObject.AddComponent("createSphericMesh") as createSphericMesh;
 
 	
 	/*
@@ -67,7 +73,7 @@ function Start () {
 
 	
 	//fin debug test
-	Zoom.Init(AllGO , enableMouseLook);
+	Zoom.Init(AllGO2D , enableMouseLook);
 	
 	
 	VideoFull.InitFullScreen();
@@ -102,16 +108,17 @@ function Update () {
 	
 //	sound.updateSounds(myPlanes);
 	
-	for( var i =0; i < AllGO.length; i++) {
+	for( var i =0; i < AllGO2D.length; i++) {
 	
 		if(!Videos.getFlagEndVideo())
-		move.moveSurface( AllGO[i], Videos.OnPlay() );
+		move.moveSurface( AllGO2D[i], Videos.OnPlay() );
 	
 		if( Videos.getFlagEndVideo() ){
-			move.resetPlane(AllGO[i]);
+			move.resetPlane(AllGO2D[i]);
 			Debug.Log("i am in" + Videos.getFlagEndVideo());
 		}
 	}
+	
 }
 
 function enableMouseLook( b : boolean ) {
@@ -152,15 +159,19 @@ function switchFiealdOfView() {
 
 function placeMeshHash ( t : Hashtable ){
 	
-	var obj = createPolar.placeMesh(	float.Parse(t['theta_min']) ,
+	var obj = createPolar.placeMesh(	float.Parse( t['theta_min'] ) ,
 										float.Parse( t['theta_max']) ,
 										float.Parse( t['ratioRmin']) ,
 										float.Parse( t['ratioRmax']) ,
 										t['name'] );
 	
+	var obj3D = mesh3D.placeMesh3D( t );
+	
 	createPolar.InitScript( obj , t );
+	mesh3D.InitScript( obj3D , t );
 	
 	
-	AllGO.Push(obj);
+	AllGO2D.Push( obj );
+	AllGO3D.Push( obj3D );
 }
 
