@@ -179,7 +179,7 @@ function placeMeshHash ( t : Hashtable ){
 	var obj3D = mesh3D.placeMesh3D( t );
 	
 	
-	var s = obj.GetComponent("scriptForPlane");
+	var s : scriptForPlane = obj.GetComponent("scriptForPlane");
 	if( ! s)
 		s  = obj.AddComponent ("scriptForPlane");
 		
