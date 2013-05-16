@@ -72,6 +72,8 @@ function InitFullScreen( ) {
 	strip = 		gameObject.AddComponent("displayStrip")		as displayStrip;
 	
 	onFullScreen = false ;
+	
+
 }
 
 function OnGUIFullScreen(){
@@ -79,7 +81,6 @@ function OnGUIFullScreen(){
 	if( onFullScreen ) {
 	
 		audioPlayer.OnGUISound();
-		strip.OnGUIStrip();
 		
 		textViewer.OnGUIText();
 	}
@@ -177,7 +178,6 @@ function LeaveFullScreen( Video : GameObject ) {
 	
 	audioPlayer.removeMusic();
 	textViewer.removeText();
-	strip.removeStrip();
 	
 	slideshow.destuctSlideShow();
 	windows.destuctWindow();

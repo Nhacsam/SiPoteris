@@ -29,7 +29,7 @@ private var mesh3D : createSphericMesh;
 
 
 function Start () {
-
+	
 	// MouseLook :
 	if( isOnIpad() ) {
 		
@@ -53,7 +53,6 @@ function Start () {
 	move = gameObject.AddComponent("moveSurface") as moveSurface;
 	VideoFull= gameObject.AddComponent("FullScreen") as FullScreen;
 	mesh3D = gameObject.AddComponent("createSphericMesh") as createSphericMesh;
-
 	
 	/*
 	 * Inits
@@ -97,8 +96,6 @@ function Start () {
 	camera.fieldOfView  = 60 ;
 	
 	
-	
-	
 }
 
 function Update () {
@@ -131,7 +128,7 @@ function enableMouseLook( b : boolean ) {
 }
 
 
-function isOnIpad() :boolean {
+static function isOnIpad() : boolean {
 	return ( SystemInfo.deviceType == DeviceType.Handheld );
 }
 

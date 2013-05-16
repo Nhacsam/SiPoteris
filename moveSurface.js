@@ -41,7 +41,7 @@ public function resetPlane( t : GameObject ){
 
 	var s : scriptForPlane = t.GetComponent("scriptForPlane");
 	var ht : Hashtable = s.getHT();
-	
+
 	t.transform.eulerAngles = Vector3( 0 , 0 , 0);
 	
 }
