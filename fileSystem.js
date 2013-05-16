@@ -25,9 +25,16 @@ static function getStreamingFolder() {
  * Retourne le chemin depuis Resources d'un dossier enfant à un dossier
  * Le crée si inexistant
  */
-static function getChildFolder( name : String, folderName : String ) : String {
-	Directory.CreateDirectory(getResourcesPath() + '/' + folderName + '/' + name );
-	return folderName + '/' + name ;
+static function getChildFolder( name : String, folderName : String, root ) : String {
+	
+	
+	if(!root)
+		root = getResourcesPath() ;
+	
+	if( isDirExisting( root + '/' + folderName + '/' + name ) )
+		return folderName + '/' + name ;
+	else
+		return '' ;
 }
 
 
@@ -35,11 +42,14 @@ static function getChildFolder( name : String, folderName : String ) : String {
  * Récupère dans un Array les noms des fichiers contenue dans
  * dans le dossier folder (chemin depuis Resources) avec l'extension extension
  */
-static function getFilesInArrayFromFolder( folder : String, extension : String) : Array {
+static function getFilesInArrayFromFolder( folder : String, extension : String, root) : Array {
+	
+	if(!root)
+		root = getResourcesPath() ;
 	
 	var FilesNameTab : Array = new Array();
 	
-	var fileInfo = Directory.GetFiles(getResourcesPath() + '/' + folder + '/', "*" + extension);
+	var fileInfo = Directory.GetFiles(root + '/' + folder + '/', "*" + extension);
 	for (file in fileInfo) {
 		FilesNameTab.Push( removeExtension( fromResourcesPath(file) )  );
 	}
@@ -47,8 +57,8 @@ static function getFilesInArrayFromFolder( folder : String, extension : String) 
 	return FilesNameTab ;
 }
 
-static function getFirstFileFromFolder( folder : String, extension : String) : String {
-	var tab : Array = getFilesInArrayFromFolder( folder, extension );
+static function getFirstFileFromFolder( folder : String, extension : String, root) : String {
+	var tab : Array = getFilesInArrayFromFolder( folder, extension, root );
 	if( tab.length > 0 )
 		return tab[0];
 	else
@@ -70,6 +80,32 @@ static function getTextFromFile( path : String ) {
 		return -1 ;
 	
 }
+
+
+/*
+ * renvoie true si le dossier existe
+ */
+
+static function isDirExisting( path : String ) : boolean {
+	
+	var exist  : boolean = false ;
+	var dir : DirectoryInfo ;
+	
+	try {
+		 dir = Directory.CreateDirectory( path ) ;
+		 exist = dir.Exists ;
+	} catch (e :  System.Exception ) {
+		
+		Debug.LogWarning("Erreur : \n" + e);
+		
+		if(!exist)
+			dir = new DirectoryInfo( path );
+			exist = dir.Exists ;
+	}
+	return exist ;
+	
+}
+
 
 
 /******************************************************/

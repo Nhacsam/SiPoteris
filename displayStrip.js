@@ -402,7 +402,7 @@ private function manageStates(){
 */
 function InitVideoScreen(){
 
-	createStripPlane( 0.1 , Rect( Screen.width / 2 , Screen.height / 2 , Screen.width / 4 , Screen.height / 4 ) );
+	createStripPlane( 0.1 , Rect( 2*Screen.width/3 , 3*Screen.height/4 , Screen.width/3 - Screen.width/12 , Screen.height/4 ) );
 
 }
 
@@ -428,7 +428,7 @@ private function createStripPlane( ratio : float , r : Rect ){
 	videoScreen.transform.localScale = v;
 	
 	// extend plane
-	videoScreen.transform.localScale = videoScreen.transform.localScale * 10;
+	videoScreen.transform.localScale = videoScreen.transform.localScale * 2;
 }
 
 /*

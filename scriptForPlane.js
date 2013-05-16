@@ -147,12 +147,8 @@ public function getLastMoveTime() : float {
  * Retourne le nom du dossier contenant les données
  * Le crée si vide
  * crée un dossier default si vide et nom du dossier non trouvé
- * Prend en paramètre facultatif le nom du dossier racine
  */
-public function getFolderName	(  root : String
-								) : String{
-	
-	print(root);
+public function getFolderName	(  root : String ) : String{
 	
 	if( ! root )
 		root = fileSystem.getResourcesPath() ;
@@ -164,22 +160,22 @@ public function getFolderName	(  root : String
 			if( ( HT['GUI'] as Hashtable ).Contains('folder') ) {
 				
 				folder = ( HT['GUI'] as Hashtable )['folder'] ;
-				Directory.CreateDirectory( root + '/' + folder );
-				return folder ;
+				if( fileSystem.isDirExisting(root + '/' + folder) )
+					return folder ;
 			
 			} // Contain
 		} else if (typeof(HT['GUI']) == System.String) {
 			
 			folder = HT['GUI'] ;
-			Directory.CreateDirectory( root + '/' + folder );
-			return folder ;
-			
+			if( fileSystem.isDirExisting(root + '/' + folder) )
+				return folder ;
+			         
 		}// typeof
 	} // Contain
 	
 	// Si on arrive ici, c'est que le nom du dossier n'a pas été trouvé.
 	Debug.LogWarning('No data folder found for the plane ' + Name);
-	return getDefaultFolder();
+	return getDefaultFolder(null);
 	
 }
 
@@ -190,19 +186,19 @@ public function getFolderName	(  root : String
  * Contenant les infos
  */
 public function getImgFolder() : String {
-	return fileSystem.getChildFolder( 'img', getFolderName(null) );
+	return fileSystem.getChildFolder( 'img', getFolderName(null), null );
 }
 
 public function getAudioFolder() : String {
-	return fileSystem.getChildFolder( 'audio', getFolderName(null) );
+	return fileSystem.getChildFolder( 'audio', getFolderName(null), null );
 }
 
 public function getVideoFolder() : String {
-	return fileSystem.getChildFolder( 'video', getFolderName(  fileSystem.getStreamingFolder() ) );
+	return getFolderName(  fileSystem.getStreamingFolder() ) ;
 }
 
 public function getMiniatureFolder() : String {
-	return fileSystem.getChildFolder( 'min', getFolderName(null) );
+	return fileSystem.getChildFolder( 'min', getFolderName(null), null );
 }
 
 
@@ -213,24 +209,31 @@ public function getMiniatureFolder() : String {
  * sers en cas d'erreur ou de fichier(s) introuvable(s)
  */
  
-public function getDefaultFolder() : String {
-	Directory.CreateDirectory( fileSystem.getResourcesPath() + '/defaultDatas');
-	return 'defaultDatas' ;
+public function getDefaultFolder( root : String ) : String {
+	
+	if( ! root )
+		root = fileSystem.getResourcesPath() ;
+	
+	if( fileSystem.isDirExisting( root + '/defaultDatas' ) )
+		return 'defaultDatas' ;
+	else
+		return fileSystem.getResourcesPath() ;
 }
+
 public function getDefaultImgFolder() : String {
-	return fileSystem.getChildFolder( 'img', getDefaultFolder() );
+	return fileSystem.getChildFolder( 'img', getDefaultFolder(null), null );
 }
 
 public function getDefaultAudioFolder() : String {
-	return fileSystem.getChildFolder( 'audio', getDefaultFolder() );
+	return fileSystem.getChildFolder( 'audio', getDefaultFolder(null), null );
 }
 
 public function getDefaultVideoFolder() : String {
-	return fileSystem.getChildFolder( 'video', getDefaultFolder() );
+	return getDefaultFolder( fileSystem.getStreamingFolder() ) ;
 }
 
 public function getDefaultMiniatureFolder() : String {
-	return fileSystem.getChildFolder( 'min', getDefaultFolder() );
+	return fileSystem.getChildFolder( 'min', getDefaultFolder(null), null );
 }
 
 
@@ -269,7 +272,7 @@ public function getText() : String {
 	 * sinon si un fichier de type txt est présent dans le dossier
 	 * C'est lui qu'on utilise
 	 */
-	path = fileSystem.getFirstFileFromFolder( getFolderName(null), '.txt' ) ;
+	path = fileSystem.getFirstFileFromFolder( getFolderName(null), '.txt', null ) ;
 	
 	if( path ) {
 		text = fileSystem.getTextFromFile(path) ;
@@ -281,7 +284,7 @@ public function getText() : String {
 	 * C'est lui qu'on utilise
 	 */
 	
-	path = fileSystem.getFirstFileFromFolder( getDefaultFolder(), '.txt' ) ;
+	path = fileSystem.getFirstFileFromFolder( getDefaultFolder(null), '.txt', null ) ;
 	
 	if( path ) {
 		text = fileSystem.getTextFromFile(path) ;
@@ -305,39 +308,39 @@ public function getText() : String {
 
 public function getSounds() : Array {
 	
-	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getAudioFolder(), '' ) ;
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getAudioFolder(), '', null ) ;
 	
 	if( Datas.length <= 0 ) // not found
-		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultAudioFolder(), '' ) ;
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultAudioFolder(), '', null ) ;
 
 	return Datas ;
 }
 
 public function getImages() : Array {
-	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getImgFolder(), '' ) ;
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getImgFolder(), '', null ) ;
 	
 	if( Datas.length <= 0 ) // not found
-		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultImgFolder(), '' ) ;
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultImgFolder(), '', null ) ;
 
 	return Datas ;
 }
 
 
 public function getVideos() : Array {
-	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getVideoFolder(), '' ) ;
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getVideoFolder(), '', fileSystem.getStreamingFolder() ) ;
 	
 	if( Datas.length <= 0 ) // not found
-		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultVideoFolder(), '' ) ;
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultVideoFolder(), '', fileSystem.getStreamingFolder() ) ;
 
 	return Datas ;
 }
 
 public function getMiniatures() : Array {
 	
-	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getMiniatureFolder(), '' ) ;
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getMiniatureFolder(), '', null ) ;
 	
 	if( Datas.length <= 0 ) // not found
-		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultMiniatureFolder(), '' ) ;
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultMiniatureFolder(), '', null ) ;
 
 	return Datas ;
 }

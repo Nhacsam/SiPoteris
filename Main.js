@@ -29,7 +29,7 @@ private var mesh3D : createSphericMesh;
 
 
 function Start () {
-
+	
 	// MouseLook :
 	if( isOnIpad() ) {
 		
@@ -128,7 +128,7 @@ function enableMouseLook( b : boolean ) {
 }
 
 
-function isOnIpad() :boolean {
+static function isOnIpad() : boolean {
 	return ( SystemInfo.deviceType == DeviceType.Handheld );
 }
 

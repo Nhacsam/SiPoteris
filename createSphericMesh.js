@@ -42,8 +42,6 @@ private var DATSphere : GameObject[];
 */
 function placeMesh3D( t : Hashtable ){
 		
-		Debug.Log("name : " + t['name']);
-		
 		if( float.Parse( t['ratioRmin'] )  > 0.66 || float.Parse( t['ratioRmax'] )  > 0.66 ){
 			var phiMax : float = calculatePHI( float.Parse( t['ratioRmin'] ) , true );
 			var phiMin : float = calculatePHI( float.Parse( t['ratioRmax'] ) , true );
@@ -52,9 +50,6 @@ function placeMesh3D( t : Hashtable ){
 			phiMax = calculatePHI( float.Parse( t['ratioRmin'] ) , false );
 			phiMin = calculatePHI( float.Parse( t['ratioRmax'] ) , false );
 		}
-		
-		Debug.Log("min : " + phiMin);
-		Debug.Log("max : " + phiMax);
 		
 		var theta_min : float = float.Parse( t['theta_min'] )* Mathf.PI/180;
 		var theta_max : float = float.Parse( t['theta_max'] )* Mathf.PI/180;
@@ -189,11 +184,9 @@ private function calculatePHI( ratio : float , b : boolean) : float {
 	if( b ){
 		if( ratio > 0.66 ){
 			var v : float = 7*Mathf.PI/4 + ( 1 - ratio ) * Mathf.PI/4 / ( 1 - 0.66 );
-			Debug.Log("v: " + v);
 		}
 		else{
 			v = 2*Mathf.PI + Mathf.PI/2*((0.66-ratio)/0.66);
-			Debug.Log("i am in");
 		}
 	}
 	else
