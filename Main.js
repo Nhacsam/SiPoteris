@@ -27,6 +27,11 @@ private var mesh3D : createSphericMesh;
 
 function Start () {
 	
+	//print('hello world');
+	//Debug.Log('hello world');
+	
+	
+	
 	// MouseLook :
 	if( isOnIpad() ) {
 		
@@ -85,7 +90,7 @@ function Start () {
 	Zoom.AddOnZoom( switchFiealdOfView );
 	Zoom.AddOnLeave( switchFiealdOfView );
 	
-	
+	VideoFull.SetLeaveCallback( Zoom.toOnDeZoom );
 	
 	// Camera
 	camera.backgroundColor = Color.black;

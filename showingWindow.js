@@ -1,3 +1,5 @@
+/* Le truc juste au dessus du slideshow (si on change pas la disposition) */
+
 #pragma strict
 
 // dépendences
@@ -82,7 +84,7 @@ function SetNewTextureObj( e ) {
 	if( typeof(e) == SLIDESHOWELMT ) {
 	
 		var t : SLIDESHOWELMT = e ;
-		SetNewTexture( t.path, t.type, t.size);
+		SetNewTexture( t.path, t.type, Vector2.zero);
 		
 	} else {
 		wObj.renderer.enabled = false ;
@@ -91,11 +93,9 @@ function SetNewTextureObj( e ) {
 }
 
 
-
-
 function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2 ) {
 	
-	// erreur si chmain vide
+	// erreur si chemin vide
 	if(path == '' ) {
 		Debug.LogWarning('Empty data path in SetTexture(' + path + ' ,' + type + ' ,' + size + ' ) ');
 		wObj.renderer.enabled = false ;
@@ -131,7 +131,11 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2 ) {
 			}
 			
 			size = (size != Vector2.zero) ? size : Vector2( wImgTex.width, wImgTex.height ) ;
-			chageObjSizeToOptimal(size);
+			
+
+			
+			print(size);
+			//chageObjSizeToOptimal(size);
 			
 			wObj.renderer.material.mainTexture = wImgTex ;
 			wObj.renderer.enabled = true ;

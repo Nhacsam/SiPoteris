@@ -256,7 +256,7 @@ function OnDisable(){
 
 /* Scrolling text with dragging event ! (Finger KO Mouse OK) */
 function onDragging(dragData : DragInfo) {
-	if (textInitialized) {
+	if (textInitialized && onFullScreen) {
 		var block = false; // If true, you cannot scroll
 		if ( letterSpots[0].y >= uBorder && dragData.delta.y < 0 ) // Blocking Up
 			block = true;
