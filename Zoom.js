@@ -310,23 +310,7 @@ function UpdateZoomStep () {
  */
 
 function OnGUIZoom () {
-	if( stateMachine == ZOOM_STATES.ONVIDEO ) {
-		
-		var Rectangle : Rect = new Rect(0,0,50,50) ;
-		
-		
-		var returnTexture : Texture = Resources.Load("blue_left_arrow");
-		
-		
-		if( GUI.Button( Rectangle, returnTexture ) )
-			toOnDeZoom();
-		
-	}
 }
-
-
-
-
 
 
 /*

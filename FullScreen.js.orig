@@ -27,8 +27,7 @@ private var CameraInitialOrthographic : boolean ;
 
 
 
-// A appeller pour sortir
-private var toOnDeZoom : function() ;
+
 
 
 
@@ -43,7 +42,7 @@ function InitFullScreen( ) {
 	windows =		gameObject.AddComponent("showingWindow")	as showingWindow ;
 	audioPlayer =	gameObject.AddComponent("sound")			as sound ;
 	textViewer =	gameObject.AddComponent("text")				as text ;
-	//strip = 		gameObject.AddComponent("displayStrip")		as displayStrip;
+	strip = 		gameObject.AddComponent("displayStrip")		as displayStrip;
 	
 	onFullScreen = false ;
 	
@@ -53,19 +52,13 @@ function InitFullScreen( ) {
 function OnGUIFullScreen(){
 	
 	if( onFullScreen ) {
-		
-		var Rectangle : Rect = new Rect(0,0,50,50) ;
-		var returnTexture : Texture = Resources.Load("blue_left_arrow");
-		if( GUI.Button( Rectangle, returnTexture ) ) {
-			Debug.Log( 'Sortie de l\'interface demandée' );
-		
-			if( toOnDeZoom )
-				toOnDeZoom();
-			else
-				Debug.LogWarning('Callback de dezoom non renseigné dans FullScreen.' + 
-				'\nNote : setter is public function SetLeaveCallback( f : function() )');
-		}
+	
 		audioPlayer.OnGUISound();
+<<<<<<< HEAD
+		//strip.OnGUIStrip();
+=======
+>>>>>>> 57baee9e5db572150e8ef9498a162f557c71a356
+		
 		textViewer.OnGUIText();
 	}
 
@@ -84,18 +77,15 @@ function UpDateFullScreen() {
 		
 		slideshow.UpDateSlideShow();
 		
-		windows.SetNewTextureObj( slideshow.getCurrentAssociedInfo() );
+		var temp = slideshow.getCurrentAssociedInfo() ;
+		
+		windows.SetNewTextureObj( temp );
+		
 	}
+	
 }
 
 
-/*
- * Accesseur du pointeur du callback
- * lançant le dezoom
- */
-public function SetLeaveCallback( f : function() ) {
-	toOnDeZoom = f ;
-}
 
 
 
@@ -156,13 +146,14 @@ function EnterOnFullScreen( Video : GameObject ) {
 	}
 	
 	
-	textViewer.placeText(Screen.height/10, Screen.height * 0.26, Screen.width/20, Screen.width * 0.55, Datas.getText() ); // u d l r (margins) + Text to display
+	textViewer.placeText(Screen.height/10, Screen.height * 0.26, Screen.width/20, Screen.width * 0.55, ""/*Datas.getText() */); // u d l r (margins) + Text to display
 	
 	audioPlayer.placeMusic (Screen.height * 0.74 + 10, Screen.height/10, Screen.width/20, Screen.width * 0.45, Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
 	
 
 	// create plane
-	//strip.InitVideoScreen();
+	strip.InitVideoScreen();
+
 	
 	Datas.getVideos();
 

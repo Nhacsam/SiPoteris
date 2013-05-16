@@ -98,9 +98,10 @@ static function isDirExisting( path : String ) : boolean {
 		
 		Debug.LogWarning("Erreur : \n" + e);
 		
-		if(!exist)
+		if(!exist) {
 			dir = new DirectoryInfo( path );
 			exist = dir.Exists ;
+		}
 	}
 	return exist ;
 	

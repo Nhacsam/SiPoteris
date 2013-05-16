@@ -88,7 +88,7 @@ function Start () {
 	Zoom.AddOnZoom( switchFiealdOfView );
 	Zoom.AddOnLeave( switchFiealdOfView );
 	
-	
+	VideoFull.SetLeaveCallback( Zoom.toOnDeZoom );
 	
 	// Camera
 	camera.backgroundColor = Color.black;
