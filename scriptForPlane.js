@@ -148,6 +148,9 @@ public function getLastMoveTime() : float {
  * Le crée si vide
  * crée un dossier default si vide et nom du dossier non trouvé
  */
+ 
+ 
+ 
 public function getFolderName	(  root : String ) : String{
 	
 	if( ! root )
@@ -174,7 +177,7 @@ public function getFolderName	(  root : String ) : String{
 	} // Contain
 	
 	// Si on arrive ici, c'est que le nom du dossier n'a pas été trouvé.
-	Debug.LogWarning('No data folder found for the plane ' + Name);
+	Debug.Log('No data folder found for the plane ' + Name);
 	return getDefaultFolder(null);
 	
 }
@@ -259,7 +262,7 @@ public function getText() : String {
 				
 				text = fileSystem.getTextFromFile(path) ;
 				if( text == -1)
-					Debug.LogWarning('Invalid text file name '+ path +' for the plane ' + Name);
+					Debug.Log('Invalid text file name '+ path +' for the plane ' + Name);
 				else
 					return text ;
 					
@@ -296,7 +299,7 @@ public function getText() : String {
 	 * si rien de concluent est trouvé
 	 * Warning + renvoie d'une chaine vide
 	 */
-	Debug.LogWarning('No text file found for the plane ' + Name);
+	Debug.Log('No text file found for the plane ' + Name);
 	return '' ;
 }
 

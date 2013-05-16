@@ -40,7 +40,7 @@ static function getChildFolder( name : String, folderName : String, root ) : Str
 
 /*
  * Récupère dans un Array les noms des fichiers contenue dans
- * dans le dossier folder (chemin depuis Resources) avec l'extension extension
+ * dans le dossier folder (chemin depuis Resources) avec l'extension 
  */
 static function getFilesInArrayFromFolder( folder : String, extension : String, root) : Array {
 	

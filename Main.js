@@ -14,9 +14,6 @@ var AllGO2D : Array = Array();
 // array of GO - meshes over movie in 3D
 var AllGO3D : Array = Array();
 
-// first time in 3D scene ?
-private var firstIn3D : boolean = true;
-
 private var mouseLook : MouseLook ;
 private var control : CameraControl ;
 
@@ -112,7 +109,7 @@ function Update () {
 	
 		if( Videos.getFlagEndVideo() ){
 			move.resetPlane(AllGO2D[i]);
-			//Debug.Log("i am in" + Videos.getFlagEndVideo());
+			Debug.Log("reset plane" + i + Videos.getFlagEndVideo());
 		}
 	}
 	
@@ -156,6 +153,29 @@ function OnGUI() {
 	VideoFull.OnGUIFullScreen();
 	Zoom.OnGUIZoom();
 }
+
+
+/*
+ * Ajoute les listener d'envenements
+ /
+
+function OnEnable(){
+	Gesture.onShortTapE += OnTap;
+	Gesture.onLongTapE += OnTap;
+	Gesture.onDoubleTapE += OnTap;
+}
+
+function OnDisable(){
+	Gesture.onShortTapE -= OnTap;
+	Gesture.onLongTapE -= OnTap;
+	Gesture.onDoubleTapE -= OnTap;
+}
+
+
+function Ontap( v : Vector2) {
+	Zoom.OnTapZoom(v);
+}*/
+
 
 
 

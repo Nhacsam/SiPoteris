@@ -398,7 +398,7 @@ function OnPinch ( amp : float ) {
 
 // appuie
 function OnTap (pos : Vector2 ) {
-	
+	Debug.Log(" ontap slideshow");
 	if( isDragging )
 		return ;
 		
@@ -416,6 +416,7 @@ function OnTap (pos : Vector2 ) {
 			delta = 0 ;
 		}
 	}
+	Debug.Log(" ontap slideshow success");
 	
 }
 
@@ -490,9 +491,7 @@ private function moveGradualy(pos : Vector3[], rot : Quaternion[] ) {
 	// Maj des pos/rot
 	for( var i = 0 ; i < nbElmts; i++) {
 	
-		mobilesElmts[i].transform.position =Vector3.Slerp( 	InitialElmtsPos[i],
-															pos[i],
-															timeFactor ) ;
+		mobilesElmts[i].transform.position =Vector3.Slerp( 	InitialElmtsPos[i],pos[i],timeFactor ) ;
 		mobilesElmts[i].transform.rotation = Quaternion.Slerp( InitialElmtsRot[i], rot[i], timeFactor );
 		
 	}

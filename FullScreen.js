@@ -135,14 +135,14 @@ function EnterOnFullScreen( Video : GameObject ) {
 	for (var i = 0; i < slideShowImgs.length; i++ ) {
 		slideShowElmt = new SLIDESHOWELMT(		slideShowImgs[i],
 												WINDOWTYPES.IMG,
-												Vector2(260, 390) 	) ;
+												Vector2.zero 	) ;
 		
 		slideshow.AddElmt(		fileSystem.getAssociatedMin( slideShowImgs[i], slideShowMin ),
 								slideShowElmt 									);
 	}
 	
 	
-	textViewer.placeText(Screen.height/10, Screen.height * 0.26, Screen.width/20, Screen.width * 0.55, ""/*Datas.getText() */); // u d l r (margins) + Text to display
+	textViewer.placeText(Screen.height/10, Screen.height * 0.26, Screen.width/20, Screen.width * 0.55, Datas.getText() ); // u d l r (margins) + Text to display
 	
 	audioPlayer.placeMusic (Screen.height * 0.74 + 10, Screen.height/10, Screen.width/20, Screen.width * 0.45, Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
 	
