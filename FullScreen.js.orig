@@ -32,8 +32,6 @@ private var marginBottom : float = 0.1;
 private var marginLeft : float = 0.05;
 private var marginRight : float = 0.95;
 
-// A appeller pour sortir
-private var toOnDeZoom : function() ;
 private var textTop : float = marginTop;
 private var textBottom : float = 0.26;
 private var textLeft : float = marginLeft;
@@ -44,6 +42,10 @@ private var musicBottom : float = marginBottom;
 private var musicLeft : float = marginLeft;
 private var musicRight : float = textRight;
 
+<<<<<<< HEAD
+// A appeller pour sortir
+private var toOnDeZoom : function() ;
+=======
 private var stripTop : float = 1-((1-marginTop)/4); // Le strip prend en hauteur la moitié de la marge du haut
 private var stripBottom : float = 1-(3*(1-marginTop)/4);
 private var stripLeft : float = 0.55;
@@ -53,6 +55,7 @@ private var pictureTop : float = textTop;
 private var pictureBottom : float = textBottom;
 private var pictureLeft : float = stripLeft;
 private var pictureRight : float = stripRight;
+>>>>>>> 2be27d8eda895fe6dadb0a7f4900584d9e8949f6
 
 private var slideTop : float = musicTop;
 private var slideBottom : float = musicBottom;
@@ -115,6 +118,7 @@ function UpDateFullScreen() {
 }
 
 
+<<<<<<< HEAD
 /*
  * Accesseur du pointeur du callback
  * lançant le dezoom
@@ -127,6 +131,8 @@ public function SetLeaveCallback( f : function() ) {
 
 
 
+=======
+>>>>>>> 2be27d8eda895fe6dadb0a7f4900584d9e8949f6
 /*
  * Les CallBack des entrées et sorties
  */
@@ -173,7 +179,7 @@ function EnterOnFullScreen( Video : GameObject ) {
 	textViewer.placeText(Screen.height * (1-textTop), Screen.height * textBottom, Screen.width * textLeft, Screen.width * (1-textRight), Datas.getText()); // u d l r (margins) + Text to display
 	audioPlayer.placeMusic (Screen.height * (1-musicTop), Screen.height * musicBottom, Screen.width * musicLeft, Screen.width * (1-musicRight), Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
 	
-	//strip.initStrip( Rect( -Screen.width/2 , 0 , 2*Screen.width , Screen.height ) , Rect( Screen.width*stripLeft , 0 , (stripRight-stripLeft)*Screen.width , Screen.height/8 ) );
+	strip.initStrip( Rect( -Screen.width/2 , 0 , 2*Screen.width , Screen.height ) , Rect( Screen.width*stripLeft , 0 , (stripRight-stripLeft)*Screen.width , Screen.height/8 ) );
 	
 	for (var i = 0; i < slideShowImgs.length; i++ ) {
 		slideShowElmt = new SLIDESHOWELMT(		slideShowImgs[i],
@@ -184,6 +190,18 @@ function EnterOnFullScreen( Video : GameObject ) {
 								slideShowElmt 									);
 	}
 	
+<<<<<<< HEAD
+	
+	textViewer.placeText(Screen.height/10, Screen.height * 0.26, Screen.width/20, Screen.width * 0.55, Datas.getText() ); // u d l r (margins) + Text to display
+	
+	audioPlayer.placeMusic (Screen.height * 0.74 + 10, Screen.height/10, Screen.width/20, Screen.width * 0.45, Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
+	
+
+	// create plane
+	//strip.InitVideoScreen();
+	
+=======
+>>>>>>> 2be27d8eda895fe6dadb0a7f4900584d9e8949f6
 	Datas.getVideos();
 		
 }
