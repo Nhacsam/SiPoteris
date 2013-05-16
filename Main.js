@@ -30,6 +30,11 @@ private var mesh3D : createSphericMesh;
 
 function Start () {
 	
+	//print('hello world');
+	//Debug.Log('hello world');
+	
+	
+	
 	// MouseLook :
 	if( isOnIpad() ) {
 		
