@@ -173,7 +173,7 @@ function EnterOnFullScreen( Video : GameObject ) {
 	textViewer.placeText(Screen.height * (1-textTop), Screen.height * textBottom, Screen.width * textLeft, Screen.width * (1-textRight), Datas.getText()); // u d l r (margins) + Text to display
 	audioPlayer.placeMusic (Screen.height * (1-musicTop), Screen.height * musicBottom, Screen.width * musicLeft, Screen.width * (1-musicRight), Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
 	
-	strip.initStrip( Rect( -Screen.width/2 , 0 , 2*Screen.width , Screen.height ) , Rect( Screen.width*stripLeft , 0 , (stripRight-stripLeft)*Screen.width , Screen.height/8 ) );
+	//strip.initStrip( Rect( -Screen.width/2 , 0 , 2*Screen.width , Screen.height ) , Rect( Screen.width*stripLeft , 0 , (stripRight-stripLeft)*Screen.width , Screen.height/8 ) );
 	
 	for (var i = 0; i < slideShowImgs.length; i++ ) {
 		slideShowElmt = new SLIDESHOWELMT(		slideShowImgs[i],
