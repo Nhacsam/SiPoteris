@@ -117,7 +117,7 @@ function displayMusic() {
 		}
 		
 		/* Test bouton changer musique, amené à disparaitre un jour */
-		if (GUI.Button(Rect(lBorder + 3 * buttonSize, /* test */ buttonSize + /* fin test */uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), 200, buttonSize), "Changer musique :)")) {
+		if (GUI.Button(Rect( 0.3 * Screen.width, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), 200, buttonSize), "OO")) {
 			changeMusic("");
 		}
 		

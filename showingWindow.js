@@ -1,3 +1,5 @@
+/* Le truc juste au dessus du slideshow (si on change pas la disposition) */
+
 #pragma strict
 
 // dépendences
