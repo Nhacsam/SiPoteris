@@ -82,7 +82,7 @@ function OnGUIFullScreen(){
 	
 	if( onFullScreen ) {
 		
-		var Rectangle : Rect = new Rect(0,0,50,50) ;
+		var Rectangle : Rect = new Rect(0,Screen.height-50,50,50) ;
 		var returnTexture : Texture = Resources.Load("blue_left_arrow");
 		if( GUI.Button( Rectangle, returnTexture ) ) {
 			Debug.Log( 'Sortie de l\'interface demandée' );

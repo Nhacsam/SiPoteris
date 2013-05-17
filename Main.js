@@ -87,8 +87,8 @@ function Start () {
 	Zoom.AddOnEndZoom(VideoFull.EnterOnFullScreen);
 	
 	
-	Zoom.AddOnZoom( switchFiealdOfView );
-	Zoom.AddOnLeave( switchFiealdOfView );
+	
+	Zoom.AddOnLeave( switchFieldOfView );
 	
 	VideoFull.SetLeaveCallback( Zoom.toOnDeZoom );
 	
@@ -146,7 +146,7 @@ function CreateLight () {
 
 
 
-function switchFiealdOfView() {
+function switchFieldOfView() {
 	camera.fieldOfView  = ( camera.fieldOfView == 80 ) ? 60 : 80 ;
 }
 
