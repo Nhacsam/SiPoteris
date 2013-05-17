@@ -49,11 +49,13 @@ static function getFilesInArrayFromFolder( folder : String, extension : String, 
 	
 	var FilesNameTab : Array = new Array();
 	
-	var fileInfo = Directory.GetFiles(root + '/' + folder + '/', "*" + extension);
-	for (file in fileInfo) {
-		FilesNameTab.Push( removeExtension( fromResourcesPath(file) )  );
-	}
+	if( isDirExisting(root + '/' + folder) ) {
 	
+		var fileInfo = Directory.GetFiles(root + '/' + folder + '/', "*" + extension);
+		for (file in fileInfo) {
+			FilesNameTab.Push( removeExtension( fromResourcesPath(file) )  );
+		}
+	}
 	return FilesNameTab ;
 }
 
