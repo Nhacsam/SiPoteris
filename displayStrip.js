@@ -115,7 +115,7 @@ function OnGUIStrip(){
 
 	if( onFullScreen ){
 		switch( states ){
-			case states.STATE_OUT : 
+			case states.STATE_OUT : //petit
 					rctOfPicture = displayStrip( rectOUT , "dianeIm" );
 					rectDRAG = rectIN;
 					if( !VideoInit ){
@@ -132,7 +132,7 @@ function OnGUIStrip(){
 					grr=false;
 					}*/
 				break;
-			case states.STATE_IN :
+			case states.STATE_IN : // grand
 					rctOfPicture = displayStrip( rectDRAG , "dianeIm" );
 					if( VideoInit ){
 					putVideo(videoScreen,"ALLdiane");
