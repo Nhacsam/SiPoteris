@@ -164,6 +164,10 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 
 }
 
+function placeTextFactor (u: float, d: float, l: float, r: float, text: String) {
+	placeText(u*Screen.height, d*Screen.height, l*Screen.width, r*Screen.width, text);
+}
+
 /*
 	*get number of spaces in numLine line
 */

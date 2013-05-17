@@ -93,6 +93,10 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
     }
 }
 
+function placeMusicFactor (u: float, d: float, l: float, r: float, tab: Array) {
+	placeMusic(u*Screen.height, d*Screen.height, l*Screen.width, r*Screen.width, tab);
+}
+
 function displayMusic() {
 
 	/* Do not display anything for music if play btn is not loaded or if there is no sound to play */	
