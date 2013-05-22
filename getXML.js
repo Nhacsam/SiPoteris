@@ -5,7 +5,7 @@
 This script parses xml files, informations about videos.
 	
 */
-
+#pragma strict
 
 import System.Xml;
 import System.IO;
