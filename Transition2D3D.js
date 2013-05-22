@@ -36,13 +36,15 @@ function Change2D3D(){
 	
 	
 	if(Videos.isScene2D()==true){	
-	Videos.changeSettings(true);
-	cameraTransition();
+		Videos.changeSettings(true);
+		Zoom.currently2D(true);
+		cameraTransition();
 	}
 	else{
-	control.enabled=false;
-	Videos.changeSettings(false);
-	cameraTransition();
+		control.enabled=false;
+		Videos.changeSettings(false);
+		Zoom.currently2D(false);
+		cameraTransition();
 
 	}
 

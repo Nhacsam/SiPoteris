@@ -41,7 +41,7 @@ private var beginTime : float = 0.0f ;
 private var finalPos : Vector3 ;
 private var finalRot : Vector3 ;
 
-private var isScene2D : boolean = true; // Provisoire jusqu'à ce que Maxime range son bordel =D
+private static var isScene2D : boolean = true; // Provisoire jusqu'à ce que Maxime range son bordel =D
 
 /*
  * Ajoute les listener d'envenements
@@ -218,6 +218,9 @@ function toOnSphere () {
 	
 }
 
+static function currently2D (b: boolean) {
+	isScene2D = b;
+}
 
 /*
  * Calcule les position et rotation finales optimales de la caméra
