@@ -179,7 +179,7 @@ function changeMusic(soundName) {
 function removeMusic() {
 	onFullScreen = false;
 	
-	if( audio )
+	if(audio)
 		audio.Stop();
 	
 	Destroy(GetComponent(GUIText));

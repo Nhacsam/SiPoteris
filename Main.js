@@ -24,6 +24,8 @@ private var VideoFull : FullScreen ;
 
 private var mesh3D : createSphericMesh;
 
+private var Trans :Transition2D3D;
+
 
 function Start () {
 	
@@ -55,6 +57,8 @@ function Start () {
 	move = gameObject.AddComponent("moveSurface") as moveSurface;
 	VideoFull= gameObject.AddComponent("FullScreen") as FullScreen;
 	mesh3D = gameObject.AddComponent("createSphericMesh") as createSphericMesh;
+	Trans = gameObject.AddComponent("Transition2D3D") as Transition2D3D;
+	
 	
 	/*
 	 * Inits
@@ -102,6 +106,7 @@ function Start () {
 
 function Update () {
 	
+	Trans.Update2D3D();
 	Zoom.UpDateZoom ();
 	VideoFull.UpDateFullScreen();
 	
@@ -158,31 +163,6 @@ function OnGUI() {
 	VideoFull.OnGUIFullScreen();
 	Zoom.OnGUIZoom();
 }
-
-
-/*
- * Ajoute les listener d'envenements
- /
-
-function OnEnable(){
-	Gesture.onShortTapE += OnTap;
-	Gesture.onLongTapE += OnTap;
-	Gesture.onDoubleTapE += OnTap;
-}
-
-function OnDisable(){
-	Gesture.onShortTapE -= OnTap;
-	Gesture.onLongTapE -= OnTap;
-	Gesture.onDoubleTapE -= OnTap;
-}
-
-
-function Ontap( v : Vector2) {
-	Zoom.OnTapZoom(v);
-}*/
-
-
-
 
 
 /*
