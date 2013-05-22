@@ -14,9 +14,6 @@ var AllGO2D : Array = Array();
 // array of GO - meshes over movie in 3D
 var AllGO3D : Array = Array();
 
-// first time in 3D scene ?
-private var firstIn3D : boolean = true;
-
 private var mouseLook : MouseLook ;
 private var control : CameraControl ;
 
@@ -27,13 +24,10 @@ private var VideoFull : FullScreen ;
 
 private var mesh3D : createSphericMesh;
 
+private var Trans :Transition2D3D;
+
 
 function Start () {
-	
-	//print('hello world');
-	//Debug.Log('hello world');
-	
-	
 	
 	// MouseLook :
 	if( isOnIpad() ) {
@@ -58,6 +52,8 @@ function Start () {
 	move = gameObject.AddComponent("moveSurface") as moveSurface;
 	VideoFull= gameObject.AddComponent("FullScreen") as FullScreen;
 	mesh3D = gameObject.AddComponent("createSphericMesh") as createSphericMesh;
+	Trans = gameObject.AddComponent("Transition2D3D") as Transition2D3D;
+	
 	
 	/*
 	 * Inits
@@ -90,8 +86,8 @@ function Start () {
 	Zoom.AddOnEndZoom(VideoFull.EnterOnFullScreen);
 	
 	
-	Zoom.AddOnZoom( switchFiealdOfView );
-	Zoom.AddOnLeave( switchFiealdOfView );
+	
+	Zoom.AddOnLeave( switchFieldOfView );
 	
 	VideoFull.SetLeaveCallback( Zoom.toOnDeZoom );
 	
@@ -105,6 +101,7 @@ function Start () {
 
 function Update () {
 	
+	Trans.Update2D3D();
 	Zoom.UpDateZoom ();
 	VideoFull.UpDateFullScreen();
 	
@@ -149,9 +146,11 @@ function CreateLight () {
 
 
 
-function switchFiealdOfView() {
+function switchFieldOfView() {
 	camera.fieldOfView  = ( camera.fieldOfView == 80 ) ? 60 : 80 ;
 }
+
+
 
 /*
  * Appelle les fonctions des scripts gérant l'interface
@@ -161,8 +160,6 @@ function OnGUI() {
 	VideoFull.OnGUIFullScreen();
 	Zoom.OnGUIZoom();
 }
-
-
 
 
 /*
@@ -197,6 +194,9 @@ function placeMeshHash ( t : Hashtable ){
 		var p : Vector3 = createPolar.getTruePosition( float.Parse( t['theta_min'] ) , float.Parse( t['theta_max'] ) , float.Parse( t['ratioRmin'] ) , float.Parse( t['ratioRmax'] ) , gameObject );
 		s.InitPosPlane( p );
 	}
+	
+	if( ! isOnIpad() )
+		s.createParsedFile();
 	
 			
 	AllGO2D.Push( obj );

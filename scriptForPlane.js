@@ -27,6 +27,12 @@ private var delta : float = 0;
 private var lastMoveTime : float = 0;
 
 
+// nom du fichier contenant les adresses des ressources
+private var parsedFilePath : String = "resourcesInfos.txt" ;
+
+
+
+
 /********************** METHODS **********************/
 
 
@@ -134,6 +140,10 @@ public function getLastMoveTime() : float {
 
 
 
+static function isOnIpad() : boolean {
+	return ( SystemInfo.deviceType == DeviceType.Handheld );
+}
+
 
 
 
@@ -237,11 +247,122 @@ public function getDefaultMiniatureFolder() : String {
 }
 
 
+
 /*
  * Récupère le texte qui sera afficher dans la GUI
  */
 
 public function getText() : String {
+	var path : String = getFileText() ;
+	var text = fileSystem.getTextFromFile(path) ;
+	if( text == -1)
+		Debug.LogWarning('Invalid text file name '+ path +' for the plane ' + Name);
+	else
+		return text ;
+}
+
+
+/*
+ * Récupère la liste des fichiers de chaques catégorie
+ * pour l'interface graphique utilisateur
+ */
+
+public function getSounds() : Array {
+
+	if( isOnIpad() )
+		return getIpadSounds() ;
+	else
+		return getEditorSounds() ;
+}
+
+public function getImages() : Array {
+	
+	if( isOnIpad() )
+		return getIpadImages() ;
+	else
+		return getEditorImages() ;
+}
+
+
+public function getVideos() : Array {
+	
+	if( isOnIpad() )
+		return getIpadVideos() ;
+	else
+		return getEditorVideos() ;
+}
+
+public function getMiniatures() : Array {
+	
+	if( isOnIpad() )
+		return getIpadMiniatures() ;
+	else
+		return getEditorMiniatures() ;
+}
+
+public function getFileText() : String {
+	
+	if( isOnIpad() )
+		return getIpadFileText() ;
+	else
+		return getEditorFileText() ;
+}
+
+
+/*
+ * Récupère la liste des fichiers de chaques catégorie
+ * pour l'interface graphique utilisateur
+ *
+ * Depuis l'editeur
+ */ 
+
+public function getEditorSounds() : Array {
+	
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getAudioFolder(), '', null ) ;
+	
+	if( Datas.length <= 0 ) // not found
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultAudioFolder(), '', null ) ;
+
+	return Datas ;
+}
+
+public function getEditorImages() : Array {
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getImgFolder(), '', null ) ;
+	
+	if( Datas.length <= 0 ) // not found
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultImgFolder(), '', null ) ;
+
+	return Datas ;
+}
+
+
+public function getEditorVideos() : Array {
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getVideoFolder(), '', fileSystem.getStreamingFolder() ) ;
+	
+	if( Datas.length <= 0 ) // not found
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultVideoFolder(), '', fileSystem.getStreamingFolder() ) ;
+
+	return Datas ;
+}
+
+public function getEditorMiniatures() : Array {
+	
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getMiniatureFolder(), '', null ) ;
+	
+	if( Datas.length <= 0 ) // not found
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultMiniatureFolder(), '', null ) ;
+
+	return Datas ;
+}
+
+
+
+/*
+ * Récupère le nom du fichier qui contient le 
+ * texte qui sera afficher dans la GUI
+ */
+
+public function getEditorFileText() : String {
 	
 	var path : String = '' ;
 	var text ;
@@ -256,12 +377,9 @@ public function getText() : String {
 				
 				// lit le contenue du fichier
 				path = getFolderName(null) + (( HT['GUI'] as Hashtable )['text'] as String ) ;
+				if (path)
+					return path ;
 				
-				text = fileSystem.getTextFromFile(path) ;
-				if( text == -1)
-					Debug.LogWarning('Invalid text file name '+ path +' for the plane ' + Name);
-				else
-					return text ;
 					
 			} // Contains text
 		} // type of
@@ -272,78 +390,97 @@ public function getText() : String {
 	 * sinon si un fichier de type txt est présent dans le dossier
 	 * C'est lui qu'on utilise
 	 */
-	path = fileSystem.getFirstFileFromFolder( getFolderName(null), '.txt', null ) ;
+	var allPaths : Array = fileSystem.getFilesInArrayFromFolder( getFolderName(null), '.txt', null ) ;
 	
-	if( path ) {
-		text = fileSystem.getTextFromFile(path) ;
-		if( text != -1)
-			return text ;
+	for( var i = 0; i < allPaths.length; i++ ) {
+		
+		if( allPaths[i] != getFolderName(null) +'/'+ fileSystem.removeExtension(parsedFilePath) )
+			return allPaths[i] ;
 	}
+	
 	/*
 	 * sinon si un fichier de type txt est présent dans le dossier par defaut
 	 * C'est lui qu'on utilise
 	 */
-	
 	path = fileSystem.getFirstFileFromFolder( getDefaultFolder(null), '.txt', null ) ;
 	
-	if( path ) {
-		text = fileSystem.getTextFromFile(path) ;
-		if( text != -1)
-			return text ;
-	}
-	
+	if( path )
+		return path ;
 	/*
 	 * si rien de concluent est trouvé
 	 * Warning + renvoie d'une chaine vide
 	 */
 	Debug.LogWarning('No text file found for the plane ' + Name);
 	return '' ;
+
+	
 }
+
+
 
 
 /*
  * Récupère la liste des fichiers de chaques catégorie
  * pour l'interface graphique utilisateur
+ *
+ * Depuis l'iPad
+ */ 
+
+
+public function getIpadSounds() : Array {
+	/*
+	if( GUIFiles.length == 0 )
+		GUIFiles = fileSystem
+	*/
+	return Array() ;
+}
+
+public function getIpadImages() : Array {
+	return Array() ;
+}
+
+
+public function getIpadVideos() : Array {
+	return Array() ;
+}
+
+public function getIpadMiniatures() : Array {
+	return Array() ;
+}
+
+public function getIpadFileText() : String {
+	return '' ;
+}
+
+
+/*
+ * Crée le fichier contenant tous les donnée
+ * relatif à ce plan
  */
 
-public function getSounds() : Array {
-	/*
-	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getAudioFolder(), '', null ) ;
+public function createParsedFile() {
 	
-	if( Datas.length <= 0 ) // not found
-		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultAudioFolder(), '', null ) ;
-
-	return Datas ;/**/
-}
-
-public function getImages() : Array {
-	/*var Datas : Array = fileSystem.getFilesInArrayFromFolder( getImgFolder(), '', null ) ;
+	var gettingFilesFunctions : Array = new Array() ;
+	gettingFilesFunctions.Push( getSounds );
+	gettingFilesFunctions.Push( getImages );
+	gettingFilesFunctions.Push( getVideos );
+	gettingFilesFunctions.Push( getMiniatures );
+	gettingFilesFunctions.Push( getTextArrayWrapper );
 	
-	if( Datas.length <= 0 ) // not found
-		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultImgFolder(), '', null ) ;
-
-	return Datas ;*/
+	fileSystem.createParsedFile( fileSystem.getResourcesPath() +'/'+ getFolderName(null) +'/'+ parsedFilePath, gettingFilesFunctions );
 }
 
 
-public function getVideos() : Array {
-	/*var Datas : Array = fileSystem.getFilesInArrayFromFolder( getVideoFolder(), '', fileSystem.getStreamingFolder() ) ;
-	
-	if( Datas.length <= 0 ) // not found
-		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultVideoFolder(), '', fileSystem.getStreamingFolder() ) ;
+/*
+ * Function getText Wrapper pour renvoyer un Array
+ * (utile pour le callbak de
+ */
 
-	return Datas ;*/
+public function getTextArrayWrapper() : Array {	
+	return Array( getFileText() ) ;
 }
 
-public function getMiniatures() : Array {
-	
-	/*var Datas : Array = fileSystem.getFilesInArrayFromFolder( getMiniatureFolder(), '', null ) ;
-	
-	if( Datas.length <= 0 ) // not found
-		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultMiniatureFolder(), '', null ) ;
 
-	return Datas ;*/
-}
 
 
 

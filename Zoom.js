@@ -241,6 +241,7 @@ function ComputeFinalPos3D()  {
 	var Rot = camera.transform.rotation;
 	
 	camera.transform.LookAt(selected.transform);
+	camera.fieldOfView=80;
 	
 	var CameraInitialDecal = 20 ;
 	

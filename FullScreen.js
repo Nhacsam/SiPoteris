@@ -84,7 +84,7 @@ function OnGUIFullScreen(){
 	
 	if( onFullScreen ) {
 		
-		var Rectangle : Rect = new Rect(0,0,50,50) ;
+		var Rectangle : Rect = new Rect(0,Screen.height-50,50,50) ;
 		var returnTexture : Texture = Resources.Load("blue_left_arrow");
 		if( GUI.Button( Rectangle, returnTexture ) ) {
 			Debug.Log( 'Sortie de l\'interface demandée' );
@@ -180,7 +180,7 @@ function EnterOnFullScreen( Video : GameObject ) {
 	for (var i = 0; i < slideShowImgs.length; i++ ) {
 		slideShowElmt = new SLIDESHOWELMT(		slideShowImgs[i],
 												WINDOWTYPES.IMG,
-												Vector2(260, 390) 	) ;
+												Vector2.zero 	) ;
 		
 		slideshow.AddElmt(		fileSystem.getAssociatedMin( slideShowImgs[i], slideShowMin ),
 								slideShowElmt 									);

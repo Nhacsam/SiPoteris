@@ -87,8 +87,10 @@ function SetNewTextureObj( e ) {
 		SetNewTexture( t.path, t.type, Vector2.zero);
 		
 	} else {
-		wObj.renderer.enabled = false ;
-		Debug.LogWarning('Empty SLIDESHOWELMT element given at SetNewTextureObj() ');
+		if( wObj)
+			wObj.renderer.enabled = false ;
+			
+		Console.Warning('Empty SLIDESHOWELMT element given at SetNewTextureObj() ');
 	}
 }
 
@@ -134,7 +136,7 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2 ) {
 			
 
 			
-			print(size);
+			Console.Test(size, 1);
 			//chageObjSizeToOptimal(size);
 			
 			wObj.renderer.material.mainTexture = wImgTex ;
