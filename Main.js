@@ -37,7 +37,7 @@ function Start () {
 	
 	} else {
 		mouseLook = gameObject.AddComponent("MouseLook");
-		mouseLook.enabled = false ;
+		mouseLook.enabled = true ;
 	}
 	
 	
@@ -73,7 +73,7 @@ function Start () {
 
 	
 	//fin debug test
-	Zoom.Init(AllGO2D , enableMouseLook);
+	Zoom.Init(AllGO2D, AllGO3D, enableMouseLook);
 	
 	
 	VideoFull.InitFullScreen();
@@ -119,6 +119,19 @@ function Update () {
 	}
 	
 }
+
+/* USELESS STUFF    -K */
+/*function OnTap () {
+	
+	if( 2D )
+		for ( AllGO2D )
+			Zoom.TestCol( GO2D )
+	else
+		for ( AllGO3D)
+			sjdhfohsoifhsodhf
+	
+	
+}*/
 
 function enableMouseLook( b : boolean ) {
 	/*
