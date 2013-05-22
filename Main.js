@@ -14,8 +14,6 @@ var AllGO2D : Array = Array();
 // array of GO - meshes over movie in 3D
 var AllGO3D : Array = Array();
 
-private var mouseLook : MouseLook ;
-private var control : CameraControl ;
 
 private var Videos : videoSettings ;
 private var Zoom : Zoom ;
@@ -31,21 +29,7 @@ function Start () {
 	
 	//print('hello world');
 	//Debug.Log('hello world');
-	
-	
-	
-	// MouseLook :
-	if( isOnIpad() ) {
-		
-		control = gameObject.AddComponent("CameraControl");
-		control.enabled=false;
-	
-	} else {
-		mouseLook = gameObject.AddComponent("MouseLook");
-		mouseLook.enabled = false ;
-	}
-	
-	
+
 	/*
 	 * Instanciate the objects
 	 */
@@ -159,7 +143,7 @@ function switchFieldOfView() {
  * Appelle les fonctions des scripts gérant l'interface
  */
 function OnGUI() {
-	Videos.OnGUIVideoSetting();
+	Trans.OnGUIVideoSetting();
 	VideoFull.OnGUIFullScreen();
 	Zoom.OnGUIZoom();
 }
