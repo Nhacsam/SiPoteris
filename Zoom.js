@@ -41,6 +41,7 @@ private var beginTime : float = 0.0f ;
 private var finalPos : Vector3 ;
 private var finalRot : Vector3 ;
 
+private static var isScene2D : boolean = true; // Provisoire jusqu'à ce que Maxime range son bordel =D
 
 /*
  * Ajoute les listener d'envenements
@@ -130,7 +131,6 @@ function OnTap(mousePos : Vector2) {
 			var ray : Ray = camera.ScreenPointToRay(mousePos);
 			var hit : RaycastHit = new RaycastHit() ;
 			
-			
 			var Video : GameObject = Videos[i] ;
 			if( Video.collider.Raycast(ray, hit, 1000.0f) ) {
 				
@@ -218,13 +218,26 @@ function toOnSphere () {
 	
 }
 
+static function currently2D (b: boolean) {
+	isScene2D = b;
+}
 
 /*
- * Calcul les position et rotation finales optimale de la caméra
+ * Calcule les position et rotation finales optimales de la caméra
  * lors d'un zoom sur une structure
  */
-
 function ComputeFinalPos()  {
+	if (isScene2D)
+		ComputeFinalPos2D();
+	else
+		ComputeFinalPos3D();
+}
+
+function ComputeFinalPos2D() {
+	finalPos = Vector3 (0,0,0);
+}
+
+function ComputeFinalPos3D()  {
 	
 	
 	var Pos = camera.transform.position;
@@ -232,7 +245,6 @@ function ComputeFinalPos()  {
 	
 	camera.transform.LookAt(selected.transform);
 	camera.fieldOfView=80;
-	
 	
 	var CameraInitialDecal = 20 ;
 	
@@ -267,7 +279,20 @@ function ComputeFinalPos()  {
 	
 }
 
-function ComputeFinalRot() {
+function ComputeFinalRot()  {
+	if (isScene2D)
+		ComputeFinalRot2D();
+	else
+		ComputeFinalRot3D();
+}
+
+function ComputeFinalRot2D() {
+	finalRot = camera.transform.eulerAngles + Vector3 (0,180,0);
+
+}
+
+
+function ComputeFinalRot3D() {
 	
 	var Rot : Vector3 = camera.transform.eulerAngles ;
 	

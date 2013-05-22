@@ -139,6 +139,8 @@ function switchFieldOfView() {
 	camera.fieldOfView  = ( camera.fieldOfView == 80 ) ? 60 : 80 ;
 }
 
+
+
 /*
  * Appelle les fonctions des scripts gérant l'interface
  */
@@ -181,6 +183,9 @@ function placeMeshHash ( t : Hashtable ){
 		var p : Vector3 = createPolar.getTruePosition( float.Parse( t['theta_min'] ) , float.Parse( t['theta_max'] ) , float.Parse( t['ratioRmin'] ) , float.Parse( t['ratioRmax'] ) , gameObject );
 		s.InitPosPlane( p );
 	}
+	
+	if( ! isOnIpad() )
+		s.createParsedFile();
 	
 			
 	AllGO2D.Push( obj );

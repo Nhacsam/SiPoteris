@@ -1,4 +1,4 @@
-
+#pragma strict
 /***********************************************************/
 /******** Manipulation des dossiers et leur contenu ********/
 /***********************************************************/
@@ -91,26 +91,80 @@ static function getTextFromFile( path : String ) {
 static function isDirExisting( path : String ) : boolean {
 	
 	var exist  : boolean = false ;
-	var dir : DirectoryInfo ;
 	
 	try {
-		 dir = Directory.CreateDirectory( path ) ;
-		 exist = dir.Exists ;
-	} catch (e :  System.Exception ) {
 		
-		Debug.LogWarning("Erreur : \n" + e);
+		var dir : DirectoryInfo = new DirectoryInfo( path );
+		exist = dir.Exists ;
 		
-		if(!exist) {
-			dir = new DirectoryInfo( path );
-			exist = dir.Exists ;
+		if( ! exist ) {
+			dir = Directory.CreateDirectory( path ) ;
+			Console.Warning(	'Le dossier "'+ path + "\" est inexistant \n" +
+								'Le dossier à été crée !');
 		}
+	} catch (e :  System.Exception ) {
+		Console.Warning("Erreur (sur iPad ?): \n" + e);
 	}
-	return exist ;
 	
+	return exist ;
+}
+
+/*
+ * Parse le fichier en renvoyant un tableau contenant chaque lignes
+ */
+
+static function  parseFile( parsedFilePath : String ) : Array {
+	
+	var parsedFile : StreamReader = new StreamReader( parsedFilePath );
+	var linesArray : Array = Array();
+	
+	var line : String ;
+	
+	line = parsedFile.ReadLine();
+	while(line) {
+		
+		linesArray.Push(line);
+		line = parsedFile.ReadLine();
+	}
+	parsedFile.Close();
+	
+	Console.Info( linesArray.length + ' parsed from the file ' + parsedFilePath );
+	
+	return linesArray ;
 }
 
 
 
+/*
+ * Référence tous les fichiers contenue dans le dossier et le crée
+ */
+
+static function createParsedFile( 	parsedFilePath : String,
+									getFiles : Array
+								) {
+	var i : int = 0 ;
+	var j : int = 0 ;
+	
+	var parsedFile = StreamWriter(parsedFilePath);
+	Console.Info('Creating parsed file ' + parsedFilePath );
+		
+	
+	// files
+	for( i = 0; i < getFiles.length; i++) {
+		
+		var files : Array = (getFiles[i] as function() : Array )() ;
+		
+		if (files ) {
+			for( j = 0; j < files.length; j++ ) {
+				parsedFile.Write( files[j] + "\n");				
+			}
+		} else
+			Console.HandledError( 'Return value null from callback '+i+' in fileSystem.createParsedFile' );
+		
+	}
+	 parsedFile.Close();
+}
+ 
 /******************************************************/
 /******** Traitements sur les nom des fichiers ********/
 /******************************************************/

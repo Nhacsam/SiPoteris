@@ -10,13 +10,11 @@ private var plane2D = GameObject.CreatePrimitive(PrimitiveType.Plane);
 //ref to the sphere 3D
 private var sphere3D:GameObject;
 
-//to access accelerometer
-private var control:CameraControl;
 private var button:boolean=true;
 
 private var Trans:Transition2D3D;
 
-private var scene2D : boolean=true;
+private var rot;
 
 /*
 * functions.
@@ -98,7 +96,7 @@ function generateScene2D(){
     plane2D.AddComponent("PlayFileBasedMovieDefault");
   	plane2D.renderer.material = Resources.Load("MovieHD");
 
-
+	rot=plane2D.transform.eulerAngles;
 
 }
 /*
@@ -116,25 +114,7 @@ function generateScene3D(){
 	
 }
 
-/*
-* button switcher interface 2D/3D and directions
-*/
 
-function  OnGUIVideoSetting(){
-
-	if(button && Trans.isEnableTrans()==false ){
-
-		GUI.Label(Rect(Screen.width/2 +315 , Screen.height-60, camera.pixelWidth , camera.pixelHeight),"Click anywhere on the screen \n   to get further information.");
-	
- 	 	if (GUI.Button(new Rect( 0, Screen.height-100, 100, 100), scene2D ? "3D view" : "2D view" ))
-			{
-				Trans.Change2D3D();
-				   
-			}
-  	  
-    }
-        
-}
 
 //called in Transition2D3D
 function changeSettings(b:boolean){
@@ -143,16 +123,6 @@ function changeSettings(b:boolean){
 	sphere3D.renderer.enabled=b;
 }
 
-//called in Transition2D3D
-function switchScene(){
-
-	scene2D=!scene2D;
-
-}
-
-function isScene2D(){
-	return scene2D;
-}
 
 
 /*
@@ -240,6 +210,15 @@ function getFlagEndVideo(){
 	
 }
 
+
+
+function endTransition(){
+	var finished:boolean=false;
+	plane2D.transform.Rotate(Vector3(1,0,0));
+	
+	if(plane2D.transform.eulerAngles==rot)finished=true;
+	return finished;
+}
 /*
 * part to hanlde zoom on a position
 */

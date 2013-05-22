@@ -171,7 +171,7 @@ function switchScene(){
 	scene2D=!scene2D;
 }
 
-//callback for other functions in other scripts
+//getter for other functions in other scripts
 function isScene2D(){
 	return scene2D;
 }
