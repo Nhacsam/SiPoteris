@@ -310,42 +310,42 @@ public function getText() : String {
  */
 
 public function getSounds() : Array {
-	
+	/*
 	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getAudioFolder(), '', null ) ;
 	
 	if( Datas.length <= 0 ) // not found
 		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultAudioFolder(), '', null ) ;
 
-	return Datas ;
+	return Datas ;/**/
 }
 
 public function getImages() : Array {
-	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getImgFolder(), '', null ) ;
+	/*var Datas : Array = fileSystem.getFilesInArrayFromFolder( getImgFolder(), '', null ) ;
 	
 	if( Datas.length <= 0 ) // not found
 		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultImgFolder(), '', null ) ;
 
-	return Datas ;
+	return Datas ;*/
 }
 
 
 public function getVideos() : Array {
-	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getVideoFolder(), '', fileSystem.getStreamingFolder() ) ;
+	/*var Datas : Array = fileSystem.getFilesInArrayFromFolder( getVideoFolder(), '', fileSystem.getStreamingFolder() ) ;
 	
 	if( Datas.length <= 0 ) // not found
 		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultVideoFolder(), '', fileSystem.getStreamingFolder() ) ;
 
-	return Datas ;
+	return Datas ;*/
 }
 
 public function getMiniatures() : Array {
 	
-	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getMiniatureFolder(), '', null ) ;
+	/*var Datas : Array = fileSystem.getFilesInArrayFromFolder( getMiniatureFolder(), '', null ) ;
 	
 	if( Datas.length <= 0 ) // not found
 		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultMiniatureFolder(), '', null ) ;
 
-	return Datas ;
+	return Datas ;*/
 }
 
 

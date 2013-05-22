@@ -25,6 +25,10 @@ private var CameraInitialPos : Vector3 ;
 private var CameraInitialOrthographic : boolean ;
 
 
+// A appeller pour sortir
+private var toOnDeZoom : function() ;
+
+
 /* Variables qui régissent la disposition du full screen en proportion de la hauteur / largeur (donc entre 0 et 1) */
 /* Le point (0,0) est en bas à gauche. */
 private var marginTop : float = 0.9;
@@ -32,8 +36,6 @@ private var marginBottom : float = 0.1;
 private var marginLeft : float = 0.05;
 private var marginRight : float = 0.95;
 
-// A appeller pour sortir
-private var toOnDeZoom : function() ;
 private var textTop : float = marginTop;
 private var textBottom : float = 0.26;
 private var textLeft : float = marginLeft;
@@ -170,8 +172,8 @@ function EnterOnFullScreen( Video : GameObject ) {
 	slideshow.InitSlideShowFactor(slideShowImgs.length, Rect( slideLeft , slideBottom , slideRight - slideLeft , slideTop - slideBottom), 20);
 	windows.InitWindowFactor( Rect( pictureLeft , 1-pictureTop , pictureRight-pictureLeft, pictureTop-pictureBottom), 20 );
 	
-	textViewer.placeText(Screen.height * (1-textTop), Screen.height * textBottom, Screen.width * textLeft, Screen.width * (1-textRight), Datas.getText()); // u d l r (margins) + Text to display
-	audioPlayer.placeMusic (Screen.height * (1-musicTop), Screen.height * musicBottom, Screen.width * musicLeft, Screen.width * (1-musicRight), Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
+	textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getText()); // u d l r (margins) + Text to display
+	audioPlayer.placeMusicFactor (1-musicTop, musicBottom, musicLeft, 1-musicRight, Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
 	
 	//strip.initStrip( Rect( -Screen.width/2 , 0 , 2*Screen.width , Screen.height ) , Rect( Screen.width*stripLeft , 0 , (stripRight-stripLeft)*Screen.width , Screen.height/8 ) );
 	
