@@ -44,7 +44,7 @@ function endEnable(){
 
 function  OnGUIVideoSetting(){
 
-	if(button && !enable ){
+	if(Videos.OnPlay()==true && !enable ){
 
 		GUI.Label(Rect(Screen.width/2 +315 , Screen.height-60, camera.pixelWidth , camera.pixelHeight),"Click anywhere on the screen \n   to get further information.");
 	
