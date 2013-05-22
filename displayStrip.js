@@ -171,7 +171,8 @@ function OnGUIStrip(){
 	*action after event tap
 */
 function OnTap( v : Vector2 ){
-	
+	/*
+	Debug.Log("onTap displaystrip");
 	var ray : Ray = getRay( v );
 	var hit : RaycastHit = new RaycastHit();
 	
@@ -179,10 +180,10 @@ function OnTap( v : Vector2 ){
 	if( videoScreen.collider.Raycast( ray , hit , 2000.0f ) )
 		moveCameraToDisplay();
 	
+	Debug.Log("onTap displaystrip success");
 	
 	
 	
-	/*
 	var value : boolean = OnRect( rctOfPicture , v );
 	
 	if( (states != STATES_OF_STRIP.SWIPE_OUT || states != STATES_OF_STRIP.SWIPE_IN || states != STATES_OF_STRIP.STATE_IN) && value )
@@ -489,6 +490,8 @@ function putVideo( focus : GameObject , nom : String ){
 	var controllerMovie:PlayFileBasedMovieDefault;
 	controllerMovie=focus.GetComponent("PlayFileBasedMovieDefault");
 	controllerMovie.PlayMovie(nom + ".mov");
+	
+	Debug.Log("video loaded");
 	
 }
 

@@ -126,12 +126,14 @@ function displayMusic() {
 		}
 		
 		/* Name of the song */
+		
 		GUI.Label( Rect(lBorder + buttonSize + 10,
 						uBorder + buttonSize/(2*buttonSizeFactor) - widthLetter,
 						Screen.width - lBorder - rBorder,
 						heightLetter
 						),
-					soundNameStr);
+				soundNameStr);
+					
 	}
 }
 

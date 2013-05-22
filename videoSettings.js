@@ -4,7 +4,7 @@
 
 private var MovieController:GameObject;
 private var iOS : GameObject;
-private var scene2D : boolean;
+
 //ref to the screen 2D
 private var plane2D = GameObject.CreatePrimitive(PrimitiveType.Plane);
 //ref to the sphere 3D
@@ -14,6 +14,13 @@ private var sphere3D:GameObject;
 private var control:CameraControl;
 private var button:boolean=true;
 
+private var Trans:Transition2D3D;
+
+private var scene2D : boolean=true;
+
+/*
+* functions.
+*/
 
 function OnPlay(){
 
@@ -27,8 +34,9 @@ function OnPlay(){
 */
 function videoSettings () {
 
-	control = gameObject.AddComponent("CameraControl");
-	control.enabled=false;
+	Trans = gameObject.GetComponent("Transition2D3D") as Transition2D3D;
+	Trans.init();
+
 	//instantiate
 	iOS = new GameObject(); 
 	iOS.name="iOS";
@@ -47,12 +55,12 @@ function videoSettings () {
 	controllerScene.seekTime = new float[2];
 	
 	
-	scene2D=true;
+	
 	//set camera
 	var rot:Quaternion=Quaternion.identity;	
 	
-	this.transform.position=Vector3(0,-10,0);
-	this.transform.Rotate(Vector3(270,180,0));
+	camera.transform.position=Vector3(0,-10,0);
+	camera.transform.Rotate(Vector3(270,180,0));
 
 	//generate the 2 scenes
 	generateScene2D();
@@ -114,17 +122,36 @@ function generateScene3D(){
 
 function  OnGUIVideoSetting(){
 
-	if(button){
+	if(button && Trans.isEnableTrans()==false ){
 
-		GUI.Label(Rect(Screen.width/2 +275 , Screen.height-60, camera.pixelWidth , camera.pixelHeight),"Click anywhere on the screen \n   to get further information.");
+		GUI.Label(Rect(Screen.width/2 +315 , Screen.height-60, camera.pixelWidth , camera.pixelHeight),"Click anywhere on the screen \n   to get further information.");
 	
  	 	if (GUI.Button(new Rect( 0, Screen.height-100, 100, 100), scene2D ? "3D view" : "2D view" ))
 			{
-				Change2D3D();   
+				Trans.Change2D3D();
+				   
 			}
   	  
     }
         
+}
+
+//called in Transition2D3D
+function changeSettings(b:boolean){
+
+	plane2D.renderer.enabled=!b;
+	sphere3D.renderer.enabled=b;
+}
+
+//called in Transition2D3D
+function switchScene(){
+
+	scene2D=!scene2D;
+
+}
+
+function isScene2D(){
+	return scene2D;
 }
 
 
@@ -162,66 +189,6 @@ function videoHDZoomQuit(plane : GameObject){
 
 
 /*
-* reset camera parameters on switching 2D/3D
-*/
-function Change2D3D(){
-
-	
-	if(scene2D){	
-	plane2D.renderer.enabled=false;
-	sphere3D.renderer.enabled=true;
-	cameraTransition();
-
-	control.enabled=true;
- 	
-	}
-	else{
-	control.enabled=false;
-	sphere3D.renderer.enabled=false;
-	plane2D.renderer.enabled=true;
-	cameraTransition();
-
-	}
-
-	scene2D=!scene2D;
-
-} 
-
-function isScene2D(){
-	return scene2D;
-}
-
-/**
-* Camera switch 2D/3D
-*/
-function cameraTransition(){
-
-	if(scene2D){
-	var pos= camera.transform.rotation;
-	this.transform.position=Vector3(0,0,0);
-	this.transform.Rotate(Vector3(0,0,0));
-	
-	//light
-	light.type=LightType.Spot;
-	light.range=70;
-	light.intensity=0.88;
-	light.cookie=Resources.Load("camMask");
-	light.spotAngle=50;
-	//gameObject.AddComponent("MouseLook");
-	}
-	
-	else{
-	light.type=LightType.Point;
-	light.cookie=null;
-	//Destroy(gameObject.GetComponent("MouseLook"));
-	this.transform.position=Vector3(0,-10,0);
-	camera.transform.rotation = pos;
-	this.transform.Rotate(Vector3(270,180,0));
-	}
-	
-}
-
-/*
 * Set the parameters for the video (see the plug to know how to do it)
 */
 function putVideo( focus: GameObject, nom : String){
@@ -245,6 +212,8 @@ function putVideo( focus: GameObject, nom : String){
 	controllerMovie=focus.GetComponent("PlayFileBasedMovieDefault");
 	controllerMovie.PlayMovie(nom + ".mov");
 	
+	return true;
+	
 }
 
 /*
@@ -255,6 +224,8 @@ function stopVideo(focus: GameObject){
 	var controllerMovie:PlayFileBasedMovieDefault;
 	controllerMovie=focus.GetComponent("PlayFileBasedMovieDefault");
 	controllerMovie.StopMovie ();
+	
+	return true;
 
 }
 
@@ -308,9 +279,3 @@ function onDown(pos:Vector2){
 
 */
 
-/*
- * clique en zoom début recule
- * reset plan et vid
- * zoom sur le 2D
- * boutons en bas
- */

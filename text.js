@@ -236,6 +236,7 @@ function displayText() {
 	if (onFullScreen) {
 		for (var i : int = 0; i < textToDisplay.Length; i++) {
 			if (letterSpots[i].y >= uBorder && (letterSpots[i].y + heightLetter) <= Screen.height - dBorder)
+				
 				GUI.Label (letterSpots[i], ""+textToDisplay[i], styleLetterMiddle);
 		}
 	}

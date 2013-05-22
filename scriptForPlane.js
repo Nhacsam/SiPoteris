@@ -26,8 +26,6 @@ private var delta : float = 0;
 // Time when the object have been moved last
 private var lastMoveTime : float = 0;
 
-// Liste des fichiers pour l'interface
-private var GUIFiles : Array = new Array() ;
 
 // nom du fichier contenant les adresses des ressources
 private var parsedFilePath : String = "resourcesInfos.txt" ;
