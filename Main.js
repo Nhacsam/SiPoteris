@@ -14,8 +14,6 @@ var AllGO2D : Array = Array();
 // array of GO - meshes over movie in 3D
 var AllGO3D : Array = Array();
 
-private var mouseLook : MouseLook ;
-private var control : CameraControl ;
 
 private var Videos : videoSettings ;
 private var Zoom : Zoom ;
@@ -29,18 +27,9 @@ private var Trans :Transition2D3D;
 
 function Start () {
 	
-	// MouseLook :
-	if( isOnIpad() ) {
-		
-		control = gameObject.AddComponent("CameraControl");
-		control.enabled=false;
-	
-	} else {
-		mouseLook = gameObject.AddComponent("MouseLook");
-		mouseLook.enabled = true ;
-	}
-	
-	
+	//print('hello world');
+	//Debug.Log('hello world');
+
 	/*
 	 * Instanciate the objects
 	 */
@@ -114,24 +103,11 @@ function Update () {
 	
 		if( Videos.getFlagEndVideo() ){
 			move.resetPlane(AllGO2D[i]);
-			//Debug.Log("i am in" + Videos.getFlagEndVideo());
+			Debug.Log("reset plane" + i + Videos.getFlagEndVideo());
 		}
 	}
 	
 }
-
-/* USELESS STUFF    -K */
-/*function OnTap () {
-	
-	if( 2D )
-		for ( AllGO2D )
-			Zoom.TestCol( GO2D )
-	else
-		for ( AllGO3D)
-			sjdhfohsoifhsodhf
-	
-	
-}*/
 
 function enableMouseLook( b : boolean ) {
 	/*
@@ -169,7 +145,7 @@ function switchFieldOfView() {
  * Appelle les fonctions des scripts gérant l'interface
  */
 function OnGUI() {
-	Videos.OnGUIVideoSetting();
+	Trans.OnGUIVideoSetting();
 	VideoFull.OnGUIFullScreen();
 	Zoom.OnGUIZoom();
 }
