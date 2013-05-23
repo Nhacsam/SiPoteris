@@ -343,7 +343,12 @@ public function getEditorVideos() : Array {
 	
 	if( Datas.length <= 0 ) // not found
 		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultVideoFolder(), '', fileSystem.getStreamingFolder() ) ;
-
+	
+	
+	for( var i = 0; i < Datas.length; i++ )
+		Datas[i] = fileSystem.fromAssetsPath( Datas[i] ) ;
+	
+	
 	return Datas ;
 }
 

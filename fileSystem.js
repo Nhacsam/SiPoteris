@@ -188,11 +188,11 @@ static function fromResourcesPath( path : String ) : String {
 
 /*
  * Supprime dans le chemin d'un fichier tout ce qui précède
- * Asset/
+ * Assets/
  */
-static function fromAssetPath( path : String ) : String {
+static function fromAssetsPath( path : String ) : String {
 	
-	var tofind : String =  'Asset/' ;
+	var tofind : String =  'Assets/' ;
 	var found = path.IndexOf( tofind ) ;
 	if( found != -1 )
 		return path.Substring( found + tofind.length ) ;
