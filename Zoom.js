@@ -78,8 +78,6 @@ function Init( VideosMeshes2D : Array, VideosMeshes3D : Array, enableMouseLook :
 	enableLook = enableMouseLook ;
 	toOnSphere() ;
 	
-	isScene2D = Transition2D3D.isScene2D();
-	
 	enableZoom();
 	
 }
@@ -221,7 +219,7 @@ function toOnSphere () {
  * lors d'un zoom sur une structure
  */
 function ComputeFinalPos()  {
-	if (isScene2D)
+	if (Transition2D3D.isScene2D())
 		ComputeFinalPos2D();
 	else
 		ComputeFinalPos3D();
@@ -274,7 +272,7 @@ function ComputeFinalPos3D()  {
 }
 
 function ComputeFinalRot()  {
-	if (isScene2D)
+	if (Transition2D3D.isScene2D())
 		ComputeFinalRot2D();
 	else
 		ComputeFinalRot3D();

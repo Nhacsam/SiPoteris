@@ -55,7 +55,7 @@ function Start () {
 			
 		
 	xml.InitXml("xml_data");
-	Trans.init(Main.enableMouseLook);
+	Trans.init(enableMouseLook);
 
 	
 	// create plane and place camera
@@ -116,7 +116,7 @@ function Update () {
 	
 }
 
-static function enableMouseLook( b : boolean ) {
+function enableMouseLook( b : boolean ) {
 	if( isOnIpad() )
 		control.enabled = b ;
 	else
