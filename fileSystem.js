@@ -99,7 +99,7 @@ static function isDirExisting( path : String ) : boolean {
 		
 		if( ! exist ) {
 			
-			var msg = "Le dossier "'+ path + "\" est inexistant \n" ;
+			var msg = 'Le dossier "'+ path + "\" est inexistant \n" ;
 			
 			if( ! scriptForPlane.isOnIpad() ) {
 				dir = Directory.CreateDirectory( path ) ;
