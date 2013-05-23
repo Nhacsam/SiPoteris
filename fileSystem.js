@@ -120,6 +120,13 @@ static function isDirExisting( path : String ) : boolean {
 
 static function  parseFile( parsedFilePath : String ) : Array {
 	
+	
+	var parsedFile : String = getTextFromFile(parsedFilePath);
+	var linesArray : Array = parsedFile.Split("\n"[0]);
+	return linesArray ;
+	
+	
+	/*
 	var parsedFile : StreamReader = new StreamReader( parsedFilePath );
 	var linesArray : Array = Array();
 	
@@ -136,6 +143,7 @@ static function  parseFile( parsedFilePath : String ) : Array {
 	Console.Info( linesArray.length + ' parsed from the file ' + parsedFilePath );
 	
 	return linesArray ;
+	*/
 }
 
 
