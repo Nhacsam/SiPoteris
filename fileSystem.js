@@ -98,12 +98,21 @@ static function isDirExisting( path : String ) : boolean {
 		exist = dir.Exists ;
 		
 		if( ! exist ) {
-			dir = Directory.CreateDirectory( path ) ;
-			Console.Warning(	'Le dossier "'+ path + "\" est inexistant \n" +
-								'Le dossier à été crée !');
+			
+			var msg = "Le dossier "'+ path + "\" est inexistant \n" ;
+			
+			if( ! scriptForPlane.isOnIpad() ) {
+				dir = Directory.CreateDirectory( path ) ;
+				msg += 'Le dossier à été crée !' ;
+			}
+			
+			Console.Warning( msg );
 		}
 	} catch (e :  System.Exception ) {
 		Console.Warning("Erreur (sur iPad ?): \n" + e);
+		
+		if( scriptForPlane.isOnIpad() )
+			exist =  true ;
 	}
 	
 	return exist ;
