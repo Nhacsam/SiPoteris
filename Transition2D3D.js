@@ -11,6 +11,7 @@ private var finalPos : Vector3 ;
 private var finalRot : Vector3 ;
 
 private var enable:boolean = false;
+private var enableEnding:boolean = false;
 private var done:boolean = false;
 
 //to access accelerometer
@@ -21,20 +22,22 @@ private var button:boolean=true;
 private var Videos:videoSettings;
 
 private var scene2D : boolean=true;
-
+private var display:boolean=true;
 //instantiate items
 function init(){
 
+	mouseLook = gameObject.AddComponent("MouseLook");
 	control = gameObject.AddComponent("CameraControl");
 	Videos= gameObject.GetComponent("videoSettings") as videoSettings;
 	control.enabled=false;
+	mouseLook.enabled=false;
 }
 
 
 
 //setter for enable at the end of the video, called in videosettings
-function endEnable(){
-	enable=true;
+function endingEnable(){
+	enableEnding=true;
 }
 
 
@@ -42,12 +45,14 @@ function endEnable(){
 * button switcher interface 2D/3D and directions
 */
 
-function  OnGUIVideoSetting(){
+function  OnGUI2D3D(){
 
-	if(Videos.OnPlay()==true && !enable ){
-
-		GUI.Label(Rect(Screen.width/2 +315 , Screen.height-60, camera.pixelWidth , camera.pixelHeight),"Click anywhere on the screen \n   to get further information.");
 	
+
+	if(display && !enable &&  !enableEnding){
+		
+		GUI.Label(Rect(Screen.width/2 +315 , Screen.height-60, camera.pixelWidth , camera.pixelHeight),"Click anywhere on the screen \n   to get further information.");
+			
  	 	if (GUI.Button(new Rect( 0, Screen.height-100, 100, 100), scene2D ? "3D view" : "2D view" ))
 			{
 				Change2D3D();
@@ -63,7 +68,7 @@ function  OnGUIVideoSetting(){
 */
 function Change2D3D(){
 
-	
+	end=false;
 	
 	if(scene2D){	
 	Videos.changeSettings(true);
@@ -89,21 +94,18 @@ function Change2D3D(){
 */
 function cameraTransition(){
 
-	beginTime=Time.time;
-	
-
-
 	if(scene2D){
 		var rot= camera.transform.localEulerAngles;
 		camera.transform.eulerAngles=Vector3(270,0,0);
 		enable=true;
 		done=false;
+		
 	}
 	else{
 		light.type=LightType.Point;
 		light.cookie=null;
 		camera.transform.position=Vector3(0,-10,0);
-		camera.transform.localEulerAngles=rot;
+		camera.transform.eulerAngles=rot;
 		camera.transform.Rotate(Vector3(270,180,0));
 	}
 	
@@ -116,18 +118,12 @@ private var end:boolean =false;
 //called at everyframe, function generating transition
 function Update2D3D(){
 
+	display=Videos.OnPlay();
+
 	if (!enable)
 		return ;
-	
-	control.DetachGyro();
-	
-	if(Videos.getFlagEndVideo() && !end){
-	
-		if(Videos.endTransition()){enable=false;end=true;}
 
-	return;
-	}
-	
+	control.DetachGyro();
 
 	if(!scene2D && !done){
 
@@ -145,13 +141,26 @@ function Update2D3D(){
 				control.enabled=true;
 	
 			} else {
-				mouseLook = gameObject.AddComponent("MouseLook");
 				mouseLook.enabled = true ;
 			}	
 			control.AttachGyro();}
 	}
 	
 	
+}
+
+function UpdateEnding(){
+
+	if (!enableEnding)
+		return ;
+
+	if(end==false && enableEnding==true){
+	
+	
+		if(Videos.endTransition()==true){enableEnding=false;end=true;}
+
+	}
+
 }
 
 //adjust final settings at the end of the transition
