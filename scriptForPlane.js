@@ -435,7 +435,14 @@ public function getEditorFileText() : String {
  */ 
 
 public function getIpadSounds() : Array {
-
+	
+	
+	Console.Test( 'fileSystem.getResourcesPath() : ' + fileSystem.getResourcesPath(), 5 );
+	Console.Test( 'getFolderName(null) : ' + getFolderName(null), 5 );
+	Console.Test( 'parsedFilePath : ' + parsedFilePath, 5 );
+	
+	
+	
 	// Si la liste des fichiers et vides, on la génère
 	if( GUIFiles.length == 0 )
 		GUIFiles = fileSystem.parseFile( fileSystem.getResourcesPath() +'/'+ getFolderName(null) +'/'+ parsedFilePath ) ;
