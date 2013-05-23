@@ -116,7 +116,7 @@ function UpDateFullScreen() {
 		
 		if( firstTimeInUpdate ){
 			// init strip
-			strip.InitVideoScreen( 11 );
+			strip.InitVideoScreen( 11 , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
 			firstTimeInUpdate = false;
 		}
 	
