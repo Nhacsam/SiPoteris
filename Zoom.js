@@ -42,8 +42,6 @@ private var beginTime : float = 0.0f ;
 private var finalPos : Vector3 ;
 private var finalRot : Vector3 ;
 
-private static var isScene2D : boolean = true; // true par défaut ?
-
 /*
  * Ajoute les listener d'envenements
  */
@@ -80,6 +78,7 @@ function Init( VideosMeshes2D : Array, VideosMeshes3D : Array, enableMouseLook :
 	enableLook = enableMouseLook ;
 	toOnSphere() ;
 	
+	isScene2D = Transition2D3D.isScene2D();
 	
 	enableZoom();
 	
@@ -124,14 +123,14 @@ function disableZoom() {
 function OnTap(mousePos : Vector2) {
 	
 	if( stateMachine == ZOOM_STATES.ONSPHERE ) {
-		
+		Console.Info("Nb 2D: " + Videos2D.length + ", nb 3D: " + Videos3D.length);
 		// Détecte l'objet cliqué
-		for ( var i = 0; i < (isScene2D ? Videos2D.length : Videos3D.length) ; i++ ) {
-			
+		for ( var i = 0; i < (Transition2D3D.isScene2D() ? Videos2D.length : Videos3D.length) ; i++ ) {
+			//Console.Test("i = " + i, 42);
 			var ray : Ray = camera.ScreenPointToRay(mousePos);
 			var hit : RaycastHit = new RaycastHit() ;
 			
-			var Video : GameObject = isScene2D ? Videos2D[i] : Videos3D[i] ;
+			var Video : GameObject = Transition2D3D.isScene2D() ? Videos2D[i] : Videos3D[i] ;
 			if( Video.collider.Raycast(ray, hit, 1000.0f) ) {
 				toOnZoom(Video);
 				break ;
@@ -162,7 +161,7 @@ function toOnZoom( obj : GameObject ) {
 		selected = obj ;
 				
 		enableLook(false);
-		
+	
 		CameraInitialPos = camera.transform.position ;
 		CameraInitialRot = camera.transform.eulerAngles ;
 		beginTime = Time.time;
@@ -215,10 +214,6 @@ function toOnSphere () {
 	
 	enableLook(true);
 	
-}
-
-static function currently2D (b: boolean) {
-	isScene2D = b;
 }
 
 /*

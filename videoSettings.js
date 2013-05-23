@@ -33,7 +33,7 @@ function OnPlay(){
 function videoSettings () {
 
 	Trans = gameObject.GetComponent("Transition2D3D") as Transition2D3D;
-	Trans.init();
+	Trans.init(Main.enableMouseLook);
 
 	//instantiate
 	iOS = new GameObject(); 

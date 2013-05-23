@@ -20,14 +20,21 @@ private var mouseLook : MouseLook ;
 private var button:boolean=true;
 private var Videos:videoSettings;
 
-private var scene2D : boolean=true;
+private var enableLook : function(boolean);
+
+private static var scene2D : boolean=true;
 
 //instantiate items
-function init(){
+function init(enableMouseLook : function(boolean)){
 
 	control = gameObject.AddComponent("CameraControl");
+	mouseLook = gameObject.AddComponent("MouseLook");
+	
+	enableLook = enableMouseLook;
+	
 	Videos= gameObject.GetComponent("videoSettings") as videoSettings;
-	control.enabled=false;
+	
+	enableLook(false);
 }
 
 
@@ -66,15 +73,13 @@ function Change2D3D(){
 	
 	
 	if(scene2D){	
-	Videos.changeSettings(true);
-	cameraTransition();
+		Videos.changeSettings(true);
+		cameraTransition();
 	}
 	else{
-	control.enabled=false;
-	mouseLook.enabled = false ;
-	Videos.changeSettings(false);
-	cameraTransition();
-
+		enableLook(false);
+		Videos.changeSettings(false);
+		cameraTransition();
 	}
 
 	switchScene();
@@ -140,17 +145,10 @@ function Update2D3D(){
 		if(camera.transform.eulerAngles.x >= 358 ){
 			enable=false;
 			finalSettings();
-			if( isOnIpad() ) {
-		
-				control.enabled=true;
-	
-			} else {
-				mouseLook = gameObject.AddComponent("MouseLook");
-				mouseLook.enabled = true ;
-			}	
+			enableLook(true);
+				
 			control.AttachGyro();}
 	}
-	
 	
 }
 
@@ -172,7 +170,7 @@ function switchScene(){
 }
 
 //getter for other functions in other scripts
-function isScene2D(){
+static function isScene2D(){
 	return scene2D;
 }
 

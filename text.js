@@ -210,7 +210,6 @@ function JustifyText(numLine : int){
 	
 	/* Avoiding cast errors........ */
 	var moveToNext0Int: int = moveToNext[0];
-	var moveToNextIntMinus1: int = moveToNext[numLine - 1];
 	var moveToNextInt: int = moveToNext[numLine];
 	
 	if(numLine == 0){
@@ -222,6 +221,9 @@ function JustifyText(numLine : int){
 		}
 	}
 	else{
+		/* Avoiding cast errors........ */
+		var moveToNextIntMinus1: int = moveToNext[numLine - 1];
+		
 		for(i =  moveToNextIntMinus1; i < moveToNextInt; i++){
 			if(textToDisplay[i] == " " && i != moveToNext[numLine-1])
 				currentSpace++;
