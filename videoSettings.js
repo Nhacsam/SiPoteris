@@ -16,6 +16,12 @@ private var Trans:Transition2D3D;
 
 private var rot;
 
+
+private var startRotation;
+private var endRotation;
+private var rate = 0.7;
+private var t = 0.0;
+
 /*
 * functions.
 */
@@ -33,7 +39,6 @@ function OnPlay(){
 function videoSettings () {
 
 	Trans = gameObject.GetComponent("Transition2D3D") as Transition2D3D;
-
 	//instantiate
 	iOS = new GameObject(); 
 	iOS.name="iOS";
@@ -95,8 +100,9 @@ function generateScene2D(){
     plane2D.AddComponent("PlayFileBasedMovieDefault");
   	plane2D.renderer.material = Resources.Load("MovieHD");
 
-	rot=plane2D.transform.eulerAngles;
-
+	rot=plane2D.transform.rotation;
+	startRotation = plane2D.transform.rotation;
+	endRotation = plane2D.transform.rotation * Quaternion.Euler(180,0,0);
 }
 /*
 * create 3D sphere
@@ -186,7 +192,7 @@ function putVideo( focus: GameObject, nom : String){
 }
 
 /*
-* not used for now
+* To stop the video put with putvideo (also release memory)
 */
 function stopVideo(focus: GameObject){
 
@@ -204,19 +210,31 @@ function stopVideo(focus: GameObject){
 function getFlagEndVideo(){
 	var controllerScene:SceneController;
 	controllerScene = MovieController.GetComponent("SceneController");
-	
+	if(controllerScene.movieClass[0].movieFinished==true)Trans.endingEnable();
 	return controllerScene.movieClass[0].movieFinished;
-	
+
 }
 
 
-
 function endTransition(){
-	var finished:boolean=false;
-	plane2D.transform.Rotate(Vector3(1,0,0));
-	
-	if(plane2D.transform.eulerAngles==rot)finished=true;
-	return finished;
+
+	t += Time.deltaTime * rate;
+	plane2D.transform.rotation = Quaternion.Slerp(startRotation, endRotation, t);
+
+	if(t >= 1.0) {
+		
+		if( startRotation == rot ) {
+		
+			t = 0;
+			startRotation = plane2D.transform.rotation ;
+			endRotation = plane2D.transform.rotation * Quaternion.Euler(180,0,0);
+			return false ;
+		}
+		
+		return true;
+	}
+
+	return false;
 }
 /*
 * part to hanlde zoom on a position

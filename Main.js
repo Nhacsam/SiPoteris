@@ -54,13 +54,15 @@ function Start () {
 	 */	
 			
 		
+	
+	
 	xml.InitXml("xml_data");
-	Trans.init(enableMouseLook);
+	Trans.init();
 
 	
 	// create plane and place camera
 	var s : GameObject = Videos.videoSettings();
-	
+	Trans.init();
 	// give access to this gameobject in createPolarMesh script
 	createPolar.SetSurface(s);
 	
@@ -83,7 +85,7 @@ function Start () {
 	
 	
 	
-	Zoom.AddOnLeave( switchFieldOfView );
+	//Zoom.AddOnLeave( switchFieldOfView );
 	
 	VideoFull.SetLeaveCallback( Zoom.toOnDeZoom );
 	
@@ -91,7 +93,7 @@ function Start () {
 	camera.backgroundColor = Color.black;
 	CreateLight ();
 	camera.fieldOfView  = 60 ;
-	
+	camera.farClipPlane = 60;
 	
 }
 
@@ -100,7 +102,7 @@ function Update () {
 	Trans.Update2D3D();
 	Zoom.UpDateZoom ();
 	VideoFull.UpDateFullScreen();
-	
+	Trans.UpdateEnding();
 //	sound.updateSounds(myPlanes);
 	
 	for( var i =0; i < AllGO2D.length; i++) {
@@ -110,7 +112,6 @@ function Update () {
 	
 		if( Videos.getFlagEndVideo() ){
 			move.resetPlane(AllGO2D[i]);
-			Debug.Log("reset plane" + i + Videos.getFlagEndVideo());
 		}
 	}
 	
@@ -150,7 +151,7 @@ function switchFieldOfView() {
  * Appelle les fonctions des scripts gérant l'interface
  */
 function OnGUI() {
-	Trans.OnGUIVideoSetting();
+	Trans.OnGUI2D3D();
 	VideoFull.OnGUIFullScreen();
 	Zoom.OnGUIZoom();
 }
