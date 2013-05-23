@@ -24,6 +24,9 @@ private var mesh3D : createSphericMesh;
 
 private var Trans :Transition2D3D;
 
+private var control:CameraControl;
+private var mouseLook : MouseLook ;
+
 
 function Start () {
 	
@@ -42,7 +45,9 @@ function Start () {
 	VideoFull= gameObject.AddComponent("FullScreen") as FullScreen;
 	mesh3D = gameObject.AddComponent("createSphericMesh") as createSphericMesh;
 	Trans = gameObject.AddComponent("Transition2D3D") as Transition2D3D;
-	
+	control = gameObject.AddComponent("CameraControl") as CameraControl;
+	mouseLook = gameObject.AddComponent("MouseLook") as MouseLook;
+
 	
 	/*
 	 * Inits
@@ -52,6 +57,8 @@ function Start () {
 	
 	
 	xml.InitXml("xml_data");
+	Trans.init();
+
 	
 	// create plane and place camera
 	var s : GameObject = Videos.videoSettings();
@@ -111,12 +118,10 @@ function Update () {
 }
 
 function enableMouseLook( b : boolean ) {
-	/*
 	if( isOnIpad() )
 		control.enabled = b ;
 	else
 		mouseLook.enabled = b ;
-	*/
 }
 
 
@@ -191,6 +196,5 @@ function placeMeshHash ( t : Hashtable ){
 			
 	AllGO2D.Push( obj );
 	AllGO3D.Push( obj3D );
-	
 }
 

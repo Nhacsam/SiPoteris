@@ -98,7 +98,7 @@ function generateScene2D(){
     plane2D.transform.Rotate(Vector3(180,180,0));
     plane2D.transform.position = Vector3(0,0,0);
     plane2D.AddComponent("PlayFileBasedMovieDefault");
-  	plane2D.renderer.material = Resources.Load("Movie");
+  	plane2D.renderer.material = Resources.Load("MovieHD");
 
 	rot=plane2D.transform.rotation;
 	startRotation = plane2D.transform.rotation;
@@ -115,7 +115,7 @@ function generateScene3D(){
 	//set it at the right position
 	sphere3D.transform.Rotate(-90,0,0);
 	sphere3D.transform.localScale=Vector3(500,500,500);
-	sphere3D.renderer.material = Resources.Load("Movie");
+	sphere3D.renderer.material = Resources.Load("MovieHD");
 	
 }
 

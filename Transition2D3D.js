@@ -71,15 +71,13 @@ function Change2D3D(){
 	end=false;
 	
 	if(scene2D){	
-	Videos.changeSettings(true);
-	cameraTransition();
+		Videos.changeSettings(true);
+		cameraTransition();
 	}
 	else{
-	control.enabled=false;
-	mouseLook.enabled = false ;
-	Videos.changeSettings(false);
-	cameraTransition();
-
+		//enableLook(false);
+		Videos.changeSettings(false);
+		cameraTransition();
 	}
 
 	switchScene();
@@ -145,7 +143,6 @@ function Update2D3D(){
 			}	
 			control.AttachGyro();}
 	}
-	
 	
 }
 
