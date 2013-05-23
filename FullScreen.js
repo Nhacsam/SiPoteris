@@ -155,21 +155,45 @@ function EnterOnFullScreen( Video : GameObject ) {
 	
 	onFullScreen = true ;
 	
-	
-	var margin : Vector2 = new Vector2(	0, 0.04 );
-	
-	
+		
+	/*
+	 * Récupération des données
+	 */
 	var Datas : scriptForPlane = Video.GetComponent('scriptForPlane');
-	
-	
 	
 	var slideShowImgs : Array = Datas.getImages();
 	var slideShowMin : Array = Datas.getMiniatures();
-	var slideShowElmt : SLIDESHOWELMT ;
+	var slideShowVideo : Array = Datas.getVideos();
 	
+	var slideShowTempElmt : SLIDESHOWELMT ;
+	var slideShowElmts : Array = Array() ;
+	
+	// Remplis un tableau d'éléments pour le slideshow et la fenètre
+	for (var i = 0; i < slideShowImgs.length; i++ ) {
+		
+		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowImgs[i],
+													WINDOWTYPES.IMG,
+													Vector2.zero );
+		
+		slideShowElmts.Push( new Array( 	fileSystem.getAssociatedMin( slideShowImgs[i], slideShowMin ),
+											slideShowTempElmt ) );
+	}
+	for (i = 0; i < slideShowVideo.length; i++ ) {
+		
+		// On verifie qu'il y a une miniature associé à la video
+		var min = fileSystem.getAssociatedMin( slideShowVideo[i], slideShowMin ) ;
+		if( min == slideShowVideo[i])
+			continue;
+		
+		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
+													WINDOWTYPES.VIDEO,
+													Vector2.zero );
+		
+		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
+	}
 	
 	/* Initialisation de tous les éléments du full screen */
-	slideshow.InitSlideShowFactor(slideShowImgs.length, Rect( slideLeft , slideBottom , slideRight - slideLeft , slideTop - slideBottom), 20);
+	slideshow.InitSlideShowFactor(slideShowElmts.length, Rect( slideLeft , slideBottom , slideRight - slideLeft , slideTop - slideBottom), 20);
 	windows.InitWindowFactor( Rect( pictureLeft , 1-pictureTop , pictureRight-pictureLeft, pictureTop-pictureBottom), 20 );
 	
 	textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getText()); // u d l r (margins) + Text to display
@@ -177,17 +201,13 @@ function EnterOnFullScreen( Video : GameObject ) {
 	
 	//strip.initStrip( Rect( -Screen.width/2 , 0 , 2*Screen.width , Screen.height ) , Rect( Screen.width*stripLeft , 0 , (stripRight-stripLeft)*Screen.width , Screen.height/8 ) );
 	
-	for (var i = 0; i < slideShowImgs.length; i++ ) {
-		slideShowElmt = new SLIDESHOWELMT(		slideShowImgs[i],
-												WINDOWTYPES.IMG,
-												Vector2.zero 	) ;
-		
-		slideshow.AddElmt(		fileSystem.getAssociatedMin( slideShowImgs[i], slideShowMin ),
-								slideShowElmt 									);
+	
+	// On donne les infos au slideShow
+	for (i = 0; i < slideShowElmts.length; i++ ) {
+		var tempArray = slideShowElmts[i] as Array ;
+		slideshow.AddElmt(tempArray[0], tempArray[1] );
 	}
 	
-	Datas.getVideos();
-		
 }
 
 function LeaveFullScreen( Video : GameObject ) {

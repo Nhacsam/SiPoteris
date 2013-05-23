@@ -46,7 +46,8 @@ private var toBg : boolean = true ; 	// rotation vers l'arrière ? (ou vers l'av
 private var spacingFactor : float = 1.7 ; // Espacement des elmts
 
 
-
+// Evenement activés aou non
+private var eventEnable : boolean = false ;
 
 
 
@@ -81,8 +82,15 @@ function OnDisable(){
 	Gesture.onUpE -= onUp ;
 }
 
-
-
+/*
+ * Active ou désactive les événements :
+ */
+public function EnableEvent() {
+	eventEnable = true ;
+}
+public function DisableEvent() {
+	eventEnable = false ;
+}
 
 
 
@@ -113,6 +121,7 @@ function InitSlideShow( nbOfElmts : int, Pos : Rect, Z : float  ) {
 	
 	isMoving = false ;
 	effNbElmts = 0 ;
+	EnableEvent();
 }
 
 
@@ -285,6 +294,9 @@ private function isMovingUpdate() : boolean {
 // Balaiement
 function OnSwipe ( info : SwipeInfo) {
 	
+	if( !eventEnable)
+		return ;
+	
 	if( position.Contains(info.startPoint) && !position.Contains(info.endPoint) ) {
 		
 		var sens = 1 ;
@@ -306,6 +318,9 @@ function OnSwipe ( info : SwipeInfo) {
 
 // Déplacement
 function OnDrag ( info : DragInfo) {
+	
+	if( !eventEnable)
+		return ;
 	
 	if( position.Contains(info.pos) ) {
 			
@@ -370,6 +385,9 @@ function OnDrag ( info : DragInfo) {
 //  relevé du doigt
 function onUp(pos : Vector2) {
 	
+	if( !eventEnable)
+		return ;
+	
 	if( isDragging ) {
 		
 		isMoving = false ;
@@ -393,11 +411,18 @@ function onUp(pos : Vector2) {
 // Zoom avec les doigts
 function OnPinch ( amp : float ) {
 
+	if( !eventEnable)
+		return ;
+	
 }
 
 
 // appuie
 function OnTap (pos : Vector2 ) {
+	
+	if( !eventEnable)
+		return ;
+	
 	Console.Info("Ontap slideshow");
 	if( isDragging )
 		return ;
