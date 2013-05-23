@@ -77,10 +77,15 @@ function Init( VideosMeshes2D : Array, VideosMeshes3D : Array, enableMouseLook :
 	OnEndZoom = new Array() ;
 	OnLeave = new Array() ;	
 	
-	Trans = gameObject.AddComponent("Transition2D3D") as Transition2D3D;
-	control = gameObject.AddComponent("CameraControl") as CameraControl;
+	Trans = gameObject.GetComponent("Transition2D3D");
+	if (!Trans)
+		Trans = gameObject.AddComponent("Transition2D3D");
+	
+	control = gameObject.GetComponent("CameraControl");
+	if (!control)	
+		control = gameObject.AddComponent("CameraControl");
 
-	control.enabled=false;
+	control.enabled = false;
 	
 	CameraInitialPos = camera.transform.position ;
 	

@@ -52,10 +52,6 @@ function Start () {
 	/*
 	 * Inits
 	 */	
-			
-		
-	
-	
 	xml.InitXml("xml_data");
 	Trans.init();
 

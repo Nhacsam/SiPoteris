@@ -26,11 +26,18 @@ private var display:boolean=true;
 //instantiate items
 function init(){
 
-	mouseLook = gameObject.AddComponent("MouseLook");
-	control = gameObject.AddComponent("CameraControl");
+	mouseLook = gameObject.GetComponent("MouseLook");
+	if (!mouseLook)	
+		mouseLook = gameObject.AddComponent("MouseLook");
+	
+	control = gameObject.GetComponent("CameraControl");
+	if (!control)	
+		control = gameObject.AddComponent("CameraControl");
+		
 	Videos= gameObject.GetComponent("videoSettings") as videoSettings;
-	control.enabled=false;
-	mouseLook.enabled=false;
+	
+	control.enabled = false;
+	mouseLook.enabled = false;
 }
 
 
@@ -116,6 +123,16 @@ private var end:boolean =false;
 //called at everyframe, function generating transition
 function Update2D3D(){
 
+	/* Ca devrait activer le mouselook que en 3D. SAUF QUE NON */
+	if( isOnIpad() ) {
+		control.enabled = scene2D ? false : true;
+	} else {
+		mouseLook.enabled = scene2D ? false : true;
+	}	
+
+
+
+
 	display=Videos.OnPlay();
 
 	if (!enable)
@@ -134,13 +151,13 @@ function Update2D3D(){
 		if(camera.transform.eulerAngles.x >= 358 ){
 			enable=false;
 			finalSettings();
+			
 			if( isOnIpad() ) {
-		
-				control.enabled=true;
-	
+				control.enabled=  true;
 			} else {
 				mouseLook.enabled = true ;
 			}	
+			
 			control.AttachGyro();}
 	}
 	
