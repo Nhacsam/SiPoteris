@@ -155,7 +155,7 @@ function UpDateSlideShow() {
 		
 		effectiveCurrentPage = currentPage ;
 		
-		for( i = 0 ; i < nbElmts; i++) {
+		for( i = 0 ; i < pos.length; i++) {
 			mobilesElmts[i].transform.position = pos[i] ;
 			mobilesElmts[i].transform.rotation = rot[i] ;
 		}
@@ -398,7 +398,7 @@ function OnPinch ( amp : float ) {
 
 // appuie
 function OnTap (pos : Vector2 ) {
-	Debug.Log(" ontap slideshow");
+	Console.Info("Ontap slideshow");
 	if( isDragging )
 		return ;
 		
@@ -415,9 +415,7 @@ function OnTap (pos : Vector2 ) {
 			useSpeed = false ;
 			delta = 0 ;
 		}
-	}
-	Debug.Log(" ontap slideshow success");
-	
+	}	
 }
 
 

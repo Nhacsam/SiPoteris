@@ -162,7 +162,8 @@ static function createParsedFile( 	parsedFilePath : String,
 			Console.HandledError( 'Return value null from callback '+i+' in fileSystem.createParsedFile' );
 		
 	}
-	 parsedFile.Close();
+	parsedFile.Flush();
+	parsedFile.Close();
 }
  
 /******************************************************/
@@ -182,6 +183,24 @@ static function fromResourcesPath( path : String ) : String {
 	else
 		return path ;
 }
+
+
+
+/*
+ * Supprime dans le chemin d'un fichier tout ce qui précède
+ * Assets/
+ */
+static function fromAssetsPath( path : String ) : String {
+	
+	var tofind : String =  'Assets/' ;
+	var found = path.IndexOf( tofind ) ;
+	if( found != -1 )
+		return path.Substring( found + tofind.length ) ;
+	else
+		return path ;
+}
+
+
 
 /*
  * Retire l'extension d'un fichier
@@ -227,3 +246,31 @@ static function getAssociatedMin( img : String, minTab : Array) {
 	}
 	return img ;
 }
+
+
+
+/************************/
+/******** Divers ********/
+/************************/
+
+
+
+/*
+ * revoie un tableau contant toutes les chaines
+ * du tableau passé en paramètre
+ * contenant la chaine s
+ */
+static function getStringContainInArray( A : Array, s : String ) {
+
+	var matchedString : Array = new Array() ;
+	
+	// Ensuite on cheche ceux qui contiennent s
+	for (var i = 0; i < A.length; i++) {
+		if( (A[i] as String).IndexOf( s ) > 0 )
+			matchedString.Push( A[i] );
+	}
+	
+	// et on renvoie les résultats
+	return matchedString ;
+}
+

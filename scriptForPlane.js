@@ -26,6 +26,8 @@ private var delta : float = 0;
 // Time when the object have been moved last
 private var lastMoveTime : float = 0;
 
+// Liste des fichiers pour la GUI
+private var GUIFiles : Array = Array() ;
 
 // nom du fichier contenant les adresses des ressources
 private var parsedFilePath : String = "resourcesInfos.txt" ;
@@ -184,7 +186,7 @@ public function getFolderName	(  root : String ) : String{
 	} // Contain
 	
 	// Si on arrive ici, c'est que le nom du dossier n'a pas été trouvé.
-	Debug.LogWarning('No data folder found for the plane ' + Name);
+	Console.Warning('No data folder found for the plane ' + Name);
 	return getDefaultFolder(null);
 	
 }
@@ -256,7 +258,7 @@ public function getText() : String {
 	var path : String = getFileText() ;
 	var text = fileSystem.getTextFromFile(path) ;
 	if( text == -1)
-		Debug.LogWarning('Invalid text file name '+ path +' for the plane ' + Name);
+		Console.Warning('Invalid text file name '+ path +' for the plane ' + Name);
 	else
 		return text ;
 }
@@ -331,7 +333,7 @@ public function getEditorImages() : Array {
 	
 	if( Datas.length <= 0 ) // not found
 		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultImgFolder(), '', null ) ;
-
+		
 	return Datas ;
 }
 
@@ -341,7 +343,12 @@ public function getEditorVideos() : Array {
 	
 	if( Datas.length <= 0 ) // not found
 		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultVideoFolder(), '', fileSystem.getStreamingFolder() ) ;
-
+	
+	
+	for( var i = 0; i < Datas.length; i++ )
+		Datas[i] = fileSystem.fromAssetsPath( Datas[i] ) ;
+	
+	
 	return Datas ;
 }
 
@@ -377,8 +384,9 @@ public function getEditorFileText() : String {
 				
 				// lit le contenue du fichier
 				path = getFolderName(null) + (( HT['GUI'] as Hashtable )['text'] as String ) ;
-				if (path)
-					return path ;
+				
+				if (fileSystem.getTextFromFile(path)  != -1)
+					return path + '.textefile' ;
 				
 					
 			} // Contains text
@@ -395,7 +403,7 @@ public function getEditorFileText() : String {
 	for( var i = 0; i < allPaths.length; i++ ) {
 		
 		if( allPaths[i] != getFolderName(null) +'/'+ fileSystem.removeExtension(parsedFilePath) )
-			return allPaths[i] ;
+			return allPaths[i] + '.textefile' ;
 	}
 	
 	/*
@@ -405,12 +413,12 @@ public function getEditorFileText() : String {
 	path = fileSystem.getFirstFileFromFolder( getDefaultFolder(null), '.txt', null ) ;
 	
 	if( path )
-		return path ;
+		return path + '.textefile' ;
 	/*
 	 * si rien de concluent est trouvé
 	 * Warning + renvoie d'une chaine vide
 	 */
-	Debug.LogWarning('No text file found for the plane ' + Name);
+	Console.Warning('No text file found for the plane ' + Name);
 	return '' ;
 
 	
@@ -423,33 +431,67 @@ public function getEditorFileText() : String {
  * Récupère la liste des fichiers de chaques catégorie
  * pour l'interface graphique utilisateur
  *
- * Depuis l'iPad
+ * Depuis l'iPad en utilisant le fichier parsé
  */ 
 
-
 public function getIpadSounds() : Array {
-	/*
+
+	// Si la liste des fichiers et vides, on la génère
 	if( GUIFiles.length == 0 )
-		GUIFiles = fileSystem
-	*/
-	return Array() ;
+		GUIFiles = fileSystem.parseFile( fileSystem.getResourcesPath() +'/'+ getFolderName(null) +'/'+ parsedFilePath ) ;
+	
+	// Ensuite on cheche ceux qui contiennent '/Audio/' et on renvoie les résultats
+	return fileSystem.getStringContainInArray(GUIFiles, '/audio/' );
 }
 
+
 public function getIpadImages() : Array {
-	return Array() ;
+	
+	// Si la liste des fichiers et vides, on la génère
+	if( GUIFiles.length == 0 )
+		GUIFiles = fileSystem.parseFile( fileSystem.getResourcesPath() +'/'+ getFolderName(null) +'/'+ parsedFilePath ) ;
+	
+	// Ensuite on cheche ceux qui contiennent '/img/' et on renvoie les résultats
+	return fileSystem.getStringContainInArray(GUIFiles, '/img/' );
+
 }
 
 
 public function getIpadVideos() : Array {
-	return Array() ;
+	
+	// Si la liste des fichiers et vides, on la génère
+	if( GUIFiles.length == 0 )
+		GUIFiles = fileSystem.parseFile( fileSystem.getResourcesPath() +'/'+ getFolderName(null) +'/'+ parsedFilePath ) ;
+	
+	// Ensuite on cheche ceux qui contiennent '/Audio/' et on renvoie les résultats
+	return fileSystem.getStringContainInArray(GUIFiles, fileSystem.getStreamingFolder()+'/' );
+
 }
 
 public function getIpadMiniatures() : Array {
-	return Array() ;
+	
+	// Si la liste des fichiers et vides, on la génère
+	if( GUIFiles.length == 0 )
+		GUIFiles = fileSystem.parseFile( fileSystem.getResourcesPath() +'/'+ getFolderName(null) +'/'+ parsedFilePath ) ;
+	
+	// Ensuite on cheche ceux qui contiennent '/min/' et on renvoie les résultats
+	return fileSystem.getStringContainInArray(GUIFiles, '/min/' );
+
 }
 
 public function getIpadFileText() : String {
-	return '' ;
+	
+	// Si la liste des fichiers et vides, on la génère
+	if( GUIFiles.length == 0 )
+		GUIFiles = fileSystem.parseFile( fileSystem.getResourcesPath() +'/'+ getFolderName(null) +'/'+ parsedFilePath ) ;
+	
+	// Ensuite on cheche ceux qui contiennent '.textefile' (concaténé lors de la creation du fichier) et on renvoie le premier résultat
+	var matchedFile : Array = fileSystem.getStringContainInArray(GUIFiles, '.textefile' );
+	
+	 if ( matchedFile.length <= 0)
+		return '' ;
+	else
+		return fileSystem.removeExtension(matchedFile[0]) ;
 }
 
 

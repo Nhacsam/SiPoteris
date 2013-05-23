@@ -62,7 +62,7 @@ function Start () {
 
 	
 	//fin debug test
-	Zoom.Init(AllGO2D , enableMouseLook);
+	Zoom.Init(AllGO2D, AllGO3D, enableMouseLook);
 	
 	
 	VideoFull.InitFullScreen();

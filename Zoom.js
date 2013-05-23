@@ -15,7 +15,8 @@ private var OnLeave : Array ;
 private var enableLook : function(boolean);
 
 // Liste des Elements cliquables
-private var Videos : Array ;
+private var Videos2D : Array ;
+private var Videos3D : Array ;
 
 // Mouse look
 private var wasMouseLookEnable : boolean ;
@@ -41,7 +42,7 @@ private var beginTime : float = 0.0f ;
 private var finalPos : Vector3 ;
 private var finalRot : Vector3 ;
 
-private static var isScene2D : boolean = true; // Provisoire jusqu'à ce que Maxime range son bordel =D
+private static var isScene2D : boolean = true; // true par défaut ?
 
 /*
  * Ajoute les listener d'envenements
@@ -66,10 +67,10 @@ function OnDisable(){
  * Initialise le Module (constructeur)
  */
 
-function Init( VideosMeshes : Array , enableMouseLook : function(boolean) ) {
+function Init( VideosMeshes2D : Array, VideosMeshes3D : Array, enableMouseLook : function(boolean) ) {
 	
-	Videos = VideosMeshes ;
-	
+	Videos2D = VideosMeshes2D ;
+	Videos3D = VideosMeshes3D ;
 	
 	OnZoom = new Array() ;
 	OnEndZoom = new Array() ;
@@ -124,16 +125,14 @@ function OnTap(mousePos : Vector2) {
 	
 	if( stateMachine == ZOOM_STATES.ONSPHERE ) {
 		
-		
-		// Détecte l'objet clické
-		for ( var i = 0; i < Videos.length; i++ ) {
+		// Détecte l'objet cliqué
+		for ( var i = 0; i < (isScene2D ? Videos2D.length : Videos3D.length) ; i++ ) {
 			
 			var ray : Ray = camera.ScreenPointToRay(mousePos);
 			var hit : RaycastHit = new RaycastHit() ;
 			
-			var Video : GameObject = Videos[i] ;
+			var Video : GameObject = isScene2D ? Videos2D[i] : Videos3D[i] ;
 			if( Video.collider.Raycast(ray, hit, 1000.0f) ) {
-				
 				toOnZoom(Video);
 				break ;
 			} // if
@@ -234,7 +233,7 @@ function ComputeFinalPos()  {
 }
 
 function ComputeFinalPos2D() {
-	finalPos = Vector3 (0,0,0);
+	finalPos = Vector3 (0,5,0);
 }
 
 function ComputeFinalPos3D()  {
