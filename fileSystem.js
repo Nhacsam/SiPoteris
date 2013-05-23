@@ -92,6 +92,10 @@ static function isDirExisting( path : String ) : boolean {
 	
 	var exist  : boolean = false ;
 	
+	// Le test d'existance ne marche pas sur iPad. On croise les doigts :
+	if( scriptForPlane.isOnIpad() )
+			return true ;
+			
 	try {
 		
 		var dir : DirectoryInfo = new DirectoryInfo( path );
@@ -99,20 +103,12 @@ static function isDirExisting( path : String ) : boolean {
 		
 		if( ! exist ) {
 			
-			var msg = 'Le dossier "'+ path + "\" est inexistant \n" ;
-			
-			if( ! scriptForPlane.isOnIpad() ) {
-				dir = Directory.CreateDirectory( path ) ;
-				msg += 'Le dossier à été crée !' ;
-			}
-			
-			Console.Warning( msg );
+			dir = Directory.CreateDirectory( path ) ;
+			Console.Warning( 	'Le dossier "'+ path + "\" est inexistant \n" +
+								 'Le dossier à été crée !' );
 		}
 	} catch (e :  System.Exception ) {
 		Console.Warning("Erreur (sur iPad ?): \n" + e);
-		
-		if( scriptForPlane.isOnIpad() )
-			exist =  true ;
 	}
 	
 	return exist ;
