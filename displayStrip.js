@@ -99,7 +99,7 @@ function OnTap( v : Vector2 ){
 			manageStates();
 		}
 
-		if( videoScreen.collider.Raycast( ray , hit , 2000.0f ) && states == STATES_OF_STRIP.STATE_IN ) {
+		if( states == STATES_OF_STRIP.STATE_IN ) {
 			end_zoom = false;
 			move_in = false;
 			move_out = true;
@@ -188,14 +188,14 @@ private function bigDaddy(){
 /*
 	*on the event OnFullScreen this method is called
 */
-function InitVideoScreen( ratio : float ){
+function InitVideoScreen( ratio : float , r : Rect ){
 	
 	// init state of the state machine
 	states = STATES_OF_STRIP.STATE_OUT;
 	ratioPlane = ratio;
 	onFullScreen = true;
 
-	rectOUT = computeRect( ratioPlane , Rect( 2*Screen.width/3 , 3*Screen.height/4 , Screen.width/3 , Screen.height/4 ) );
+	rectOUT = computeRect( ratioPlane , r );
 	
 	createStripPlane( rectOUT );
 
@@ -543,5 +543,17 @@ private function getRectPlane() : Rect {
 	// build rect descripting where is the plane into screen coordinates
 	r = Rect( screenBL.x , Screen.height - screenTR.y , -screenBL.x + screenTR.x , -screenBL.y + screenTR.y );
 	
+	return r;
+}
+
+/*
+	*compute rectangle to place the plane at the right place on screen
+*/
+function placeStripFactor( stripTop : float , stripBottom :float , stripLeft : float , stripRight : float ) : Rect{
+	var r : Rect;
+	r.height = Screen.height * (stripTop-stripBottom);
+	r.width = Screen.width * (stripRight-stripLeft);
+	r.x = Screen.width * stripLeft;
+	r.y = Screen.height * stripBottom;
 	return r;
 }
