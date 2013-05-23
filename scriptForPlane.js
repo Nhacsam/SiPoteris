@@ -174,7 +174,7 @@ public function getFolderName	(  root : String ) : String{
 			if( ( HT['GUI'] as Hashtable ).Contains('folder') ) {
 				
 				folder = ( HT['GUI'] as Hashtable )['folder'] ;
-				Console.Test( 'folder 1' + folder, 5 );
+				Console.Test( 'folder 1 : ' + folder, 5 );
 				if( fileSystem.isDirExisting(root + '/' + folder) )
 					return folder ;
 			
@@ -182,7 +182,7 @@ public function getFolderName	(  root : String ) : String{
 		} else if (typeof(HT['GUI']) == System.String) {
 			
 			folder = HT['GUI'] ;
-			Console.Test( 'folder 2' + folder, 5 );
+			Console.Test( 'folder 2 : ' + folder, 5 );
 			if( fileSystem.isDirExisting(root + '/' + folder) )
 				return folder ;
 			         
