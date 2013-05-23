@@ -49,11 +49,13 @@ function Start () {
 	 */	
 			
 		
+	
+	
 	xml.InitXml("xml_data");
 	
 	// create plane and place camera
 	var s : GameObject = Videos.videoSettings();
-	
+	Trans.init();
 	// give access to this gameobject in createPolarMesh script
 	createPolar.SetSurface(s);
 	
@@ -84,7 +86,7 @@ function Start () {
 	camera.backgroundColor = Color.black;
 	CreateLight ();
 	camera.fieldOfView  = 60 ;
-	
+	camera.farClipPlane = 60;
 	
 }
 

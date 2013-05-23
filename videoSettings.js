@@ -39,8 +39,6 @@ function OnPlay(){
 function videoSettings () {
 
 	Trans = gameObject.GetComponent("Transition2D3D") as Transition2D3D;
-	Trans.init();
-
 	//instantiate
 	iOS = new GameObject(); 
 	iOS.name="iOS";
@@ -100,7 +98,7 @@ function generateScene2D(){
     plane2D.transform.Rotate(Vector3(180,180,0));
     plane2D.transform.position = Vector3(0,0,0);
     plane2D.AddComponent("PlayFileBasedMovieDefault");
-  	plane2D.renderer.material = Resources.Load("MovieHD");
+  	plane2D.renderer.material = Resources.Load("Movie");
 
 	rot=plane2D.transform.rotation;
 	startRotation = plane2D.transform.rotation;
@@ -117,7 +115,7 @@ function generateScene3D(){
 	//set it at the right position
 	sphere3D.transform.Rotate(-90,0,0);
 	sphere3D.transform.localScale=Vector3(500,500,500);
-	sphere3D.renderer.material = Resources.Load("MovieHD");
+	sphere3D.renderer.material = Resources.Load("Movie");
 	
 }
 
@@ -194,7 +192,7 @@ function putVideo( focus: GameObject, nom : String){
 }
 
 /*
-* not used for now
+* To stop the video put with putvideo (also release memory)
 */
 function stopVideo(focus: GameObject){
 

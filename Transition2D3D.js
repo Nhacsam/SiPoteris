@@ -22,7 +22,7 @@ private var button:boolean=true;
 private var Videos:videoSettings;
 
 private var scene2D : boolean=true;
-
+private var display:boolean=true;
 //instantiate items
 function init(){
 
@@ -47,10 +47,12 @@ function endingEnable(){
 
 function  OnGUI2D3D(){
 
-	if(Videos.OnPlay()==true && !enable ){
-
-		GUI.Label(Rect(Screen.width/2 +315 , Screen.height-60, camera.pixelWidth , camera.pixelHeight),"Click anywhere on the screen \n   to get further information.");
 	
+
+	if(display && !enable &&  !enableEnding){
+		
+		GUI.Label(Rect(Screen.width/2 +315 , Screen.height-60, camera.pixelWidth , camera.pixelHeight),"Click anywhere on the screen \n   to get further information.");
+			
  	 	if (GUI.Button(new Rect( 0, Screen.height-100, 100, 100), scene2D ? "3D view" : "2D view" ))
 			{
 				Change2D3D();
@@ -103,7 +105,7 @@ function cameraTransition(){
 		light.type=LightType.Point;
 		light.cookie=null;
 		camera.transform.position=Vector3(0,-10,0);
-		camera.transform.localEulerAngles=rot;
+		camera.transform.eulerAngles=rot;
 		camera.transform.Rotate(Vector3(270,180,0));
 	}
 	
@@ -115,6 +117,8 @@ private var end:boolean =false;
 
 //called at everyframe, function generating transition
 function Update2D3D(){
+
+	display=Videos.OnPlay();
 
 	if (!enable)
 		return ;
@@ -153,7 +157,7 @@ function UpdateEnding(){
 	if(end==false && enableEnding==true){
 	
 	
-		if(Videos.endTransition()==true){enable=false;end=true;}
+		if(Videos.endTransition()==true){enableEnding=false;end=true;}
 
 	}
 
