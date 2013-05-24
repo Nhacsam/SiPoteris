@@ -123,22 +123,20 @@ private var end:boolean =false;
 //called at everyframe, function generating transition
 function Update2D3D(){
 
-	/* Ca devrait activer le mouselook que en 3D. SAUF QUE NON */
-	if( isOnIpad() ) {
-		control.enabled = scene2D ? false : true;
-	} else {
-		mouseLook.enabled = scene2D ? false : true;
-	}	
-
-
-
-
 	display=Videos.OnPlay();
 
 	if (!enable)
 		return ;
 
 	control.DetachGyro();
+	
+	if(scene2D) {
+		if( isOnIpad() ) {
+			control.enabled=  false;
+		} else {
+			mouseLook.enabled = false ;
+		}
+	}
 
 	if(!scene2D && !done){
 
@@ -152,11 +150,11 @@ function Update2D3D(){
 			enable=false;
 			finalSettings();
 			
-			if( isOnIpad() ) {
-				control.enabled=  true;
-			} else {
-				mouseLook.enabled = true ;
-			}	
+		if( isOnIpad() ) {
+			control.enabled=  true;
+		} else {
+			mouseLook.enabled = true ;
+		}
 			
 			control.AttachGyro();}
 	}

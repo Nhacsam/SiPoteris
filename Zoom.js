@@ -44,6 +44,7 @@ private var finalRot : Vector3 ;
 
 private var Trans :Transition2D3D;
 private var control : CameraControl;
+private var mouseLook: MouseLook;
 
 /*
  * Ajoute les listener d'envenements
@@ -80,6 +81,10 @@ function Init( VideosMeshes2D : Array, VideosMeshes3D : Array, enableMouseLook :
 	Trans = gameObject.GetComponent("Transition2D3D");
 	if (!Trans)
 		Trans = gameObject.AddComponent("Transition2D3D");
+		
+	mouseLook = gameObject.GetComponent("MouseLook");
+	if (!mouseLook)	
+		mouseLook = gameObject.AddComponent("MouseLook");
 	
 	control = gameObject.GetComponent("CameraControl");
 	if (!control)	
@@ -136,10 +141,8 @@ function disableZoom() {
 function OnTap(mousePos : Vector2) {
 	
 	if( stateMachine == ZOOM_STATES.ONSPHERE ) {
-		//Console.Info("Nb 2D: " + Videos2D.length + ", nb 3D: " + Videos3D.length);
 		// Détecte l'objet cliqué
 		for ( var i = 0; i < (Trans.isScene2D() ? Videos2D.length : Videos3D.length) ; i++ ) {
-			//Console.Test("i = " + i, 42);
 			var ray : Ray = camera.ScreenPointToRay(mousePos);
 			var hit : RaycastHit = new RaycastHit() ;
 			
@@ -172,7 +175,7 @@ function toOnZoom( obj : GameObject ) {
 		
 		stateMachine = ZOOM_STATES.ONZOOM ;
 		selected = obj ;
-				
+			
 		enableLook(false);
 		control.enabled = false;
 
@@ -227,8 +230,8 @@ function toOnSphere () {
 	
 	stateMachine = ZOOM_STATES.ONSPHERE ;
 	
-	enableLook(true);
-	control.enabled = true;
+	//enableLook(true);
+
 	
 }
 

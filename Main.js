@@ -114,10 +114,14 @@ function Update () {
 }
 
 function enableMouseLook( b : boolean ) {
-	if( isOnIpad() )
+	if( isOnIpad() ) {
 		control.enabled = b ;
-	else
+		Console.Test("(main) Control est passe à " + b, 42);
+	}
+	else {	
 		mouseLook.enabled = b ;
+		Console.Test("(main) MouseLook est passe à " + b, 42);
+	}
 }
 
 
