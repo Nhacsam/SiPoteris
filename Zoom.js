@@ -42,7 +42,8 @@ private var beginTime : float = 0.0f ;
 private var finalPos : Vector3 ;
 private var finalRot : Vector3 ;
 
-private static var isScene2D : boolean = true; // true par défaut ?
+private var Trans :Transition2D3D;
+private var control : CameraControl;
 
 /*
  * Ajoute les listener d'envenements
@@ -76,10 +77,21 @@ function Init( VideosMeshes2D : Array, VideosMeshes3D : Array, enableMouseLook :
 	OnEndZoom = new Array() ;
 	OnLeave = new Array() ;	
 	
-	CameraInitialPos = camera.transform.position ;
-	enableLook = enableMouseLook ;
-	toOnSphere() ;
+	Trans = gameObject.GetComponent("Transition2D3D");
+	if (!Trans)
+		Trans = gameObject.AddComponent("Transition2D3D");
 	
+	control = gameObject.GetComponent("CameraControl");
+	if (!control)	
+		control = gameObject.AddComponent("CameraControl");
+
+	control.enabled = false;
+	
+	CameraInitialPos = camera.transform.position ;
+	
+	enableLook = enableMouseLook ;
+	enableLook(false);
+	toOnSphere() ;
 	
 	enableZoom();
 	
@@ -124,14 +136,14 @@ function disableZoom() {
 function OnTap(mousePos : Vector2) {
 	
 	if( stateMachine == ZOOM_STATES.ONSPHERE ) {
-		
+		//Console.Info("Nb 2D: " + Videos2D.length + ", nb 3D: " + Videos3D.length);
 		// Détecte l'objet cliqué
-		for ( var i = 0; i < (isScene2D ? Videos2D.length : Videos3D.length) ; i++ ) {
-			
+		for ( var i = 0; i < (Trans.isScene2D() ? Videos2D.length : Videos3D.length) ; i++ ) {
+			//Console.Test("i = " + i, 42);
 			var ray : Ray = camera.ScreenPointToRay(mousePos);
 			var hit : RaycastHit = new RaycastHit() ;
 			
-			var Video : GameObject = isScene2D ? Videos2D[i] : Videos3D[i] ;
+			var Video : GameObject = Trans.isScene2D() ? Videos2D[i] : Videos3D[i] ;
 			if( Video.collider.Raycast(ray, hit, 1000.0f) ) {
 				toOnZoom(Video);
 				break ;
@@ -162,7 +174,8 @@ function toOnZoom( obj : GameObject ) {
 		selected = obj ;
 				
 		enableLook(false);
-		
+
+	
 		CameraInitialPos = camera.transform.position ;
 		CameraInitialRot = camera.transform.eulerAngles ;
 		beginTime = Time.time;
@@ -213,12 +226,8 @@ function toOnSphere () {
 	
 	stateMachine = ZOOM_STATES.ONSPHERE ;
 	
-	enableLook(true);
+	//enableLook(true);
 	
-}
-
-static function currently2D (b: boolean) {
-	isScene2D = b;
 }
 
 /*
@@ -226,7 +235,7 @@ static function currently2D (b: boolean) {
  * lors d'un zoom sur une structure
  */
 function ComputeFinalPos()  {
-	if (isScene2D)
+	if (Trans.isScene2D())
 		ComputeFinalPos2D();
 	else
 		ComputeFinalPos3D();
@@ -279,7 +288,7 @@ function ComputeFinalPos3D()  {
 }
 
 function ComputeFinalRot()  {
-	if (isScene2D)
+	if (Trans.isScene2D())
 		ComputeFinalRot2D();
 	else
 		ComputeFinalRot3D();

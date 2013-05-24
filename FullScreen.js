@@ -12,6 +12,8 @@ private var strip : displayStrip;
 /* On est en mode plein écran ? */
 private var onFullScreen : boolean ;
 
+/*	quand on rentre dans l'update pour la premiere fois*/
+private var firstTimeInUpdate : boolean = true;
 
 /* isolation de l'élément par rapport à la sphère complete */
 private var isolate : boolean = true ;
@@ -73,7 +75,7 @@ function InitFullScreen( ) {
 	windows =		gameObject.AddComponent("showingWindow")	as showingWindow ;
 	audioPlayer =	gameObject.AddComponent("sound")			as sound ;
 	textViewer =	gameObject.AddComponent("text")				as text ;
-	//strip = 		gameObject.AddComponent("displayStrip")		as displayStrip;
+	strip = 		gameObject.AddComponent("displayStrip")		as displayStrip;
 	
 	onFullScreen = false ;
 	
@@ -109,10 +111,31 @@ function OnGUIFullScreen(){
 function UpDateFullScreen() {
 	
 	if( onFullScreen ) {
-		
 		slideshow.UpDateSlideShow();
-		
 		windows.SetNewTextureObj( slideshow.getCurrentAssociedInfo() );
+		
+		if( firstTimeInUpdate ){
+			// init strip
+			strip.InitVideoScreen( 11 , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
+			firstTimeInUpdate = false;
+		}
+	
+		// for strip on GUI
+		if( strip.getMoveIn() && strip.getStates() == STATES_OF_STRIP.MOVE ){
+			var middle : Vector2 = Vector2( Screen.width/2 , Screen.height/2 );
+			strip.Update_MOVE( middle );
+		}
+	
+		if( strip.getStates() == STATES_OF_STRIP.ZOOM_IN )
+			strip.Update_ZOOM_IN();
+	
+		if( strip.getStates() == STATES_OF_STRIP.ZOOM_OUT )
+			strip.Update_ZOOM_OUT();
+		
+		if( strip.getStates() == STATES_OF_STRIP.MOVE && strip.getMoveOut() ){
+			var v : Vector3 = strip.getPosStart();
+			strip.Update_MOVE( Vector2(v.x,v.y) );
+		}
 	}
 }
 

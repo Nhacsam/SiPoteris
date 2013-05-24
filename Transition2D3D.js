@@ -25,8 +25,14 @@ private var scene2D : boolean=true;
 //instantiate items
 function init(){
 
-	mouseLook = gameObject.AddComponent("MouseLook");
-	control = gameObject.AddComponent("CameraControl");
+	mouseLook = gameObject.GetComponent("MouseLook");
+	control = gameObject.GetComponent("CameraControl");
+	if (!mouseLook)
+		mouseLook = gameObject.AddComponent("mouseLook");
+
+	if (!control)	
+		control = gameObject.AddComponent("CameraControl");
+		
 	Videos= gameObject.GetComponent("videoSettings") as videoSettings;
 	control.enabled=false;
 	mouseLook.enabled=false;
@@ -57,8 +63,6 @@ function  OnGUI2D3D(){
 			}
   	  
     }
-
-	
         
 }
 
@@ -70,15 +74,12 @@ function Change2D3D(){
 	end=false;
 	
 	if(scene2D){	
-	Videos.changeSettings(true);
-	cameraTransition();
+		Videos.changeSettings(true);
+		cameraTransition();
 	}
 	else{
-	control.enabled=false;
-	mouseLook.enabled = false ;
-	Videos.changeSettings(false);
-	cameraTransition();
-
+		Videos.changeSettings(false);
+		cameraTransition();
 	}
 
 	switchScene();
@@ -133,16 +134,15 @@ function Update2D3D(){
 		if(camera.transform.eulerAngles.x >= 358 ){
 			enable=false;
 			finalSettings();
+			
 			if( isOnIpad() ) {
-		
-				control.enabled=true;
-	
+				control.enabled=  true;
 			} else {
-				mouseLook.enabled = true ;
+				if(!scene2D)mouseLook.enabled = true ;
 			}	
+			
 			control.AttachGyro();}
 	}
-	
 	
 }
 
