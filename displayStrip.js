@@ -8,7 +8,7 @@
 
 // states engine
 enum STATES_OF_STRIP { STATE_IN , STATE_OUT , MOVE , ZOOM_IN , ZOOM_OUT};
-private var states : STATES_OF_STRIP;
+private var states : STATES_OF_STRIP = STATES_OF_STRIP.STATE_OUT;
 
 // plane for video  /  screen
 private var videoScreen : GameObject;
@@ -114,12 +114,11 @@ function OnTap( v : Vector2 ){
 */
 private function OnDrag( dragInfo : DragInfo ){
 	
-	if( states == STATES_OF_STRIP.STATE_IN )
+	if( states == STATES_OF_STRIP.STATE_IN ){
 		dragging = true;
-		
-	dragInf = dragInfo;
-
-	manageStates();
+		dragInf = dragInfo;
+		manageStates();
+	}
 }
 
 ////////////////////////
