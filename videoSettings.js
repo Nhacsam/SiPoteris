@@ -14,7 +14,7 @@ private var button:boolean=true;
 
 private var Trans:Transition2D3D;
 
-private var rot;
+private var rotInit;
 
 
 private var startRotation;
@@ -98,9 +98,9 @@ function generateScene2D(){
     plane2D.transform.Rotate(Vector3(180,180,0));
     plane2D.transform.position = Vector3(0,0,0);
     plane2D.AddComponent("PlayFileBasedMovieDefault");
-  	plane2D.renderer.material = Resources.Load("Movie");
+  	plane2D.renderer.material = Resources.Load("MovieHD");
 
-	rot=plane2D.transform.rotation;
+	rotInit=plane2D.transform.rotation;
 	startRotation = plane2D.transform.rotation;
 	endRotation = plane2D.transform.rotation * Quaternion.Euler(180,0,0);
 }
@@ -115,7 +115,7 @@ function generateScene3D(){
 	//set it at the right position
 	sphere3D.transform.Rotate(-90,0,0);
 	sphere3D.transform.localScale=Vector3(500,500,500);
-	sphere3D.renderer.material = Resources.Load("Movie");
+	sphere3D.renderer.material = Resources.Load("MovieHD");
 	
 }
 
@@ -199,6 +199,7 @@ function stopVideo(focus: GameObject){
 	var controllerMovie:PlayFileBasedMovieDefault;
 	controllerMovie=focus.GetComponent("PlayFileBasedMovieDefault");
 	controllerMovie.StopMovie ();
+	Destroy(focus.GetComponent("PlayFileBasedMovieDefault"));
 	
 	return true;
 
@@ -210,11 +211,19 @@ function stopVideo(focus: GameObject){
 function getFlagEndVideo(){
 	var controllerScene:SceneController;
 	controllerScene = MovieController.GetComponent("SceneController");
-	if(controllerScene.movieClass[0].movieFinished==true)Trans.endingEnable();
 	return controllerScene.movieClass[0].movieFinished;
-
+	//Trans.endingEnable();
+	//return true;
 }
 
+function effectsOnEnd(){
+
+	if(getFlagEndVideo()){
+	
+		Trans.endingEnable();
+	}
+
+}
 
 function endTransition(){
 
@@ -223,7 +232,7 @@ function endTransition(){
 
 	if(t >= 1.0) {
 		
-		if( startRotation == rot ) {
+		if( startRotation == rotInit ) {
 		
 			t = 0;
 			startRotation = plane2D.transform.rotation ;
@@ -236,6 +245,7 @@ function endTransition(){
 
 	return false;
 }
+
 /*
 * part to hanlde zoom on a position
 */

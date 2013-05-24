@@ -104,7 +104,7 @@ function displayMusic() {
 		return;
 	
 	var buttonSize = (Screen.height - uBorder - dBorder ) * buttonSizeFactor;  // size of the square
-	//GUI.skin = customGUISkin; // Transparent buttons
+	GUI.skin = customGUISkin; // Transparent buttons
 	
 	if (onFullScreen) {
 	
