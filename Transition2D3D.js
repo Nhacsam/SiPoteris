@@ -80,6 +80,7 @@ function Change2D3D(){
 	else{
 		Videos.changeSettings(false);
 		mouseLook.enabled = false;
+		control.enabled = false;
 		cameraTransition();
 	}
 
