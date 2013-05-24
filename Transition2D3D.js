@@ -22,22 +22,20 @@ private var button:boolean=true;
 private var Videos:videoSettings;
 
 private var scene2D : boolean=true;
-private var display:boolean=true;
 //instantiate items
 function init(){
 
 	mouseLook = gameObject.GetComponent("MouseLook");
-	if (!mouseLook)	
-		mouseLook = gameObject.AddComponent("MouseLook");
-	
 	control = gameObject.GetComponent("CameraControl");
+	if (!mouseLook)
+		mouseLook = gameObject.AddComponent("mouseLook");
+
 	if (!control)	
 		control = gameObject.AddComponent("CameraControl");
 		
 	Videos= gameObject.GetComponent("videoSettings") as videoSettings;
-	
-	control.enabled = false;
-	mouseLook.enabled = false;
+	control.enabled=false;
+	mouseLook.enabled=false;
 }
 
 
@@ -54,9 +52,7 @@ function endingEnable(){
 
 function  OnGUI2D3D(){
 
-	
-
-	if(display && !enable &&  !enableEnding){
+	if(Videos.OnPlay() && !enable &&  !enableEnding){
 		
 		GUI.Label(Rect(Screen.width/2 +315 , Screen.height-60, camera.pixelWidth , camera.pixelHeight),"Click anywhere on the screen \n   to get further information.");
 			
@@ -82,7 +78,6 @@ function Change2D3D(){
 		cameraTransition();
 	}
 	else{
-		//enableLook(false);
 		Videos.changeSettings(false);
 		cameraTransition();
 	}
@@ -123,20 +118,10 @@ private var end:boolean =false;
 //called at everyframe, function generating transition
 function Update2D3D(){
 
-	display=Videos.OnPlay();
-
 	if (!enable)
 		return ;
 
 	control.DetachGyro();
-	
-	if(scene2D) {
-		if( isOnIpad() ) {
-			control.enabled=  false;
-		} else {
-			mouseLook.enabled = false ;
-		}
-	}
 
 	if(!scene2D && !done){
 
@@ -163,14 +148,14 @@ function Update2D3D(){
 
 function UpdateEnding(){
 
+	Videos.effectsOnEnd();
+
 	if (!enableEnding)
 		return ;
 
-	if(end==false && enableEnding==true){
-	
+	if(end==false){
 	
 		if(Videos.endTransition()==true){enableEnding=false;end=true;}
-
 	}
 
 }

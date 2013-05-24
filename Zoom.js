@@ -95,7 +95,7 @@ function Init( VideosMeshes2D : Array, VideosMeshes3D : Array, enableMouseLook :
 	CameraInitialPos = camera.transform.position ;
 	
 	enableLook = enableMouseLook ;
-	
+	enableLook(false);
 	toOnSphere() ;
 	
 	enableZoom();
@@ -177,7 +177,6 @@ function toOnZoom( obj : GameObject ) {
 		selected = obj ;
 			
 		enableLook(false);
-		control.enabled = false;
 
 	
 		CameraInitialPos = camera.transform.position ;
@@ -231,7 +230,6 @@ function toOnSphere () {
 	stateMachine = ZOOM_STATES.ONSPHERE ;
 	
 	//enableLook(true);
-
 	
 }
 
