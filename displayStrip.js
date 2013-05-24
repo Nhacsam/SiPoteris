@@ -52,8 +52,6 @@ private var posCam : Vector3;
 	private var zoomSpeed : float;
 	// rect when zooming in
 	private var rectZoomIn : Rect;
-	// first time in updatezoom_in
-	private var firstTimeZoomIn : boolean = true;
 	// end zoom
 	private var end_zoom : boolean = false;
 	// position of camera at the start of zoom in move
@@ -85,7 +83,7 @@ function OnDisable(){
 	*action after event tap
 */
 function OnTap( v : Vector2 ){
-	if( onFullScreen ){
+	if( onFullScreen && videoScreen != null ){
 		var ray : Ray = camera.ScreenPointToRay( v );
 		var hit : RaycastHit = new RaycastHit();
 
@@ -95,6 +93,7 @@ function OnTap( v : Vector2 ){
 			move_out = false;
 			enable_move = true;
 			end_zoom = false;
+			firstTimeMove = true;
 			posStart = camera.WorldToScreenPoint( videoScreen.transform.position );
 			manageStates();
 		}
@@ -252,13 +251,12 @@ private function createStripPlane( r : Rect ){
 	videoScreen.name = "stripPlane";
 	
 	var size = videoScreen.renderer.bounds.size ;
-
+	
 	// set position of plane
 	videoScreen.transform.position = camera.ScreenToWorldPoint( Vector3( r.x + r.width/2 , r.y + r.height/2 , camera.nearClipPlane + 0.1 ) );
-	videoScreen.transform.localRotation.eulerAngles = Vector3( 0 , 180 , 0 );
-	
-	// load picture
-	videoScreen.renderer.material.mainTexture = Resources.Load( "dianeIm" );
+	videoScreen.transform.rotation = camera.transform.rotation;
+	videoScreen.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
+	videoScreen.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );
 	
 	// extend plane
 	var elmtsSize : Vector2 = show.getRealSize(	Vector2( r.width , r.height ),
@@ -267,6 +265,9 @@ private function createStripPlane( r : Rect ){
 												camera ) ;
 	
 	videoScreen.transform.localScale = Vector3( elmtsSize.x/size.x, 1, elmtsSize.y/size.z ) ;
+	
+	// load picture
+	videoScreen.renderer.material.mainTexture = Resources.Load( "dianeIm" );
 }
 
 /*
@@ -495,6 +496,14 @@ function runMovie( name : String ){
 
 function stopMovie(){
 	videoSet.stopVideo( videoScreen );
+}
+
+///////////////////////////////////////////////
+/////destruct when living full screen mode/////
+///////////////////////////////////////////////
+
+function destructStrip(){
+	Destroy( videoScreen );
 }
 
 /////////////////////////////////////////////
