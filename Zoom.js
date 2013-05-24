@@ -140,7 +140,7 @@ function disableZoom() {
 
 function OnTap(mousePos : Vector2) {
 	
-	if( stateMachine == ZOOM_STATES.ONSPHERE ) {
+	if( stateMachine == ZOOM_STATES.ONSPHERE && !Trans.isInButton(mousePos) ) {
 		// Détecte l'objet cliqué
 		for ( var i = 0; i < (Trans.isScene2D() ? Videos2D.length : Videos3D.length) ; i++ ) {
 			var ray : Ray = camera.ScreenPointToRay(mousePos);
