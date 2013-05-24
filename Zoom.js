@@ -229,7 +229,7 @@ function toOnSphere () {
 	
 	stateMachine = ZOOM_STATES.ONSPHERE ;
 	
-	//enableLook(true);
+	enableLook(true);
 	
 }
 

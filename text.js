@@ -129,8 +129,8 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 			}
 			else {
 				toJustify.push(false);
-				if (textToDisplay[i+1] == "\t")
-					rectLetter.x += (widthTab-1) * widthLetter; // -1 because \t adds a space
+//				if (textToDisplay[i+1] == "\t")
+	//				rectLetter.x += (widthTab-1) * widthLetter; // -1 because \t adds a space
 			}
 			
 			// get position of switch lines
