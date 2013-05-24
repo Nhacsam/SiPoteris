@@ -190,16 +190,19 @@ function EnterOnFullScreen( Video : GameObject ) {
 	
 	var slideShowTempElmt : SLIDESHOWELMT ;
 	var slideShowElmts : Array = Array() ;
+	var id : int = 1 ;
 	
 	// Remplis un tableau d'éléments pour le slideshow et la fenètre
 	for (var i = 0; i < slideShowImgs.length; i++ ) {
 		
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowImgs[i],
 													WINDOWTYPES.IMG,
-													Vector2.zero );
+													Vector2.zero,
+													id );
 		
 		slideShowElmts.Push( new Array( 	fileSystem.getAssociatedMin( slideShowImgs[i], slideShowMin ),
 											slideShowTempElmt ) );
+		id++ ;
 	}
 	for (i = 0; i < slideShowVideo.length; i++ ) {
 		
@@ -210,9 +213,11 @@ function EnterOnFullScreen( Video : GameObject ) {
 		
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
 													WINDOWTYPES.VIDEO,
-													Vector2.zero );
+													Vector2.zero,
+													id );
 		
 		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
+		id++ ;
 	}
 	
 	/* Initialisation de tous les éléments du full screen */

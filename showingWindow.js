@@ -20,7 +20,11 @@ private var wImgTex : Texture = null ;
 enum WINDOWTYPES { NONE, IMG, VIDEO } ;
 private var wType : WINDOWTYPES = WINDOWTYPES.NONE;
 
-// VIdeo en lecture ?
+// Id de l'element en lecture
+private var wId : int = -1;
+
+
+// Video en lecture ?
 private var wVideoIsPlaying : boolean = false ;
 
 // Informations sur un éléments
@@ -28,11 +32,13 @@ class SLIDESHOWELMT extends System.ValueType{
   var type : WINDOWTYPES ;
   var path : String ;
   var size : Vector2 ;
+  var id : int ;
  
-  public function SLIDESHOWELMT(p : String, t : WINDOWTYPES, s : Vector2){
+  public function SLIDESHOWELMT( p : String, t : WINDOWTYPES, s : Vector2, id : int ){
      this.type = t;
      this.path = p;
 	 this.size = s;
+	 this.id = id ;
   }
 }
 
@@ -81,10 +87,14 @@ function destuctWindow() {
 
 function SetNewTextureObj( e ) {
 	
+	
+	Console.Test( e, 5 );
+	
 	if( typeof(e) == SLIDESHOWELMT ) {
 	
 		var t : SLIDESHOWELMT = e ;
-		SetNewTexture( t.path, t.type, Vector2.zero);
+		Console.Test( t.path + ' * ' + t.type + ' * ' + Vector2.zero + ' * ' + t.id, 5 );
+		SetNewTexture( t.path, t.type, Vector2.zero, t.id );
 		
 	} else {
 		if( wObj)
@@ -95,7 +105,13 @@ function SetNewTextureObj( e ) {
 }
 
 
-function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2 ) {
+function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id : int ) {
+	
+	// l'objet affiché n'a pas changé
+	if( id == wId )
+		return ;
+	else
+		wId = id ;
 	
 	// erreur si chemin vide
 	if(path == '' ) {

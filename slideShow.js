@@ -197,6 +197,7 @@ function destuctSlideShow() {
  * Récupère les infos du plan courant
  */
 function getCurrentAssociedInfo() {
+
 	if( elmtsInfo )
 		if( elmtsInfo.length > effectiveCurrentPage )
 			return elmtsInfo[ effectiveCurrentPage ];
@@ -211,7 +212,8 @@ function getCurrentAssociedInfo() {
 
 function AddElmt( texture : String, info ) : boolean {
 	
-	
+	var a : SLIDESHOWELMT = info ;
+	Console.Test( 'info.id : ' + a.id, 5);
 	if( effNbElmts > nbElmts-1 ) {
 		effNbElmts-- ;
 		Debug.LogError( "Too many elmts given in slideShow" );
