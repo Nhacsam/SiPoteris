@@ -14,7 +14,7 @@ private var button:boolean=true;
 
 private var Trans:Transition2D3D;
 
-private var rot;
+private var rotInit;
 
 
 private var startRotation;
@@ -100,7 +100,7 @@ function generateScene2D(){
     plane2D.AddComponent("PlayFileBasedMovieDefault");
   	plane2D.renderer.material = Resources.Load("MovieHD");
 
-	rot=plane2D.transform.rotation;
+	rotInit=plane2D.transform.rotation;
 	startRotation = plane2D.transform.rotation;
 	endRotation = plane2D.transform.rotation * Quaternion.Euler(180,0,0);
 }
@@ -199,6 +199,7 @@ function stopVideo(focus: GameObject){
 	var controllerMovie:PlayFileBasedMovieDefault;
 	controllerMovie=focus.GetComponent("PlayFileBasedMovieDefault");
 	controllerMovie.StopMovie ();
+	Destroy(focus.GetComponent("PlayFileBasedMovieDefault"));
 	
 	return true;
 
@@ -210,11 +211,19 @@ function stopVideo(focus: GameObject){
 function getFlagEndVideo(){
 	var controllerScene:SceneController;
 	controllerScene = MovieController.GetComponent("SceneController");
-	if(controllerScene.movieClass[0].movieFinished==true)Trans.endingEnable();
 	return controllerScene.movieClass[0].movieFinished;
-
+	//Trans.endingEnable();
+	//return true;
 }
 
+function effectsOnEnd(){
+
+	if(getFlagEndVideo()){
+	
+		Trans.endingEnable();
+	}
+
+}
 
 function endTransition(){
 
@@ -223,7 +232,7 @@ function endTransition(){
 
 	if(t >= 1.0) {
 		
-		if( startRotation == rot ) {
+		if( startRotation == rotInit ) {
 		
 			t = 0;
 			startRotation = plane2D.transform.rotation ;
@@ -236,6 +245,7 @@ function endTransition(){
 
 	return false;
 }
+
 /*
 * part to hanlde zoom on a position
 */
