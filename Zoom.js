@@ -46,6 +46,8 @@ private var Trans :Transition2D3D;
 private var control : CameraControl;
 private var mouseLook: MouseLook;
 
+private var dezooming: boolean = false;
+
 /*
  * Ajoute les listener d'envenements
  */
@@ -206,9 +208,9 @@ function toOnVideo() {
 
 function toOnDeZoom() {
 	
-	stateMachine = ZOOM_STATES.ONDEZOOM ;
+	dezooming = true;
 	
-	
+	stateMachine = ZOOM_STATES.ONDEZOOM ;	
 	
 	for( var j = 0; j < OnLeave.length; j++){
 		(OnLeave[j] as function(GameObject) )( selected ) ;
@@ -228,9 +230,13 @@ function toOnDeZoom() {
 function toOnSphere () {
 	
 	stateMachine = ZOOM_STATES.ONSPHERE ;
-	
+	dezooming = false;
 	enableLook(true);
 	
+}
+
+function isDezooming () {
+	return dezooming;
 }
 
 /*

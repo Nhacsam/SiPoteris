@@ -18,6 +18,8 @@ private var done:boolean = false;
 private var control:CameraControl;
 private var mouseLook : MouseLook ;
 
+private var zoom: Zoom;
+
 private var button:boolean=true;
 private var Videos:videoSettings;
 
@@ -34,12 +36,16 @@ private var buttonWidth : int = 100;
 function init(){
 
 	mouseLook = gameObject.GetComponent("MouseLook");
-	control = gameObject.GetComponent("CameraControl");
 	if (!mouseLook)
 		mouseLook = gameObject.AddComponent("mouseLook");
-
+	
+	control = gameObject.GetComponent("CameraControl");
 	if (!control)	
 		control = gameObject.AddComponent("CameraControl");
+	
+	zoom = gameObject.GetComponent("Zoom");
+	if (!zoom)	
+		zoom = gameObject.AddComponent("Zoom");
 		
 	Videos= gameObject.GetComponent("videoSettings") as videoSettings;
 	control.enabled=false;
@@ -60,7 +66,7 @@ function endingEnable(){
 
 function  OnGUI2D3D(){
 
-	if(Videos.OnPlay() && !enable &&  !enableEnding){
+	if(Videos.OnPlay() && !enable &&  !enableEnding && !zoom.isDezooming() ){
 		
 		GUI.Label(Rect(Screen.width/2 +315 , Screen.height-60, camera.pixelWidth , camera.pixelHeight),"Click anywhere on the screen \n   to get further information.");
 			
