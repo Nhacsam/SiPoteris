@@ -262,6 +262,10 @@ function LeaveFullScreen( Video : GameObject ) {
 	slideshow.destuctSlideShow();
 	windows.destuctWindow();
 	
+	// for strip
+	strip.destructStrip();
+	firstTimeInUpdate = true;
+	
 	onFullScreen = false ;
 }
 

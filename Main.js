@@ -28,11 +28,11 @@ private var control:CameraControl;
 private var mouseLook : MouseLook ;
 
 
+private var textViewer: text;
+
+
 function Start () {
 	
-	//print('hello world');
-	//Debug.Log('hello world');
-
 	/*
 	 * Instanciate the objects
 	 */
@@ -51,7 +51,7 @@ function Start () {
 	
 	/*
 	 * Inits
-	 */	
+	 */
 	xml.InitXml("xml_data");
 	Trans.init();
 
@@ -115,12 +115,10 @@ function Update () {
 
 function enableMouseLook( b : boolean ) {
 	if( isOnIpad() ) {
-		control.enabled = b ;
-		Console.Test("(main) Control est passe à " + b, 42);
+		control.enabled = Trans.isScene2D() ? false : b;
 	}
 	else {	
-		mouseLook.enabled = b ;
-		Console.Test("(main) MouseLook est passe à " + b, 42);
+		mouseLook.enabled = Trans.isScene2D() ? false : b;
 	}
 }
 
