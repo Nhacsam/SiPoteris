@@ -86,7 +86,7 @@ function InitFullScreen( ) {
 
 function OnGUIFullScreen(){
 	
-	if( onFullScreen ) {
+	if( onFullScreen && strip.getStates() == STATES_OF_STRIP.STATE_OUT  ) {
 		
 		var Rectangle : Rect = new Rect(0,Screen.height-50,50,50) ;
 		var returnTexture : Texture = Resources.Load("blue_left_arrow");
@@ -113,10 +113,11 @@ function OnGUIFullScreen(){
 function UpDateFullScreen() {
 	
 	if( onFullScreen ) {
-	
-		slideshow.UpDateSlideShow();
-		windows.SetNewTextureObj( slideshow.getCurrentAssociedInfo() );
-		windows.updateWindow();
+		if( strip.getStates() == STATES_OF_STRIP.STATE_OUT ){
+			slideshow.UpDateSlideShow();
+			windows.SetNewTextureObj( slideshow.getCurrentAssociedInfo() );
+			windows.updateWindow();
+		}
 		
 		
 		if( firstTimeInUpdate ){
