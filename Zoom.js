@@ -46,6 +46,8 @@ private var Trans :Transition2D3D;
 private var control : CameraControl;
 private var mouseLook: MouseLook;
 
+private var dezooming: boolean = false;
+
 /*
  * Ajoute les listener d'envenements
  */
@@ -140,7 +142,7 @@ function disableZoom() {
 
 function OnTap(mousePos : Vector2) {
 	
-	if( stateMachine == ZOOM_STATES.ONSPHERE ) {
+	if( stateMachine == ZOOM_STATES.ONSPHERE && !Trans.isInButton(mousePos) ) {
 		// Détecte l'objet cliqué
 		for ( var i = 0; i < (Trans.isScene2D() ? Videos2D.length : Videos3D.length) ; i++ ) {
 			var ray : Ray = camera.ScreenPointToRay(mousePos);
@@ -206,9 +208,9 @@ function toOnVideo() {
 
 function toOnDeZoom() {
 	
-	stateMachine = ZOOM_STATES.ONDEZOOM ;
+	dezooming = true;
 	
-	
+	stateMachine = ZOOM_STATES.ONDEZOOM ;	
 	
 	for( var j = 0; j < OnLeave.length; j++){
 		(OnLeave[j] as function(GameObject) )( selected ) ;
@@ -228,9 +230,13 @@ function toOnDeZoom() {
 function toOnSphere () {
 	
 	stateMachine = ZOOM_STATES.ONSPHERE ;
-	
+	dezooming = false;
 	enableLook(true);
 	
+}
+
+function isDezooming () {
+	return dezooming;
 }
 
 /*

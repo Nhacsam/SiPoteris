@@ -187,4 +187,5 @@ function removeMusic() {
 		audio.Stop();
 	
 	Destroy(GetComponent(GUIText));
+	Destroy(GetComponent("AudioSource"));
 }

@@ -107,10 +107,11 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 	styleLetterMiddle.normal.textColor = Color.white;
 	
 	/* The script below this one does not handle the case when the 1st character is \t. Let us do it now. */
+
 	if (textToDisplay[0] == "\t")
 		rectLetter.x += (widthTab-1) * widthLetter; // -1 because \t adds a space
 	
-	/* for each letter */
+	// for each letter
 	for(var i : int = 0; i < textToDisplay.Length; i++){
 		
 		/* if the sentence does not reach the right edge AND the character is NOT \n */
@@ -133,10 +134,8 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 			}
 			else {
 				toJustify.push(false);
-				if (i < textToDisplay.Length - 1) { // Avoid the case when the text ends with \n, so textToDisplay[i+1] is out of range
-					if (textToDisplay[i+1] == "\t")
-						rectLetter.x += (widthTab-1) * widthLetter; // -1 because \t adds a space
-					}
+				if (i < (textToDisplay.Length-1) && textToDisplay[i+1] == "\t")
+					rectLetter.x += (widthTab-1) * widthLetter; // -1 because \t adds a space
 			}
 			
 			// get position of switch lines
@@ -160,7 +159,6 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 				
 		}
 	}
-	
 	/* Justify certain lines of the text */
 	for(i = 0; i < nbLines; i++) {
 		if (toJustify[i])
@@ -210,6 +208,7 @@ function CalculateSpace(numLine : int){
 	*justify text by adding spaces between words
 */
 function JustifyText(numLine : int){
+
 	var nmbSpace : float = GetNumberOfSpaces(numLine);
 	var lengthToRight : float = CalculateSpace(numLine);
 	var spaceToAdd : float = lengthToRight/nmbSpace;

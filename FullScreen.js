@@ -25,6 +25,8 @@ private var VideoInitialPos : Vector3 ;
 private var VideoInitialRot : Vector3 ;
 private var CameraInitialPos : Vector3 ;
 private var CameraInitialOrthographic : boolean ;
+private var CameraInitialLightType ;
+private var CameraInitialLightIntesity : float ;
 
 
 // A appeller pour sortir
@@ -111,8 +113,11 @@ function OnGUIFullScreen(){
 function UpDateFullScreen() {
 	
 	if( onFullScreen ) {
+	
 		slideshow.UpDateSlideShow();
 		windows.SetNewTextureObj( slideshow.getCurrentAssociedInfo() );
+		windows.updateWindow();
+		
 		
 		if( firstTimeInUpdate ){
 			// init strip
@@ -163,18 +168,19 @@ function EnterOnFullScreen( Video : GameObject ) {
 	CameraInitialPos = camera.transform.position ;
 	CameraInitialOrthographic = camera.orthographic ;
 	
+	CameraInitialLightType = gameObject.light.type ;
+	CameraInitialLightIntesity = gameObject.light.intensity ;
+	
 	// On déplace le tout pour l'isoler ds autres éléments
 	if( isolate ) {
 		camera.transform.position += toMove ;
 		//Video.transform.position += toMove ;
 	}
 	
-	
 	// Configuration de la camera et de la lumière
 	camera.orthographic = true ;
 	gameObject.light.type = LightType.Directional ;
 	gameObject.light.intensity = 0.4 ;
-	
 	
 	onFullScreen = true ;
 	
@@ -190,16 +196,19 @@ function EnterOnFullScreen( Video : GameObject ) {
 	
 	var slideShowTempElmt : SLIDESHOWELMT ;
 	var slideShowElmts : Array = Array() ;
+	var id : int = 1 ;
 	
 	// Remplis un tableau d'éléments pour le slideshow et la fenètre
 	for (var i = 0; i < slideShowImgs.length; i++ ) {
 		
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowImgs[i],
 													WINDOWTYPES.IMG,
-													Vector2.zero );
+													Vector2.zero,
+													id );
 		
 		slideShowElmts.Push( new Array( 	fileSystem.getAssociatedMin( slideShowImgs[i], slideShowMin ),
 											slideShowTempElmt ) );
+		id++ ;
 	}
 	for (i = 0; i < slideShowVideo.length; i++ ) {
 		
@@ -210,9 +219,11 @@ function EnterOnFullScreen( Video : GameObject ) {
 		
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
 													WINDOWTYPES.VIDEO,
-													Vector2.zero );
+													Vector2.zero,
+													id );
 		
 		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
+		id++ ;
 	}
 	
 	/* Initialisation de tous les éléments du full screen */
@@ -241,6 +252,10 @@ function LeaveFullScreen( Video : GameObject ) {
 	camera.transform.position = CameraInitialPos ;
 	camera.orthographic = CameraInitialOrthographic ;
 	
+	gameObject.light.type  = CameraInitialLightType ;
+	gameObject.light.intensity  = CameraInitialLightIntesity ;
+
+
 	audioPlayer.removeMusic();
 	textViewer.removeText();
 	

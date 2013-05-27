@@ -28,11 +28,11 @@ private var control:CameraControl;
 private var mouseLook : MouseLook ;
 
 
+private var textViewer: text;
+
+
 function Start () {
 	
-	//print('hello world');
-	//Debug.Log('hello world');
-
 	/*
 	 * Instanciate the objects
 	 */
@@ -51,7 +51,7 @@ function Start () {
 	
 	/*
 	 * Inits
-	 */	
+	 */
 	xml.InitXml("xml_data");
 	Trans.init();
 
