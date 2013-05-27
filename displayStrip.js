@@ -1,7 +1,7 @@
 /*
 	*Creation : 29/04/2013
 	*Author : Fabien Daoulas
-	*Last update : 24/05/2013
+	*Last update : 27/05/2013
 	
 	This script displays in full screen the picture on which the user tapped 
 */
@@ -12,9 +12,6 @@ private var states : STATES_OF_STRIP = STATES_OF_STRIP.STATE_OUT;
 
 // plane for video  /  screen
 private var videoScreen : GameObject;
-
-// rotation before lookat on 3D mode
-private var CameraInitialRot : Vector3;
 
 // ratio of plane
 private var ratioPlane : float;
@@ -70,14 +67,14 @@ private var move_out : boolean = false;
 function OnEnable(){
 
 	Gesture.onShortTapE += OnTap;
-	//Gesture.onDraggingE += OnDrag;
+	Gesture.onDraggingE += OnDrag;
 	
 }
 
 function OnDisable(){
 
 	Gesture.onShortTapE -= OnTap;
-	//Gesture.onDraggingE -= OnDrag;
+	Gesture.onDraggingE -= OnDrag;
 	
 }
 
@@ -108,7 +105,6 @@ function OnTap( v : Vector2 ){
 			move_out = true;
 			manageStates();
 		}
-
 	}
 }
 
@@ -116,7 +112,6 @@ function OnTap( v : Vector2 ){
 	*action after event drag
 */
 private function OnDrag( dragInfo : DragInfo ){
-	
 	if( states == STATES_OF_STRIP.STATE_IN ){
 		dragging = true;
 		dragInf = dragInfo;
@@ -194,7 +189,6 @@ private function bigDaddy(){
 	*on the event OnFullScreen this method is called
 */
 function InitVideoScreen( ratio : float , r : Rect ){
-	
 	// init state of the state machine
 	states = STATES_OF_STRIP.STATE_OUT;
 	ratioPlane = ratio;
@@ -203,7 +197,6 @@ function InitVideoScreen( ratio : float , r : Rect ){
 	rectOUT = computeRect( ratioPlane , r );
 	
 	createStripPlane( rectOUT );
-
 }
 
 /*
@@ -211,9 +204,7 @@ function InitVideoScreen( ratio : float , r : Rect ){
 	*ratio = width/height
 */
 private function computeRect( ratio : float , r : Rect ) : Rect {
-	
 	var newR : Rect;
-	
 	var ratioMax : float = r.width/r.height;
 	
 	// resize plane to fit ratio
@@ -249,12 +240,8 @@ private function computeRect( ratio : float , r : Rect ) : Rect {
 	*and create a plane
 */
 private function createStripPlane( r : Rect ){
-
 	show = 			gameObject.GetComponent("showingWindow") as showingWindow;
 	videoSet = 		gameObject.GetComponent("videoSettings") as videoSettings;
-	zoom =			gameObject.GetComponent("Zoom") as Zoom;
-
-	CameraInitialRot = zoom.getInitialRot();
 	
 	// create plane
 	videoScreen = new GameObject.CreatePrimitive( PrimitiveType.Plane );
@@ -275,7 +262,9 @@ private function createStripPlane( r : Rect ){
 												camera.nearClipPlane + 0.1, 
 												camera ) ;
 	
-	videoScreen.transform.localScale = Vector3( elmtsSize.x/size.x, 1, elmtsSize.y/size.z ) ;
+	videoScreen.transform.localScale = Vector3( videoScreen.transform.localScale.x*elmtsSize.x/size.x, 
+												1, 
+												videoScreen.transform.localScale.z*elmtsSize.y/size.z ) ;
 	
 	// load picture
 	videoScreen.renderer.material.mainTexture = Resources.Load( "dianeIm" );
