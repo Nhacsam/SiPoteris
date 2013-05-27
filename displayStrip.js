@@ -166,9 +166,11 @@ private function bigDaddy(){
 				videoScreen.transform.position = camera.ScreenToWorldPoint( Vector3( 	rectOUT.x + rectOUT.width/2, 
 																			rectOUT.y + rectOUT.height/2, 
 																			camera.nearClipPlane));
+				(gameObject.GetComponent( FullScreen ) as FullScreen ).enableOthers( this );
 				break;
 			case states.MOVE :
 				enable_move = true;
+				(gameObject.GetComponent( FullScreen ) as FullScreen ).disableOthers( this );
 				break;
 			case states.ZOOM_IN :
 				break;
@@ -184,6 +186,27 @@ private function bigDaddy(){
 		}
 }
 
+/////////////////////***************************** update ***************************************////////////////////////////
+/////////////////////***************************** update ***************************************////////////////////////////
+
+function updateStrip(){
+	// for strip on GUI
+	if( move_in && states == STATES_OF_STRIP.MOVE ){
+		var middle : Vector2 = Vector2( Screen.width/2 , Screen.height/2 );
+		Update_MOVE( middle );
+	}
+	
+	if( states == STATES_OF_STRIP.ZOOM_IN )
+		Update_ZOOM_IN();
+	
+	if( states == STATES_OF_STRIP.ZOOM_OUT )
+		Update_ZOOM_OUT();
+		
+	if( states == STATES_OF_STRIP.MOVE && move_out ){
+		var v : Vector3 = getPosStart();
+		Update_MOVE( Vector2(v.x,v.y) );
+	}
+}
 
 /////////////////////***************************** mise en place du plan ***************************************////////////////////////////
 /////////////////////***************************** mise en place du plan ***************************************////////////////////////////
@@ -250,7 +273,16 @@ private function createStripPlane( r : Rect ){
 	videoScreen = new GameObject.CreatePrimitive( PrimitiveType.Plane );
 	videoScreen.name = "stripPlane";
 	
+	// extend plane
+	var elmtsSize : Vector2 = window.getRealSize(	Vector2( r.width , r.height ),
+												Vector2( r.x , r.y ),
+												camera.nearClipPlane + 0.1, 
+												camera ) ;
+	
 	var size = videoScreen.renderer.bounds.size ;
+	videoScreen.transform.localScale = Vector3( elmtsSize.x/size.x, 
+												1, 
+												elmtsSize.y/size.z ) ;
 	
 	// set position of plane
 	videoScreen.transform.position = camera.ScreenToWorldPoint( Vector3( r.x + r.width/2 , r.y + r.height/2 , camera.nearClipPlane + 0.1 ) );
@@ -258,18 +290,11 @@ private function createStripPlane( r : Rect ){
 	videoScreen.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
 	videoScreen.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );
 	
-	
-	// extend plane
-	var elmtsSize : Vector2 = window.getRealSize(	Vector2( r.width , r.height ),
-												Vector2( r.x , r.y ),
-												camera.nearClipPlane + 0.1, 
-												camera ) ;
-	
-	videoScreen.transform.localScale = Vector3( videoScreen.transform.localScale.x*elmtsSize.x/size.x, 
-												1, 
-												videoScreen.transform.localScale.z*elmtsSize.y/size.z ) ;
-	
-	// load picture
+	// test and set renderer
+	var testRenderer = videoScreen.GetComponent(Renderer);
+	if( !testRenderer)
+		videoScreen.AddComponent(Renderer);
+
 	videoScreen.renderer.material.mainTexture = Resources.Load( "dianeIm" );
 }
 
@@ -291,6 +316,8 @@ private function moveCameraToDisplay(){
 */
 private function changeSizeScreen( ratio : float , r : Rect ){
 	var newR : Rect = computeRect( ratio , r );
+	var rot = videoScreen.transform.rotation;
+	videoScreen.transform.rotation = Quaternion();
 	
 	// extend plane
 	var size : Vector3 = videoScreen.renderer.bounds.size;
@@ -299,8 +326,9 @@ private function changeSizeScreen( ratio : float , r : Rect ){
 												camera.nearClipPlane + 0.1, 
 												camera ) ;
 	videoScreen.transform.localScale = Vector3( videoScreen.transform.localScale.x*elmtsSize.x/size.x, 
-												1, 
+												videoScreen.transform.localScale.y, 
 												videoScreen.transform.localScale.z*elmtsSize.y/size.z ) ;
+	videoScreen.transform.rotation = rot;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -412,9 +440,8 @@ private function initSpeedMove( obj : Vector2 , desired : Vector2 ){
 */
 function Update_ZOOM_IN(){
 	var r : Rect = getRectPlane();
-	
 	initSpeedZoom( r.y , Screen.height/6 );
-	
+
 	resizePlane( ratioPlane , 1 );
 	
 	if( r.y < Screen.height/6 )
@@ -428,14 +455,14 @@ function Update_ZOOM_IN(){
 	*ratio is the ratio of the plane
 */
 private function resizePlane( ratio : float , InOrOut : float ){
-	var r : Rect = getRectPlane();
+	var rect : Rect = getRectPlane();
 	
-	r.height += InOrOut*zoomSpeed;
-	r.width += InOrOut*zoomSpeed*ratio;
-	r.x = Screen.width/2 - r.width/2;
-	r.y = Screen.height/2 - r.height/2;
-	
-	changeSizeScreen( ratio , r );
+	rect.height += InOrOut*zoomSpeed;
+	rect.width += InOrOut*zoomSpeed*ratio;
+	rect.x = Screen.width/2 - rect.width/2;
+	rect.y = Screen.height/2 - rect.height/2;
+
+	changeSizeScreen( ratio , rect );
 }
 /*
 	*init speed when zooming in/out
@@ -495,7 +522,7 @@ function stopMovie(){
 }
 
 ///////////////////////////////////////////////
-/////destruct when living full screen mode/////
+/////destruct when leaving full screen mode/////
 ///////////////////////////////////////////////
 
 function destructStrip(){
