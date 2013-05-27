@@ -271,3 +271,40 @@ function LeaveFullScreen( Video : GameObject ) {
 
 
 
+/*
+ * Cache et désactive les objet de la GUI sauf celui envoyer en parametre
+ */
+function disableOthers( elemt ) {
+	
+	if( typeof(elemt) != slideShow )
+		slideshow.disableAll();
+	if( typeof(elemt) != showingWindow )
+		windows.disableAll();
+	if( typeof(elemt) != text )
+		textViewer.disableAll();
+	if( typeof(elemt) != sound )
+		audioPlayer.disableAll();
+
+}
+
+/*
+ * Affiche et active les objet de la GUI sauf celui envoyer en parametre
+ */
+function enableOthers( elemt ) {
+	
+	if( typeof(elemt) != slideShow )
+		slideshow.enableAll();
+	if( typeof(elemt) != showingWindow )
+		windows.enableAll();
+	if( typeof(elemt) != text )
+		textViewer.enableAll();
+	if( typeof(elemt) != sound )
+		audioPlayer.enableAll();
+	
+
+}
+
+
+
+
+

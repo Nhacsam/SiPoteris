@@ -80,7 +80,7 @@ function InitSlideShow( nbOfElmts : int, Pos : Rect, Z : float  ) {
 	
 	isMoving = false ;
 	effNbElmts = 0 ;
-	EnableEvent();
+	enableAll();
 }
 
 /*
@@ -180,16 +180,59 @@ public function AddElmt( texture : String, info ) : boolean {
 	return true ;
 }
 
+/*******************************************************
+**** Cacher / desactiver les evennements de l'objet ****
+********************************************************/
 
 /*
- * Active ou désactive les événements :
+ * Affiche l'objet et active les evenements
  */
-public function EnableEvent() {
+public function enableAll() {
+	show() ;
+	enableEvents() ;
+}
+
+/*
+ * Cache l'objet et desactive les evenements
+ */
+public function disableAll() {
+	hide() ;
+	disableEvents() ;
+}
+
+/*
+ * Active les evenements
+ */
+public function enableEvents() {
 	eventEnable = true ;
 }
-public function DisableEvent() {
+
+/*
+ * Desactive les evenements
+ */
+public function disableEvents() {
 	eventEnable = false ;
 }
+
+/*
+ * Affiche l'objet
+ */
+public function show() {
+	for( var i = 0 ; i < effNbElmts; i++) {
+		mobilesElmts[i].renderer.enabled = true ;
+	}
+}
+
+/*
+ * Cache l'objet
+ */
+public function hide() {
+	for( var i = 0 ; i < effNbElmts; i++) {
+		mobilesElmts[i].renderer.enabled = false ;
+	}
+}
+
+
 
 
 

@@ -36,7 +36,9 @@ private var currentIndex: int;
 private var widthLetter : int = 11;
 private var heightLetter : int = 20;
 
-private var onFullScreen : boolean;
+// event and display activate or not
+private var eventEnable : boolean ;
+private var isHidden : boolean ;
 
 private var chooseNextSoundRandomly: boolean = true;
 
@@ -45,7 +47,8 @@ private var chooseNextSoundRandomly: boolean = true;
 
 
 function OnGUISound() {
-	displayMusic();
+	if( !isHidden )
+		displayMusic();
 }
 
 
@@ -60,7 +63,7 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
 	tabOfSounds = tab;
 	currentIndex = 0;
 		
-	onFullScreen = true;
+	enableAll();
 
 	gameObject.AddComponent("AudioSource");
 	audio.clip = Resources.Load(tab[0]) as AudioClip;
@@ -105,36 +108,33 @@ function displayMusic() {
 	
 	var buttonSize = (Screen.height - uBorder - dBorder ) * buttonSizeFactor;  // size of the square
 	GUI.skin = customGUISkin; // Transparent buttons
-	
-	if (onFullScreen) {
-	
-		/* The button is centered regarding the y axis */
-		if (GUI.Button(Rect(lBorder, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), currentBtn)) { // Rect: left top width height
-			if (currentBtn == pauseBtn) { // Sound playing
-				currentBtn = playBtn;
-				audio.Pause();
-			}
-			else {
-				currentBtn = pauseBtn;
-				audio.Play();
-			}
+
+	/* The button is centered regarding the y axis */
+	if (GUI.Button(Rect(lBorder, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), currentBtn) && eventEnable ) { // Rect: left top width height
+		if (currentBtn == pauseBtn) { // Sound playing
+			currentBtn = playBtn;
+			audio.Pause();
 		}
+		else {
+			currentBtn = pauseBtn;
+			audio.Play();
+		}
+	}
 		
-		/* Test bouton changer musique, amené à disparaitre un jour */
-		if (GUI.Button(Rect( Screen.width-rBorder-35, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), 35, buttonSize), "OO")) {
-			changeMusic("");
-		}
+	/* Test bouton changer musique, amené à disparaitre un jour */
+	if (GUI.Button(Rect( Screen.width-rBorder-35, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), 35, buttonSize), "OO") && eventEnable) {
+		changeMusic("");
+	}
 		
 		/* Name of the song */
 		
-		GUI.Label( Rect(lBorder + buttonSize + 10,
-						uBorder + buttonSize/(2*buttonSizeFactor) - widthLetter,
-						Screen.width - lBorder - rBorder,
-						heightLetter
-						),
-				soundNameStr);
-					
-	}
+	GUI.Label( Rect(lBorder + buttonSize + 10,
+					uBorder + buttonSize/(2*buttonSizeFactor) - widthLetter,
+					Screen.width - lBorder - rBorder,
+					heightLetter
+					),
+			soundNameStr);
+	
 }
 
 /* If soundName = "", the function chooses the next sound to play (random or not). If not, plays the sound named soundName */
@@ -181,11 +181,61 @@ function changeMusic(soundName) {
 }
 
 function removeMusic() {
-	onFullScreen = false;
+	disableAll();
 	
 	if(audio)
 		audio.Stop();
 	
 	Destroy(GetComponent(GUIText));
 	Destroy(GetComponent("AudioSource"));
+}
+
+
+
+/*******************************************************
+**** Cacher / desactiver les evennements de l'objet ****
+********************************************************/
+
+/*
+ * Affiche l'objet et active les evenements
+ */
+public function enableAll() {
+	show() ;
+	enableEvents() ;
+}
+
+/*
+ * Cache l'objet et desactive les evenements
+ */
+public function disableAll() {
+	hide() ;
+	disableEvents() ;
+}
+
+/*
+ * Active les evenements
+ */
+public function enableEvents() {
+	eventEnable = true ;
+}
+
+/*
+ * Desactive les evenements
+ */
+public function disableEvents() {
+	eventEnable = false ;
+}
+
+/*
+ * Affiche l'objet
+ */
+public function show() {
+	isHidden = false ;
+}
+
+/*
+ * Cache l'objet
+ */
+public function hide() {
+	isHidden = true ;
 }

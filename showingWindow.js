@@ -43,17 +43,22 @@ class SLIDESHOWELMT extends System.ValueType{
 }
 
 // pour pouvoir zoomer sur la fenetre
-var wFullPos : Vector3 ;
-var wGUIPos : Vector3 ;
-var wFullScale : Vector3 ;
-var wGUIScale : Vector3 ;
+private var wFullPos : Vector3 ;
+private var wGUIPos : Vector3 ;
+private var wFullScale : Vector3 ;
+private var wGUIScale : Vector3 ;
 
-var wBeginTime : float ;
-var wTransitionLength : float = 1 ;
+private var wBeginTime : float ;
+private var wTransitionLength : float = 1 ;
 
 // machine d'état
 enum W_STATE { NOTONGUI, ONGUI, ONZOOM, ONDEZOOM, ONFULL };
 private var wState : W_STATE = W_STATE.NOTONGUI ;
+
+// evenement activé ?
+private var eventEnable : boolean ;
+
+
 
 
 
@@ -62,24 +67,8 @@ private var wState : W_STATE = W_STATE.NOTONGUI ;
 
 
 /*
- * Ajoute les listener d'envenements
+ * Initialise les paramètre et crée le plan
  */
-
-function OnEnable(){
-	Gesture.onShortTapE += onTap ;
-	Gesture.onDoubleTapE += onDoubleTap;
-}
-
-function OnDisable(){
-	Gesture.onShortTapE -= onTap ;
-	Gesture.onDoubleTapE -= onDoubleTap;
-}
-
-
-
-
-
-
 function InitWindow( pos : Rect, z : float ) {
 
 	wPos = pos ;
@@ -98,6 +87,9 @@ function InitWindow( pos : Rect, z : float ) {
 	
 	// Calcul celle qu'il aurait en plein écran
 	ComputeFullPos();
+	
+	// affichage et activation des événement
+	enableAll();
 }
 
 function InitWindowFactor( pos : Rect, z : float ) {
@@ -111,7 +103,9 @@ function InitWindowFactor( pos : Rect, z : float ) {
 }
 
 
-
+/*
+ * Supprime l'objet
+ */
 function destuctWindow() {
 	wState = W_STATE.NOTONGUI;
 	if( wObj)
@@ -143,7 +137,6 @@ function SetNewTextureObj( e ) {
 	}
 }
 
-
 function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id : int ) {
 	
 	// l'objet affiché n'a pas changé
@@ -163,12 +156,14 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 	
 	switch( wType ) {
 	
-		case WINDOWTYPES.VIDEO :
+		case WINDOWTYPES.VIDEO : // Si c'est une video
 			
+			// on retire du chemin StreamingAssets/
 			var tofind : String =  'StreamingAssets/' ;
 			var found = path.IndexOf( tofind ) ;
 			if( found != -1 )
 				path = path.Substring( found + tofind.length ) ;
+			
 			
 			Console.Info( 'Chargement de la video "' + path + '" sur la fenetre de la GUI');
 			
@@ -179,29 +174,31 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 			break ;
 		
 		
-		case WINDOWTYPES.IMG :
+		case WINDOWTYPES.IMG : // Si c'est une image
 			
+			// Arret de la video si on était sur une video
 			if( wVideoIsPlaying ) {
 				wVideoSettings.stopVideo( wObj );
 				wObj.renderer.enabled = true ;
 				wVideoIsPlaying= false ;
 			}
 			
+			// Charge la texture
 			wImgTex = Resources.Load(path);
 			
+			// texture invalide
 			if(! wImgTex) {
 				Debug.LogWarning('Invalid image path in SetTexture(' + path + ' ,' + type + ' ,' + size + ' ) ');
 				wObj.renderer.enabled = false ;
 				return;
 			}
 			
+			// Dimentionnement de la fenetre
 			size = (size != Vector2.zero) ? size : Vector2( wImgTex.width, wImgTex.height ) ;
-			
-
-			
 			Console.Test(size, 1);
 			//chageObjSizeToOptimal(size);
 			
+			// application de la texture
 			wObj.renderer.material.mainTexture = wImgTex ;
 			wObj.renderer.enabled = true ;
 			
@@ -215,9 +212,65 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 }
 
 
+/*******************************************************
+**** Cacher / desactiver les evennements de l'objet ****
+********************************************************/
+
 /*
-	 * crée et dimentionne le plan
-	 */
+ * Affiche l'objet et active les evenements
+ */
+public function enableAll() {
+	show() ;
+	enableEvents() ;
+}
+
+/*
+ * Cache l'objet et desactive les evenements
+ */
+public function disableAll() {
+	hide() ;
+	disableEvents() ;
+}
+
+/*
+ * Active les evenements
+ */
+public function enableEvents() {
+	eventEnable = true ;
+}
+
+/*
+ * Desactive les evenements
+ */
+public function disableEvents() {
+	eventEnable = false ;
+}
+
+/*
+ * Affiche l'objet
+ */
+public function show() {
+	wObj.renderer.enabled = true ;
+}
+
+/*
+ * Cache l'objet
+ */
+public function hide() {
+	wObj.renderer.enabled = false ;
+}
+
+
+
+
+/*******************************
+**** Dimentions et Position ****
+********************************/
+
+
+/*
+ * crée et dimentionne le plan
+ */
 private function placeRenderingPlane() {
 	
 	// Dimensions
@@ -226,21 +279,24 @@ private function placeRenderingPlane() {
 											Vector2( wPos.x, wPos.y ),
 											wZ, camera ) ;
 	
-	// Création et position
+	// Création
 	wObj = new GameObject.CreatePrimitive(PrimitiveType.Plane);
 	
 	// Application des dimentions
 	var size = wObj.renderer.bounds.size ;
 	wObj.transform.localScale = Vector3( elmtsSize.x/size.x, 1, elmtsSize.y/size.z ) ;
 	
+	// rotation face à la caméra
 	wObj.transform.rotation = camera.transform.rotation ;
 	wObj.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
 	wObj.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );
 	
+	// place l'objet
 	wObj.transform.position =	camera.ScreenToWorldPoint(Vector3( wPos.center.x, camera.pixelHeight - wPos.center.y, wZ ) ) ;
 	
 	wObj.name = "Showing Window" ;
 	
+	// ajoute un renderer si tel n'est pas le cas
 	var testRenderer = wObj.GetComponent(Renderer);
 	if( !testRenderer)
 		wObj.AddComponent(Renderer);
@@ -250,9 +306,13 @@ private function placeRenderingPlane() {
 
 
 
+/*
+ * Calcul les dimension optimales pour entrer dans la fenetre
+ * sans redimentionner l'image
+ */
 private function getOptimalSize( VideoDim : Vector2 ) : Vector2 {
 	
-	
+	// calcul des ratios
 	var videoRatio = VideoDim.y/VideoDim.x ;
 	var ratio = wPos.height / wPos.width ;
 	var optimalSize : Vector2 = new Vector2(0.0f,0.0f);
@@ -274,6 +334,10 @@ private function getOptimalSize( VideoDim : Vector2 ) : Vector2 {
 	return optimalSize ;
 }
 
+/*
+ * Récupère les dimension d'un objet par rapport à ses dimension sur
+ * l'écran de la caméra et à sa  distance par rappot à celle ci
+ */
 
 static function getRealSize (size : Vector2, screenPos : Vector2, z : float, camera : Camera ) : Vector2 {
 	
@@ -284,18 +348,25 @@ static function getRealSize (size : Vector2, screenPos : Vector2, z : float, cam
 	return elmtsSize ;
 }
 
+/*
+ * Redimensionne l'objet pour lui donner ses dimension optimales
+ */
+
 private function chageObjSizeToOptimal( size : Vector2 ) {
 	
+	// récupère les dimension optimales
 	var newSize = getOptimalSize(size);
 	newSize = getRealSize( newSize, Vector2( wPos.x, wPos.y ), wZ, camera ) ;
 	
-	
+	// tourne l'objet dans le sens des axes
 	var rotation = wObj.transform.rotation ;
 	wObj.transform.rotation = Quaternion();
 	
+	// lui assigne les bonnes dimensions
 	var bounds = wObj.renderer.bounds.size ;
 	wObj.transform.localScale= Vector3( wObj.transform.localScale.x * newSize.x/bounds.x, wObj.transform.localScale.y, wObj.transform.localScale.z *newSize.y/bounds.z ) ;
 	
+	// replace l'objet
 	wObj.transform.rotation = rotation ;
 }
 
@@ -305,6 +376,24 @@ private function chageObjSizeToOptimal( size : Vector2 ) {
 /************************************
 **************** ZOOM ***************
 *************************************/
+
+
+/*
+ * Ajoute les listener d'envenements
+ */
+
+function OnEnable(){
+	Gesture.onShortTapE += onTap ;
+	Gesture.onDoubleTapE += onDoubleTap;
+}
+
+function OnDisable(){
+	Gesture.onShortTapE -= onTap ;
+	Gesture.onDoubleTapE -= onDoubleTap;
+}
+
+
+
 
 /*
  * MaJ de la position
@@ -328,6 +417,10 @@ public function updateWindow() {
 		// Si le déplacement est fini
 		if( Time.time > wBeginTime + wTransitionLength ) {
 			wState = W_STATE.ONGUI ;
+			
+			// réactive les autre éléments de la fenetre
+			(gameObject.GetComponent( FullScreen ) as FullScreen ).enableOthers( this );
+			
 		} else { // sinon
 			
 			// Calcul des valeurs intermédiaires
@@ -347,6 +440,10 @@ public function updateWindow() {
 
 public function onTap( pos : Vector2 ) {
 	
+	// La fonction s'interrompt si les événements sont désactivés
+	if( !eventEnable )
+		return ;
+	
 	// SI on est sur les video (2D / 3D)
 	if( wState == W_STATE.NOTONGUI)
 		return ;
@@ -360,6 +457,10 @@ public function onTap( pos : Vector2 ) {
 }
 
 public function onDoubleTap( pos : Vector2 ) {
+	
+	// La fonction s'interrompt si les événements sont désactivés
+	if( !eventEnable )
+		return ;
 	
 	// SI on est sur les video (2D / 3D)
 	if( wState == W_STATE.NOTONGUI)
@@ -391,15 +492,24 @@ private function clickOnWindow (pos : Vector2) : boolean {
  * Calcul la position et l'echelle de l'objet en plein écran
  */
 private function ComputeFullPos() {
+	
+	// calcul de la position finale de l'objet
 	wFullPos = camera.ScreenToWorldPoint( Vector3(camera.pixelWidth/2, camera.pixelHeight/2, wZ ) ) ;
 	
+	// tourne l'objet dans le sens des axes
+	var rotation = wObj.transform.rotation ;
+	wObj.transform.rotation = Quaternion();
 	
+	// calcul des dimentions finales de l'objets
 	var size = wObj.renderer.bounds.size ;
 	var elmtsSize : Vector2 = getRealSize(	Vector2( size.x * camera.pixelHeight/size.z , camera.pixelHeight ),
 											Vector2( wFullPos.x, wFullPos.y ),
 											wFullPos.z, camera ) ;
-		
+	
 	wFullScale = Vector3( wObj.transform.localScale.x * elmtsSize.x/size.x, 1, wObj.transform.localScale.z * elmtsSize.y/size.z ) ;
+	
+	// replace l'objet
+	wObj.transform.rotation = rotation ;
 	
 }
 
@@ -416,11 +526,12 @@ private function SetUpZoom () {
 		wState = W_STATE.ONZOOM ;
 		wBeginTime = Time.time;
 		
+		(gameObject.GetComponent( FullScreen ) as FullScreen ).disableOthers( this );
+		
 	} else if( wState == W_STATE.ONFULL ){
 	
 		wState = W_STATE.ONDEZOOM ;
 		wBeginTime = Time.time;
-		
 	}
 }
 
