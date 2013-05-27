@@ -42,6 +42,40 @@ class SLIDESHOWELMT extends System.ValueType{
   }
 }
 
+// pour pouvoir zoomer sur la fenetre
+var wFullPos : Vector3 ;
+var wGUIPos : Vector3 ;
+var wFullScale : Vector3 ;
+var wGUIScale : Vector3 ;
+
+var wBeginTime : float ;
+var wTransitionLength : float = 1 ;
+
+// machine d'état
+enum W_STATE { NOTONGUI, ONGUI, ONZOOM, ONDEZOOM, ONFULL };
+private var wState : W_STATE = W_STATE.NOTONGUI ;
+
+
+
+
+
+
+
+/*
+ * Ajoute les listener d'envenements
+ */
+
+function OnEnable(){
+	Gesture.onShortTapE += onTap ;
+	Gesture.onDoubleTapE += onDoubleTap;
+}
+
+function OnDisable(){
+	Gesture.onShortTapE -= onTap ;
+	Gesture.onDoubleTapE -= onDoubleTap;
+}
+
+
 
 
 
@@ -50,12 +84,20 @@ function InitWindow( pos : Rect, z : float ) {
 
 	wPos = pos ;
 	wZ = z ;
+	wState = W_STATE.ONGUI ;
 	
 	wVideoSettings = gameObject.GetComponent("videoSettings");
 	if( ! wVideoSettings)
 		wVideoSettings = gameObject.AddComponent("videoSettings");
 	
 	placeRenderingPlane();
+	
+	// Retient la position du plan dans la GUI
+	wGUIPos = wObj.transform.position ;
+	wGUIScale = wObj.transform.localScale ;
+	
+	// Calcul celle qu'il aurait en plein écran
+	ComputeFullPos();
 }
 
 function InitWindowFactor( pos : Rect, z : float ) {
@@ -71,6 +113,7 @@ function InitWindowFactor( pos : Rect, z : float ) {
 
 
 function destuctWindow() {
+	wState = W_STATE.NOTONGUI;
 	if( wObj)
 		Destroy(wObj);
 }
@@ -87,13 +130,9 @@ function destuctWindow() {
 
 function SetNewTextureObj( e ) {
 	
-	
-	Console.Test( e, 5 );
-	
 	if( typeof(e) == SLIDESHOWELMT ) {
 	
 		var t : SLIDESHOWELMT = e ;
-		Console.Test( t.path + ' * ' + t.type + ' * ' + Vector2.zero + ' * ' + t.id, 5 );
 		SetNewTexture( t.path, t.type, Vector2.zero, t.id );
 		
 	} else {
@@ -192,7 +231,7 @@ private function placeRenderingPlane() {
 	
 	// Application des dimentions
 	var size = wObj.renderer.bounds.size ;
-	wObj.transform.localScale= Vector3( elmtsSize.x/size.x, 1, elmtsSize.y/size.z ) ;
+	wObj.transform.localScale = Vector3( elmtsSize.x/size.x, 1, elmtsSize.y/size.z ) ;
 	
 	wObj.transform.rotation = camera.transform.rotation ;
 	wObj.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
@@ -259,6 +298,132 @@ private function chageObjSizeToOptimal( size : Vector2 ) {
 	
 	wObj.transform.rotation = rotation ;
 }
+
+
+
+
+/************************************
+**************** ZOOM ***************
+*************************************/
+
+/*
+ * MaJ de la position
+ */
+public function updateWindow() {
+	
+	if( wState == W_STATE.ONZOOM ) {
+		
+		// Si le déplacement est fini
+		if( Time.time > wBeginTime + wTransitionLength ) {
+			wState = W_STATE.ONFULL ;
+		} else { // sinon
+			
+			// Calcul des valeurs intermédiaires
+			wObj.transform.localScale = Vector3.Slerp( wGUIScale, wFullScale, (Time.time - wBeginTime ) / wTransitionLength );
+			wObj.transform.position = Vector3.Slerp( wGUIPos, wFullPos, (Time.time - wBeginTime ) / wTransitionLength );
+		}
+		
+	} else if( wState == W_STATE.ONDEZOOM ){
+	
+		// Si le déplacement est fini
+		if( Time.time > wBeginTime + wTransitionLength ) {
+			wState = W_STATE.ONGUI ;
+		} else { // sinon
+			
+			// Calcul des valeurs intermédiaires
+			wObj.transform.localScale = Vector3.Slerp( wFullScale, wGUIScale, (Time.time - wBeginTime ) / wTransitionLength );
+			wObj.transform.position = Vector3.Slerp( wFullPos, wGUIPos, (Time.time - wBeginTime ) / wTransitionLength );
+		}
+		
+	}
+	
+}
+
+
+
+/*
+ * Gestion des evennements
+ */
+
+public function onTap( pos : Vector2 ) {
+	
+	// SI on est sur les video (2D / 3D)
+	if( wState == W_STATE.NOTONGUI)
+		return ;
+	
+	if( clickOnWindow(pos) ) { 	// Si on a cliqué sur le plan
+		//SetUpZoom();			// On change l'image
+	} else {
+		if( wState == W_STATE.ONFULL ) // Si on est en plein écran et qu'on a cliqué à coté
+			SetUpZoom();				// On dezoom
+	}
+}
+
+public function onDoubleTap( pos : Vector2 ) {
+	
+	// SI on est sur les video (2D / 3D)
+	if( wState == W_STATE.NOTONGUI)
+		return ;
+	
+	if( clickOnWindow(pos) ) { 	// Si on a cliqué sur le plan
+		SetUpZoom();			// on zoom ou dezoom
+	} else {
+		if( wState == W_STATE.ONFULL ) // Si on est en plein écran et qu'on a cliqué à coté
+			SetUpZoom();				// On dezoom
+	}
+}
+
+/*
+ * Renvoie vrai si la position pos sur l'écran
+ * correspond à la fenetre
+ */
+ 
+private function clickOnWindow (pos : Vector2) : boolean {
+	var ray : Ray = camera.ScreenPointToRay(pos);
+	var hit : RaycastHit = new RaycastHit() ;
+	return wObj.collider.Raycast(ray, hit, 1000.0f)	;
+}
+
+
+
+
+/*
+ * Calcul la position et l'echelle de l'objet en plein écran
+ */
+private function ComputeFullPos() {
+	wFullPos = camera.ScreenToWorldPoint( Vector3(camera.pixelWidth/2, camera.pixelHeight/2, wZ ) ) ;
+	
+	
+	var size = wObj.renderer.bounds.size ;
+	var elmtsSize : Vector2 = getRealSize(	Vector2( size.x * camera.pixelHeight/size.z , camera.pixelHeight ),
+											Vector2( wFullPos.x, wFullPos.y ),
+											wFullPos.z, camera ) ;
+		
+	wFullScale = Vector3( wObj.transform.localScale.x * elmtsSize.x/size.x, 1, wObj.transform.localScale.z * elmtsSize.y/size.z ) ;
+	
+}
+
+
+
+
+/*
+ * Lance le Zoom
+ */
+private function SetUpZoom () {
+	
+	if( wState == W_STATE.ONGUI ) {
+	
+		wState = W_STATE.ONZOOM ;
+		wBeginTime = Time.time;
+		
+	} else if( wState == W_STATE.ONFULL ){
+	
+		wState = W_STATE.ONDEZOOM ;
+		wBeginTime = Time.time;
+		
+	}
+}
+
 
 
 

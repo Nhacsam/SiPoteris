@@ -68,14 +68,14 @@ private var move_out : boolean = false;
 function OnEnable(){
 
 	Gesture.onShortTapE += OnTap;
-	Gesture.onDraggingE += OnDrag;
+	//Gesture.onDraggingE += OnDrag;
 	
 }
 
 function OnDisable(){
 
 	Gesture.onShortTapE -= OnTap;
-	Gesture.onDraggingE -= OnDrag;
+	//Gesture.onDraggingE -= OnDrag;
 	
 }
 
