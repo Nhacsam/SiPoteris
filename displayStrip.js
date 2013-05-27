@@ -21,9 +21,7 @@ private var ratioPlane : float;
 	// info about dragging event
 	private var dragInf : DragInfo;
 
-private var onFullScreen : boolean = false;
-
-private var show : showingWindow;
+private var window : showingWindow;
 private var videoSet : videoSettings;
 private var zoom : Zoom;
 
@@ -62,6 +60,11 @@ private var posCam : Vector3;
 private var move_in : boolean = false;
 private var move_out : boolean = false;
 
+
+// events are enable ?
+private var eventEnable : boolean = false;
+
+
 /**************** listeners ****************/
 
 function OnEnable(){
@@ -84,7 +87,7 @@ function OnDisable(){
 	*action after event tap
 */
 function OnTap( v : Vector2 ){
-	if( onFullScreen && videoScreen != null ){
+	if( eventEnable && videoScreen != null ){
 		var ray : Ray = camera.ScreenPointToRay( v );
 		var hit : RaycastHit = new RaycastHit();
 
@@ -112,7 +115,7 @@ function OnTap( v : Vector2 ){
 	*action after event drag
 */
 private function OnDrag( dragInfo : DragInfo ){
-	if( states == STATES_OF_STRIP.STATE_IN ){
+	if( states == STATES_OF_STRIP.STATE_IN && eventEnable){
 		dragging = true;
 		dragInf = dragInfo;
 		manageStates();
@@ -192,11 +195,11 @@ function InitVideoScreen( ratio : float , r : Rect ){
 	// init state of the state machine
 	states = STATES_OF_STRIP.STATE_OUT;
 	ratioPlane = ratio;
-	onFullScreen = true;
 
 	rectOUT = computeRect( ratioPlane , r );
 	
 	createStripPlane( rectOUT );
+	enableAll();
 }
 
 /*
@@ -240,7 +243,7 @@ private function computeRect( ratio : float , r : Rect ) : Rect {
 	*and create a plane
 */
 private function createStripPlane( r : Rect ){
-	show = 			gameObject.GetComponent("showingWindow") as showingWindow;
+	window = 		gameObject.GetComponent("showingWindow") as showingWindow;
 	videoSet = 		gameObject.GetComponent("videoSettings") as videoSettings;
 	
 	// create plane
@@ -248,7 +251,7 @@ private function createStripPlane( r : Rect ){
 	videoScreen.name = "stripPlane";
 	
 	// extend plane
-	var elmtsSize : Vector2 = show.getRealSize(	Vector2( r.width , r.height ),
+	var elmtsSize : Vector2 = window.getRealSize(	Vector2( r.width , r.height ),
 												Vector2( r.x , r.y ),
 												camera.nearClipPlane + 0.1, 
 												camera ) ;
@@ -295,7 +298,7 @@ private function changeSizeScreen( ratio : float , r : Rect ){
 	
 	// extend plane
 	var size : Vector3 = videoScreen.renderer.bounds.size;
-	var elmtsSize : Vector2 = show.getRealSize(	Vector2( newR.width , newR.height ),
+	var elmtsSize : Vector2 = window.getRealSize(	Vector2( newR.width , newR.height ),
 												Vector2( newR.x , newR.y ),
 												camera.nearClipPlane + 0.1, 
 												camera ) ;
@@ -500,6 +503,7 @@ function stopMovie(){
 ///////////////////////////////////////////////
 
 function destructStrip(){
+	disableAll();
 	Destroy( videoScreen );
 }
 
@@ -563,3 +567,56 @@ function placeStripFactor( stripTop : float , stripBottom :float , stripLeft : f
 	r.y = Screen.height * stripBottom;
 	return r;
 }
+
+
+
+/*******************************************************
+**** Cacher / desactiver les evennements de l'objet ****
+********************************************************/
+
+/*
+ * Affiche l'objet et active les evenements
+ */
+public function enableAll() {
+	show() ;
+	enableEvents() ;
+}
+
+/*
+ * Cache l'objet et desactive les evenements
+ */
+public function disableAll() {
+	hide() ;
+	disableEvents() ;
+}
+
+/*
+ * Active les evenements
+ */
+public function enableEvents() {
+	eventEnable = true ;
+}
+
+/*
+ * Desactive les evenements
+ */
+public function disableEvents() {
+	eventEnable = false ;
+}
+
+/*
+ * Affiche l'objet
+ */
+public function show() {
+	videoScreen.renderer.enabled = true ;
+}
+
+/*
+ * Cache l'objet
+ */
+public function hide() {
+	videoScreen.renderer.enabled = false ;
+}
+
+
+

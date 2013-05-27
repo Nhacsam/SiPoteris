@@ -86,7 +86,7 @@ function InitFullScreen( ) {
 
 function OnGUIFullScreen(){
 	
-	if( onFullScreen && strip.getStates() == STATES_OF_STRIP.STATE_OUT  ) {
+	if( onFullScreen ) {
 		
 		var Rectangle : Rect = new Rect(0,Screen.height-50,50,50) ;
 		var returnTexture : Texture = Resources.Load("blue_left_arrow");
@@ -113,11 +113,9 @@ function OnGUIFullScreen(){
 function UpDateFullScreen() {
 	
 	if( onFullScreen ) {
-		if( strip.getStates() == STATES_OF_STRIP.STATE_OUT ){
-			slideshow.UpDateSlideShow();
-			windows.SetNewTextureObj( slideshow.getCurrentAssociedInfo() );
-			windows.updateWindow();
-		}
+		slideshow.UpDateSlideShow();
+		windows.SetNewTextureObj( slideshow.getCurrentAssociedInfo() );
+		windows.updateWindow();
 		
 		
 		if( firstTimeInUpdate ){
@@ -269,6 +267,47 @@ function LeaveFullScreen( Video : GameObject ) {
 	
 	onFullScreen = false ;
 }
+
+
+
+/*
+ * Cache et désactive les objet de la GUI sauf celui envoyer en parametre
+ */
+function disableOthers( elemt ) {
+	
+	if( typeof(elemt) != slideShow )
+		slideshow.disableAll();
+	if( typeof(elemt) != showingWindow )
+		windows.disableAll();
+	if( typeof(elemt) != text )
+		textViewer.disableAll();
+	if( typeof(elemt) != sound )
+		audioPlayer.disableAll();
+	if( typeof(elemt) != displayStrip )
+		strip.disableAll();
+
+}
+
+/*
+ * Affiche et active les objet de la GUI sauf celui envoyer en parametre
+ */
+function enableOthers( elemt ) {
+	
+	if( typeof(elemt) != slideShow )
+		slideshow.enableAll();
+	if( typeof(elemt) != showingWindow )
+		windows.enableAll();
+	if( typeof(elemt) != text )
+		textViewer.enableAll();
+	if( typeof(elemt) != sound )
+		audioPlayer.enableAll();
+	if( typeof(elemt) != displayStrip )
+		strip.enableAll();
+	
+
+}
+
+
 
 
 
