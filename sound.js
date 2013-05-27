@@ -38,7 +38,7 @@ private var heightLetter : int = 20;
 
 // event and display activate or not
 private var eventEnable : boolean ;
-private var isHidden : boolean ;
+private var soundIsHidden : boolean ;
 
 private var chooseNextSoundRandomly: boolean = true;
 
@@ -47,7 +47,7 @@ private var chooseNextSoundRandomly: boolean = true;
 
 
 function OnGUISound() {
-	if( !isHidden )
+	if( !soundIsHidden )
 		displayMusic();
 }
 
@@ -230,12 +230,22 @@ public function disableEvents() {
  * Affiche l'objet
  */
 public function show() {
-	isHidden = false ;
+	soundIsHidden = false ;
 }
 
 /*
  * Cache l'objet
  */
 public function hide() {
-	isHidden = true ;
+	soundIsHidden = true ;
+}
+
+/*
+ * Getters
+ */
+public function areEventEnabled() : boolean {
+	return eventEnable ;
+}
+public function isHidden() : boolean {
+	return soundIsHidden ;
 }

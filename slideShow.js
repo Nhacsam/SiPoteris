@@ -180,6 +180,39 @@ public function AddElmt( texture : String, info ) : boolean {
 	return true ;
 }
 
+
+/*
+ * déplace le slideShow ver l'élément suivant
+ */
+public function next( slowly : boolean ) {
+	
+	if( slowly ) {
+		decalLeft();
+		useSpeed = false ;
+		delta = 0 ;
+	} else {
+		if (currentPage < effNbElmts-1 )
+			currentPage++ ;
+	}
+}
+
+/*
+ * déplace le slideShow ver l'élément précédent
+ */
+public function previous( slowly : boolean ) {
+	
+	if( slowly ) {
+		decalRight();
+		useSpeed = false ;
+		delta = 0 ;
+	} else {
+		if (currentPage > 0 )
+			currentPage-- ;
+	}
+}
+
+
+
 /*******************************************************
 **** Cacher / desactiver les evennements de l'objet ****
 ********************************************************/
@@ -232,7 +265,18 @@ public function hide() {
 	}
 }
 
-
+/*
+ * Getters
+ */
+public function areEventEnabled() : boolean {
+	return eventEnable ;
+}
+public function isHidden() : boolean {
+	if( effNbElmts > 0 )
+		return !(mobilesElmts[0].renderer.enabled) ;
+	else
+		return false ;
+}
 
 
 

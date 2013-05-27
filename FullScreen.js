@@ -12,6 +12,9 @@ private var strip : displayStrip;
 /* On est en mode plein écran ? */
 private var onFullScreen : boolean ;
 
+// Doit on afficher le(s) boutton(s) géré par fullscreen
+private var GUIIsHidden : boolean ;
+
 /*	quand on rentre dans l'update pour la premiere fois*/
 private var firstTimeInUpdate : boolean = true;
 
@@ -88,17 +91,20 @@ function OnGUIFullScreen(){
 	
 	if( onFullScreen ) {
 		
-		var Rectangle : Rect = new Rect(0,Screen.height-50,50,50) ;
-		var returnTexture : Texture = Resources.Load("blue_left_arrow");
-		if( GUI.Button( Rectangle, returnTexture ) ) {
-			Debug.Log( 'Sortie de l\'interface demandée' );
-		
-			if( toOnDeZoom )
-				toOnDeZoom();
-			else
-				Debug.LogWarning('Callback de dezoom non renseigné dans FullScreen.' + 
-				'\nNote : setter is public function SetLeaveCallback( f : function() )');
+		if( !GUIIsHidden) {
+			var Rectangle : Rect = new Rect(0,Screen.height-50,50,50) ;
+			var returnTexture : Texture = Resources.Load("blue_left_arrow");
+			if( GUI.Button( Rectangle, returnTexture ) ) {
+				Debug.Log( 'Sortie de l\'interface demandée' );
+			
+				if( toOnDeZoom )
+					toOnDeZoom();
+				else
+					Debug.LogWarning('Callback de dezoom non renseigné dans FullScreen.' + 
+					'\nNote : setter is public function SetLeaveCallback( f : function() )');
+			}
 		}
+		
 		audioPlayer.OnGUISound();
 		textViewer.OnGUIText();
 	}
@@ -269,6 +275,19 @@ function LeaveFullScreen( Video : GameObject ) {
 }
 
 
+/*
+ * Affiche et active le(s) boutton(s) géré par fullscreen
+ */
+public function displayGUI() {
+	GUIIsHidden = false ;
+}
+
+/*
+ * Cache et désactive le(s) boutton(s) géré par fullscreen
+ */
+public function hideGUI() {
+	GUIIsHidden = true ;
+}
 
 /*
  * Cache et désactive les objet de la GUI sauf celui envoyer en parametre
@@ -285,6 +304,8 @@ function disableOthers( elemt ) {
 		audioPlayer.disableAll();
 	if( typeof(elemt) != displayStrip )
 		strip.disableAll();
+	if( typeof(elemt) != typeof(this) )
+		hideGUI();
 
 }
 
@@ -303,10 +324,17 @@ function enableOthers( elemt ) {
 		audioPlayer.enableAll();
 	if( typeof(elemt) != displayStrip )
 		strip.enableAll();
-	
-
+	if( typeof(elemt) != typeof(this) )
+		displayGUI();
 }
 
+
+/*
+ * Déplace le slideshow
+ */
+public function nextImg() {
+	slideshow.next( !slideshow.isHidden() );
+}
 
 
 

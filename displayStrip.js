@@ -614,5 +614,14 @@ public function hide() {
 	videoScreen.renderer.enabled = false ;
 }
 
+/*
+ * Getters
+ */
+public function areEventEnabled() : boolean {
+	return eventEnable ;
+}
+public function isHidden() : boolean {
+	return !(videoScreen.renderer.enabled) ;
+}
 
 

@@ -260,6 +260,15 @@ public function hide() {
 	wObj.renderer.enabled = false ;
 }
 
+/*
+ * Getters
+ */
+public function areEventEnabled() : boolean {
+	return eventEnable ;
+}
+public function isHidden() : boolean {
+	return !(wObj.renderer.enabled) ;
+}
 
 
 
@@ -384,11 +393,13 @@ private function chageObjSizeToOptimal( size : Vector2 ) {
 
 function OnEnable(){
 	Gesture.onShortTapE += onTap ;
+	Gesture.onLongTapE += onLongTap ;
 	Gesture.onDoubleTapE += onDoubleTap;
 }
 
 function OnDisable(){
 	Gesture.onShortTapE -= onTap ;
+	Gesture.onLongTapE += onLongTap ;
 	Gesture.onDoubleTapE -= onDoubleTap;
 }
 
@@ -449,7 +460,25 @@ public function onTap( pos : Vector2 ) {
 		return ;
 	
 	if( clickOnWindow(pos) ) { 	// Si on a cliqué sur le plan
-		//SetUpZoom();			// On change l'image
+		(gameObject.GetComponent( FullScreen ) as FullScreen ).nextImg();			// On change l'image
+	} else {
+		if( wState == W_STATE.ONFULL ) // Si on est en plein écran et qu'on a cliqué à coté
+			SetUpZoom();				// On dezoom
+	}
+}
+
+public function onLongTap( pos : Vector2 ) {
+	
+	// La fonction s'interrompt si les événements sont désactivés
+	if( !eventEnable )
+		return ;
+	
+	// SI on est sur les video (2D / 3D)
+	if( wState == W_STATE.NOTONGUI)
+		return ;
+	
+	if( clickOnWindow(pos) ) { 	// Si on a cliqué sur le plan
+		SetUpZoom();			// on zoom ou dezoom
 	} else {
 		if( wState == W_STATE.ONFULL ) // Si on est en plein écran et qu'on a cliqué à coté
 			SetUpZoom();				// On dezoom
