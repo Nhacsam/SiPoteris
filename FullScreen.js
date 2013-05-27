@@ -283,6 +283,8 @@ function disableOthers( elemt ) {
 		textViewer.disableAll();
 	if( typeof(elemt) != sound )
 		audioPlayer.disableAll();
+	if( typeof(elemt) != displayStrip )
+		strip.disableAll();
 
 }
 
@@ -299,6 +301,8 @@ function enableOthers( elemt ) {
 		textViewer.enableAll();
 	if( typeof(elemt) != sound )
 		audioPlayer.enableAll();
+	if( typeof(elemt) != displayStrip )
+		strip.enableAll();
 	
 
 }
