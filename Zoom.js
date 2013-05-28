@@ -1,11 +1,5 @@
 #pragma strict
 
-var Text : String = 'Nothing' ;
-
-
-private var enable : boolean = true;
-
-
 // CallBacks
 private var OnZoom : Array ;
 private var OnEndZoom : Array ;
@@ -48,6 +42,9 @@ private var mouseLook: MouseLook;
 
 private var dezooming: boolean = false;
 
+
+
+private var eventEnable : boolean ;
 /*
  * Ajoute les listener d'envenements
  */
@@ -100,7 +97,7 @@ function Init( VideosMeshes2D : Array, VideosMeshes3D : Array, enableMouseLook :
 	enableLook(false);
 	toOnSphere() ;
 	
-	enableZoom();
+	enableEvents();
 	
 }
  
@@ -121,19 +118,6 @@ function AddOnLeave ( f : function(GameObject) ) {
 }
 
 
-/*
- * Ennable, Disable
- */
-
-function enableZoom() {
-	enable = true ;
-}
-
-function disableZoom() {
-	enable = false ;
-}
-
-
 
 /*
  * Gestion des Evenements
@@ -141,6 +125,11 @@ function disableZoom() {
 
 
 function OnTap(mousePos : Vector2) {
+	
+	
+	// On interronmpt la fonction si les évenements sont désactivé
+	if( !eventEnable )
+		return ;
 	
 	if( stateMachine == ZOOM_STATES.ONSPHERE && !Trans.isInButton(mousePos) ) {
 		// Détecte l'objet cliqué
@@ -165,6 +154,7 @@ function OnTap(mousePos : Vector2) {
  */
 
 function toOnZoom( obj : GameObject ) {
+	
 	
 	if( stateMachine != ZOOM_STATES.ONSPHERE )
 		Debug.LogError( 'State Machine Error : Must zoom from ONSPHERE state' );
@@ -366,9 +356,6 @@ function UpDateZoom () {
 	if( Input.GetMouseButtonDown(0) )
 		OnTap(Input.mousePosition);
 	
-	if (!enable)
-		return ;
-	
 	switch( stateMachine ) {
 		
 		
@@ -415,3 +402,19 @@ function UpDateZoom () {
 	}
 	
 }
+
+
+/*
+ * Active les evenements
+ */
+public function enableEvents() {
+	eventEnable = true ;
+}
+
+/*
+ * Desactive les evenements
+ */
+public function disableEvents() {
+	eventEnable = false ;
+}
+

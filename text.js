@@ -56,7 +56,7 @@ private var textInitialized : boolean = false;
 
 // event and display activate or not
 private var eventEnable : boolean ;
-private var isHidden : boolean ;
+private var textIsHidden : boolean ;
 
 
 
@@ -66,7 +66,7 @@ private var isHidden : boolean ;
 */
 
 function OnGUIText(){
-	if( !isHidden )
+	if( !textIsHidden )
 		displayText();
 }
 
@@ -328,15 +328,24 @@ public function disableEvents() {
  * Affiche l'objet
  */
 public function show() {
-	isHidden = false ;
+	textIsHidden = false ;
 }
 
 /*
  * Cache l'objet
  */
 public function hide() {
-	isHidden = true ;
+	textIsHidden = true ;
 }
 
+/*
+ * Getters
+ */
+public function areEventEnabled() : boolean {
+	return eventEnable ;
+}
+public function isHidden() : boolean {
+	return textIsHidden ;
+}
 
 
