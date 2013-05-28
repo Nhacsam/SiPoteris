@@ -171,10 +171,12 @@ private function bigDaddy(){
 			case states.ZOOM_IN :
 				break;
 			case states.STATE_IN :
+				runMovie("ALLdiane");
 				if( dragging )
 					dragPlane(dragInf);
 				break;
 			case states.ZOOM_OUT :
+				stopMovie();
 				break;
 		}
 }

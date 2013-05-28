@@ -75,13 +75,14 @@ function Start () {
 	
 	// Link
 	Zoom.AddOnZoom( Videos.videoHDZoomON );
+	Zoom.AddOnZoom(switchFieldOfView);
 	Zoom.AddOnLeave( VideoFull.LeaveFullScreen );
 	Zoom.AddOnLeave( Videos.videoHDZoomQuit );
 	Zoom.AddOnEndZoom(VideoFull.EnterOnFullScreen);
 	
 	
 	
-	//Zoom.AddOnLeave( switchFieldOfView );
+	Zoom.AddOnLeave( switchFieldOfView );
 	
 	VideoFull.SetLeaveCallback( Zoom.toOnDeZoom );
 	
@@ -90,12 +91,13 @@ function Start () {
 	CreateLight ();
 	camera.fieldOfView  = 60 ;
 	camera.farClipPlane = 60;
-	
+	camera.nearClipPlane = 0.01;
 }
 
 function Update () {
 	
 	Trans.Update2D3D();
+	Trans.Update3D2D();
 	Zoom.UpDateZoom ();
 	VideoFull.UpDateFullScreen();
 	Trans.UpdateEnding();
@@ -152,6 +154,8 @@ function OnGUI() {
 	Trans.OnGUI2D3D();
 	VideoFull.OnGUIFullScreen();
 	Zoom.OnGUIZoom();
+	
+	GUI.Label(Rect(Screen.width/2  , Screen.height-60, camera.pixelWidth , camera.pixelHeight),"TEST");
 }
 
 

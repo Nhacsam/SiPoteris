@@ -1,32 +1,30 @@
 #pragma strict
 
-//camera transition parameters
-private var TransitionTime : float = 1.0f ;
-private var beginTime : float = 0.0f ;
+//camera transition parameter
+private var TransitionTime : float = 10.0f ;
 
-private var CameraInitialPos : Vector3 ;
-private var CameraInitialRot : Vector3 ;
-
-private var finalPos : Vector3 ;
-private var finalRot : Vector3 ;
-
+//signals allowing the transition 2D3D and ending
 private var enable:boolean = false;
 private var enableEnding:boolean = false;
 private var done:boolean = false;
-
+private var done2:boolean = false;
+private var done3:boolean = false;
+private var lightFlag:boolean = false;
 //to access accelerometer
 private var control:CameraControl;
 private var mouseLook : MouseLook ;
-
 private var button:boolean=true;
 private var Videos:videoSettings;
 
+private var rot;
 private var scene2D : boolean=true;
+
 //instantiate items
 function init(){
 
 	mouseLook = gameObject.GetComponent("MouseLook");
 	control = gameObject.GetComponent("CameraControl");
+	
 	if (!mouseLook)
 		mouseLook = gameObject.AddComponent("mouseLook");
 
@@ -59,6 +57,7 @@ function  OnGUI2D3D(){
  	 	if (GUI.Button(new Rect( 0, Screen.height-100, 100, 100), scene2D ? "3D view" : "2D view" ))
 			{
 				Change2D3D();
+				//Videos.test();
 				   
 			}
   	  
@@ -74,11 +73,9 @@ function Change2D3D(){
 	end=false;
 	
 	if(scene2D){	
-		Videos.changeSettings(true);
 		cameraTransition();
 	}
 	else{
-		Videos.changeSettings(false);
 		mouseLook.enabled = false;
 		control.enabled = false;
 		cameraTransition();
@@ -97,18 +94,26 @@ function Change2D3D(){
 function cameraTransition(){
 
 	if(scene2D){
-		var rot= camera.transform.localEulerAngles;
-		camera.transform.eulerAngles=Vector3(270,0,0);
+		rot= camera.transform.eulerAngles;
+		lightFlag=false;
 		enable=true;
 		done=false;
+		next=false;
+		
 		
 	}
 	else{
+		camera.transform.eulerAngles=Vector3(0,0,0);
+		enable=true;
+		done=false;
+		next=false;
+		done2=false;
+		done3=false;
+		lightFlag=false;
 		light.type=LightType.Point;
 		light.cookie=null;
-		camera.transform.position=Vector3(0,-10,0);
-		camera.transform.eulerAngles=rot;
-		camera.transform.Rotate(Vector3(270,180,0));
+		//camera.transform.position=Vector3(0,-10,0);
+		
 	}
 	
 }
@@ -124,29 +129,81 @@ function Update2D3D(){
 		return ;
 
 	control.DetachGyro();
-
-	if(!scene2D && !done){
-
-		camera.transform.position.y += 0.1/TransitionTime;
-		if(camera.transform.position.y >= 0 )  {done = true; next=true;}
+	
+	//decrease light intensity
+	if(!scene2D && !lightFlag){
+	
+		light.intensity-=0.02;
+		if(light.intensity <= 0.04)lightFlag=true;
 	}
-	if(!scene2D && next){
+	//load the pshere and reincrease light
+	if(!scene2D && !done && lightFlag){
+		Videos.changeSettings(true);
+		camera.transform.eulerAngles=Vector3(270,0,0);
+		if(light.intensity <= 0.88)light.intensity+=0.02;
+		camera.transform.position.y += 1/TransitionTime;
+		if(camera.transform.position.y >= 0.7 )  {done = true; next=true;}
+	}
+	if(!scene2D && next && done){
 
-		camera.transform.Rotate(Vector3(1,0,0));
+		camera.transform.Rotate(Vector3(10,0,0)/TransitionTime);
 		if(camera.transform.eulerAngles.x >= 358 ){
 			enable=false;
 			finalSettings();
 			
 		if( isOnIpad() ) {
 			control.enabled=  true;
-		} else {
+		} 
+		else {
 			mouseLook.enabled = true ;
 		}
 			
-			control.AttachGyro();}
+		control.AttachGyro();}
 	}
 	
 }
+
+
+function Update3D2D(){
+
+	if (!enable)
+		return ;
+
+	control.DetachGyro();
+
+	//decrease light intensity
+	if(scene2D && !done){
+		light.intensity-=0.02;
+		camera.transform.Rotate(Vector3(-10,0,0)/TransitionTime);
+		if(camera.transform.eulerAngles.x <= 270 )  {done = true;}
+	}
+	
+	if(scene2D && !done2){
+	
+		camera.transform.Rotate(Vector3(0,10,0)/TransitionTime);
+		
+		if(camera.transform.eulerAngles.x >= 180 )  {done2 = true; next=true;}
+	
+	}
+	//load the plane 
+	if(scene2D && next ){
+		
+		if(camera.transform.position.y >= -10)camera.transform.position.y -= 1/TransitionTime;
+		else{done3=true;
+		camera.transform.eulerAngles=rot;	
+		Videos.changeSettings(false);	
+		}	
+		
+	}
+	//reincrease light
+	if(scene2D && done3){
+		if(light.intensity <= 0.88)light.intensity+=0.02;
+		else enable=false;
+	
+	}
+
+}
+
 
 function UpdateEnding(){
 
@@ -157,7 +214,7 @@ function UpdateEnding(){
 
 	if(end==false){
 	
-		if(Videos.endTransition()==true){enableEnding=false;end=true;}
+		if(Videos.endTransition()==true){enableEnding=false;end=true;Console.Test("flag end :  "+Videos.getFlagEndVideo(),0);}
 	}
 
 }
