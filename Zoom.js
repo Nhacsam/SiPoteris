@@ -78,6 +78,7 @@ function Init( VideosMeshes2D : Array, VideosMeshes3D : Array, enableMouseLook :
 	
 	// On initialise la machine d'état en dehors de
 	// la GUI et on active les événemments
+	Console.Test('Init', 5 );
 	toOnSphere() ;
 	enableEvents();
 	
@@ -236,26 +237,27 @@ function toOnDeZoom() {
 		(OnLeave[j] as function(GameObject) )( selected ) ;
 	}
 	
+	// Calcul des états de fin
+	finalPos = CameraInitialPos ;
+	finalRot = CameraInitialRot ;
+	
 	// Enregistrement des états au début de la transition
 	CameraInitialPos = camera.transform.position ;
 	CameraInitialRot = camera.transform.eulerAngles ;
 	beginTime = Time.time ;
 	
-	// Calcul des états de fin
-	finalPos = CameraInitialPos ;
-	finalRot = CameraInitialRot ;
 }
 
 /*
  * Se place sur l'univers (hors de la GUI)
  */
-function toOnSphere () {
+private function toOnSphere () {
 	
 	// Appel des callbacks
 	if( stateMachine == ZOOM_STATES.ONDEZOOM ) {
 		dezooming = false;
 		
-		for( var j = 0; j < OnEndZoom.length; j++){
+		for( var j = 0; j < OnEndDezoom.length; j++){
 			(OnEndDezoom[j] as function( GameObject ) )( selected ) ;
 		}
 	}
@@ -289,7 +291,8 @@ function UpdateZoomStep () {
 	var elapsedTime = Time.time - beginTime ;
 	
 	// Calcul de la nouvelle position
-	camera.transform.position = Vector3.Slerp( CameraInitialPos, CameraInitialPos, elapsedTime/TransitionTime) ;
+	//camera.transform.position = Vector3.Slerp( CameraInitialPos, finalPos, elapsedTime/TransitionTime) ;
+	camera.transform.position = CameraInitialPos + (finalPos - CameraInitialPos)*elapsedTime/TransitionTime ;
 	
 	// calcul de la nouvelle rotation, en passant par le plus cours chemin
 	var Diff = ( finalRot - CameraInitialRot ) ;
