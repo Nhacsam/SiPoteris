@@ -28,7 +28,6 @@ private var buttonUp : int = Screen.height - 100;
 private var buttonLeft : int = 0;
 private var buttonHeight : int = 100;
 private var buttonWidth : int = 100;
-
 //instantiate items
 function init(){
 
@@ -43,8 +42,7 @@ function init(){
 	zoom = gameObject.GetComponent("Zoom");
 	if (!zoom)	
 		zoom = gameObject.AddComponent("Zoom");
-		
-	Videos= gameObject.GetComponent("videoSettings") as videoSettings;
+	Videos = gameObject.GetComponent("videoSettings") as videoSettings;
 	control.enabled=false;
 	mouseLook.enabled=false;
 }
@@ -69,6 +67,8 @@ function  OnGUI2D3D(){
 			
  	 	if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), scene2D ? "3D view" : "2D view" ))
 			Change2D3D();
+			
+			//Videos.test();
     }
         
 }
@@ -166,14 +166,17 @@ function Update2D3D(){
 			enable=false;
 			finalSettings();
 			
-		if( isOnIpad() ) {
-			control.enabled=  true;
-		} 
-		else {
-			mouseLook.enabled = true ;
-		}
+			if( isOnIpad() ) {
+				control.enabled=  true;
+			} 
+			else {
+				mouseLook.enabled = true ;
+			}
 			
-		control.AttachGyro();}
+			control.AttachGyro();
+			zoom.enableEvents()
+		
+		}
 	}
 	
 }
@@ -213,7 +216,7 @@ function Update3D2D(){
 	//reincrease light
 	if(scene2D && done3){
 		if(light.intensity <= 0.88)light.intensity+=0.02;
-		else enable=false;
+		else {enable=false; zoom.enableEvents();}
 	
 	}
 
@@ -229,7 +232,7 @@ function UpdateEnding(){
 
 	if(end==false){
 	
-		if(Videos.endTransition()==true){enableEnding=false;end=true;Console.Test("flag end :  "+Videos.getFlagEndVideo(),0);}
+		if(Videos.endTransition()==true){enableEnding=false;end=true;zoom.enableEvents()}
 	}
 
 }

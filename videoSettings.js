@@ -8,8 +8,6 @@ private var iOS : GameObject;
 //ref to the screen 2D
 private var plane2D = GameObject.CreatePrimitive(PrimitiveType.Plane);
 
-private var planetest = GameObject.CreatePrimitive(PrimitiveType.Plane);
-
 //ref to the sphere 3D
 private var sphere3D:GameObject;
 
@@ -191,7 +189,7 @@ function putVideo( focus: GameObject, nom : String){
 	
 	
 	focus.AddComponent("PlayFileBasedMovieDefault");
-  	planetest.renderer.material = Resources.Load("Movie");
+  	focus.renderer.material = Resources.Load("Movie");
 	Destroy(focus.collider);
 	controllerIOS.movie[1]=focus.GetComponent("PlayFileBasedMovieDefault"); 
 	   
@@ -235,11 +233,13 @@ function getFlagEndVideo(){
 /*
 * fonction de test de chargement d'une nouvelle video
 */
+private var planetest:GameObject;
 function test(){
+	planetest=GameObject.CreatePrimitive(PrimitiveType.Plane);
 	planetest.transform.eulerAngles=Vector3(180,0,0);
 	planetest.transform.position=Vector3(2,-2,0);
 	planetest.name= "planetest";
-	putVideo( planetest , "ALLdiane");
+	putVideo( planetest , "Diane1");
 
 }
 
