@@ -52,9 +52,11 @@ private var toJustify = new Array();
 // number of lines
 private var nbLines : int = 0;
 
-private var onFullScreen : boolean;
 private var textInitialized : boolean = false;
 
+// event and display activate or not
+private var eventEnable : boolean ;
+private var textIsHidden : boolean ;
 
 
 
@@ -64,13 +66,12 @@ private var textInitialized : boolean = false;
 */
 
 function OnGUIText(){
-	displayText();
+	if( !textIsHidden )
+		displayText();
 }
 
 private function initText(u: int, d: int, l: int, r: int) {
 
-	onFullScreen = true;
-	
 	letterSpots = new Rect[textToDisplay.Length];
 
 	/* Calculate margin sizes */
@@ -81,6 +82,10 @@ private function initText(u: int, d: int, l: int, r: int) {
 		
 	widthText = Screen.width - lBorder - rBorder;
 	REF_RECT = Rect(lBorder, uBorder, widthLetter, heightLetter);
+	
+	// enable event and dispy the text
+	enableAll();
+	
 }
 
 /*
@@ -107,10 +112,11 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 	styleLetterMiddle.normal.textColor = Color.white;
 	
 	/* The script below this one does not handle the case when the 1st character is \t. Let us do it now. */
+
 	if (textToDisplay[0] == "\t")
 		rectLetter.x += (widthTab-1) * widthLetter; // -1 because \t adds a space
 	
-	/* for each letter */
+	// for each letter
 	for(var i : int = 0; i < textToDisplay.Length; i++){
 		
 		/* if the sentence does not reach the right edge AND the character is NOT \n */
@@ -133,10 +139,8 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 			}
 			else {
 				toJustify.push(false);
-				if (i < textToDisplay.Length - 1) { // Avoid the case when the text ends with \n, so textToDisplay[i+1] is out of range
-					if (textToDisplay[i+1] == "\t")
-						rectLetter.x += (widthTab-1) * widthLetter; // -1 because \t adds a space
-					}
+				if (i < (textToDisplay.Length-1) && textToDisplay[i+1] == "\t")
+					rectLetter.x += (widthTab-1) * widthLetter; // -1 because \t adds a space
 			}
 			
 			// get position of switch lines
@@ -160,7 +164,6 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 				
 		}
 	}
-	
 	/* Justify certain lines of the text */
 	for(i = 0; i < nbLines; i++) {
 		if (toJustify[i])
@@ -210,6 +213,7 @@ function CalculateSpace(numLine : int){
 	*justify text by adding spaces between words
 */
 function JustifyText(numLine : int){
+
 	var nmbSpace : float = GetNumberOfSpaces(numLine);
 	var lengthToRight : float = CalculateSpace(numLine);
 	var spaceToAdd : float = lengthToRight/nmbSpace;
@@ -242,17 +246,15 @@ function JustifyText(numLine : int){
 }
 	
 function displayText() {
-	if (onFullScreen) {
-		for (var i : int = 0; i < textToDisplay.Length; i++) {
-			if (letterSpots[i].y >= uBorder && (letterSpots[i].y + heightLetter) <= Screen.height - dBorder)
+	for (var i : int = 0; i < textToDisplay.Length; i++) {
+		if (letterSpots[i].y >= uBorder && (letterSpots[i].y + heightLetter) <= Screen.height - dBorder)
 				
-				GUI.Label (letterSpots[i], ""+textToDisplay[i], styleLetterMiddle);
-		}
+			GUI.Label (letterSpots[i], ""+textToDisplay[i], styleLetterMiddle);
 	}
 }
 
 function removeText() {
-	onFullScreen = false;
+	disableAll();
 	textInitialized = false;
 }
 
@@ -269,7 +271,7 @@ function OnDisable(){
 
 /* Scrolling text with dragging event ! (Finger KO Mouse OK) */
 function onDragging(dragData : DragInfo) {
-	if (textInitialized && onFullScreen) {
+	if (textInitialized && eventEnable) {
 		var block = false; // If true, you cannot scroll
 		if ( letterSpots[0].y >= uBorder && dragData.delta.y < 0 ) // Blocking Up
 			block = true;
@@ -284,4 +286,66 @@ function onDragging(dragData : DragInfo) {
 		}
 	}
 }
+
+
+
+
+/*******************************************************
+**** Cacher / desactiver les evennements de l'objet ****
+********************************************************/
+
+/*
+ * Affiche l'objet et active les evenements
+ */
+public function enableAll() {
+	show() ;
+	enableEvents() ;
+}
+
+/*
+ * Cache l'objet et desactive les evenements
+ */
+public function disableAll() {
+	hide() ;
+	disableEvents() ;
+}
+
+/*
+ * Active les evenements
+ */
+public function enableEvents() {
+	eventEnable = true ;
+}
+
+/*
+ * Desactive les evenements
+ */
+public function disableEvents() {
+	eventEnable = false ;
+}
+
+/*
+ * Affiche l'objet
+ */
+public function show() {
+	textIsHidden = false ;
+}
+
+/*
+ * Cache l'objet
+ */
+public function hide() {
+	textIsHidden = true ;
+}
+
+/*
+ * Getters
+ */
+public function areEventEnabled() : boolean {
+	return eventEnable ;
+}
+public function isHidden() : boolean {
+	return textIsHidden ;
+}
+
 

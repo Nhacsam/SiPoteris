@@ -162,11 +162,9 @@ static function isOnIpad() : boolean {
  */
 public function getFolderName	(  root : String ) : String{
 	
-	Console.Test( 'In getFolderName ', 5 );
 	if( ! root )
 		root = fileSystem.getResourcesPath() ;
 	
-	Console.Test( 'root ' + root, 5 );
 	var folder : String = '' ;
 	
 	if( HT.Contains('GUI') ) {
@@ -174,7 +172,6 @@ public function getFolderName	(  root : String ) : String{
 			if( ( HT['GUI'] as Hashtable ).Contains('folder') ) {
 				
 				folder = ( HT['GUI'] as Hashtable )['folder'] ;
-				Console.Test( 'folder 1 : ' + folder, 5 );
 				if( fileSystem.isDirExisting(root + '/' + folder) )
 					return folder ;
 			
@@ -182,13 +179,12 @@ public function getFolderName	(  root : String ) : String{
 		} else if (typeof(HT['GUI']) == System.String) {
 			
 			folder = HT['GUI'] ;
-			Console.Test( 'folder 2 : ' + folder, 5 );
 			if( fileSystem.isDirExisting(root + '/' + folder) )
 				return folder ;
 			         
 		}// typeof
 	} // Contain
-	Console.Test( 'getFolderName fail ', 5 );
+	
 	// Si on arrive ici, c'est que le nom du dossier n'a pas été trouvé.
 	Console.Warning('No data folder found for the plane ' + Name);
 	return getDefaultFolder(null);
@@ -450,13 +446,6 @@ public function getIpadSounds() : Array {
 
 
 public function getIpadImages() : Array {
-	
-		
-	Console.Test( 'fileSystem.getResourcesPath() : ' + fileSystem.getResourcesPath(), 5 );
-	Console.Test( 'getFolderName(null) : ' + getFolderName(null), 5 );
-	Console.Test( 'parsedFilePath : ' + parsedFilePath, 5 );
-	
-	
 	
 	// Si la liste des fichiers et vides, on la génère
 	if( GUIFiles.length == 0 )

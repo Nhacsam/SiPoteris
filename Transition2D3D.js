@@ -13,23 +13,36 @@ private var lightFlag:boolean = false;
 //to access accelerometer
 private var control:CameraControl;
 private var mouseLook : MouseLook ;
+
+private var zoom: Zoom;
+
 private var button:boolean=true;
 private var Videos:videoSettings;
 
 private var rot;
 private var scene2D : boolean=true;
+private var buttonIsPressed : boolean=true;
+
+/* Coordinates of the 2D/3D button */
+private var buttonUp : int = Screen.height - 100;
+private var buttonLeft : int = 0;
+private var buttonHeight : int = 100;
+private var buttonWidth : int = 100;
 
 //instantiate items
 function init(){
 
 	mouseLook = gameObject.GetComponent("MouseLook");
-	control = gameObject.GetComponent("CameraControl");
-	
 	if (!mouseLook)
 		mouseLook = gameObject.AddComponent("mouseLook");
-
+	
+	control = gameObject.GetComponent("CameraControl");
 	if (!control)	
 		control = gameObject.AddComponent("CameraControl");
+	
+	zoom = gameObject.GetComponent("Zoom");
+	if (!zoom)	
+		zoom = gameObject.AddComponent("Zoom");
 		
 	Videos= gameObject.GetComponent("videoSettings") as videoSettings;
 	control.enabled=false;
@@ -50,19 +63,21 @@ function endingEnable(){
 
 function  OnGUI2D3D(){
 
-	if(Videos.OnPlay() && !enable &&  !enableEnding){
+	if(Videos.OnPlay() && !enable &&  !enableEnding && !zoom.isDezooming() ){
 		
 		GUI.Label(Rect(Screen.width/2 +315 , Screen.height-60, camera.pixelWidth , camera.pixelHeight),"Click anywhere on the screen \n   to get further information.");
 			
- 	 	if (GUI.Button(new Rect( 0, Screen.height-100, 100, 100), scene2D ? "3D view" : "2D view" ))
-			{
-				Change2D3D();
-				//Videos.test();
-				   
-			}
-  	  
+ 	 	if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), scene2D ? "3D view" : "2D view" ))
+			Change2D3D();
     }
         
+}
+
+/*
+* Tests if pos is inside the 2D / 3D button 
+*/
+function isInButton (pos : Vector2) {
+	return ( pos.x > buttonLeft && pos.x < buttonLeft + buttonWidth && pos.y > Screen.height - buttonUp - buttonHeight && pos.y < Screen.height - buttonUp);
 }
 
 /*

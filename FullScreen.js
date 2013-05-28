@@ -12,6 +12,9 @@ private var strip : displayStrip;
 /* On est en mode plein écran ? */
 private var onFullScreen : boolean ;
 
+// Doit on afficher le(s) boutton(s) géré par fullscreen
+private var GUIIsHidden : boolean ;
+
 /*	quand on rentre dans l'update pour la premiere fois*/
 private var firstTimeInUpdate : boolean = true;
 
@@ -25,6 +28,8 @@ private var VideoInitialPos : Vector3 ;
 private var VideoInitialRot : Vector3 ;
 private var CameraInitialPos : Vector3 ;
 private var CameraInitialOrthographic : boolean ;
+private var CameraInitialLightType ;
+private var CameraInitialLightIntesity : float ;
 
 
 // A appeller pour sortir
@@ -86,17 +91,20 @@ function OnGUIFullScreen(){
 	
 	if( onFullScreen ) {
 		
-		var Rectangle : Rect = new Rect(0,Screen.height-50,50,50) ;
-		var returnTexture : Texture = Resources.Load("blue_left_arrow");
-		if( GUI.Button( Rectangle, returnTexture ) ) {
-			Debug.Log( 'Sortie de l\'interface demandée' );
-		
-			if( toOnDeZoom )
-				toOnDeZoom();
-			else
-				Debug.LogWarning('Callback de dezoom non renseigné dans FullScreen.' + 
-				'\nNote : setter is public function SetLeaveCallback( f : function() )');
+		if( !GUIIsHidden) {
+			var Rectangle : Rect = new Rect(0,Screen.height-50,50,50) ;
+			var returnTexture : Texture = Resources.Load("blue_left_arrow");
+			if( GUI.Button( Rectangle, returnTexture ) ) {
+				Debug.Log( 'Sortie de l\'interface demandée' );
+			
+				if( toOnDeZoom )
+					toOnDeZoom();
+				else
+					Debug.LogWarning('Callback de dezoom non renseigné dans FullScreen.' + 
+					'\nNote : setter is public function SetLeaveCallback( f : function() )');
+			}
 		}
+		
 		audioPlayer.OnGUISound();
 		textViewer.OnGUIText();
 	}
@@ -113,29 +121,8 @@ function UpDateFullScreen() {
 	if( onFullScreen ) {
 		slideshow.UpDateSlideShow();
 		windows.SetNewTextureObj( slideshow.getCurrentAssociedInfo() );
-		
-		if( firstTimeInUpdate ){
-			// init strip
-			strip.InitVideoScreen( 11 , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
-			firstTimeInUpdate = false;
-		}
-	
-		// for strip on GUI
-		if( strip.getMoveIn() && strip.getStates() == STATES_OF_STRIP.MOVE ){
-			var middle : Vector2 = Vector2( Screen.width/2 , Screen.height/2 );
-			strip.Update_MOVE( middle );
-		}
-	
-		if( strip.getStates() == STATES_OF_STRIP.ZOOM_IN )
-			strip.Update_ZOOM_IN();
-	
-		if( strip.getStates() == STATES_OF_STRIP.ZOOM_OUT )
-			strip.Update_ZOOM_OUT();
-		
-		if( strip.getStates() == STATES_OF_STRIP.MOVE && strip.getMoveOut() ){
-			var v : Vector3 = strip.getPosStart();
-			strip.Update_MOVE( Vector2(v.x,v.y) );
-		}
+		windows.updateWindow();
+		strip.updateStrip();
 	}
 }
 
@@ -163,18 +150,19 @@ function EnterOnFullScreen( Video : GameObject ) {
 	CameraInitialPos = camera.transform.position ;
 	CameraInitialOrthographic = camera.orthographic ;
 	
+	CameraInitialLightType = gameObject.light.type ;
+	CameraInitialLightIntesity = gameObject.light.intensity ;
+	
 	// On déplace le tout pour l'isoler ds autres éléments
 	if( isolate ) {
 		camera.transform.position += toMove ;
 		//Video.transform.position += toMove ;
 	}
 	
-	
 	// Configuration de la camera et de la lumière
 	camera.orthographic = true ;
 	gameObject.light.type = LightType.Directional ;
 	gameObject.light.intensity = 0.4 ;
-	
 	
 	onFullScreen = true ;
 	
@@ -190,16 +178,19 @@ function EnterOnFullScreen( Video : GameObject ) {
 	
 	var slideShowTempElmt : SLIDESHOWELMT ;
 	var slideShowElmts : Array = Array() ;
+	var id : int = 1 ;
 	
 	// Remplis un tableau d'éléments pour le slideshow et la fenètre
 	for (var i = 0; i < slideShowImgs.length; i++ ) {
 		
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowImgs[i],
 													WINDOWTYPES.IMG,
-													Vector2.zero );
+													Vector2.zero,
+													id );
 		
 		slideShowElmts.Push( new Array( 	fileSystem.getAssociatedMin( slideShowImgs[i], slideShowMin ),
 											slideShowTempElmt ) );
+		id++ ;
 	}
 	for (i = 0; i < slideShowVideo.length; i++ ) {
 		
@@ -210,9 +201,11 @@ function EnterOnFullScreen( Video : GameObject ) {
 		
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
 													WINDOWTYPES.VIDEO,
-													Vector2.zero );
+													Vector2.zero,
+													id );
 		
 		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
+		id++ ;
 	}
 	
 	/* Initialisation de tous les éléments du full screen */
@@ -222,7 +215,7 @@ function EnterOnFullScreen( Video : GameObject ) {
 	textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getText()); // u d l r (margins) + Text to display
 	audioPlayer.placeMusicFactor (1-musicTop, musicBottom, musicLeft, 1-musicRight, Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
 	
-	//strip.initStrip( Rect( -Screen.width/2 , 0 , 2*Screen.width , Screen.height ) , Rect( Screen.width*stripLeft , 0 , (stripRight-stripLeft)*Screen.width , Screen.height/8 ) );
+	strip.InitVideoScreen(11 , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
 	
 	
 	// On donne les infos au slideShow
@@ -241,6 +234,10 @@ function LeaveFullScreen( Video : GameObject ) {
 	camera.transform.position = CameraInitialPos ;
 	camera.orthographic = CameraInitialOrthographic ;
 	
+	gameObject.light.type  = CameraInitialLightType ;
+	gameObject.light.intensity  = CameraInitialLightIntesity ;
+
+
 	audioPlayer.removeMusic();
 	textViewer.removeText();
 	
@@ -253,6 +250,69 @@ function LeaveFullScreen( Video : GameObject ) {
 	
 	onFullScreen = false ;
 }
+
+
+/*
+ * Affiche et active le(s) boutton(s) géré par fullscreen
+ */
+public function displayGUI() {
+	GUIIsHidden = false ;
+}
+
+/*
+ * Cache et désactive le(s) boutton(s) géré par fullscreen
+ */
+public function hideGUI() {
+	GUIIsHidden = true ;
+}
+
+/*
+ * Cache et désactive les objet de la GUI sauf celui envoyer en parametre
+ */
+function disableOthers( elemt ) {
+	
+	if( typeof(elemt) != slideShow )
+		slideshow.disableAll();
+	if( typeof(elemt) != showingWindow )
+		windows.disableAll();
+	if( typeof(elemt) != text )
+		textViewer.disableAll();
+	if( typeof(elemt) != sound )
+		audioPlayer.disableAll();
+	if( typeof(elemt) != displayStrip )
+		strip.disableAll();
+	if( typeof(elemt) != typeof(this) )
+		hideGUI();
+
+}
+
+/*
+ * Affiche et active les objet de la GUI sauf celui envoyer en parametre
+ */
+function enableOthers( elemt ) {
+	
+	if( typeof(elemt) != slideShow )
+		slideshow.enableAll();
+	if( typeof(elemt) != showingWindow )
+		windows.enableAll();
+	if( typeof(elemt) != text )
+		textViewer.enableAll();
+	if( typeof(elemt) != sound )
+		audioPlayer.enableAll();
+	if( typeof(elemt) != displayStrip )
+		strip.enableAll();
+	if( typeof(elemt) != typeof(this) )
+		displayGUI();
+}
+
+
+/*
+ * Déplace le slideshow
+ */
+public function nextImg() {
+	slideshow.next( !slideshow.isHidden() );
+}
+
 
 
 
