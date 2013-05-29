@@ -167,9 +167,13 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 			
 			Console.Info( 'Chargement de la video "' + path + '" sur la fenetre de la GUI');
 			
-			
+			try {
 			//chageObjSizeToOptimal(size);
-			//wVideoSettings.putVideo( wObj, path );
+				wVideoSettings.putVideo( wObj, "Diane1" );
+			} catch (e :  System.Exception ) {
+				
+				Console.CriticalError(e);
+			}
 			wVideoIsPlaying= true ;
 			break ;
 		
