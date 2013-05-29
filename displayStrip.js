@@ -113,18 +113,23 @@ function InitVideoScreen( path : String , r : Rect ){
 	// init state of the state machine
 	states = STATES_OF_STRIP.STATE_OUT;
 
-	// get ratio of strip
-	var texture : Texture = Resources.Load( path );
-	ratioPlane = texture.width/texture.height;
+	if( path ){
+		// get ratio of strip
+		var texture : Texture = Resources.Load( path );
+		ratioPlane = texture.width/texture.height;
 	
-	rectOUT = optimalSize( ratioPlane , r );
+		rectOUT = optimalSize( ratioPlane , r );
 	
-	createStripPlane( path , rectOUT );
+		createStripPlane( path , rectOUT );
 	
-	// compute scale and position when plane is widen
-	getInParameters();
+		// compute scale and position when plane is widen
+		getInParameters();
 	
-	enableAll();
+		enableAll();
+	}
+	else
+		Console.Warning("No file found here : "+path);
+		
 }
 
 /*
@@ -275,9 +280,11 @@ function Update_ZOOM_IN(){
 	*all that have to be done in zooming_out state
 */
 function Update_ZOOM_OUT(){
-	var t = Time.time - zoomStart;
+	var t = Time.time - zoomStart / zoomLength;
+	Debug.Log("t   " + t);
+	
 	if( Time.time > zoomStart + zoomLength ){
-			videoScreen.transform.localScale = outScale;
+			//videoScreen.transform.localScale = outScale;
 			// the fullscreen elements are enabled
 			(gameObject.GetComponent( FullScreen ) as FullScreen ).enableOthers( this );
 			states = STATES_OF_STRIP.STATE_OUT;
