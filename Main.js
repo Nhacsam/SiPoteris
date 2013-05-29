@@ -13,6 +13,8 @@ private var move : moveSurface;
 var AllGO2D : Array = Array();
 // array of GO - meshes over movie in 3D
 var AllGO3D : Array = Array();
+// array of GO - audiosources in 3D
+var AllAudio3D : Array = Array();
 
 
 private var Videos : videoSettings ;
@@ -27,6 +29,7 @@ private var Trans :Transition2D3D;
 private var control:CameraControl;
 private var mouseLook : MouseLook ;
 
+private var sound3D : audio3D;
 
 private var textViewer: text;
 
@@ -47,7 +50,7 @@ function Start () {
 	Trans = gameObject.AddComponent("Transition2D3D") as Transition2D3D;
 	control = gameObject.AddComponent("CameraControl") as CameraControl;
 	mouseLook = gameObject.AddComponent("MouseLook") as MouseLook;
-
+	sound3D = gameObject.AddComponent("audio3D") as audio3D;
 	
 	/*
 	 * Inits
@@ -55,7 +58,7 @@ function Start () {
 	xml.InitXml("xml_data");
 	Trans.init();
 
-	
+	sound3D.initSound();
 	// create plane and place camera
 	var s : GameObject = Videos.videoSettings();
 	Trans.init();
@@ -63,7 +66,7 @@ function Start () {
 	createPolar.SetSurface(s);
 	
 	// create pieces of circle for Diane
-	xml.getElementFromXML( placeMeshHash );
+	xml.getElementFromXML( placeMeshHash , placeAudioHash );
 
 	
 	//fin debug test
@@ -99,7 +102,9 @@ function Update () {
 	Zoom.UpDateZoom ();
 	VideoFull.UpDateFullScreen();
 	Trans.UpdateEnding();
-//	sound.updateSounds(myPlanes);
+	
+	if( !Trans.isScene2D() )
+		sound3D.updateSounds( AllAudio3D );
 	
 	for( var i =0; i < AllGO2D.length; i++) {
 	
@@ -157,9 +162,8 @@ function OnGUI() {
 
 /*
 	*place piece of circle according to xml
-	*init hashtable in the sript attached to the plane
+	*init hashtable in the script attached to the plane
 */
-
 function placeMeshHash ( t : Hashtable ){
 	
 	var obj = createPolar.placeMesh(	float.Parse( t['theta_min'] ) ,
@@ -196,3 +200,12 @@ function placeMeshHash ( t : Hashtable ){
 	AllGO3D.Push( obj3D );
 }
 
+/*
+	*place sound in 3D
+*/
+function placeAudioHash ( t : Hashtable ){
+	var g : GameObject = sound3D.createAudio( t['title'] , t['name'] );
+	sound3D.placeAudioSources( float.Parse(t['theta']) , float.Parse(t['ratio']) , g );
+	
+	AllAudio3D.Push( g );
+}
