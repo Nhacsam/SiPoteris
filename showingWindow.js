@@ -14,6 +14,7 @@ private var wZ : float ;
 private var wObj : GameObject ;
 
 // Texture
+private var material : Material ;
 private var wImgTex : Texture = null ;
 
 // Types
@@ -76,6 +77,7 @@ function InitWindow( pos : Rect, z : float ) {
 		wVideoSettings = gameObject.AddComponent("videoSettings");
 	
 	placeRenderingPlane();
+	material = wObj.renderer.material ;
 	
 	// affichage et activation des événement
 	enableAll();
@@ -151,7 +153,7 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 			Console.Info( 'Chargement de la video "' + path + '" sur la fenetre de la GUI');
 			
 			// Applique la video sur l'objet
-			//wVideoSettings.putVideo( wObj, path );
+			wVideoSettings.putVideo( wObj, path );
 			wObj.renderer.enabled = true ;
 			
 			// inversion de la rotation
@@ -169,6 +171,7 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 				wVideoSettings.stopVideo( wObj );
 				wObj.renderer.enabled = true ;
 				wVideoIsPlaying= false ;
+				wObj.renderer.material = material;
 			}
 			
 			// Charge la texture
