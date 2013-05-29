@@ -27,16 +27,16 @@ public function initSound(){
 	*create gameobject with audiosource
 */
 public function createAudio( t : Hashtable ) : GameObject{
-	var clip : AudioClip = Resources.Load("defaultDatas/sound/"+t['title'] , AudioClip); 
+	var clip : AudioClip = Resources.Load( t['path'] , AudioClip ); 
 	
 	// test if sound exists in defaultDatas
 	if( !clip ){
-		Console.Warning("No audio -- " +t['title']+" -- found in defaultDatas/sound");
+		Console.Warning("No audio -- " +t['path']+" -- found in resources");
 		return;
 	}
 
 	var g : GameObject = new GameObject();
-	g.name = "3D_"+t['name'];
+	g.name = "3D_sound_"+t['name'];
 	g.AddComponent(AudioSource);
 	g.audio.clip = clip; 
 	

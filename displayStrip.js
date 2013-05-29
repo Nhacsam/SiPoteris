@@ -1,14 +1,13 @@
 /*
 	*Creation : 29/04/2013
 	*Author : Fabien Daoulas
-	*Last update : 27/05/2013
+	*Last update : 29/05/2013
 	
 	This script displays in full screen the picture on which the user tapped 
 */
 
 private var window : showingWindow;
 private var videoSet : videoSettings;
-private var zoom : Zoom;
 
 // states engine
 enum STATES_OF_STRIP { STATE_IN , STATE_OUT , ZOOM_IN , ZOOM_OUT};
@@ -33,6 +32,9 @@ private var inScale : Vector3;
 // position at start and on full mode
 private var inPos : Vector3;
 private var outPos : Vector3;
+
+// position of plane along z axis
+private var z_coor : float = 20;
 
 // length of zoom
 private var zoomLength : float = 2;
@@ -69,7 +71,7 @@ function OnTap( v : Vector2 ){
 	if( eventEnable && videoScreen != null ){
 		var ray : Ray = camera.ScreenPointToRay( v );
 		var hit : RaycastHit = new RaycastHit();
-		if( (videoScreen.collider.Raycast( ray , hit , 2000.0f ) && states == STATES_OF_STRIP.STATE_OUT)|| states == STATES_OF_STRIP.STATE_IN )
+		if( ( videoScreen.collider.Raycast( ray , hit , 2000.0f ) && states == STATES_OF_STRIP.STATE_OUT) || states == STATES_OF_STRIP.STATE_IN )
 			initZoom();
 	}
 }
@@ -83,9 +85,9 @@ function OnDrag( dragInfo : DragInfo ){
 	}
 }
 
-//////////////
-/////init/////
-//////////////
+/////////////////////////
+/////initialize zoom/////
+/////////////////////////
 
 private function initZoom(){
 	if( states == STATES_OF_STRIP.STATE_OUT ){
@@ -107,14 +109,17 @@ private function initZoom(){
 /*
 	*on the event OnFullScreen this method is called
 */
-function InitVideoScreen( ratio : float , r : Rect ){
+function InitVideoScreen( path : String , r : Rect ){
 	// init state of the state machine
 	states = STATES_OF_STRIP.STATE_OUT;
-	ratioPlane = ratio;
 
+	// get ratio of strip
+	var texture : Texture = Resources.Load( path );
+	ratioPlane = texture.width/texture.height;
+	
 	rectOUT = optimalSize( ratioPlane , r );
 	
-	createStripPlane( rectOUT );
+	createStripPlane(path , rectOUT );
 	
 	// compute scale and position when plane is widen
 	getInParameters();
@@ -126,19 +131,19 @@ function InitVideoScreen( ratio : float , r : Rect ){
 	*get rect to place the plane on the screen
 	*and create a plane
 */
-private function createStripPlane( r : Rect ){
+private function createStripPlane( path :String , r : Rect ){
 	window = 		gameObject.GetComponent("showingWindow") as showingWindow;
 	videoSet = 		gameObject.GetComponent("videoSettings") as videoSettings;
 	
 	// create plane
 	videoScreen = new GameObject.CreatePrimitive( PrimitiveType.Plane );
-	videoScreen.name = "stripPlane";
+	videoScreen.name = "GUI_stripPlane";
 	
 	// extend plane
 	var elmtsSize : Vector2 = window.getRealSize(	Vector2( r.width , r.height ),
-												Vector2( r.x , r.y ),
-												camera.nearClipPlane + 0.1, 
-												camera ) ;
+													Vector2( r.x , r.y ),
+													z_coor, 
+													camera ) ;
 	
 	var size = videoScreen.renderer.bounds.size ;
 	videoScreen.transform.localScale = Vector3( elmtsSize.x/size.x, 
@@ -146,7 +151,7 @@ private function createStripPlane( r : Rect ){
 												elmtsSize.y/size.z ) ;
 	
 	// set position of plane
-	videoScreen.transform.position = camera.ScreenToWorldPoint( Vector3( r.x + r.width/2 , r.y + r.height/2 , camera.nearClipPlane + 0.1 ) );
+	videoScreen.transform.position = camera.ScreenToWorldPoint( Vector3( r.x + r.width/2 , r.y + r.height/2 , z_coor ) );
 	videoScreen.transform.rotation = camera.transform.rotation;
 	videoScreen.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
 	videoScreen.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );
@@ -160,7 +165,7 @@ private function createStripPlane( r : Rect ){
 	if( !testRenderer)
 		videoScreen.AddComponent(Renderer);
 
-	videoScreen.renderer.material.mainTexture = Resources.Load( "dianeIm" );
+	videoScreen.renderer.material.mainTexture = Resources.Load( path );
 }
 
 /*
@@ -216,7 +221,7 @@ private function optimalSize( ratio : float , r : Rect ) : Rect {
 
 private function getInParameters(){
 	// position of plane when state is state_in
-	inPos = camera.ScreenToWorldPoint( Vector3(camera.pixelWidth/2, camera.pixelHeight/2, camera.nearClipPlane + 0.1 ) ) ;
+	inPos = camera.ScreenToWorldPoint( Vector3(camera.pixelWidth/2, camera.pixelHeight/2, 20 ) ) ;
 	
 	var rotation = videoScreen.transform.rotation ;
 	videoScreen.transform.rotation = Quaternion();
