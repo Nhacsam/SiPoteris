@@ -56,8 +56,7 @@ function placeMesh3D( t : Hashtable ){
 		
 		var g : GameObject = CreateSphericMesh( theta_min , phiMin , theta_max , phiMax , t['name'] );
 
-		return g;
-		
+		return g;	
 }
 
 /*
