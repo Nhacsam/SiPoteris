@@ -246,6 +246,7 @@ function UpdateEnding(){
 function finalSettings(){
 
 	//light
+	
 	light.type=LightType.Spot;
 	light.range=70;
 	light.intensity=0.88;
