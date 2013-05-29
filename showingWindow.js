@@ -74,6 +74,7 @@ function InitWindow( pos : Rect, z : float ) {
 	wPos = pos ;
 	wZ = z ;
 	wState = W_STATE.ONGUI ;
+	wId = -1;
 	
 	wVideoSettings = gameObject.GetComponent("videoSettings");
 	if( ! wVideoSettings)
@@ -195,8 +196,8 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 			
 			// Dimentionnement de la fenetre
 			size = (size != Vector2.zero) ? size : Vector2( wImgTex.width, wImgTex.height ) ;
-			Console.Test(size, 1);
-			//chageObjSizeToOptimal(size);
+			Console.Test(size, 5);
+			chageObjSizeToOptimal(size);
 			
 			// application de la texture
 			wObj.renderer.material.mainTexture = wImgTex ;
@@ -535,7 +536,14 @@ private function ComputeFullPos() {
 											Vector2( wFullPos.x, wFullPos.y ),
 											wFullPos.z, camera ) ;
 	
-	wFullScale = Vector3( wObj.transform.localScale.x * elmtsSize.x/size.x, 1, wObj.transform.localScale.z * elmtsSize.y/size.z ) ;
+	Console.Test( 'size  : ' + size , 9 );
+	Console.Test( 'elmtsSize  : ' + elmtsSize , 9 );
+	Console.Test( ' elmtsSize.y/size.z : ' + elmtsSize.y/size.z , 9 );
+	Console.Test( '  wObj.transform.localScale : ' +  wObj.transform.localScale , 9 );
+	Console.Test( ' elmtsSize.x/size.x : ' + elmtsSize.x/size.x , 9 );
+	
+	wFullScale = Vector3(		wObj.transform.localScale.x * elmtsSize.y/size.z , 1, wObj.transform.localScale.z * elmtsSize.y/size.z ) ;
+	Console.Test( ' wFullScale : ' + wFullScale , 9 );
 	
 	// replace l'objet
 	wObj.transform.rotation = rotation ;

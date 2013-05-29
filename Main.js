@@ -156,7 +156,6 @@ function switchFieldOfView() {
 function OnGUI() {
 	Trans.OnGUI2D3D();
 	VideoFull.OnGUIFullScreen();
-	Zoom.OnGUIZoom();
 }
 
 
