@@ -114,18 +114,20 @@ function InitVideoScreen( path : String , r : Rect ){
 	states = STATES_OF_STRIP.STATE_OUT;
 
 	if( path ){
-		// get ratio of strip
-		var texture : Texture = Resources.Load( path );
-		ratioPlane = texture.width/texture.height;
+		if( typeof(Resources.Load( path )) == typeof(Texture) ){
+			var texture : Texture = Resources.Load( path );
+			
+			// get ratio of strip
+			ratioPlane = texture.width/texture.height;
+			rectOUT = optimalSize( ratioPlane , r );
+			createStripPlane( path , rectOUT );
 	
-		rectOUT = optimalSize( ratioPlane , r );
-	
-		createStripPlane( path , rectOUT );
-	
-		// compute scale and position when plane is widen
-		getInParameters();
-	
-		enableAll();
+			// compute scale and position when plane is widen
+			getInParameters();
+			enableAll();
+		}
+		else
+			Console.Warning("File is typeof "+typeof(Resources.Load( path ))+" whereas it should be typeof Texture");
 	}
 	else
 		Console.Warning("No file found here : "+path);
