@@ -26,19 +26,22 @@ public function initSound(){
 /*
 	*create gameobject with audiosource
 */
-public function createAudio( nameOfAudio : String , nameOfGo : String ) : GameObject{
+public function createAudio( t : Hashtable ) : GameObject{
 	var g : GameObject = new GameObject();
-	g.name = "3D_"+nameOfGo;
-	var clip : AudioClip = Resources.Load("defaultDatas/sound/"+nameOfAudio , AudioClip); 
+	g.name = "3D_"+t['name'];
+	var clip : AudioClip = Resources.Load("defaultDatas/sound/"+t['title'] , AudioClip); 
 	
 	// test if sound exists in defaultDatas
 	if( !clip ){
-		Console.Warning("No audio -- " +nameOfAudio+" -- found in defaultDatas/sound");
+		Console.Warning("No audio -- " +t['title']+" -- found in defaultDatas/sound");
 		return;
 	}
 	
 	g.AddComponent(AudioSource);
 	g.audio.clip = clip; 
+	
+	// place audio
+	placeAudioSources( float.Parse(t['theta']) , float.Parse(t['ratio']) , g );
 	
 	// clip is heard like in the real world
 	g.audio.rolloffMode =  AudioRolloffMode.Logarithmic;
@@ -49,7 +52,7 @@ public function createAudio( nameOfAudio : String , nameOfGo : String ) : GameOb
 /*
 	*place GO around the sphere
 */
-public function placeAudioSources( theta : float , ratio : float , g : GameObject ){
+private function placeAudioSources( theta : float , ratio : float , g : GameObject ){
 	if( ratio > 0.66 )
 		var phi : float = calculatePHI( ratio , true );
 	else

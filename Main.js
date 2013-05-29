@@ -204,11 +204,10 @@ function placeMeshHash ( t : Hashtable ){
 }
 
 /*
-	*place sound in 3D
+	*create and place sound in 3D
 */
 function placeAudioHash ( t : Hashtable ){
-	var g : GameObject = sound3D.createAudio( t['title'] , t['name'] );
-	sound3D.placeAudioSources( float.Parse(t['theta']) , float.Parse(t['ratio']) , g );
-	
-	AllAudio3D.Push( g );
+	var g : GameObject = sound3D.createAudio( t );
+	if( g )
+		AllAudio3D.Push( g );
 }
