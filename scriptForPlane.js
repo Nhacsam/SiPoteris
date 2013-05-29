@@ -464,7 +464,7 @@ public function getIpadVideos() : Array {
 		GUIFiles = fileSystem.parseFile( fileSystem.getResourcesPath() +'/'+ getFolderName(null) +'/'+ parsedFilePath ) ;
 	
 	// Ensuite on cheche ceux qui contiennent '/Audio/' et on renvoie les résultats
-	return fileSystem.getStringContainInArray(GUIFiles, fileSystem.getStreamingFolder()+'/' );
+	return fileSystem.getStringContainInArray(GUIFiles, 'StreamingAssets/' );
 
 }
 

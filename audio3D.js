@@ -117,10 +117,10 @@ public function updateSounds ( tabSound : Array ){
 				continue ;
 				
 			// run clip if not playing
-			if( !tabSound[i].audio.isPlaying )
+			if( !(tabSound[i] as GameObject).audio.isPlaying )
 				displayAudio3D( tabSound[i] );
 				
-			if( tabSound[i].audio.isPlaying ){
+			if( (tabSound[i] as GameObject).audio.isPlaying ){
 				srcAudioPosViewPoint = Camera.main.WorldToViewportPoint( (tabSound[i] as GameObject).transform.position );
 				Distance = ComputeDistance( srcAudioPosViewPoint.x , srcAudioPosViewPoint.y );
 				manageVolume( Distance , tabSound[i] , srcAudioPosViewPoint );

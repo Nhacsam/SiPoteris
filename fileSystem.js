@@ -183,18 +183,26 @@ static function createParsedFile( 	parsedFilePath : String,
 /******** Traitements sur les nom des fichiers ********/
 /******************************************************/
 
+
 /*
- * Supprime dans le chemin d'un fichier tout ce qui précède
- * Ressources/
+ * Supprime dans le chemin d'un fichier tout ce qui précède folder
  */
-static function fromResourcesPath( path : String ) : String {
+static function fromFolderPath( path : String, folder : String ) : String {
 	
-	var tofind : String =  'Resources/' ;
+	var tofind : String =  folder+'/' ;
 	var found = path.IndexOf( tofind ) ;
 	if( found != -1 )
 		return path.Substring( found + tofind.length ) ;
 	else
 		return path ;
+}
+
+/*
+ * Supprime dans le chemin d'un fichier tout ce qui précède
+ * Ressources/
+ */
+static function fromResourcesPath( path : String ) : String {
+	return fromFolderPath( path, 'Resources');
 }
 
 
@@ -204,13 +212,7 @@ static function fromResourcesPath( path : String ) : String {
  * Assets/
  */
 static function fromAssetsPath( path : String ) : String {
-	
-	var tofind : String =  'Assets/' ;
-	var found = path.IndexOf( tofind ) ;
-	if( found != -1 )
-		return path.Substring( found + tofind.length ) ;
-	else
-		return path ;
+	return fromFolderPath( path, 'Assets');
 }
 
 
@@ -279,8 +281,9 @@ static function getStringContainInArray( A : Array, s : String ) {
 	
 	// Ensuite on cheche ceux qui contiennent s
 	for (var i = 0; i < A.length; i++) {
-		if( (A[i] as String).IndexOf( s ) > 0 )
+		if( (A[i] as String).IndexOf( s ) >= 0 ) {
 			matchedString.Push( A[i] );
+		}
 	}
 	
 	// et on renvoie les résultats

@@ -1,12 +1,13 @@
 #pragma strict
 
 
-
+private var MovieController2:GameObject;
 private var MovieController:GameObject;
 private var iOS : GameObject;
 
 //ref to the screen 2D
 private var plane2D = GameObject.CreatePrimitive(PrimitiveType.Plane);
+
 //ref to the sphere 3D
 private var sphere3D:GameObject;
 
@@ -15,6 +16,11 @@ private var button:boolean=true;
 private var Trans:Transition2D3D;
 
 private var rotInit;
+
+private var controllerIOS:ForwardiOSMessages;
+private var controllerScene:SceneController;
+//private var controllerIOS2:ForwardiOSMessages;
+private var controllerScene2:SceneController;
 
 
 private var startRotation;
@@ -41,20 +47,22 @@ function videoSettings () {
 	Trans = gameObject.GetComponent("Transition2D3D") as Transition2D3D;
 	//instantiate
 	iOS = new GameObject(); 
+	iOS.transform.position= Vector3(10,0,0);
 	iOS.name="iOS";
 	iOS.AddComponent("ForwardiOSMessages");
- 	var controllerIOS:ForwardiOSMessages;
+ 	
 	controllerIOS = iOS.GetComponent("ForwardiOSMessages");
 	controllerIOS.movie = new PlayHardwareMovieClassPro[2]; 
 	
 	MovieController = new GameObject(); 
+	MovieController.transform.position= Vector3(10,0,0);
 	MovieController.name="MovieController";
 	MovieController.AddComponent("SceneController");       
-	var controllerScene:SceneController;
+	
 	controllerScene = MovieController.GetComponent("SceneController");      
-	controllerScene.movieClass = new PlayHardwareMovieClassPro[2];
-	controllerScene.movieName = new  String[2];
-	controllerScene.seekTime = new float[2];
+	controllerScene.movieClass = new PlayHardwareMovieClassPro[1];
+	controllerScene.movieName = new  String[1];
+	controllerScene.seekTime = new float[1];
 	
 	
 	
@@ -70,7 +78,7 @@ function videoSettings () {
 	     
 	//set iOS forwarding
 	controllerIOS.movie[0]=plane2D.GetComponent("PlayFileBasedMovieDefault");
-	     
+		
 	//set the scene
 	controllerScene.movieClass[0] =  plane2D.GetComponent("PlayFileBasedMovieDefault");
 	controllerScene.movieClass[0].movieIndex=0;
@@ -99,6 +107,7 @@ function generateScene2D(){
     plane2D.transform.position = Vector3(0,0,0);
     plane2D.AddComponent("PlayFileBasedMovieDefault");
   	plane2D.renderer.material = Resources.Load("MovieHD");
+	Destroy(plane2D.collider);
 
 	rotInit=plane2D.transform.rotation;
 	startRotation = plane2D.transform.rotation;
@@ -112,6 +121,7 @@ function generateScene3D(){
 	var rot:Quaternion=Quaternion.identity;
 	//load .fbx sphere on scene
 	sphere3D=Instantiate(Resources.Load("SphereFULL"),Vector3(0,1.3,0),rot);
+	Destroy(sphere3D.GetComponent("Animator"));
 	//set it at the right position
 	sphere3D.transform.Rotate(-90,0,0);
 	sphere3D.transform.localScale=Vector3(500,500,500);
@@ -155,11 +165,8 @@ function videoHDZoomQuit(plane : GameObject){
 	//resume movie
 	controllerMovie=plane2D.GetComponent("PlayFileBasedMovieDefault");
 	controllerMovie.ResumeMovie ();
-	button=true;
-	light.type=LightType.Point;
-	light.range=70;
-	light.intensity=0.88;
 	
+	button=true;
 }
 
 
@@ -168,25 +175,30 @@ function videoHDZoomQuit(plane : GameObject){
 */
 function putVideo( focus: GameObject, nom : String){
 
- 	var controllerIOS:ForwardiOSMessages;
-	controllerIOS = iOS.GetComponent("ForwardiOSMessages");
- 
-	var controllerScene:SceneController;
-	controllerScene = MovieController.GetComponent("SceneController");      
+	if(!MovieController2){
+	MovieController2 = new GameObject(); 
+	MovieController2.transform.position= Vector3(10,0,0);
+	MovieController2.name = "MovieControllerBis";
+	MovieController2.AddComponent("SceneController");      
+	}
+	 
+	controllerScene2 = MovieController2.GetComponent("SceneController");      
+	controllerScene2.movieClass = new PlayHardwareMovieClassPro[1];
+	controllerScene2.movieName = new  String[1];
+	controllerScene2.seekTime = new float[1];
 	
-    focus.AddComponent("PlayFileBasedMovieDefault");
-    focus.renderer.material = Resources.Load("Video");
-    
-	controllerScene.movieClass[1] =  focus.GetComponent("PlayFileBasedMovieDefault");
-	controllerScene.movieClass[1].movieIndex=1;
-	controllerScene.movieName[1] = nom + ".mov";
-	controllerIOS.movie[1]=focus.GetComponent("PlayFileBasedMovieDefault");
-	
+	if(!focus.GetComponent("PlayFileBasedMovieDefault"))focus.AddComponent("PlayFileBasedMovieDefault");
+  	focus.renderer.material = Resources.Load("Movie");
+	controllerIOS.movie[1] = focus.GetComponent("PlayFileBasedMovieDefault"); 
+	   
+	controllerScene2.movieClass[0] =  focus.GetComponent("PlayFileBasedMovieDefault");
+	controllerScene2.movieClass[0].movieIndex=1;
+	controllerScene2.movieName[0] = nom +".mov";
 	
 	var controllerMovie:PlayFileBasedMovieDefault;
-	controllerMovie=focus.GetComponent("PlayFileBasedMovieDefault");
-	controllerMovie.PlayMovie(nom + ".mov");
-	
+	controllerMovie = focus.GetComponent("PlayFileBasedMovieDefault");
+	controllerMovie.PlayMovie(nom +".mov");
+
 	return true;
 	
 }
@@ -215,6 +227,27 @@ function getFlagEndVideo(){
 	//Trans.endingEnable();
 	//return true;
 }
+
+/*
+* fonction de test de chargement d'une nouvelle video
+*/
+/*
+private var planetest:GameObject;
+
+function test(){
+	if(!planetest){
+	planetest=GameObject.CreatePrimitive(PrimitiveType.Plane);
+	planetest.transform.eulerAngles=Vector3(180,0,0);
+	planetest.transform.position=Vector3(2,-2,0);
+	planetest.name= "planetest";}
+	putVideo( planetest , "Diane1");
+
+}*/
+
+
+
+
+
 
 function effectsOnEnd(){
 
