@@ -1,13 +1,14 @@
 /*
 	*Creation : 22/04/2013
 	*Author : Fabien Daoulas
-	*Last update : 28/05/2013
+	*Last update : 29/05/2013
 	* this script displays sound around the sphere
 */
 
 private var radius : float = 5;
 
 private var trans : Transition2D3D;
+private var full : FullScreen;
 
 
 ////////////////////////
@@ -15,8 +16,8 @@ private var trans : Transition2D3D;
 ////////////////////////
 public function initSound(){
 	trans = gameObject.GetComponent("Transition2D3D") as Transition2D3D;
+	full = gameObject.GetComponent("FullScreen") as FullScreen;
 }
-
 
 ////////////////////////////////////////////
 //////////create/place audiosource//////////
@@ -107,7 +108,7 @@ private function manageVolume( d : float , g : GameObject , srcAudioPosViewPoint
 //////////////////////////
 
 public function updateSounds ( tabSound : Array ){
-	if( !trans.isScene2D() ){// if in 3D view
+	if( !trans.isScene2D() && !full.getOnFullScreen() ){// if in 3D view
 		var srcAudioPosViewPoint : Vector3;//position viewpoint
 		var Distance : float;//distance between gameObject and center of screen
 	
@@ -140,7 +141,6 @@ public function updateSounds ( tabSound : Array ){
 	*calculate values of phi thanks to the ratio in the xml
 */
 private function calculatePHI( ratio : float , b : boolean) : float {
-
 	if( b ){
 		if( ratio > 0.66 ){
 			var v : float = 7*Mathf.PI/4 + ( 1 - ratio ) * Mathf.PI/4 / ( 1 - 0.66 );
@@ -153,5 +153,4 @@ private function calculatePHI( ratio : float , b : boolean) : float {
 		v = ( 1 - ratio ) * Mathf.PI / 2;
 
 	return v;
-
 }

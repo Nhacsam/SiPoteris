@@ -314,5 +314,10 @@ public function nextImg() {
 }
 
 
-
+/*
+	*getter
+*/ 
+function getOnFullScreen(){
+	return onFullScreen;
+}
 
