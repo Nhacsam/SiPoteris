@@ -216,7 +216,7 @@ function EnterOnFullScreen( Video : GameObject ) {
 	textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getText()); // u d l r (margins) + Text to display
 	audioPlayer.placeMusicFactor (1-musicTop, musicBottom, musicLeft, 1-musicRight, Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
 	
-	strip.InitVideoScreen(11 , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
+	strip.InitVideoScreen("dianeIm" , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
 	
 	
 	// On donne les infos au slideShow
