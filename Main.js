@@ -103,8 +103,7 @@ function Update () {
 	VideoFull.UpDateFullScreen();
 	Trans.UpdateEnding();
 	
-	if( !Trans.isScene2D() )
-		sound3D.updateSounds( AllAudio3D );
+	sound3D.updateSounds( AllAudio3D );
 	
 	for( var i =0; i < AllGO2D.length; i++) {
 	

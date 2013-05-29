@@ -59,9 +59,9 @@ public function placeAudioSources( theta : float , ratio : float , g : GameObjec
 									radius * Mathf.Cos(theta) * Mathf.Cos(phi) );
 }
 
-////////////////////////////
-//////////run clip//////////
-////////////////////////////
+/////////////////////////////////
+//////////run/stop clip//////////
+/////////////////////////////////
 
 private function displayAudio3D( source : GameObject ){
 	if( !source.audio.isPlaying ){
@@ -71,6 +71,10 @@ private function displayAudio3D( source : GameObject ){
 	}
 	else
 		return;
+}
+
+private function stopAudio3D( source : GameObject ){
+	source.audio.Stop();
 }
 
 /////////////////////////////////
@@ -101,20 +105,28 @@ private function manageVolume( d : float , g : GameObject , srcAudioPosViewPoint
 //////////////////////////
 
 public function updateSounds ( tabSound : Array ){
-	var srcAudioPosViewPoint : Vector3;//position viewpoint
-	var Distance : float;//distance between gameObject and center of screen
+	if( !trans.isScene2D() ){// if in 3D view
+		var srcAudioPosViewPoint : Vector3;//position viewpoint
+		var Distance : float;//distance between gameObject and center of screen
 	
-	for(var i = 0; i < tabSound.length ; i++){
-		if( tabSound[i].GetComponent(AudioSource) == null )
-			continue ;
-		// run clip if not playing
-		if( !tabSound[i].audio.isPlaying )
-			displayAudio3D( tabSound[i] );
-		if( tabSound[i].audio.isPlaying ){
-			srcAudioPosViewPoint = Camera.main.WorldToViewportPoint( tabSound[i].transform.position );
-			Distance = ComputeDistance( srcAudioPosViewPoint.x , srcAudioPosViewPoint.y );
-			manageVolume( Distance , tabSound[i] , srcAudioPosViewPoint );
-		}
+		for(var i = 0; i < tabSound.length ; i++){
+			if( tabSound[i].GetComponent(AudioSource) == null )
+				continue ;
+				
+			// run clip if not playing
+			if( !tabSound[i].audio.isPlaying )
+				displayAudio3D( tabSound[i] );
+				
+			if( tabSound[i].audio.isPlaying ){
+				srcAudioPosViewPoint = Camera.main.WorldToViewportPoint( tabSound[i].transform.position );
+				Distance = ComputeDistance( srcAudioPosViewPoint.x , srcAudioPosViewPoint.y );
+				manageVolume( Distance , tabSound[i] , srcAudioPosViewPoint );
+			}//if
+		}//for
+	}//if
+	else{// if not in 3D view
+		for(i = 0; i < tabSound.length ; i++)
+			stopAudio3D( tabSound[i] );
 	}
 }
 
@@ -123,7 +135,7 @@ public function updateSounds ( tabSound : Array ){
 /////////////////////////////////////
 
 /*
-	*calculate values of phi with ratio in the xml
+	*calculate values of phi thanks to the ratio in the xml
 */
 private function calculatePHI( ratio : float , b : boolean) : float {
 
