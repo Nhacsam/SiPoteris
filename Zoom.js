@@ -36,10 +36,6 @@ private var Trans :Transition2D3D;
 private var control : CameraControl;
 private var mouseLook: MouseLook;
 
-private var dezooming: boolean = false;
-
-
-
 private var eventEnable : boolean ;
 
 
@@ -89,6 +85,9 @@ function Init( VideosMeshes2D : Array, VideosMeshes3D : Array, enableMouseLook :
  * Mets à jours les calcul liés au zoom
  */
 function UpDateZoom () {
+	
+	if( Input.GetMouseButtonDown(0) )
+		OnTap(Input.mousePosition);
 	
 	switch( stateMachine ) {
 	
@@ -146,6 +145,7 @@ public function enableEvents() {
  * Desactive les evenements
  */
 public function disableEvents() {
+;
 	eventEnable = false ;
 }
 
@@ -227,8 +227,6 @@ function toOnVideo() {
  */
 function toOnDeZoom() {
 	
-	dezooming = true;
-	
 	// Changement de la machine d'état
 	stateMachine = ZOOM_STATES.ONDEZOOM ;	
 	
@@ -255,8 +253,6 @@ private function toOnSphere () {
 	
 	// Appel des callbacks
 	if( stateMachine == ZOOM_STATES.ONDEZOOM ) {
-		dezooming = false;
-		
 		for( var j = 0; j < OnEndDezoom.length; j++){
 			(OnEndDezoom[j] as function( GameObject ) )( selected ) ;
 		}
@@ -268,13 +264,6 @@ private function toOnSphere () {
 	// Réactive le mouseLook
 	enableLook(true);
 	
-}
-
-/*
- * getter
- */
-function isDezooming () {
-	return dezooming;
 }
 
 
@@ -419,7 +408,6 @@ function OnDisable(){
  * Gestion du click
  */
 function OnTap(mousePos : Vector2) {
-	
 	
 	// On interronmpt la fonction si les évenements sont désactivé
 	if( !eventEnable )

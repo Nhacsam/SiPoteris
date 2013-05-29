@@ -76,9 +76,11 @@ function Start () {
 	// Link
 	Zoom.AddOnZoom( Videos.videoHDZoomON );
 	Zoom.AddOnZoom(switchFieldOfView);
+	Zoom.AddOnZoom(Trans.flagExit);
 	Zoom.AddOnLeave( VideoFull.LeaveFullScreen );
 	Zoom.AddOnLeave( Videos.videoHDZoomQuit );
 	Zoom.AddOnEndZoom(VideoFull.EnterOnFullScreen);
+	Zoom.AddOnEndDezoom( Trans.flagExit );
 	
 	
 	
@@ -153,6 +155,7 @@ function switchFieldOfView() {
 function OnGUI() {
 	Trans.OnGUI2D3D();
 	VideoFull.OnGUIFullScreen();
+	GUI.Label(Rect(Screen.width/2, Screen.height-60, camera.pixelWidth , camera.pixelHeight),"TEST");
 }
 
 

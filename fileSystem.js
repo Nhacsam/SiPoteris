@@ -279,8 +279,9 @@ static function getStringContainInArray( A : Array, s : String ) {
 	
 	// Ensuite on cheche ceux qui contiennent s
 	for (var i = 0; i < A.length; i++) {
-		if( (A[i] as String).IndexOf( s ) > 0 )
+		if( (A[i] as String).IndexOf( s ) >= 0 ) {
 			matchedString.Push( A[i] );
+		}
 	}
 	
 	// et on renvoie les résultats

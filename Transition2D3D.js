@@ -28,6 +28,8 @@ private var buttonUp : int = Screen.height - 100;
 private var buttonLeft : int = 0;
 private var buttonHeight : int = 100;
 private var buttonWidth : int = 100;
+private var exitFinished: boolean=true;
+
 //instantiate items
 function init(){
 
@@ -61,14 +63,17 @@ function endingEnable(){
 
 function  OnGUI2D3D(){
 
-	if(Videos.OnPlay() && !enable &&  !enableEnding && !zoom.isDezooming() ){
-		
-		GUI.Label(Rect(Screen.width/2 +315 , Screen.height-60, camera.pixelWidth , camera.pixelHeight),"Click anywhere on the screen \n   to get further information.");
+	if(Videos.OnPlay() && !enable &&  !enableEnding && exitFinished){
+	
+		var Rectangle : Rect = new Rect(Screen.width/2 +310 , Screen.height-60, camera.pixelWidth , camera.pixelHeight);		
+		GUI.Label(Rectangle,"Click anywhere on the screen \n   to get further information.");
 			
- 	 	if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), scene2D ? "3D view" : "2D view" ))
+ 	 	if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), scene2D ? "3D view" : "2D view" )){
+			zoom.disableEvents();
 			Change2D3D();
-			
 			//Videos.test();
+			}
+			
     }
         
 }
@@ -174,7 +179,7 @@ function Update2D3D(){
 			}
 			
 			control.AttachGyro();
-			zoom.enableEvents()
+			zoom.enableEvents();
 		
 		}
 	}
@@ -232,7 +237,7 @@ function UpdateEnding(){
 
 	if(end==false){
 	
-		if(Videos.endTransition()==true){enableEnding=false;end=true;zoom.enableEvents()}
+		if(Videos.endTransition()==true){enableEnding=false;end=true;zoom.enableEvents();}
 	}
 
 }
@@ -259,7 +264,11 @@ function isScene2D(){
 	return scene2D;
 }
 
+function flagExit(){
+	exitFinished=!exitFinished;
+	return exitFinished;
 
+}
 
 static function isOnIpad() : boolean {
 	return ( SystemInfo.deviceType == DeviceType.Handheld );

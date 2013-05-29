@@ -194,6 +194,7 @@ function EnterOnFullScreen( Video : GameObject ) {
 	}
 	for (i = 0; i < slideShowVideo.length; i++ ) {
 		
+		
 		// On verifie qu'il y a une miniature associé à la video
 		var min = fileSystem.getAssociatedMin( slideShowVideo[i], slideShowMin ) ;
 		if( min == slideShowVideo[i])

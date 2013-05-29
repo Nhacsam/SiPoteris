@@ -174,31 +174,29 @@ function videoHDZoomQuit(plane : GameObject){
 * Set the parameters for the video (see the plug to know how to do it)
 */
 function putVideo( focus: GameObject, nom : String){
-	
+
+	if(!MovieController2){
 	MovieController2 = new GameObject(); 
 	MovieController2.transform.position= Vector3(10,0,0);
-	MovieController2.name="MovieControllerBis";
-	MovieController2.AddComponent("SceneController");    
-	   
-	
+	MovieController2.name = "MovieControllerBis";
+	MovieController2.AddComponent("SceneController");      
+	}
 	 
 	controllerScene2 = MovieController2.GetComponent("SceneController");      
 	controllerScene2.movieClass = new PlayHardwareMovieClassPro[1];
 	controllerScene2.movieName = new  String[1];
 	controllerScene2.seekTime = new float[1];
 	
-	
-	focus.AddComponent("PlayFileBasedMovieDefault");
+	if(!focus.GetComponent("PlayFileBasedMovieDefault"))focus.AddComponent("PlayFileBasedMovieDefault");
   	focus.renderer.material = Resources.Load("Movie");
-	Destroy(focus.collider);
-	controllerIOS.movie[1]=focus.GetComponent("PlayFileBasedMovieDefault"); 
+	controllerIOS.movie[1] = focus.GetComponent("PlayFileBasedMovieDefault"); 
 	   
 	controllerScene2.movieClass[0] =  focus.GetComponent("PlayFileBasedMovieDefault");
-	controllerScene2.movieClass[0].movieIndex=0;
+	controllerScene2.movieClass[0].movieIndex=1;
 	controllerScene2.movieName[0] = nom +".mov";
 	
 	var controllerMovie:PlayFileBasedMovieDefault;
-	controllerMovie=focus.GetComponent("PlayFileBasedMovieDefault");
+	controllerMovie = focus.GetComponent("PlayFileBasedMovieDefault");
 	controllerMovie.PlayMovie(nom +".mov");
 
 	return true;
@@ -233,15 +231,18 @@ function getFlagEndVideo(){
 /*
 * fonction de test de chargement d'une nouvelle video
 */
+/*
 private var planetest:GameObject;
+
 function test(){
+	if(!planetest){
 	planetest=GameObject.CreatePrimitive(PrimitiveType.Plane);
 	planetest.transform.eulerAngles=Vector3(180,0,0);
 	planetest.transform.position=Vector3(2,-2,0);
-	planetest.name= "planetest";
+	planetest.name= "planetest";}
 	putVideo( planetest , "Diane1");
 
-}
+}*/
 
 
 

@@ -170,7 +170,7 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 			
 			try {
 			//chageObjSizeToOptimal(size);
-				wVideoSettings.putVideo( wObj, "Diane1" );
+				wVideoSettings.putVideo( wObj, path );
 			} catch (e :  System.Exception ) {
 				
 				Console.CriticalError(e);
