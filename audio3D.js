@@ -31,8 +31,10 @@ public function createAudio( nameOfAudio : String , nameOfGo : String ) : GameOb
 	var clip : AudioClip = Resources.Load("defaultDatas/sound/"+nameOfAudio , AudioClip); 
 	
 	// test if sound exists in defaultDatas
-	if( !clip )
+	if( !clip ){
 		Console.Warning("No audio -- " +nameOfAudio+" -- found in defaultDatas/sound");
+		return;
+	}
 	
 	g.AddComponent(AudioSource);
 	g.audio.clip = clip; 
