@@ -44,6 +44,19 @@ static function getChildFolder( name : String, folderName : String, root ) : Str
  */
 static function getFilesInArrayFromFolder( folder : String, extension : String, root) : Array {
 	
+	var reg : Regex ;
+	
+	// si l'extension commence par une parenthèse ouvrante,
+	// On considère que c'est une regex
+	if( extension.length > 0) {
+		if( extension[0] == '('[0] ) {
+			reg = new Regex(extension);
+			extension = '' ;
+		}
+	}
+	if( !reg )
+		reg = new Regex(".*");
+	
 	if(!root)
 		root = getResourcesPath() ;
 	
@@ -51,9 +64,10 @@ static function getFilesInArrayFromFolder( folder : String, extension : String, 
 	
 	if( isDirExisting(root + '/' + folder) ) {
 	
-		var fileInfo = Directory.GetFiles(root + '/' + folder + '/', "*" + extension);
+		var fileInfo = Directory.GetFiles(root + '/' + folder + '/', "*" + extension) ;
 		for (file in fileInfo) {
-			FilesNameTab.Push( removeExtension( fromResourcesPath(file) )  );
+			if(  reg.IsMatch(file) )
+				FilesNameTab.Push( removeExtension( fromResourcesPath(file) )  );
 		}
 	}
 	return FilesNameTab ;
@@ -124,26 +138,6 @@ static function  parseFile( parsedFilePath : String ) : Array {
 	var parsedFile : String = getTextFromFile(parsedFilePath);
 	var linesArray : Array = parsedFile.Split("\n"[0]);
 	return linesArray ;
-	
-	
-	/*
-	var parsedFile : StreamReader = new StreamReader( parsedFilePath );
-	var linesArray : Array = Array();
-	
-	var line : String ;
-	
-	line = parsedFile.ReadLine();
-	while(line) {
-		
-		linesArray.Push(line);
-		line = parsedFile.ReadLine();
-	}
-	parsedFile.Close();
-	
-	Console.Info( linesArray.length + ' parsed from the file ' + parsedFilePath );
-	
-	return linesArray ;
-	*/
 }
 
 
@@ -220,7 +214,6 @@ static function fromAssetsPath( path : String ) : String {
 /*
  * Retire l'extension d'un fichier
  */
-
 static function removeExtension(file : String ) : String {
 	
 	var pointPos : int = file.IndexOf( '.' );
@@ -228,6 +221,18 @@ static function removeExtension(file : String ) : String {
 		return file.Substring( 0, pointPos ) ;
 	else
 		return file ;
+}
+
+/*
+ * Récupère l'extension d'un fichier
+ */
+static function getExtension(file : String ) : String {
+	
+	var pointPos : int = file.IndexOf( '.' );
+	if( pointPos >= 0)
+		return file.Substring( pointPos ) ;
+	else
+		return '' ;
 }
 
 /*

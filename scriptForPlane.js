@@ -206,11 +206,19 @@ public function getAudioFolder() : String {
 }
 
 public function getVideoFolder() : String {
-	return getFolderName(  fileSystem.getStreamingFolder() ) ;
+	return  fileSystem.getChildFolder( 'video', getFolderName(  fileSystem.getStreamingFolder() ), fileSystem.getStreamingFolder() ) ;
 }
 
 public function getMiniatureFolder() : String {
 	return fileSystem.getChildFolder( 'min', getFolderName(null), null );
+}
+
+public function getStripImgFolder() : String {
+	return fileSystem.getChildFolder( 'strip', getFolderName(null), null );
+}
+
+public function getStripVideoFolder() : String {
+	return  fileSystem.getChildFolder( 'strip', getFolderName(  fileSystem.getStreamingFolder() ), fileSystem.getStreamingFolder() ) ;
 }
 
 
@@ -241,14 +249,20 @@ public function getDefaultAudioFolder() : String {
 }
 
 public function getDefaultVideoFolder() : String {
-	return getDefaultFolder( fileSystem.getStreamingFolder() ) ;
+	return fileSystem.getChildFolder( 'video', getDefaultFolder( fileSystem.getStreamingFolder() ), fileSystem.getStreamingFolder() ) ;
 }
 
 public function getDefaultMiniatureFolder() : String {
 	return fileSystem.getChildFolder( 'min', getDefaultFolder(null), null );
 }
 
+public function getDefaultStripImgFolder() : String {
+	return fileSystem.getChildFolder( 'strip', getDefaultFolder(null), null );
+}
 
+public function getDefaultStripVideoFolder() : String {
+	return fileSystem.getChildFolder( 'strip', getDefaultFolder( fileSystem.getStreamingFolder() ), fileSystem.getStreamingFolder() ) ;
+}
 
 /*
  * Récupère le texte qui sera afficher dans la GUI
@@ -310,6 +324,23 @@ public function getFileText() : String {
 		return getEditorFileText() ;
 }
 
+public function getStripImg() : String {
+	
+	if( isOnIpad() )
+		return getIpadStripImg() ;
+	else
+		return getEditorStripImg() ;
+}
+
+
+public function getStripVideo() : String {
+	
+	if( isOnIpad() )
+		return getIpadStripVideo() ;
+	else
+		return getEditorStripVideo() ;
+}
+
 
 /*
  * Récupère la liste des fichiers de chaques catégorie
@@ -348,7 +379,6 @@ public function getEditorVideos() : Array {
 	for( var i = 0; i < Datas.length; i++ )
 		Datas[i] = fileSystem.fromAssetsPath( Datas[i] ) ;
 	
-	
 	return Datas ;
 }
 
@@ -362,6 +392,31 @@ public function getEditorMiniatures() : Array {
 	return Datas ;
 }
 
+public function getEditorStripImg() : String {
+	
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getStripImgFolder(), '', null ) ;
+	
+	if( Datas.length <= 0 ) // not found
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultStripImgFolder(), '', null ) ;
+
+	if( Datas.length > 0)
+		return fileSystem.fromAssetsPath( Datas[ Datas.length -1 ] );
+	else
+		return '' ;
+}
+
+public function getEditorStripVideo() : String {
+	
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getStripVideoFolder(), '', fileSystem.getStreamingFolder() ) ;
+	
+	if( Datas.length <= 0 ) // not found
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultStripVideoFolder(), '', fileSystem.getStreamingFolder() ) ;
+	
+	if( Datas.length > 0)
+		return fileSystem.fromAssetsPath( Datas[ Datas.length -1] );
+	else
+		return '' ;
+}
 
 
 /*
@@ -463,8 +518,8 @@ public function getIpadVideos() : Array {
 	if( GUIFiles.length == 0 )
 		GUIFiles = fileSystem.parseFile( fileSystem.getResourcesPath() +'/'+ getFolderName(null) +'/'+ parsedFilePath ) ;
 	
-	// Ensuite on cheche ceux qui contiennent '/Audio/' et on renvoie les résultats
-	return fileSystem.getStringContainInArray(GUIFiles, 'StreamingAssets/' );
+	// Ensuite on cheche ceux qui contiennent '/video/' et on renvoie les résultats
+	return fileSystem.getStringContainInArray(GUIFiles, '/video/' );
 
 }
 
@@ -488,6 +543,39 @@ public function getIpadFileText() : String {
 	// Ensuite on cheche ceux qui contiennent '.textefile' (concaténé lors de la creation du fichier) et on renvoie le premier résultat
 	var matchedFile : Array = fileSystem.getStringContainInArray(GUIFiles, '.textefile' );
 	
+	if ( matchedFile.length <= 0)
+		return '' ;
+	else
+		return fileSystem.removeExtension(matchedFile[0]) ;
+}
+
+public function getIpadStripImg() : String {
+	
+	// Si la liste des fichiers et vides, on la génère
+	if( GUIFiles.length == 0 )
+		GUIFiles = fileSystem.parseFile( fileSystem.getResourcesPath() +'/'+ getFolderName(null) +'/'+ parsedFilePath ) ;
+	
+	// Ensuite on cheche ceux qui contiennent '/strip/' et on renvoie le premier résultat
+	var matchedFile : Array = fileSystem.getStringContainInArray(GUIFiles, '/strip/' );
+	
+	// on renvoie le premier
+	if ( matchedFile.length <= 0)
+		return '' ;
+	else
+		return fileSystem.removeExtension(matchedFile[0]) ;
+		
+}
+
+public function getIpadStripVideo() : String {
+	
+	// Si la liste des fichiers et vides, on la génère
+	if( GUIFiles.length == 0 )
+		GUIFiles = fileSystem.parseFile( fileSystem.getResourcesPath() +'/'+ getFolderName(null) +'/'+ parsedFilePath ) ;
+	
+	// Ensuite on cheche ceux qui contiennent 'StreamingAssets/strip/' et on renvoie le premier résultat
+	var matchedFile : Array = fileSystem.getStringContainInArray(GUIFiles, 'StreamingAssets/' );
+	matchedFile = fileSystem.getStringContainInArray(matchedFile, '/strip/' );
+	
 	 if ( matchedFile.length <= 0)
 		return '' ;
 	else
@@ -508,6 +596,8 @@ public function createParsedFile() {
 	gettingFilesFunctions.Push( getVideos );
 	gettingFilesFunctions.Push( getMiniatures );
 	gettingFilesFunctions.Push( getTextArrayWrapper );
+	gettingFilesFunctions.Push( getStripVideoArrayWrapper );
+	gettingFilesFunctions.Push( getStripImgArrayWrapper );
 	
 	fileSystem.createParsedFile( fileSystem.getResourcesPath() +'/'+ getFolderName(null) +'/'+ parsedFilePath, gettingFilesFunctions );
 }
@@ -515,14 +605,20 @@ public function createParsedFile() {
 
 /*
  * Function getText Wrapper pour renvoyer un Array
- * (utile pour le callbak de
+ * (utile pour le callbak de createParsedFile )
  */
 
 public function getTextArrayWrapper() : Array {	
 	return Array( getFileText() ) ;
 }
 
+public function getStripVideoArrayWrapper() : Array {	
+	return Array( getStripVideo() ) ;
+}
 
+public function getStripImgArrayWrapper() : Array {	
+	return Array( getStripImg() ) ;
+}
 
 
 
