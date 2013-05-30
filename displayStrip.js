@@ -112,11 +112,9 @@ private function initZoom(){
 function InitVideoScreen( path : String , r : Rect ){
 	// init state of the state machine
 	states = STATES_OF_STRIP.STATE_OUT;
-
+	var texture = Resources.Load( path );
 	if( path ){
-		if( typeof(Resources.Load( path )) == typeof(Texture) ){
-			var texture : Texture = Resources.Load( path );
-			
+		if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
 			// get ratio of strip
 			ratioPlane = texture.width/texture.height;
 			rectOUT = optimalSize( ratioPlane , r );
@@ -130,7 +128,7 @@ function InitVideoScreen( path : String , r : Rect ){
 			videoScreen = new GameObject.CreatePrimitive( PrimitiveType.Plane );
 			videoScreen.name = "GUI_stripPlane";
 			disableAll();
-			Console.Warning("File is typeof "+typeof(Resources.Load( path ))+" whereas it should be typeof Texture");
+			Console.Warning("File is typeof "+typeof(texture)+" whereas it should be typeof Texture");
 		}
 	}
 	else
