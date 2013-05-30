@@ -116,7 +116,8 @@ function InitVideoScreen( path : String , r : Rect ){
 	if( path ){
 		if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
 			// get ratio of strip
-			ratioPlane = texture.width/texture.height;
+			ratioPlane = (texture as Texture).width/(texture as Texture).height;
+				
 			rectOUT = optimalSize( ratioPlane , r );
 			createStripPlane( path , rectOUT );
 	
@@ -253,6 +254,8 @@ private function getInParameters(){
 ////////////////
 
 function updateStrip(){
+
+	Debug.Log("scale     "+ videoScreen.transform.localScale);
 	if( states == STATES_OF_STRIP.ZOOM_IN )
 		Update_ZOOM_IN();
 	
@@ -284,11 +287,9 @@ function Update_ZOOM_IN(){
 	*all that have to be done in zooming_out state
 */
 function Update_ZOOM_OUT(){
-	var t = Time.time - zoomStart / zoomLength;
-	Debug.Log("t   " + t);
-	
 	if( Time.time > zoomStart + zoomLength ){
-			//videoScreen.transform.localScale = outScale;
+			videoScreen.transform.localScale = outScale;
+			videoScreen.transform.position = outPos;
 			// the fullscreen elements are enabled
 			(gameObject.GetComponent( FullScreen ) as FullScreen ).enableOthers( this );
 			states = STATES_OF_STRIP.STATE_OUT;
