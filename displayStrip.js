@@ -126,8 +126,12 @@ function InitVideoScreen( path : String , r : Rect ){
 			getInParameters();
 			enableAll();
 		}
-		else
+		else{
+			videoScreen = new GameObject.CreatePrimitive( PrimitiveType.Plane );
+			videoScreen.name = "GUI_stripPlane";
+			disableAll();
 			Console.Warning("File is typeof "+typeof(Resources.Load( path ))+" whereas it should be typeof Texture");
+		}
 	}
 	else
 		Console.Warning("No file found here : "+path);
@@ -358,8 +362,8 @@ function stopMovie(){
 ////////////////////////////////////////////////
 
 function destructStrip(){
-	disableAll();
-	Destroy( videoScreen );
+		disableAll();
+		Destroy( videoScreen );
 }
 
 
