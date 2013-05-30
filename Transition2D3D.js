@@ -63,7 +63,7 @@ function endingEnable(){
 
 function  OnGUI2D3D(){
 
-	if(Videos.OnPlay() && !enable &&  !enableEnding && exitFinished){
+	if(Videos.OnPlay() && !enable && exitFinished){
 	
 		var Rectangle : Rect = new Rect(Screen.width/2 +310 , Screen.height-60, camera.pixelWidth , camera.pixelHeight);		
 		GUI.Label(Rectangle,"Click anywhere on the screen \n   to get further information.");
@@ -71,6 +71,7 @@ function  OnGUI2D3D(){
  	 	if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), scene2D ? "3D view" : "2D view" )){
 			zoom.disableEvents();
 			Change2D3D();
+			Videos.VideoWH();
 			//Videos.test();
 			}
 			
@@ -235,9 +236,15 @@ function UpdateEnding(){
 	if (!enableEnding)
 		return ;
 
-	if(end==false){
+	if(!end && !lightFlag){
 	
-		if(Videos.endTransition()==true){enableEnding=false;end=true;zoom.enableEvents();}
+		light.intensity-=0.02;
+		if(light.intensity <= 0.04)lightFlag=true;
+	}
+	
+	if(!end && lightFlag){	
+		light.intensity+=0.02;
+		if(light.intensity >= 0.88){enableEnding=false;end=true;zoom.enableEvents();Videos.EndFlagOff();}
 	}
 
 }
@@ -246,7 +253,6 @@ function UpdateEnding(){
 function finalSettings(){
 
 	//light
-	
 	light.type=LightType.Spot;
 	light.range=70;
 	light.intensity=0.88;
@@ -265,6 +271,7 @@ function isScene2D(){
 	return scene2D;
 }
 
+//called in DeZoom state
 function flagExit(){
 	exitFinished=!exitFinished;
 	return exitFinished;
