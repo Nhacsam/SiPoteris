@@ -159,7 +159,7 @@ function switchFieldOfView() {
 function OnGUI() {
 	Trans.OnGUI2D3D();
 	VideoFull.OnGUIFullScreen();
-	GUI.Label(Rect(Screen.width/2, Screen.height-60, camera.pixelWidth , camera.pixelHeight),"TEST");
+	//GUI.Label(Rect(Screen.width/2, Screen.height-60, camera.pixelWidth , camera.pixelHeight),"TEST");
 }
 
 
