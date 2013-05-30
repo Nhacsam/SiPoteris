@@ -1,7 +1,7 @@
 /*
 	*Creation : 22/04/2013
 	*Author : Fabien Daoulas
-	*Last update : 29/05/2013
+	*Last update : 30/05/2013
 	* this script displays sound around the sphere
 */
 
@@ -9,6 +9,7 @@ private var radius : float = 5;
 
 private var trans : Transition2D3D;
 private var full : FullScreen;
+private var sphericMesh : createSphericMesh;
 
 
 ////////////////////////
@@ -17,6 +18,7 @@ private var full : FullScreen;
 public function initSound(){
 	trans = gameObject.GetComponent("Transition2D3D") as Transition2D3D;
 	full = gameObject.GetComponent("FullScreen") as FullScreen;
+	sphericMesh = gameObject.GetComponent("createSphericMesh") as createSphericMesh;
 }
 
 ////////////////////////////////////////////
@@ -54,9 +56,9 @@ public function createAudio( t : Hashtable ) : GameObject{
 */
 private function placeAudioSources( theta : float , ratio : float , g : GameObject ){
 	if( ratio > 0.66 )
-		var phi : float = calculatePHI( ratio , true );
+		var phi : float = sphericMesh.calculatePHI( ratio , true );
 	else
-		phi = calculatePHI( ratio , false );
+		phi = sphericMesh.calculatePHI( ratio , false );
 		
 	theta = theta * Mathf.PI/180;	
 	
@@ -134,26 +136,4 @@ public function updateSounds ( tabSound : Array ){
 		for(i = 0; i < tabSound.length ; i++)
 			stopAudio3D( tabSound[i] );
 	}
-}
-
-/////////////////////////////////////
-//////////additional method//////////
-/////////////////////////////////////
-
-/*
-	*calculate values of phi thanks to the ratio in the xml
-*/
-private function calculatePHI( ratio : float , b : boolean) : float {
-	if( b ){
-		if( ratio > 0.66 ){
-			var v : float = 7*Mathf.PI/4 + ( 1 - ratio ) * Mathf.PI/4 / ( 1 - 0.66 );
-		}
-		else{
-			v = 2*Mathf.PI + Mathf.PI/2*((0.66-ratio)/0.66);
-		}
-	}
-	else
-		v = ( 1 - ratio ) * Mathf.PI / 2;
-
-	return v;
 }
