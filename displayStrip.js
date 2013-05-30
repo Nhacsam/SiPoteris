@@ -91,14 +91,14 @@ function OnDrag( dragInfo : DragInfo ){
 
 private function initZoom(){
 	if( states == STATES_OF_STRIP.STATE_OUT ){
-		zoomStart = Time.time;
 		// the fullscreen elements are disabled
 		(gameObject.GetComponent( FullScreen ) as FullScreen ).disableOthers( this );
 		states = STATES_OF_STRIP.ZOOM_IN;
+		zoomStart = Time.time;
 	}
 	if( states == STATES_OF_STRIP.STATE_IN ){
-		zoomStart = Time.time;
 		states = STATES_OF_STRIP.ZOOM_OUT;
+		zoomStart = Time.time;
 	}
 }
 
@@ -113,25 +113,32 @@ function InitVideoScreen( path : String , r : Rect ){
 	// init state of the state machine
 	states = STATES_OF_STRIP.STATE_OUT;
 
-	// get ratio of strip
-	var texture : Texture = Resources.Load( path );
-	ratioPlane = texture.width/texture.height;
+	if( path ){
+		if( typeof(Resources.Load( path )) == typeof(Texture) ){
+			var texture : Texture = Resources.Load( path );
+			
+			// get ratio of strip
+			ratioPlane = texture.width/texture.height;
+			rectOUT = optimalSize( ratioPlane , r );
+			createStripPlane( path , rectOUT );
 	
-	rectOUT = optimalSize( ratioPlane , r );
-	
-	createStripPlane(path , rectOUT );
-	
-	// compute scale and position when plane is widen
-	getInParameters();
-	
-	enableAll();
+			// compute scale and position when plane is widen
+			getInParameters();
+			enableAll();
+		}
+		else
+			Console.Warning("File is typeof "+typeof(Resources.Load( path ))+" whereas it should be typeof Texture");
+	}
+	else
+		Console.Warning("No file found here : "+path);
+		
 }
 
 /*
 	*get rect to place the plane on the screen
 	*and create a plane
 */
-private function createStripPlane( path :String , r : Rect ){
+private function createStripPlane( path : String , r : Rect ){
 	window = 		gameObject.GetComponent("showingWindow") as showingWindow;
 	videoSet = 		gameObject.GetComponent("videoSettings") as videoSettings;
 	
@@ -155,16 +162,17 @@ private function createStripPlane( path :String , r : Rect ){
 	videoScreen.transform.rotation = camera.transform.rotation;
 	videoScreen.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
 	videoScreen.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );
-
-	// set value of scale and position of plane when not widen
-	outScale = videoScreen.transform.localScale;
+	
+	// set position and scale when plane is out
 	outPos = videoScreen.transform.position;
+	outScale = videoScreen.transform.localScale;
 	
 	// test and set renderer
 	var testRenderer = videoScreen.GetComponent(Renderer);
 	if( !testRenderer)
 		videoScreen.AddComponent(Renderer);
-
+	
+	// add texture to the plane
 	videoScreen.renderer.material.mainTexture = Resources.Load( path );
 }
 
@@ -236,6 +244,8 @@ private function getInParameters(){
 	videoScreen.transform.rotation = rotation ;
 }
 
+
+
 ////////////////
 /////update/////
 ////////////////
@@ -264,6 +274,28 @@ function Update_ZOOM_IN(){
 	}
 }
 
+////////////////////////////////////////
+/////about zooming out on the plane/////
+////////////////////////////////////////
+
+/*
+	*all that have to be done in zooming_out state
+*/
+function Update_ZOOM_OUT(){
+	var t = Time.time - zoomStart / zoomLength;
+	Debug.Log("t   " + t);
+	
+	if( Time.time > zoomStart + zoomLength ){
+			//videoScreen.transform.localScale = outScale;
+			// the fullscreen elements are enabled
+			(gameObject.GetComponent( FullScreen ) as FullScreen ).enableOthers( this );
+			states = STATES_OF_STRIP.STATE_OUT;
+	}
+	else{
+		videoScreen.transform.localScale = Vector3.Slerp( inScale, outScale, (Time.time - zoomStart ) / zoomLength );
+		videoScreen.transform.position = Vector3.Slerp( inPos, outPos, (Time.time - zoomStart ) / zoomLength );
+	}
+}
 
 ///////////////////////////////////////////////////////////
 /////about dragging plane when movie is on full screen/////
@@ -278,25 +310,6 @@ private function dragPlane( dI : DragInfo ){
 	if( !(r.x > 0 && dI.delta.x > 0 || r.x + r.width < Screen.width && dI.delta.x < 0 )){
 		screenPos.x += dI.delta.x;
 		videoScreen.transform.position = camera.ScreenToWorldPoint( screenPos );
-	}
-}
-
-////////////////////////////////////////
-/////about zooming out on the plane/////
-////////////////////////////////////////
-
-/*
-	*all that have to be done in zooming_out state
-*/
-function Update_ZOOM_OUT(){
-	if( Time.time > zoomStart + zoomLength ){
-			// the fullscreen elements are enabled
-			(gameObject.GetComponent( FullScreen ) as FullScreen ).enableOthers( this );
-			states = STATES_OF_STRIP.STATE_OUT;
-	}
-	else{
-		videoScreen.transform.localScale = Vector3.Slerp( inScale, outScale, (Time.time - zoomStart ) / zoomLength );
-		videoScreen.transform.position = Vector3.Slerp( inPos, outPos, (Time.time - zoomStart ) / zoomLength );
 	}
 }
 

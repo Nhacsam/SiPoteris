@@ -71,7 +71,6 @@ function  OnGUI2D3D(){
  	 	if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), scene2D ? "3D view" : "2D view" )){
 			zoom.disableEvents();
 			Change2D3D();
-			Videos.VideoWH();
 			//Videos.test();
 			}
 			

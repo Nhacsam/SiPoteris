@@ -1,6 +1,6 @@
 /*
 Creation : 02/04/2013
-Last update : 15/05/2013
+Last update : 30/05/2013
 
 Author : Fabien Daoulas
 Debug : Nicolas Djambazian
@@ -178,21 +178,20 @@ private function CreateSphericMesh( thetaMin : float , phiMin : float , thetaMax
 /*
 	*calculate values of phi with ratio in the xml
 */
-private function calculatePHI( ratio : float , b : boolean) : float {
+static function calculatePHI( ratio : float , b : boolean) : float {
 
 	if( b ){
 		if( ratio > 0.66 ){
-			var v : float = 7*Mathf.PI/4 + ( 1 - ratio ) * Mathf.PI/4 / ( 1 - 0.66 );
+			var v : float = 7*Mathf.PI/4 + ( 1 - ratio ) * ( Mathf.PI/2 ) / 0.66 ;
 		}
 		else{
 			v = 2*Mathf.PI + Mathf.PI/2*((0.66-ratio)/0.66);
 		}
 	}
 	else
-		v = ( 1 - ratio ) * Mathf.PI / 2;
+		v = (0.66 - ratio)*(Mathf.PI/2)/0.66;
 
 	return v;
-
 }
 
 
