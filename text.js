@@ -66,7 +66,7 @@ private var textIsHidden : boolean ;
 */
 
 function OnGUIText(){
-	if( !textIsHidden )
+	if( !textIsHidden && textInitialized)
 		displayText();
 }
 
@@ -133,7 +133,7 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 			rectLetter.y += spacing;
 			
 			if (textToDisplay[i] != "\n") {
-				while(""+textToDisplay[cursor] !=" ") // get the beginning of the word
+				while(textToDisplay[cursor] !=" " && cursor > 0) // get the beginning of the word
 					cursor--;
 				toJustify.push(true); // We do not need to justify that line
 			}
@@ -184,18 +184,22 @@ function placeTextFactor (u: float, d: float, l: float, r: float, text: String) 
 function GetNumberOfSpaces(numLine : int){
 	var numOfSpace : int = 0;
 	
-	var moveToNextInt : int = moveToNext[numLine];
+	var finLigne : int = moveToNext[numLine]; // real end is finLigne-1
 	
 	if(numLine == 0){
-		for(var i : int = 0; i < moveToNextInt; i++)	
-			if(textToDisplay[i] == " ")
+		for(var i : int = 0; i < finLigne; i++) {	
+			if(textToDisplay[i] == " ") {
 				if(letterSpots[i].x > REF_RECT.x)
 					numOfSpace++;
+			}
+		}
 	}
 	else{
-		for(i = moveToNext[numLine-1]; i < moveToNextInt; i++)	
-			if("" + textToDisplay[i] == " " && i != moveToNext[numLine-1])
-					numOfSpace++;
+		var debutLigne : int = moveToNext[numLine-1]; // index of the beginning of the line
+		for(i = debutLigne; i < finLigne; i++) {
+			if(textToDisplay[i] == " " && i != debutLigne)
+				numOfSpace++;
+		}
 	}
 			
 	return numOfSpace;

@@ -101,21 +101,12 @@ function UpDateZoom () {
 	
 		// Si on est en train de zoomer
 		case ZOOM_STATES.ONZOOM :
-			
+		
 			// Conditions d'arrets
-			if( camera.transform.position == zCameraFinalPos && camera.transform.rotation == zCameraFinalRot) {
-				camera.transform.LookAt(zSelected.transform);
+			if( zoomFinished() )
 				toOnGUI();
-				
-			} else if ( Time.time > (zBeginTime + zTransitionTime) ){
-				camera.transform.position = zCameraFinalPos ;
-				camera.transform.LookAt(zSelected.transform);
-				toOnGUI();
-				
-			} else {
-				// Maj des positions
+			else
 				UpdateZoomStep();
-			}
 			
 		break;
 	
@@ -123,20 +114,10 @@ function UpDateZoom () {
 		case ZOOM_STATES.ONDEZOOM :
 			
 			// Conditions d'arrets
-			if( camera.transform.position == zCameraFinalPos && camera.transform.rotation == zCameraFinalRot) {
-				camera.transform.rotation = zCameraFinalRot ;
+			if( zoomFinished() )
 				toOnUniv();
-				
-			} else if ( Time.time > (zBeginTime + zTransitionTime) ){
-				camera.transform.position = zCameraFinalPos ;
-				camera.transform.rotation = zCameraFinalRot ;
-				toOnUniv();
-				
-			} else {
-				// Maj des positions
+			else
 				UpdateZoomStep();
-			}
-			
 		break;
 	}
 	
@@ -236,7 +217,9 @@ public function changeType( t : ZOOM_TYPE, p : Vector3 ) {
 	
 	// enregistrement du point de destination si besoins
 	if ( 	t == ZOOM_TYPE.GO_ON_POINT 				||
-			t == ZOOM_TYPE.GO_ON_POINT_ROTATING 		) {
+			t == ZOOM_TYPE.GO_ON_POINT_ROTATING 	||
+			t == ZOOM_TYPE.GO_AWAY_FORWARD 			||
+			t == ZOOM_TYPE.GO_AWAY_BACKWARD 		) {
 			
 		zDestinationPoint = p ;
 	}
@@ -335,7 +318,7 @@ private function toOnUniv () {
 /*
  * Effectue une étape du ZOOM
  */
-function UpdateZoomStep () {
+private function UpdateZoomStep () {
 	
 	
 	// Calcul du temps écoulé depuis le début
@@ -348,6 +331,28 @@ function UpdateZoomStep () {
 	camera.transform.rotation = Quaternion.Slerp( zCameraInitialRot, zCameraFinalRot, elapsedTime/zTransitionTime) ;
 	
 }
+
+/*
+ * Conditions d'arret du zoom
+ */
+
+private function zoomFinished() : boolean{
+	
+	if ( Time.time > (zBeginTime + zTransitionTime) ) {
+	
+		camera.transform.position = zCameraFinalPos ;
+		camera.transform.rotation = zCameraFinalRot ;
+		return true ;
+	
+	} else if ( camera.transform.position == zCameraFinalPos &&
+				camera.transform.rotation == zCameraFinalRot ) {
+		return true ;
+	
+	} else {
+		return false ;
+	}
+}
+
 
 /************************
  **** Positionnement ****
@@ -499,7 +504,10 @@ private function computeGoOnPlaneRotatingPosAndRot() : Array {
  */
 private function computeGoOnPointRotatingPosAndRot() : Array {
 	var forward : Vector3 = zDestinationPoint - zCameraBeginPos ;
+	
+	camera.transform.rotation = zCameraBeginRot;
 	var upwards : Vector3 = - camera.transform.up ;
+	
 	return new Array(zDestinationPoint,  Quaternion.LookRotation (forward , upwards)  );
 }
 
@@ -509,7 +517,8 @@ private function computeGoOnPointRotatingPosAndRot() : Array {
  */
 private function computeLookBehindPosAndRot() : Array {
 	
-	var forward : Vector3 = zDestinationPoint - zCameraBeginPos ;
+	camera.transform.rotation = zCameraBeginRot;
+	var forward : Vector3 = camera.transform.forward ;
 	var upwards : Vector3 = camera.transform.up ;
 	return new Array( zCameraBeginPos,  Quaternion.LookRotation ( -forward , upwards)  );
 }
@@ -520,8 +529,12 @@ private function computeLookBehindPosAndRot() : Array {
  */
 private function computeGoAwayBackwardPosAndRot() : Array {
 	
+	camera.transform.rotation = zCameraBeginRot;
+	var forward : Vector3 = camera.transform.forward ;
 	
-	return computeLookBehindPosAndRot();
+	var pos : Vector3 = zCameraBeginPos - forward ;
+	
+	return new Array( 10*pos, zCameraBeginRot );
 }
 
 /*
@@ -530,8 +543,10 @@ private function computeGoAwayBackwardPosAndRot() : Array {
  */
 private function computeGoAwayForwardPosAndRot() : Array {
 	
+	var LookBehind : Array = computeLookBehindPosAndRot() ;
+	var GoAway : Array = computeGoAwayBackwardPosAndRot() ;
 	
-	return computeLookBehindPosAndRot();
+	return new Array(GoAway[0], LookBehind[1]);
 }
 
 
@@ -544,12 +559,14 @@ private function computeOnPlanePos() : Vector3 {
 	
 	var computedPos : Vector3 ;
 	
+	var planePos : Vector3 = (zSelected.GetComponent('scriptForPlane') as scriptForPlane).getPosPlane();
+	
 	// on oriente la caméra vers le plan
 	camera.transform.LookAt(zSelected.transform);
 	
 	var orientedTo : Vector3 = (zSelected.GetComponent('scriptForPlane') as scriptForPlane).getOrientedTo() ;
 	// vecteur 0M ou O le centre du plan et M le centre de la sphère
-	var axe = orientedTo - zSelected.transform.position ;
+	var axe = orientedTo - planePos ;
 	
 	// distance entre la caméra et le plan
 	var CameraInitialDecal = axe.magnitude ;
@@ -573,7 +590,7 @@ private function computeOnPlanePos() : Vector3 {
 	// qu'un des deux traits collisionne avec le plan
 	do {
 		
-		computedPos = zSelected.transform.position + (CameraInitialDecal - i )*normal ;
+		computedPos = planePos + (CameraInitialDecal - i )*normal ;
 		camera.transform.position = computedPos ;
 		camera.transform.LookAt(zSelected.transform);
 		

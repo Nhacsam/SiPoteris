@@ -80,6 +80,7 @@ function InitSlideShow( nbOfElmts : int, Pos : Rect, Z : float  ) {
 	
 	isMoving = false ;
 	effNbElmts = 0 ;
+	currentPage = 0;
 	enableAll();
 }
 

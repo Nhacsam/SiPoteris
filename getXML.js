@@ -30,7 +30,7 @@ function InitXml( XMLToLoad : String ) {
 	*this method creates a hashtable containing all informations of this element, and 
 	*thanks to callback, this hashtable will be attached to the plane
 */
-function getElementFromXML( f_plane : function(Hashtable) , f_sound : function(Hashtable) ) : Array {
+function getElementFromXML( functions : Hashtable ) : Array {
 
 	var Data = new Array();
 	
@@ -60,10 +60,8 @@ function getElementFromXML( f_plane : function(Hashtable) , f_sound : function(H
 		
 		Data.Push( rootTab );
 		
-		if( nodeList.Name == "sound" )
-			f_sound(rootTab);
-		else
-			f_plane( rootTab );
+		if( functions.Contains(nodeList.Name) )
+			(functions[ nodeList.Name ] as function(Hashtable) )(rootTab) ;
 		
 	}
 	

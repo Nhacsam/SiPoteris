@@ -68,12 +68,17 @@ function Start () {
 		createPolar.SetSurface(plane2D);
 	
 	// create pieces of circle for Diane
-	xml.getElementFromXML( placeMeshHash , placeAudioHash );
+	var func : Hashtable = new Hashtable() ;
+	func['diane'] = placeMeshHash ;
+	func['acteon'] = placeMeshHash ;
+	func['middle'] = placeMeshHash ;
+	func['sound'] = placeAudioHash ;
+	
+	xml.getElementFromXML( func );
 
 	
 	//fin debug test
-	Zoom.Init(AllGO2D, ZOOM_TYPE.LOOK_BEHIND ,Vector3.zero );
-	
+	Zoom.Init(AllGO2D, ZOOM_TYPE.GO_ON_POINT_ROTATING ,Vector3.zero );
 	
 	VideoFull.InitFullScreen();
 	
@@ -100,8 +105,9 @@ function Start () {
 	camera.fieldOfView  = 60 ;
 	camera.farClipPlane = 60;
 	camera.nearClipPlane = 0.01;
-	
+	if(Videos.GetFirstView()){
 	disableMouseLook();
+	}else enableMouseLook();
 }
 
 function Update () {
@@ -155,6 +161,7 @@ function changeZoomPlane( is2D : boolean ) {
 		Zoom.changeType( ZOOM_TYPE.GO_ON_PLANE, Vector3.zero );
 	}
 }
+
 
 function isOnAGUIElmt( pos : Vector2) {
 	
@@ -226,10 +233,12 @@ function placeMeshHash ( t : Hashtable ){
 	if( ! s3D)
 		s3D  = obj3D.AddComponent ("scriptForPlane");
 	s3D.InitScript( t );
-
+	
+	s3D.InitPosPlane( obj3D.transform.position );
+	
 	s3D.InitOrientedTo( mesh3D.getOrientedTo() );
 	
-	if( ! isOnIpad() )
+	if( ! isOnIpad()  && plane2D)
 		s.createParsedFile();
 		
 	AllGO3D.Push( obj3D );

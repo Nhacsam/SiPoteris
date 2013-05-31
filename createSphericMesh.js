@@ -176,7 +176,7 @@ private function CreateSphericMesh( thetaMin : float , phiMin : float , thetaMax
 	
 	g.transform.position += VerticesInMiddle;
 	
-	g.renderer.enabled = true;
+	g.renderer.enabled = false;
 
 	return g;
 	

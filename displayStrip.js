@@ -137,6 +137,7 @@ function InitVideoScreen( path : String , r : Rect ){
 		
 }
 
+
 /*
 	*get rect to place the plane on the screen
 	*and create a plane
