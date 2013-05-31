@@ -10,6 +10,7 @@ private var plane2D = GameObject.CreatePrimitive(PrimitiveType.Plane);
 
 //ref to the sphere 3D
 private var sphere3D:GameObject;
+private var sphere3D_pos : Vector3;
 
 private var button:boolean=true;
 
@@ -119,8 +120,9 @@ function generateScene2D(){
 function generateScene3D(){
 
 	var rot:Quaternion=Quaternion.identity;
+	sphere3D_pos = Vector3(0,1.3,0);
 	//load .fbx sphere on scene
-	sphere3D=Instantiate(Resources.Load("SphereFULL"),Vector3(0,1.3,0),rot);
+	sphere3D=Instantiate(Resources.Load("SphereFULL"),sphere3D_pos,rot);
 	Destroy(sphere3D.GetComponent("Animator"));
 	//set it at the right position
 	sphere3D.transform.Rotate(-90,0,0);
@@ -336,3 +338,9 @@ function onDown(pos:Vector2){
 
 */
 
+/*
+	*get sphere3D_pos
+*/
+function getSpherePos() : Vector3{
+	return sphere3D_pos;
+}
