@@ -255,7 +255,6 @@ private function getInParameters(){
 
 function updateStrip(){
 
-	Debug.Log("scale     "+ videoScreen.transform.localScale);
 	if( states == STATES_OF_STRIP.ZOOM_IN )
 		Update_ZOOM_IN();
 	
