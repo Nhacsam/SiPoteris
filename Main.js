@@ -78,8 +78,7 @@ function Start () {
 
 	
 	//fin debug test
-	Zoom.Init(AllGO2D, ZOOM_TYPE.GO_AWAY_BACKWARD ,Vector3.zero );
-	
+	Zoom.Init(AllGO2D, ZOOM_TYPE.GO_ON_POINT_ROTATING ,Vector3.zero );
 	
 	VideoFull.InitFullScreen();
 	
@@ -161,6 +160,7 @@ function changeZoomPlane( is2D : boolean ) {
 		Zoom.changeType( ZOOM_TYPE.GO_ON_PLANE, Vector3.zero );
 	}
 }
+
 
 function isOnAGUIElmt( pos : Vector2) {
 	
