@@ -111,9 +111,9 @@ private function CreateSphericMesh( thetaMin : float , phiMin : float , thetaMax
 			var latt = phiMin + j*quantumOfMesh ;
 			var longi = thetaMin + i*quantumOfMesh ;
 			
-			newX = radius * Mathf.Sin(longi) * Mathf.Cos(latt);
-			newY = radius * Mathf.Sin(latt) + (video.getSpherePos()).y;
-			newZ = radius * Mathf.Cos(longi) * Mathf.Cos(latt);
+			newX = radius * Mathf.Sin(longi) * Mathf.Cos(latt)  	+ (video.getSpherePos()).x ;
+			newY = radius * Mathf.Sin(latt) 						+ (video.getSpherePos()).y;
+			newZ = radius * Mathf.Cos(longi) * Mathf.Cos(latt)  	+ (video.getSpherePos()).z;
 			
 			VerticesLocal[i*numberOfLines + j] = Vector3(newX, newY, newZ);
 		}
@@ -201,6 +201,8 @@ static function calculatePHI( ratio : float , b : boolean) : float {
 	return v;
 }
 
-
+public function getOrientedTo() : Vector3 {
+	return video.getSpherePos();
+}
 	
 

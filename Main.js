@@ -150,7 +150,7 @@ function changeZoomPlane( is2D : boolean ) {
 		Zoom.changeType( ZOOM_TYPE.GO_ON_POINT_ROTATING, Vector3.zero );
 	} else {
 		Zoom.changeClickableElmts( AllGO3D );
-		Zoom.changeType( ZOOM_TYPE.GO_ON_PLANE_ROTATING, Vector3.zero );
+		Zoom.changeType( ZOOM_TYPE.GO_ON_PLANE, Vector3.zero );
 	}
 }
 
@@ -215,10 +215,15 @@ function placeMeshHash ( t : Hashtable ){
 	s.InitScript( t );
 	s3D.InitScript( t );
 	
+	s3D.InitOrientedTo( mesh3D.getOrientedTo() );
+	
 	if( t.ContainsKey( 'theta_min' ) && t.ContainsKey( 'theta_max' ) && t.ContainsKey( 'ratioRmin' ) && t.ContainsKey( 'name' ) && t.ContainsKey( 'ratioRmax' )) {
 	
 		var p : Vector3 = createPolar.getTruePosition( float.Parse( t['theta_min'] ) , float.Parse( t['theta_max'] ) , float.Parse( t['ratioRmin'] ) , float.Parse( t['ratioRmax'] ) , gameObject );
 		s.InitPosPlane( p );
+		
+		p = createPolar.getOrientedTo( float.Parse( t['theta_min'] ) , float.Parse( t['theta_max'] ) , float.Parse( t['ratioRmin'] ) , float.Parse( t['ratioRmax'] ) , gameObject );
+		s.InitOrientedTo( p );
 	}
 	
 	if( ! isOnIpad() )

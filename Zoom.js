@@ -547,8 +547,9 @@ private function computeOnPlanePos() : Vector3 {
 	// on oriente la caméra vers le plan
 	camera.transform.LookAt(zSelected.transform);
 	
-	// vecteur 0M ou O le centre du plan et M le centre de la caméra
-	var axe = camera.transform.position - zSelected.transform.position ;
+	var orientedTo : Vector3 = (zSelected.GetComponent('scriptForPlane') as scriptForPlane).getOrientedTo() ;
+	// vecteur 0M ou O le centre du plan et M le centre de la sphère
+	var axe = orientedTo - zSelected.transform.position ;
 	
 	// distance entre la caméra et le plan
 	var CameraInitialDecal = axe.magnitude ;
@@ -574,6 +575,7 @@ private function computeOnPlanePos() : Vector3 {
 		
 		computedPos = zSelected.transform.position + (CameraInitialDecal - i )*normal ;
 		camera.transform.position = computedPos ;
+		camera.transform.LookAt(zSelected.transform);
 		
 		i += 0.1 ;
 		
@@ -581,6 +583,8 @@ private function computeOnPlanePos() : Vector3 {
 	} while( 	!( 		zSelected.collider.Raycast( camera.ScreenPointToRay(top	) , hit, 1000.0f) ||
 				 		zSelected.collider.Raycast( camera.ScreenPointToRay(left) , hit, 1000.0f) )
 				&& i <= CameraInitialDecal ) ;
+	
+	Console.Test(camera.transform.position ,48);
 	
 	return computedPos ;
 }
