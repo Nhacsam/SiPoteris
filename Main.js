@@ -105,8 +105,9 @@ function Start () {
 	camera.fieldOfView  = 60 ;
 	camera.farClipPlane = 60;
 	camera.nearClipPlane = 0.01;
-	
+	if(Videos.GetFirstView()){
 	disableMouseLook();
+	}else enableMouseLook();
 }
 
 function Update () {
@@ -237,7 +238,7 @@ function placeMeshHash ( t : Hashtable ){
 	
 	s3D.InitOrientedTo( mesh3D.getOrientedTo() );
 	
-	if( ! isOnIpad() )
+	if( ! isOnIpad()  && plane2D)
 		s.createParsedFile();
 		
 	AllGO3D.Push( obj3D );
