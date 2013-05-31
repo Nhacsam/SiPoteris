@@ -23,7 +23,7 @@ function initCredits ( returnRectangle : Rect) {
 	VideoFull.hideGUI();
 	displayCredits = true;
 	
-	//textViewer.placeTextFactor(0, 0, 1, 1, fileSystem.getTextFromFile(fileSystem.getResourcesPath() + "Resources/defaultDatas/credits/credits")); // u d l r (margins) + Text to display
+	textViewer.placeTextFactor(0, 0, 0.5, 0.5, fileSystem.getTextFromFile(fileSystem.getResourcesPath() + "Resources/defaultDatas/credits/credits")); // u d l r (margins) + Text to display
 
 }
 

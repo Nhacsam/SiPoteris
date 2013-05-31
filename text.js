@@ -184,7 +184,6 @@ function placeTextFactor (u: float, d: float, l: float, r: float, text: String) 
 function GetNumberOfSpaces(numLine : int){
 	var numOfSpace : int = 0;
 	
-	var debutLigne : int = moveToNext[numLine-1]; // index of the beginning of the line
 	var finLigne : int = moveToNext[numLine]; // real end is finLigne-1
 	
 	if(numLine == 0){
@@ -196,6 +195,7 @@ function GetNumberOfSpaces(numLine : int){
 		}
 	}
 	else{
+		var debutLigne : int = moveToNext[numLine-1]; // index of the beginning of the line
 		for(i = debutLigne; i < finLigne; i++) {
 			if(textToDisplay[i] == " " && i != debutLigne)
 				numOfSpace++;

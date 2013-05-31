@@ -51,7 +51,7 @@ private var textRight : float = 0.45;
 
 private var musicTop : float = textBottom - 0.05;
 private var musicBottom : float = marginBottom;
-private var musicLeft : float = marginLeft;
+private var musicLeft : float = marginLeft + 0.03;
 private var musicRight : float = textRight;
 
 private var stripTop : float = marginTop;
@@ -94,10 +94,10 @@ function OnGUIFullScreen(){
 	if( onFullScreen ) {
 	
 		if( !GUIIsHidden) {
-			var returnRectangle : Rect = new Rect(0,Screen.height-Screen.width*marginLeft,Screen.width*marginLeft,Screen.width*marginLeft);
+			var returnRectangle : Rect = new Rect(0,Screen.height-Screen.width*musicLeft,Screen.width*musicLeft,Screen.width*musicLeft);
 			var returnTexture : Texture = Resources.Load("blue_left_arrow");
 			
-			var creditsRectangle : Rect = new Rect(Screen.width*marginRight,Screen.height-Screen.width*marginLeft,Screen.width*marginLeft,Screen.width*marginLeft);
+			var creditsRectangle : Rect = new Rect(Screen.width-Screen.width*musicLeft,Screen.height-Screen.width*musicLeft,Screen.width*musicLeft,Screen.width*musicLeft);
 			var creditsTexture : Texture = Resources.Load("Pictures/credits");
 			
 			if( GUI.Button( returnRectangle, returnTexture ) ) {
