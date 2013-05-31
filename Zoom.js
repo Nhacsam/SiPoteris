@@ -103,19 +103,10 @@ function UpDateZoom () {
 		case ZOOM_STATES.ONZOOM :
 		
 			// Conditions d'arrets
-			if( camera.transform.position == zCameraFinalPos && camera.transform.rotation == zCameraFinalRot) {
-				camera.transform.LookAt(zSelected.transform);
+			if( zoomFinished() )
 				toOnGUI();
-				
-			} else if ( Time.time > (zBeginTime + zTransitionTime) ){
-				camera.transform.position = zCameraFinalPos ;
-				camera.transform.LookAt(zSelected.transform);
-				toOnGUI();
-				
-			} else {
-				// Maj des positions
+			else
 				UpdateZoomStep();
-			}
 			
 		break;
 	
@@ -123,20 +114,10 @@ function UpDateZoom () {
 		case ZOOM_STATES.ONDEZOOM :
 			
 			// Conditions d'arrets
-			if( camera.transform.position == zCameraFinalPos && camera.transform.rotation == zCameraFinalRot) {
-				camera.transform.rotation = zCameraFinalRot ;
+			if( zoomFinished() )
 				toOnUniv();
-				
-			} else if ( Time.time > (zBeginTime + zTransitionTime) ){
-				camera.transform.position = zCameraFinalPos ;
-				camera.transform.rotation = zCameraFinalRot ;
-				toOnUniv();
-				
-			} else {
-				// Maj des positions
+			else
 				UpdateZoomStep();
-			}
-			
 		break;
 	}
 	
@@ -236,7 +217,9 @@ public function changeType( t : ZOOM_TYPE, p : Vector3 ) {
 	
 	// enregistrement du point de destination si besoins
 	if ( 	t == ZOOM_TYPE.GO_ON_POINT 				||
-			t == ZOOM_TYPE.GO_ON_POINT_ROTATING 		) {
+			t == ZOOM_TYPE.GO_ON_POINT_ROTATING 	||
+			t == ZOOM_TYPE.GO_AWAY_FORWARD 			||
+			t == ZOOM_TYPE.GO_AWAY_BACKWARD 		) {
 			
 		zDestinationPoint = p ;
 	}
@@ -335,7 +318,7 @@ private function toOnUniv () {
 /*
  * Effectue une étape du ZOOM
  */
-function UpdateZoomStep () {
+private function UpdateZoomStep () {
 	
 	
 	// Calcul du temps écoulé depuis le début
@@ -348,6 +331,28 @@ function UpdateZoomStep () {
 	camera.transform.rotation = Quaternion.Slerp( zCameraInitialRot, zCameraFinalRot, elapsedTime/zTransitionTime) ;
 	
 }
+
+/*
+ * Conditions d'arret du zoom
+ */
+
+private function zoomFinished() : boolean{
+	
+	if ( Time.time > (zBeginTime + zTransitionTime) ) {
+	
+		camera.transform.position = zCameraFinalPos ;
+		camera.transform.rotation = zCameraFinalRot ;
+		return true ;
+	
+	} else if ( camera.transform.position == zCameraFinalPos &&
+				camera.transform.rotation == zCameraFinalRot ) {
+		return true ;
+	
+	} else {
+		return false ;
+	}
+}
+
 
 /************************
  **** Positionnement ****
@@ -520,8 +525,9 @@ private function computeLookBehindPosAndRot() : Array {
  */
 private function computeGoAwayBackwardPosAndRot() : Array {
 	
+	var pos : Vector3 = 2*zCameraBeginPos - zDestinationPoint ;
 	
-	return computeLookBehindPosAndRot();
+	return new Array( 10*pos, zCameraBeginRot );
 }
 
 /*
@@ -530,8 +536,10 @@ private function computeGoAwayBackwardPosAndRot() : Array {
  */
 private function computeGoAwayForwardPosAndRot() : Array {
 	
+	var LookBehind : Array = computeLookBehindPosAndRot() ;
+	var GoAway : Array = computeGoAwayBackwardPosAndRot() ;
 	
-	return computeLookBehindPosAndRot();
+	return new Array(GoAway[0], LookBehind[1]);
 }
 
 

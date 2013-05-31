@@ -7,13 +7,14 @@ private var windows  : showingWindow ;
 private var audioPlayer : sound ;
 private var textViewer : text ;
 private var strip : displayStrip;
+private var myCredits : credits;
 
 
 /* On est en mode plein écran ? */
-private var onFullScreen : boolean ;
+private var onFullScreen : boolean;
 
 // Doit on afficher le(s) boutton(s) géré par fullscreen
-private var GUIIsHidden : boolean ;
+private var GUIIsHidden : boolean;
 
 /*	quand on rentre dans l'update pour la premiere fois*/
 private var firstTimeInUpdate : boolean = true;
@@ -55,17 +56,17 @@ private var musicRight : float = textRight;
 
 private var stripTop : float = marginTop;
 private var stripBottom : float = stripTop - 0.15;
-private var stripLeft : float = 0.55;
+private var stripLeft : float = marginLeft;
 private var stripRight : float = marginRight;
 
 private var pictureTop : float = textTop;
 private var pictureBottom : float = textBottom;
-private var pictureLeft : float = stripLeft;
+private var pictureLeft : float = 0.55;
 private var pictureRight : float = stripRight;
 
 private var slideTop : float = musicTop;
 private var slideBottom : float = musicBottom;
-private var slideLeft : float = stripLeft;
+private var slideLeft : float = pictureLeft;
 private var slideRight : float = marginRight;
 
 
@@ -81,6 +82,7 @@ function InitFullScreen( ) {
 	audioPlayer =	gameObject.AddComponent("sound")			as sound ;
 	textViewer =	gameObject.AddComponent("text")				as text ;
 	strip = 		gameObject.AddComponent("displayStrip")		as displayStrip;
+	myCredits = 	gameObject.AddComponent("credits")			as credits;
 	
 	onFullScreen = false ;
 	
@@ -89,7 +91,7 @@ function InitFullScreen( ) {
 function OnGUIFullScreen(){
 	
 	if( onFullScreen ) {
-		
+	
 		if( !GUIIsHidden) {
 			var returnRectangle : Rect = new Rect(0,Screen.height-Screen.width*marginLeft,Screen.width*marginLeft,Screen.width*marginLeft);
 			var returnTexture : Texture = Resources.Load("blue_left_arrow");
@@ -105,15 +107,27 @@ function OnGUIFullScreen(){
 				else
 					Debug.LogWarning('Callback de dezoom non renseigné dans FullScreen.' + 
 					'\nNote : setter is public function SetLeaveCallback( f : function() )');
-			}
+			} // end bouton retour
 			
 			if( GUI.Button( creditsRectangle, creditsTexture ) ) {
-				Debug.Log( 'Bonjour =D' );
+				myCredits.initCredits(returnRectangle);
 			}
-		}
+			
+			audioPlayer.OnGUISound();
+			textViewer.OnGUIText();
+		} // end if GUI showed
 		
-		audioPlayer.OnGUISound();
-		textViewer.OnGUIText();
+		if (myCredits.isDisplayed()) {
+			myCredits.OnGUICredits();
+			strip.hide();
+			windows.hide();
+			slideshow.hide();
+		}
+		else {
+			strip.show();
+			windows.show();
+			slideshow.show();
+		}
 	}
 
 }
@@ -271,14 +285,14 @@ function LeaveFullScreen( Video : GameObject ) {
  * Affiche et active le(s) boutton(s) géré par fullscreen
  */
 public function displayGUI() {
-	GUIIsHidden = false ;
+	GUIIsHidden = false;
 }
 
 /*
  * Cache et désactive le(s) boutton(s) géré par fullscreen
  */
 public function hideGUI() {
-	GUIIsHidden = true ;
+	GUIIsHidden = true;
 }
 
 /*

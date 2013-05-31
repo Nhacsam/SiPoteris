@@ -68,11 +68,17 @@ function Start () {
 		createPolar.SetSurface(plane2D);
 	
 	// create pieces of circle for Diane
-	xml.getElementFromXML( placeMeshHash , placeAudioHash );
+	var func : Hashtable = new Hashtable() ;
+	func['diane'] = placeMeshHash ;
+	func['acteon'] = placeMeshHash ;
+	func['middle'] = placeMeshHash ;
+	func['sound'] = placeAudioHash ;
+	
+	xml.getElementFromXML( func );
 
 	
 	//fin debug test
-	Zoom.Init(AllGO2D, ZOOM_TYPE.LOOK_BEHIND ,Vector3.zero );
+	Zoom.Init(AllGO2D, ZOOM_TYPE.GO_AWAY_BACKWARD ,Vector3.zero );
 	
 	
 	VideoFull.InitFullScreen();
@@ -227,7 +233,9 @@ function placeMeshHash ( t : Hashtable ){
 	if( ! s3D)
 		s3D  = obj3D.AddComponent ("scriptForPlane");
 	s3D.InitScript( t );
-
+	
+	s3D.InitPosPlane( obj3D.transform.position );
+	
 	s3D.InitOrientedTo( mesh3D.getOrientedTo() );
 	
 	if( ! isOnIpad()  && plane2D)
