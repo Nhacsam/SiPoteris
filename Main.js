@@ -61,9 +61,10 @@ function Start () {
 	sound3D.initSound();
 	// create plane and place camera
 	var s : GameObject = Videos.videoSettings();
+	
 	Trans.init();
 	// give access to this gameobject in createPolarMesh script
-	createPolar.SetSurface(s);
+	if(s !=null)createPolar.SetSurface(s);
 	
 	// create pieces of circle for Diane
 	xml.getElementFromXML( placeMeshHash , placeAudioHash );
@@ -78,17 +79,12 @@ function Start () {
 	
 	// Link
 	Zoom.AddOnZoom( Videos.videoHDZoomON );
-	Zoom.AddOnZoom(switchFieldOfView);
 	Zoom.AddOnZoom(Trans.flagExit);
 	Zoom.AddOnLeave( VideoFull.LeaveFullScreen );
 	Zoom.AddOnLeave( Videos.videoHDZoomQuit );
 	Zoom.AddOnEndZoom(VideoFull.EnterOnFullScreen);
 	Zoom.AddOnEndDezoom( Trans.flagExit );
-	
-	
-	
-	Zoom.AddOnLeave( switchFieldOfView );
-	
+		
 	VideoFull.SetLeaveCallback( Zoom.toOnDeZoom );
 	
 	// Camera
@@ -146,13 +142,6 @@ function CreateLight () {
 }
 
 
-
-function switchFieldOfView() {
-	camera.fieldOfView  = ( camera.fieldOfView == 80 ) ? 60 : 80 ;
-}
-
-
-
 /*
  * Appelle les fonctions des scripts gérant l'interface
  */
@@ -168,7 +157,7 @@ function OnGUI() {
 	*init hashtable in the script attached to the plane
 */
 function placeMeshHash ( t : Hashtable ){
-	
+
 	var obj = createPolar.placeMesh(	float.Parse( t['theta_min'] ) ,
 										float.Parse( t['theta_max']) ,
 										float.Parse( t['ratioRmin']) ,

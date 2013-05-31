@@ -359,7 +359,8 @@ function stopMovie(){
 ////////////////////////////////////////////////
 
 function destructStrip(){
-		disableAll();
+	disableAll();
+	if(videoScreen)
 		Destroy( videoScreen );
 }
 

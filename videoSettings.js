@@ -9,20 +9,20 @@ private var MovieController:GameObject;
 private var iOS : GameObject;
 
 //ref to the screen 2D
-private var plane2D = GameObject.CreatePrimitive(PrimitiveType.Plane);
+private var plane2D : GameObject;
 
 //ref to the sphere 3D
 private var sphere3D:GameObject;
+private var sphere3D_pos : Vector3;
 
-private var button:boolean=true;
+private var button:boolean = true;
 
 private var Trans:Transition2D3D;
 
 private var rotInit;
 
 private var controllerIOS:ForwardiOSMessages;
-private var controllerScene:SceneController;
-//private var controllerIOS2:ForwardiOSMessages;
+private var controllerScene2D3D:SceneController;
 private var controllerScene2:SceneController;
 
 
@@ -31,6 +31,8 @@ private var endRotation;
 private var rate = 0.7;
 private var t = 0.0;
 
+private var firstView2D:boolean = true;
+private var otherView:boolean = true;
 /*
 * functions.
 */
@@ -48,7 +50,7 @@ function OnPlay(){
 function videoSettings () {
 
 	Trans = gameObject.GetComponent("Transition2D3D") as Transition2D3D;
-	//instantiate
+	//instantiate plugin
 	iOS = new GameObject(); 
 	iOS.transform.position= Vector3(10,0,0);
 	iOS.name="iOS";
@@ -62,40 +64,67 @@ function videoSettings () {
 	MovieController.name="MovieController";
 	MovieController.AddComponent("SceneController");       
 	
-	controllerScene = MovieController.GetComponent("SceneController");      
-	controllerScene.movieClass = new PlayHardwareMovieClassPro[1];
-	controllerScene.movieName = new  String[1];
-	controllerScene.seekTime = new float[1];
+	controllerScene2D3D = MovieController.GetComponent("SceneController");      
+	controllerScene2D3D.movieClass = new PlayHardwareMovieClassPro[1];
+	controllerScene2D3D.movieName = new  String[1];
+	controllerScene2D3D.seekTime = new float[1];
 	
 	
 	
-	//set camera
+	//set camera and scene(s)
 	var rot:Quaternion=Quaternion.identity;	
-	
-	camera.transform.position=Vector3(0,-10,0);
-	camera.transform.Rotate(Vector3(270,180,0));
-
-	//generate the 2 scenes
-	generateScene2D();
-	generateScene3D();	
-	     
-	//set iOS forwarding
-	controllerIOS.movie[0]=plane2D.GetComponent("PlayFileBasedMovieDefault");
+	if(firstView2D){
+		camera.transform.position=Vector3(0,-10,0);
+		camera.transform.Rotate(Vector3(270,180,0));
+		generateScene2D();	
 		
-	//set the scene
-	controllerScene.movieClass[0] =  plane2D.GetComponent("PlayFileBasedMovieDefault");
-	controllerScene.movieClass[0].movieIndex=0;
-	controllerScene.movieName[0] ="SIPO_full.mov";
+		//set iOS forwarding
+		controllerIOS.movie[0]=plane2D.GetComponent("PlayFileBasedMovieDefault");
 		
-	var parentTransform = sphere3D.transform;
-	parentTransform.parent = sphere3D.transform; 	    
-	parentTransform = plane2D.transform;    	    
-	parentTransform.parent = sphere3D.transform;
+		//set the scene
+		plane2D.AddComponent("PlayFileBasedMovieDefault");
+		controllerScene2D3D.movieClass[0] =  plane2D.GetComponent("PlayFileBasedMovieDefault");
+		controllerScene2D3D.movieClass[0].movieIndex=0;
+		controllerScene2D3D.movieName[0] ="SIPO_full.mov";
+		if(otherView){
+			generateScene3D();
+			/*
+			var parentTransform = sphere3D.transform;
+			parentTransform.parent = sphere3D.transform; 	    
+			parentTransform = plane2D.transform;    	    
+			parentTransform.parent = sphere3D.transform;
+			*/
+			sphere3D.renderer.enabled = false;
+		}
 	
-	sphere3D.renderer.enabled = false;
-
-
-	return plane2D;
+	}
+	else{
+		camera.transform.position=Vector3(0,0.7,0);
+		camera.transform.Rotate(Vector3(270,180,0));
+		generateScene3D();
+		//set iOS forwarding
+		controllerIOS.movie[0]=sphere3D.GetComponent("PlayFileBasedMovieDefault");
+		
+		//set the scene
+		sphere3D.AddComponent("PlayFileBasedMovieDefault");
+		controllerScene2D3D.movieClass[0] =  sphere3D.GetComponent("PlayFileBasedMovieDefault");
+		controllerScene2D3D.movieClass[0].movieIndex=0;
+		controllerScene2D3D.movieName[0] ="SIPO_full.mov";	
+		if(otherView){
+			generateScene2D();	
+			/*
+			var parentTransform = sphere3D.transform;
+			parentTransform.parent = sphere3D.transform; 	    
+			parentTransform = plane2D.transform;    	    
+			parentTransform.parent = sphere3D.transform;
+			*/
+			plane2D.renderer.enabled= false; 
+		}
+	}
+   
+		
+	if(!plane2D)return null;
+	else return plane2D;
 }
 
 /*
@@ -104,17 +133,19 @@ function videoSettings () {
 
 function generateScene2D(){
 
+	plane2D = GameObject.CreatePrimitive(PrimitiveType.Plane);
     plane2D.transform.localScale=Vector3(1.1,1.1,1.1);
-    plane2D.name="screen";
+    plane2D.name = "screen";
     plane2D.transform.Rotate(Vector3(180,180,0));
     plane2D.transform.position = Vector3(0,0,0);
-    plane2D.AddComponent("PlayFileBasedMovieDefault");
   	plane2D.renderer.material = Resources.Load("MovieTexture");
+  
 	Destroy(plane2D.collider);
 
 	rotInit=plane2D.transform.rotation;
 	startRotation = plane2D.transform.rotation;
 	endRotation = plane2D.transform.rotation * Quaternion.Euler(180,0,0);
+
 }
 /*
 * create 3D sphere
@@ -122,14 +153,14 @@ function generateScene2D(){
 function generateScene3D(){
 
 	var rot:Quaternion=Quaternion.identity;
+	sphere3D_pos = Vector3(0,2,0);
 	//load .fbx sphere on scene
-	sphere3D=Instantiate(Resources.Load("SphereFULL"),Vector3(0,2,0),rot);
+	sphere3D=Instantiate(Resources.Load("SphereFULL"),sphere3D_pos,rot);
 	Destroy(sphere3D.GetComponent("Animator"));
 	//set it at the right position
 	sphere3D.transform.Rotate(-90,180,0);
-	sphere3D.transform.localScale=Vector3(500,500,500);
+	sphere3D.transform.localScale = Vector3(500,500,500);
 	sphere3D.renderer.material = Resources.Load("MovieTexture");
-	
 }
 
 
@@ -137,8 +168,8 @@ function generateScene3D(){
 //called in Transition2D3D
 function changeSettings(b:boolean){
 
-	plane2D.renderer.enabled=!b;
-	sphere3D.renderer.enabled=b;
+	plane2D.renderer.enabled =!b;
+	sphere3D.renderer.enabled = b;
 }
 
 
@@ -339,3 +370,20 @@ function onDown(pos:Vector2){
 
 */
 
+/*
+	*get sphere3D_pos
+*/
+function getSpherePos() : Vector3{
+	return sphere3D_pos;
+}
+
+function GetOtherView(){
+
+	return otherView;
+
+}
+
+function GetFirstView(){
+
+	return firstView2D;
+}
