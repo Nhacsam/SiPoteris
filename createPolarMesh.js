@@ -149,7 +149,7 @@ private function CreatePolarMesh(thetaMin : float, thetaMax : float, Rmin : floa
 	// add mesh collider
 	obj.GetComponent(MeshCollider).sharedMesh = meshBuilding;
 
-	obj.renderer.enabled = true;
+	obj.renderer.enabled = false;
 
 	return obj;
 }

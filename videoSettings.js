@@ -1,5 +1,8 @@
 #pragma strict
 
+/* 
+* script setting de paramters of the videos and initiate the 2D and 3D scenes
+*/
 
 private var MovieController2:GameObject;
 private var MovieController:GameObject;
@@ -120,10 +123,10 @@ function generateScene3D(){
 
 	var rot:Quaternion=Quaternion.identity;
 	//load .fbx sphere on scene
-	sphere3D=Instantiate(Resources.Load("SphereFULL"),Vector3(0,1.3,0),rot);
+	sphere3D=Instantiate(Resources.Load("SphereFULL"),Vector3(0,2,0),rot);
 	Destroy(sphere3D.GetComponent("Animator"));
 	//set it at the right position
-	sphere3D.transform.Rotate(-90,0,0);
+	sphere3D.transform.Rotate(-90,180,0);
 	sphere3D.transform.localScale=Vector3(500,500,500);
 	sphere3D.renderer.material = Resources.Load("MovieTexture");
 	

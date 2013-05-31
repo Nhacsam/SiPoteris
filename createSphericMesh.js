@@ -32,7 +32,7 @@ private var quantumOfMesh : float = 0.05f;
 private var sphere : GameObject[];
 
 // radius of piece of sphere
-private var radius : float = 5.1;
+private var radius : float = 5.2;
 
 private var DATSphere : GameObject[];
 
@@ -108,7 +108,7 @@ private function CreateSphericMesh( thetaMin : float , phiMin : float , thetaMax
 			var longi = thetaMin + i*quantumOfMesh ;
 			
 			newX = radius * Mathf.Sin(longi) * Mathf.Cos(latt);
-			newY = radius * Mathf.Sin(latt) + 1.3;
+			newY = radius * Mathf.Sin(latt) + 2;
 			newZ = radius * Mathf.Cos(longi) * Mathf.Cos(latt);
 			
 			VerticesLocal[i*numberOfLines + j] = Vector3(newX, newY, newZ);
@@ -172,7 +172,7 @@ private function CreateSphericMesh( thetaMin : float , phiMin : float , thetaMax
 	
 	g.transform.position += VerticesInMiddle;
 	
-	g.renderer.enabled = true;
+	g.renderer.enabled = false;
 
 	return g;
 	
