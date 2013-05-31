@@ -404,14 +404,16 @@ public function disableEvents() {
  * Affiche l'objet
  */
 public function show() {
-	videoScreen.renderer.enabled = true ;
+	if(videoScreen)	
+		videoScreen.renderer.enabled = true ;
 }
 
 /*
  * Cache l'objet
  */
 public function hide() {
-	videoScreen.renderer.enabled = false ;
+	if(videoScreen)	
+		videoScreen.renderer.enabled = false ;
 }
 
 /*

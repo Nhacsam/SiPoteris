@@ -170,8 +170,13 @@ public function getTruePosition( thetaMin : float , thetaMax : float , RatioRmin
 	a = a * Mathf.PI / 180;
 
 	return Vector3( r * Mathf.Cos( a ) , obj.transform.position.y , r * Mathf.Sin( a ) );
-
 }
 
-
-
+/*
+ * give a point in the normal axe of the plane which is passing by the center
+ */
+public function getOrientedTo( thetaMin : float , thetaMax : float , RatioRmin : float , RatioRmax : float , obj : GameObject) : Vector3 {
+	
+	var v : Vector3 = getTruePosition( thetaMin, thetaMax, RatioRmin, RatioRmax, obj );
+	return v + Vector3( 0,1,0);
+}

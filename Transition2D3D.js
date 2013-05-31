@@ -17,6 +17,7 @@ private var mouseLook : MouseLook ;
 private var zoom: Zoom;
 
 private var button:boolean = true;
+private var button:boolean=true;
 private var Videos:videoSettings;
 
 private var rot;
@@ -29,6 +30,12 @@ private var buttonLeft : int = 0;
 private var buttonHeight : int = 100;
 private var buttonWidth : int = 100;
 private var exitFinished: boolean = true;
+
+// CallBacks appelés lors d'un changement de vue
+private var OnBeginTrans : Array ;
+private var OnEndTrans : Array ;
+
+
 
 //instantiate items
 function init(){
@@ -47,7 +54,10 @@ function init(){
 	Videos = gameObject.GetComponent("videoSettings") as videoSettings;
 	control.enabled=false;
 	mouseLook.enabled=false;
-	scene2D = Videos.GetFirstView();
+	
+	// Initialisation des Callback
+	OnBeginTrans = new Array();
+	OnEndTrans = new Array();
 }
 
 
@@ -141,6 +151,12 @@ function cameraTransition(){
 		
 	}
 	
+	Console.Info('Début de la transition 2D-3D');
+	// Appel des callbacks
+	for( var j = 0; j < OnBeginTrans.length; j++){
+		(OnBeginTrans[j] as function( boolean ) )( scene2D ) ;
+	}
+	
 }
 
 
@@ -185,7 +201,12 @@ function Update2D3D(){
 			
 			control.AttachGyro();
 			zoom.enableEvents();
-		
+			
+			Console.Info('Fin de la transition 2D->3D');
+			// Appel des callbacks
+			for( var j = 0; j < OnEndTrans.length; j++){
+				(OnEndTrans[j] as function( boolean ) )( scene2D ) ;
+			}
 		}
 	}
 	
@@ -226,7 +247,16 @@ function Update3D2D(){
 	//reincrease light
 	if(scene2D && done3){
 		if(light.intensity <= 0.88)light.intensity+=0.02;
-		else {enable=false; zoom.enableEvents();}
+		else {
+			enable=false;
+			zoom.enableEvents();
+			
+			Console.Info('Fin de la transition 2D<-3D');
+			// Appel des callbacks
+			for( var j = 0; j < OnEndTrans.length; j++){
+				(OnEndTrans[j] as function( boolean ) )( scene2D ) ;
+			}
+		}
 	
 	}
 
@@ -287,16 +317,13 @@ static function isOnIpad() : boolean {
 }
 
 
-function fondu(){
-	
-	var done=false;
-	if(!done){
-		light.intensity-=0.02;
-		if(light.intensity <= 0.04)done=true;
-	}
-	else{
-		light.intensity+=0.02;
-		if(light.intensity >= 0.88)return;
-	}
+/**
+ * Setter de Callback
+ */
 
+function AddOnBeginTrans ( f : function( boolean ) ) {
+	OnBeginTrans.push(f);
+}
+function AddOnEndTrans ( f : function( boolean ) ) {
+	OnEndTrans.push(f);
 }
