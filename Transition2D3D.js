@@ -17,7 +17,6 @@ private var mouseLook : MouseLook ;
 private var zoom: Zoom;
 
 private var button:boolean = true;
-private var button:boolean=true;
 private var Videos:videoSettings;
 
 private var rot;
@@ -54,6 +53,8 @@ function init(){
 	Videos = gameObject.GetComponent("videoSettings") as videoSettings;
 	control.enabled=false;
 	mouseLook.enabled=false;
+	
+	scene2D = Videos.GetFirstView();
 	
 	// Initialisation des Callback
 	OnBeginTrans = new Array();
@@ -316,6 +317,19 @@ static function isOnIpad() : boolean {
 	return ( SystemInfo.deviceType == DeviceType.Handheld );
 }
 
+// decrease light
+function fonduDown(){
+	
+	if(light.intensity <= 0.04)return;
+	else light.intensity-=0.02;
+}
+
+//increase light
+function fonduUp(){
+	
+	if(light.intensity >= 0.88)return;
+	else light.intensity+=0.02;
+}
 
 /**
  * Setter de Callback
