@@ -53,8 +53,8 @@ private var musicBottom : float = marginBottom;
 private var musicLeft : float = marginLeft;
 private var musicRight : float = textRight;
 
-private var stripTop : float = 1-((1-marginTop)/4); // Le strip prend en hauteur la moitié de la marge du haut
-private var stripBottom : float = 1-(3*(1-marginTop)/4);
+private var stripTop : float = marginTop;
+private var stripBottom : float = stripTop - 0.15;
 private var stripLeft : float = 0.55;
 private var stripRight : float = marginRight;
 
@@ -92,9 +92,13 @@ function OnGUIFullScreen(){
 	if( onFullScreen ) {
 		
 		if( !GUIIsHidden) {
-			var Rectangle : Rect = new Rect(0,Screen.height-50,50,50) ;
+			var returnRectangle : Rect = new Rect(0,Screen.height-Screen.width*marginLeft,Screen.width*marginLeft,Screen.width*marginLeft);
 			var returnTexture : Texture = Resources.Load("blue_left_arrow");
-			if( GUI.Button( Rectangle, returnTexture ) ) {
+			
+			var creditsRectangle : Rect = new Rect(Screen.width*marginRight,Screen.height-Screen.width*marginLeft,Screen.width*marginLeft,Screen.width*marginLeft);
+			var creditsTexture : Texture = Resources.Load("Pictures/credits");
+			
+			if( GUI.Button( returnRectangle, returnTexture ) ) {
 				Debug.Log( 'Sortie de l\'interface demandée' );
 			
 				if( toOnDeZoom )
@@ -102,6 +106,10 @@ function OnGUIFullScreen(){
 				else
 					Debug.LogWarning('Callback de dezoom non renseigné dans FullScreen.' + 
 					'\nNote : setter is public function SetLeaveCallback( f : function() )');
+			}
+			
+			if( GUI.Button( creditsRectangle, creditsTexture ) ) {
+				Debug.Log( 'Bonjour =D' );
 			}
 		}
 		
@@ -172,6 +180,8 @@ function EnterOnFullScreen( Video : GameObject ) {
 	 */
 	var Datas : scriptForPlane = Video.GetComponent('scriptForPlane');
 	
+	var stripPath : String = Datas.getStripImg();
+	
 	var slideShowImgs : Array = Datas.getImages();
 	var slideShowMin : Array = Datas.getMiniatures();
 	var slideShowVideo : Array = Datas.getVideos();
@@ -210,6 +220,12 @@ function EnterOnFullScreen( Video : GameObject ) {
 	}
 	
 	/* Initialisation de tous les éléments du full screen */
+	
+	if (stripPath) {
+		strip.InitVideoScreen( stripPath , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
+		pictureTop = stripBottom - 0.05;
+	}
+	
 	slideshow.InitSlideShowFactor(slideShowElmts.length, Rect( slideLeft , slideBottom , slideRight - slideLeft , slideTop - slideBottom), 20);
 	windows.InitWindowFactor( Rect( pictureLeft , 1-pictureTop , pictureRight-pictureLeft, pictureTop-pictureBottom), 20 );
 	
@@ -217,8 +233,6 @@ function EnterOnFullScreen( Video : GameObject ) {
 	audioPlayer.placeMusicFactor (1-musicTop, musicBottom, musicLeft, 1-musicRight, Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
 	
 	Console.Test( Datas.getStripVideo() ,45);
-	
-	strip.InitVideoScreen( Datas.getStripImg() , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
 	
 	
 	// On donne les infos au slideShow

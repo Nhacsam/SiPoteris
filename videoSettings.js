@@ -10,6 +10,7 @@ private var plane2D = GameObject.CreatePrimitive(PrimitiveType.Plane);
 
 //ref to the sphere 3D
 private var sphere3D:GameObject;
+private var sphere3D_pos : Vector3;
 
 private var button:boolean=true;
 
@@ -91,7 +92,7 @@ function videoSettings () {
 	
 	sphere3D.renderer.enabled = false;
 
-	
+
 	return plane2D;
 }
 
@@ -106,7 +107,7 @@ function generateScene2D(){
     plane2D.transform.Rotate(Vector3(180,180,0));
     plane2D.transform.position = Vector3(0,0,0);
     plane2D.AddComponent("PlayFileBasedMovieDefault");
-  	plane2D.renderer.material = Resources.Load("MovieHD");
+  	plane2D.renderer.material = Resources.Load("MovieTexture");
 	Destroy(plane2D.collider);
 
 	rotInit=plane2D.transform.rotation;
@@ -119,13 +120,14 @@ function generateScene2D(){
 function generateScene3D(){
 
 	var rot:Quaternion=Quaternion.identity;
+	sphere3D_pos = Vector3(0,1.3,0);
 	//load .fbx sphere on scene
-	sphere3D=Instantiate(Resources.Load("SphereFULL"),Vector3(0,1.3,0),rot);
+	sphere3D=Instantiate(Resources.Load("SphereFULL"),sphere3D_pos,rot);
 	Destroy(sphere3D.GetComponent("Animator"));
 	//set it at the right position
 	sphere3D.transform.Rotate(-90,0,0);
 	sphere3D.transform.localScale=Vector3(500,500,500);
-	sphere3D.renderer.material = Resources.Load("MovieHD");
+	sphere3D.renderer.material = Resources.Load("MovieTexture");
 	
 }
 
@@ -188,7 +190,7 @@ function putVideo( focus: GameObject, nom : String){
 	controllerScene2.seekTime = new float[1];
 	
 	if(!focus.GetComponent("PlayFileBasedMovieDefault"))focus.AddComponent("PlayFileBasedMovieDefault");
-  	focus.renderer.material = Resources.Load("Movie");
+  	focus.renderer.material = Resources.Load("Movie3");
 	controllerIOS.movie[1] = focus.GetComponent("PlayFileBasedMovieDefault"); 
 	   
 	controllerScene2.movieClass[0] =  focus.GetComponent("PlayFileBasedMovieDefault");
@@ -228,6 +230,13 @@ function getFlagEndVideo(){
 	//return true;
 }
 
+function EndFlagOff(){
+
+	var controllerScene:SceneController;
+	controllerScene = MovieController.GetComponent("SceneController");
+	controllerScene.movieClass[0].movieFinished=false;
+}
+
 /*
 * fonction de test de chargement d'une nouvelle video
 */
@@ -245,10 +254,20 @@ function test(){
 }*/
 
 
+//revoi largeur et auteur de la video
+function VideoWH(){
+	var controllerScene:SceneController;
+	controllerScene = MovieController2.GetComponent("SceneController");
+	var WH:Vector2;
+	WH.x = controllerScene.movieClass[0].Mwidth;
+	WH.y = controllerScene.movieClass[0].Mheight;
+	Console.Test("largeur: "+ WH.x +" // hauteur: "+ WH.y,0);
+	return WH;
+
+}
 
 
-
-
+//active l'ending
 function effectsOnEnd(){
 
 	if(getFlagEndVideo()){
@@ -258,6 +277,7 @@ function effectsOnEnd(){
 
 }
 
+/*
 function endTransition(){
 
 	t += Time.deltaTime * rate;
@@ -277,7 +297,7 @@ function endTransition(){
 	}
 
 	return false;
-}
+}*/
 
 /*
 * part to hanlde zoom on a position
@@ -318,3 +338,9 @@ function onDown(pos:Vector2){
 
 */
 
+/*
+	*get sphere3D_pos
+*/
+function getSpherePos() : Vector3{
+	return sphere3D_pos;
+}

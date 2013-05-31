@@ -148,14 +148,8 @@ private function CreatePolarMesh(thetaMin : float, thetaMax : float, Rmin : floa
 	
 	// add mesh collider
 	obj.GetComponent(MeshCollider).sharedMesh = meshBuilding;
-	
-	/*
-	if( firstTime && mesh_name.IndexOf("middle") != -1 ){
-		obj.renderer.enabled = true;
-		firstTime = false;
-	}
-	else*/
-		obj.renderer.enabled = false;
+
+	obj.renderer.enabled = true;
 
 	return obj;
 }
