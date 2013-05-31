@@ -86,7 +86,6 @@ function InitFullScreen( ) {
 	
 	onFullScreen = false ;
 	
-
 }
 
 function OnGUIFullScreen(){
@@ -174,7 +173,6 @@ function EnterOnFullScreen( Video : GameObject ) {
 	
 	CameraInitialLightType = gameObject.light.type ;
 	CameraInitialLightIntesity = gameObject.light.intensity ;
-	
 	// On déplace le tout pour l'isoler ds autres éléments
 	if( isolate ) {
 		camera.transform.position += toMove ;

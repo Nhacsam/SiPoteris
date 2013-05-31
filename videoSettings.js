@@ -4,35 +4,41 @@
 * script setting de paramters of the videos and initiate the 2D and 3D scenes
 */
 
-private var MovieController2:GameObject;
-private var MovieController:GameObject;
-private var iOS : GameObject;
 
 //ref to the screen 2D
 private var plane2D : GameObject;
-
 //ref to the sphere 3D
 private var sphere3D:GameObject;
 private var sphere3D_pos : Vector3;
-
+//tells if the buttons are to be displayed or not to the Transition 2D3D when we go in full screen interface
 private var button:boolean = true;
-
+//ref to the script
 private var Trans:Transition2D3D;
 
-private var rotInit;
-
+//controlers for the plugin video
 private var controllerIOS:ForwardiOSMessages;
 private var controllerScene2D3D:SceneController;
 private var controllerScene2:SceneController;
-
-
+private var MovieController2:GameObject;
+private var MovieController:GameObject;
+private var iOS : GameObject;
+// parameters for the final transition
+/*
+private var rotInit;
 private var startRotation;
 private var endRotation;
 private var rate = 0.7;
 private var t = 0.0;
+*/
 
+/*
+*	parameters to chose which scene you want to see first
+*	and if you want to disable the other view.
+*/
 private var firstView2D:boolean = true;
 private var otherView:boolean = true;
+
+
 /*
 * functions.
 */
@@ -141,10 +147,11 @@ function generateScene2D(){
   	plane2D.renderer.material = Resources.Load("MovieTexture");
   
 	Destroy(plane2D.collider);
-
+	/*
 	rotInit=plane2D.transform.rotation;
 	startRotation = plane2D.transform.rotation;
 	endRotation = plane2D.transform.rotation * Quaternion.Euler(180,0,0);
+	*/
 
 }
 /*
@@ -184,7 +191,9 @@ function videoHDZoomON (plane : GameObject){
 	button=false;
 	var controllerMovie:PlayFileBasedMovieDefault;	
 	//pause movie
+	if(firstView2D)
 	controllerMovie=plane2D.GetComponent("PlayFileBasedMovieDefault");
+	else controllerMovie=sphere3D.GetComponent("PlayFileBasedMovieDefault");
 	controllerMovie.PauseMovie ();
 
 }
@@ -197,7 +206,9 @@ function videoHDZoomQuit(plane : GameObject){
 
 	var controllerMovie:PlayFileBasedMovieDefault;
 	//resume movie
+	if(firstView2D)
 	controllerMovie=plane2D.GetComponent("PlayFileBasedMovieDefault");
+	else controllerMovie=sphere3D.GetComponent("PlayFileBasedMovieDefault");
 	controllerMovie.ResumeMovie ();
 	
 	button=true;

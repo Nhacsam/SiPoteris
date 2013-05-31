@@ -101,7 +101,7 @@ function UpDateZoom () {
 	
 		// Si on est en train de zoomer
 		case ZOOM_STATES.ONZOOM :
-			
+		
 			// Conditions d'arrets
 			if( zoomFinished() )
 				toOnGUI();
