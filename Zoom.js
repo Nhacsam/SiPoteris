@@ -1,42 +1,61 @@
 #pragma strict
 
-// CallBacks
-private var OnZoom : Array ;
-private var OnEndZoom : Array ;
-private var OnLeave : Array ;
-private var OnEndDezoom : Array ;
 
-private var enableLook : function(boolean);
 
-// Liste des Elements cliquables
-private var Videos2D : Array ;
-private var Videos3D : Array ;
+// Eléments cliquables
+private var zClickableElmts : Array ;	// Liste des Elements cliquables
+private var zSelected : GameObject ;	// élément sélectionné
 
 
 // Machine d'état
-enum ZOOM_STATES {ONSPHERE, ONZOOM, ONVIDEO, ONDEZOOM};
-private var stateMachine : ZOOM_STATES ;
+enum ZOOM_STATES {	ONUNIV,			// Dans l'univers (plan video 2D + sphère 3D)
+					ONGUI,			// Dans la GUI
+					ONZOOM,			// En train de zoomer 	( ONUNIV->	ONGUI )
+					ONDEZOOM};		// En train de dezoomer ( ONGUI	->	ONUNIV )
+private var zState : ZOOM_STATES ;
 
-// élément sélectionné
-private var selected : GameObject ;
-
-
-// paramètre du zoom
-private var CameraInitialPos : Vector3 ;
-private var CameraInitialRot : Vector3 ;
-
-private var TransitionTime : float = 1.0f ;
-private var beginTime : float = 0.0f ;
+// CallBacks appelés lors d'un changement d'état
+private var zOnZoom : Array ;
+private var zOnEndZoom : Array ;
+private var zOnLeave : Array ;
+private var zOnEndDezoom : Array ;
 
 
-private var finalPos : Vector3 ;
-private var finalRot : Vector3 ;
+// Types de Zoom possibles
+enum ZOOM_TYPE {
+					GO_ON_PLANE,			// Fonce sur le plan
+					GO_ON_POINT,			// Fonce sur le point
+					GO_ON_PLANE_ROTATING,	// Fonce sur le plan en tournant
+					GO_ON_POINT_ROTATING,	// Fonce sur le point en tournant
+					LOOK_BEHIND,			// Regarde derrière lui
+					GO_AWAY_BACKWARD,		// fait une marche arrière
+					GO_AWAY_FORWARD			// Fait demis tour en se barrant
+}
+private var zType : ZOOM_TYPE ;
 
-private var Trans :Transition2D3D;
-private var control : CameraControl;
-private var mouseLook: MouseLook;
+private var zDestinationPoint : Vector3 ;	// point de destination, pour GO_ON_POINT par ex
 
-private var eventEnable : boolean ;
+
+
+// paramètres du zoom
+private var zTransitionTime : float = 1.0f ;	// temps de transition
+private var zBeginTime : float = 0.0f ;			// horloge au début
+
+private var zCameraInitialPos : Vector3 ;		// Positionnement au démarrage
+private var zCameraInitialRot : Quaternion ;	// Rotation au démarrage
+
+private var zCameraFinalPos : Vector3 ;			// Positionnement à la fin
+private var zCameraFinalRot : Quaternion ;		// Rotation à la fin
+
+private var zCameraBeginPos : Vector3 ;			// Positionnement dans l'univers
+private var zCameraBeginRot : Quaternion ;		// Rotation dans l'univers
+
+// événements
+private var zEventEnable : boolean ;			// événement activé ?
+
+
+
+
 
 
 
@@ -49,65 +68,45 @@ private var eventEnable : boolean ;
 /*
  * Initialise le Module (constructeur)
  */
-function Init( VideosMeshes2D : Array, VideosMeshes3D : Array, enableMouseLook : function(boolean) ) {
+function Init( VideosMeshes : Array, type : ZOOM_TYPE, point : Vector3 ) {
 	
 	// Enregistrment des plans cliquables
-	Videos2D = VideosMeshes2D ;
-	Videos3D = VideosMeshes3D ;
+	setClickableElmts( VideosMeshes ) ;
+	
+	// Enregistrement du type du zoom et du point de destination si besoins est
+	changeType(type, point );
 	
 	// initialisation des tableaux de callback
-	OnZoom = new Array() ;
-	OnEndZoom = new Array() ;
-	OnLeave = new Array() ;
-	OnEndDezoom = new Array() ;
-	
-	// Récupération du composant de transition 2D3D
-	Trans = gameObject.GetComponent("Transition2D3D");
-	if (!Trans)
-		Trans = gameObject.AddComponent("Transition2D3D");
-	
-	// savegarde de la position de la caméra
-	CameraInitialPos = camera.transform.position ;
-	
-	// savegarde du callback pour l'activation / desactivation du mouselook
-	enableLook = enableMouseLook ;
+	zOnZoom = new Array() ;
+	zOnEndZoom = new Array() ;
+	zOnLeave = new Array() ;
+	zOnEndDezoom = new Array() ;
 	
 	// On initialise la machine d'état en dehors de
 	// la GUI et on active les événemments
-	Console.Test('Init', 5 );
-	toOnSphere() ;
+	toOnUniv() ;
 	enableEvents();
-	
 }
 
-
 /*
- * Mets à jours les calcul liés au zoom
+ * Mets à jours les calcul liés au zoom (Routine)
  */
 function UpDateZoom () {
 	
+	// click de la souris (pour test sur mac)
 	if( Input.GetMouseButtonDown(0) )
 		OnTap(Input.mousePosition);
 	
-	switch( stateMachine ) {
+	switch( zState ) {
 	
 		// Si on est en train de zoomer
 		case ZOOM_STATES.ONZOOM :
 			
 			// Conditions d'arrets
-			if( camera.transform.position == finalPos ) {
-				camera.transform.LookAt(selected.transform);
-				toOnVideo();
-				
-			} else if ( Time.time > (beginTime + TransitionTime) ){
-				camera.transform.position = finalPos ;
-				camera.transform.LookAt(selected.transform);
-				toOnVideo();
-				
-			} else {
-				// Maj des positions
+			if( zoomFinished() )
+				toOnGUI();
+			else
 				UpdateZoomStep();
-			}
 			
 		break;
 	
@@ -115,20 +114,10 @@ function UpDateZoom () {
 		case ZOOM_STATES.ONDEZOOM :
 			
 			// Conditions d'arrets
-			if( camera.transform.position == finalPos ) {
-				camera.transform.eulerAngles = finalRot ;
-				toOnSphere();
-				
-			} else if ( Time.time > (beginTime + TransitionTime) ){
-				camera.transform.position = finalPos ;
-				camera.transform.eulerAngles = finalRot ;
-				toOnSphere();
-				
-			} else {
-				// Maj des positions
+			if( zoomFinished() )
+				toOnUniv();
+			else
 				UpdateZoomStep();
-			}
-			
 		break;
 	}
 	
@@ -138,35 +127,103 @@ function UpDateZoom () {
  * Active les evenements
  */
 public function enableEvents() {
-	eventEnable = true ;
+	zEventEnable = true ;
 }
 
 /*
  * Desactive les evenements
  */
 public function disableEvents() {
-;
-	eventEnable = false ;
+	zEventEnable = false ;
 }
 
 
-/*
+/**
  * Setter de Callback
  */
 
 function AddOnZoom ( f : function( GameObject ) ) {
-	OnZoom.push(f);
+	zOnZoom.push(f);
 }
 function AddOnEndZoom ( f : function( GameObject ) ) {
-	OnEndZoom.push(f);
+	zOnEndZoom.push(f);
 }
 function AddOnLeave ( f : function(GameObject) ) {
-	OnLeave.push(f);
+	zOnLeave.push(f);
 }
 function AddOnEndDezoom ( f : function(GameObject) ) {
-	OnEndDezoom.push(f);
+	zOnEndDezoom.push(f);
 }
 
+
+/**
+ * Gestion des éléments cliquables
+ */
+
+/*
+ * Change les éléments cliquables
+ */
+public function setClickableElmts( e : Array ) {
+	zClickableElmts = e ;
+}
+public function changeClickableElmts( e : Array ) { // équivalent 
+	setClickableElmts(e);
+}
+
+/*
+ * Ajoute un élément
+ */
+public function addClickableElmt( e : GameObject ) {
+	zClickableElmts.Push(e);
+}
+
+/*
+ * Ajoute des éléments
+ */
+public function addClickableElmts( e : Array ) {
+	changeClickableElmts( zClickableElmts.Concat(e) );
+}
+
+
+/**
+ * Gestion du type de transition
+ */
+
+/*
+ * Setter du type de transition
+ */
+public function setType( t : ZOOM_TYPE ) {
+	zType = t ;
+}
+
+/*
+ * Getter du type de transition
+ */
+public function getType() : ZOOM_TYPE {
+	return zType ;
+}
+
+/*
+ * Change le type de transition
+ * avec en 2ieme paramètre le point de destination
+ * (utile pour GO_ON_POINT par ex )
+ *
+ * Si le point de destination est inutile pour le type
+ * de tarnsition fournis, il n'est pas enregistré
+ */
+public function changeType( t : ZOOM_TYPE, p : Vector3 ) {
+	// enregistrement du type
+	setType(t);
+	
+	// enregistrement du point de destination si besoins
+	if ( 	t == ZOOM_TYPE.GO_ON_POINT 				||
+			t == ZOOM_TYPE.GO_ON_POINT_ROTATING 	||
+			t == ZOOM_TYPE.GO_AWAY_FORWARD 			||
+			t == ZOOM_TYPE.GO_AWAY_BACKWARD 		) {
+			
+		zDestinationPoint = p ;
+	}
+}
 
 
 /************************
@@ -179,47 +236,41 @@ function AddOnEndDezoom ( f : function(GameObject) ) {
 function toOnZoom( obj : GameObject ) {
 	
 	// vérification de l'état courant
-	if( stateMachine != ZOOM_STATES.ONSPHERE )
-		Console.HandledError( 'State Machine Error : Must zoom from ONSPHERE state' );
+	if( zState != ZOOM_STATES.ONUNIV )
+		Console.HandledError( 'State Machine Error : Must zoom from ONUNIV state' );
 	else {
 		
 		// Appel des callbacks
-		for( var j = 0; j < OnZoom.length; j++){
-			(OnZoom[j] as function( GameObject ) )( obj ) ;			
+		for( var j = 0; j < zOnZoom.length; j++){
+			(zOnZoom[j] as function( GameObject ) )( obj ) ;
 		}
 		
+		zSelected = obj ;
+		
+		// calcul des position pour le dezoom
+		computeFinalPosAndRot();
+		// Enregistrement du temps courant
+		zBeginTime = Time.time ;
+		
 		// Changement de la machine d'état
-		stateMachine = ZOOM_STATES.ONZOOM ;
-		selected = obj ;
-		
-		// Désactive le mouseLook
-		enableLook(false);
-		
-		// Enregistrement des états au début de la transition
-		CameraInitialPos = camera.transform.position ;
-		CameraInitialRot = camera.transform.eulerAngles ;
-		beginTime = Time.time;
-		
-		// Calcul des états de fin
-		ComputeFinalPos();
-		ComputeFinalRot();
+		zState = ZOOM_STATES.ONZOOM ;
 	}
 }
 
 /*
  * Se place sur la GUI
  */
-function toOnVideo() {
+function toOnGUI() {
 	
 	// Appel des callbacks
-	if( stateMachine == ZOOM_STATES.ONZOOM ) {
-		for( var j = 0; j < OnEndZoom.length; j++){
-			(OnEndZoom[j] as function( GameObject ) )( selected ) ;
+	if( zState == ZOOM_STATES.ONZOOM ) {
+		for( var j = 0; j < zOnEndZoom.length; j++){
+			(zOnEndZoom[j] as function( GameObject ) )( zSelected ) ;
 		}
 	}
 	
 	// Changement de la machine d'état
-	stateMachine = ZOOM_STATES.ONVIDEO ;
+	zState = ZOOM_STATES.ONGUI ;
 }
 
 /*
@@ -227,42 +278,35 @@ function toOnVideo() {
  */
 function toOnDeZoom() {
 	
+	
+	// calcul des position pour le dezoom
+	computeFinalPosAndRot();
+	// Enregistrement du temps courant
+	zBeginTime = Time.time ;
+	
 	// Changement de la machine d'état
-	stateMachine = ZOOM_STATES.ONDEZOOM ;	
+	zState = ZOOM_STATES.ONDEZOOM ;	
 	
 	// Appel des callbacks
-	for( var j = 0; j < OnLeave.length; j++){
-		(OnLeave[j] as function(GameObject) )( selected ) ;
+	for( var j = 0; j < zOnLeave.length; j++){
+		(zOnLeave[j] as function(GameObject) )( zSelected ) ;
 	}
-	
-	// Calcul des états de fin
-	finalPos = CameraInitialPos ;
-	finalRot = CameraInitialRot ;
-	
-	// Enregistrement des états au début de la transition
-	CameraInitialPos = camera.transform.position ;
-	CameraInitialRot = camera.transform.eulerAngles ;
-	beginTime = Time.time ;
-	
 }
 
 /*
  * Se place sur l'univers (hors de la GUI)
  */
-private function toOnSphere () {
+private function toOnUniv () {
 	
 	// Appel des callbacks
-	if( stateMachine == ZOOM_STATES.ONDEZOOM ) {
-		for( var j = 0; j < OnEndDezoom.length; j++){
-			(OnEndDezoom[j] as function( GameObject ) )( selected ) ;
+	if( zState == ZOOM_STATES.ONDEZOOM ) {
+		for( var j = 0; j < zOnEndDezoom.length; j++){
+			(zOnEndDezoom[j] as function( GameObject ) )( zSelected ) ;
 		}
 	}
 	
 	// Changement de la machine d'état
-	stateMachine = ZOOM_STATES.ONSPHERE ;
-	
-	// Réactive le mouseLook
-	enableLook(true);
+	zState = ZOOM_STATES.ONUNIV ;
 	
 }
 
@@ -274,28 +318,39 @@ private function toOnSphere () {
 /*
  * Effectue une étape du ZOOM
  */
-function UpdateZoomStep () {
+private function UpdateZoomStep () {
+	
 	
 	// Calcul du temps écoulé depuis le début
-	var elapsedTime = Time.time - beginTime ;
+	var elapsedTime = Time.time - zBeginTime ;
 	
 	// Calcul de la nouvelle position
-	//camera.transform.position = Vector3.Slerp( CameraInitialPos, finalPos, elapsedTime/TransitionTime) ;
-	camera.transform.position = CameraInitialPos + (finalPos - CameraInitialPos)*elapsedTime/TransitionTime ;
+	camera.transform.position = Vector3.Slerp( zCameraInitialPos, zCameraFinalPos, elapsedTime/zTransitionTime) ;
 	
-	// calcul de la nouvelle rotation, en passant par le plus cours chemin
-	var Diff = ( finalRot - CameraInitialRot ) ;
+	// Calcul de la nouvelle rotation
+	camera.transform.rotation = Quaternion.Slerp( zCameraInitialRot, zCameraFinalRot, elapsedTime/zTransitionTime) ;
 	
-	Diff.x = (Diff.x < -180) ? Diff.x + 360 : Diff.x ;
-	Diff.y = (Diff.y < -180) ? Diff.y + 360 : Diff.y ;
-	Diff.z = (Diff.z < -180) ? Diff.z + 360 : Diff.z ;
+}
+
+/*
+ * Conditions d'arret du zoom
+ */
+
+private function zoomFinished() : boolean{
 	
-	Diff.x = (Diff.x > 180) ? Diff.x - 360 : Diff.x ;
-	Diff.y = (Diff.y > 180) ? Diff.y - 360 : Diff.y ;
-	Diff.z = (Diff.z > 180) ? Diff.z - 360 : Diff.z ;
-				
-	camera.transform.eulerAngles = CameraInitialRot + Diff*elapsedTime/TransitionTime ;
+	if ( Time.time > (zBeginTime + zTransitionTime) ) {
 	
+		camera.transform.position = zCameraFinalPos ;
+		camera.transform.rotation = zCameraFinalRot ;
+		return true ;
+	
+	} else if ( camera.transform.position == zCameraFinalPos &&
+				camera.transform.rotation == zCameraFinalRot ) {
+		return true ;
+	
+	} else {
+		return false ;
+	}
 }
 
 
@@ -304,36 +359,216 @@ function UpdateZoomStep () {
  ************************/
 
 /*
- * Calcule les position et rotation finales optimales de la caméra
- * lors d'un zoom sur une structure
+ * Calcul les positions initiales et finales du Zoom
+ * En fonction du type de celui-ci
  */
-function ComputeFinalPos()  {
-	if (Trans.isScene2D())
-		ComputeFinalPos2D();
-	else
-		ComputeFinalPos3D();
+private function computeFinalPosAndRot() {
+	
+	
+	if( zState == ZOOM_STATES.ONUNIV ) {
+		// Enregistrement des coordonnées dans l'univers
+		zCameraBeginPos = camera.transform.position ;
+		zCameraBeginRot = camera.transform.rotation ;
+		
+		// Enregistrement des états au début de la transition
+		zCameraInitialPos = zCameraBeginPos ;
+		zCameraInitialRot = zCameraBeginRot ;
+	
+	} else if ( zState == ZOOM_STATES.ONGUI ) {
+		
+		// On fini le dezoom sur les positions initales de la GUI
+		zCameraFinalPos = zCameraBeginPos ;
+		zCameraFinalRot = zCameraBeginRot ;
+	}
+	
+	// On enregistre les coordonnées de la caméra
+	// pour que les fonctions puissent la déplacer pour faire leurs calculs
+	var CameraCurrentPos : Vector3 = camera.transform.position ;
+	var CameraCurrentRot : Quaternion = camera.transform.rotation ;
+	
+	// Vas contenir les coordonnées calculées par les fonctions.
+	// Elles doivent avoir une valeur de retour de la forme :
+	// 		Array( position : Vector3, rotation : Quaternion )
+	var ComputedCoord : Array ;
+	
+	// Choix de la fonction à appeler
+	switch( zType ) {
+	
+		case ZOOM_TYPE.GO_ON_PLANE :			// Fonce sur le plan
+			ComputedCoord = computeGoOnPlanePosAndRot();
+			break;
+			
+		case ZOOM_TYPE.GO_ON_POINT :			// Fonce sur le point
+			ComputedCoord = computeGoOnPointPosAndRot();
+			break;
+		
+		case ZOOM_TYPE.GO_ON_PLANE_ROTATING :	// Fonce sur le plan en tournant
+			ComputedCoord = computeGoOnPlaneRotatingPosAndRot();
+			break;
+		
+		case ZOOM_TYPE.GO_ON_POINT_ROTATING :	// Fonce sur le point en tournant
+			ComputedCoord = computeGoOnPointRotatingPosAndRot();
+			break;
+		
+		case ZOOM_TYPE.LOOK_BEHIND :			// Regarde derrière lui
+			ComputedCoord = computeLookBehindPosAndRot();
+			break;
+		
+		case ZOOM_TYPE.GO_AWAY_BACKWARD :		// fait une marche arrière
+			ComputedCoord = computeGoAwayBackwardPosAndRot();
+			break;
+		
+		case ZOOM_TYPE.GO_AWAY_FORWARD :		// Fait demis tour en se barrant
+			ComputedCoord = computeGoAwayForwardPosAndRot();
+			break;
+		
+		default :
+			Console.HandledError( "Value of zType("+zType+") is invalid.");
+			ComputedCoord = computeGoOnPlanePosAndRot();		// Fonce sur le plan
+			break;
+	}
+	
+	// Erreur dans les calculs
+	if(! ComputedCoord || ComputedCoord.length < 2) {
+		Console.HandledError(	"Error in computing zoom pos and rot.\n" +
+								"State = "+zState+"\n" +
+								"Type = "+zType);
+		zCameraInitialPos = zCameraBeginPos ;
+		zCameraInitialRot = zCameraBeginRot ;
+		zCameraFinalPos = zCameraBeginPos ;
+		zCameraFinalRot = zCameraBeginRot ;
+		return ;
+	}
+	
+	// Choisi si on a calculé des positions finales ou initiales
+	if( zState == ZOOM_STATES.ONUNIV ) {
+		
+		// Si on été dans l'univers, c'est les positions finales qui varient
+		// en fonction du type de transition
+		zCameraFinalPos = ComputedCoord[0] ;
+		zCameraFinalRot = ComputedCoord[1] ;
+		
+	} else if ( zState == ZOOM_STATES.ONGUI ) {
+		
+		// Si on été dans la GUI, c'est les positions initiales qui varient
+		// en fonction du type de transition
+		zCameraInitialPos = ComputedCoord[0] ;
+		zCameraInitialRot = ComputedCoord[1] ;
+	}
+	
+	// On replace la caméra si elle a été bougé pendant les calculs
+	camera.transform.position = CameraCurrentPos ;
+	camera.transform.rotation = CameraCurrentRot ;
+	
 }
 
-function ComputeFinalPos2D() {
-	finalPos = Vector3 (0,5,0);
+
+
+
+/*
+ * Calcul les positions initiales et finales du Zoom
+ * Pour le type : GO_ON_PLANE
+ */
+private function computeGoOnPlanePosAndRot() : Array {
+	
+	var forward : Vector3 = zSelected.transform.position - zCameraBeginPos ;
+	var upwards : Vector3 = zSelected.transform.up ;
+	return new Array( computeOnPlanePos(), Quaternion.LookRotation (forward , upwards) );
 }
 
-function ComputeFinalPos3D()  {
+/*
+ * Calcul les positions initiales et finales du Zoom
+ * Pour le type : GO_ON_POINT
+ */
+private function computeGoOnPointPosAndRot() : Array {
 	
+	var forward : Vector3 = zDestinationPoint - zCameraBeginPos ;
+	var upwards : Vector3 = camera.transform.up ;
+	return new Array(zDestinationPoint,  Quaternion.LookRotation (forward , upwards)  );
+}
+
+/*
+ * Calcul les positions initiales et finales du Zoom
+ * Pour le type : GO_ON_PLANE_ROTATING
+ */
+private function computeGoOnPlaneRotatingPosAndRot() : Array {
 	
-	var Pos = camera.transform.position;
-	var Rot = camera.transform.rotation;
+	var forward : Vector3 = zSelected.transform.position - zCameraBeginPos ;
+	var upwards : Vector3 = - zSelected.transform.up ;
+	return new Array( computeOnPlanePos(), Quaternion.LookRotation (forward , upwards) );
+}
+
+/*
+ * Calcul les positions initiales et finales du Zoom
+ * Pour le type : GO_ON_POINT_ROTATING
+ */
+private function computeGoOnPointRotatingPosAndRot() : Array {
+	var forward : Vector3 = zDestinationPoint - zCameraBeginPos ;
+	var upwards : Vector3 = - camera.transform.up ;
+	return new Array(zDestinationPoint,  Quaternion.LookRotation (forward , upwards)  );
+}
+
+/*
+ * Calcul les positions initiales et finales du Zoom
+ * Pour le type : LOOK_BEHIND
+ */
+private function computeLookBehindPosAndRot() : Array {
 	
-	camera.transform.LookAt(selected.transform);
-	camera.fieldOfView=80;
+	var forward : Vector3 = zDestinationPoint - zCameraBeginPos ;
+	var upwards : Vector3 = camera.transform.up ;
+	return new Array( zCameraBeginPos,  Quaternion.LookRotation ( -forward , upwards)  );
+}
+
+/*
+ * Calcul les positions initiales et finales du Zoom
+ * Pour le type : GO_AWAY_BACKWARD
+ */
+private function computeGoAwayBackwardPosAndRot() : Array {
 	
-	var CameraInitialDecal = 20 ;
+	var pos : Vector3 = 2*zCameraBeginPos - zDestinationPoint ;
 	
-	var axe = camera.transform.position - selected.transform.position ;
-	var normal : Vector3 = axe.normalized ;                 
+	return new Array( 10*pos, zCameraBeginRot );
+}
+
+/*
+ * Calcul les positions initiales et finales du Zoom
+ * Pour le type : GO_AWAY_FORWARD
+ */
+private function computeGoAwayForwardPosAndRot() : Array {
+	
+	var LookBehind : Array = computeLookBehindPosAndRot() ;
+	var GoAway : Array = computeGoAwayBackwardPosAndRot() ;
+	
+	return new Array(GoAway[0], LookBehind[1]);
+}
+
+
+
+/*
+ * Calcule la position face à un plan permettant
+ * de le voir en plein écran
+ */
+private function computeOnPlanePos() : Vector3 {
+	
+	var computedPos : Vector3 ;
+	
+	// on oriente la caméra vers le plan
+	camera.transform.LookAt(zSelected.transform);
+	
+	var orientedTo : Vector3 = (zSelected.GetComponent('scriptForPlane') as scriptForPlane).getOrientedTo() ;
+	// vecteur 0M ou O le centre du plan et M le centre de la sphère
+	var axe = orientedTo - zSelected.transform.position ;
+	
+	// distance entre la caméra et le plan
+	var CameraInitialDecal = axe.magnitude ;
+	// vecteur unitaire relian le plan et la camera
+	var normal : Vector3 = axe.normalized ;
+	
 	
 	var rect = camera.pixelRect ;
+	// point milieu haut de la caméra
 	var top : Vector2 = new Vector2( 	rect.xMin + (rect.xMax - rect.xMin) / 2 , rect.yMin ) ;
+	// point milieu gauche de la caméra
 	var left : Vector2 = new Vector2( 	rect.xMin 								, rect.yMin + (rect.yMax - rect.yMin) / 2 ) ;
 	
 	
@@ -341,48 +576,26 @@ function ComputeFinalPos3D()  {
 	var hit : RaycastHit = new RaycastHit() ;
 	var i : float = 0 ;
 	
+	// On tire deux trait partant des deux points milieu haut et milieu gauche, et
+	// on approche petit à petit la caméra du plan jusqu'a
+	// qu'un des deux traits collisionne avec le plan
 	do {
 		
-		finalPos = selected.transform.position + (CameraInitialDecal - i )*normal ;
-		camera.transform.position = finalPos ;
+		computedPos = zSelected.transform.position + (CameraInitialDecal - i )*normal ;
+		camera.transform.position = computedPos ;
+		camera.transform.LookAt(zSelected.transform);
 		
 		i += 0.1 ;
 		
 		
-	} while( 	!( 		selected.collider.Raycast( camera.ScreenPointToRay(top	) , hit, 1000.0f) ||
-				 		selected.collider.Raycast( camera.ScreenPointToRay(left) , hit, 1000.0f) )
+	} while( 	!( 		zSelected.collider.Raycast( camera.ScreenPointToRay(top	) , hit, 1000.0f) ||
+				 		zSelected.collider.Raycast( camera.ScreenPointToRay(left) , hit, 1000.0f) )
 				&& i <= CameraInitialDecal ) ;
 	
+	Console.Test(camera.transform.position ,48);
 	
-	camera.transform.position = Pos ;
-	camera.transform.rotation = Rot ;
-	
-	
+	return computedPos ;
 }
-
-function ComputeFinalRot()  {
-	if (Trans.isScene2D())
-		ComputeFinalRot2D();
-	else
-		ComputeFinalRot3D();
-}
-
-function ComputeFinalRot2D() {
-	finalRot = camera.transform.eulerAngles + Vector3 (0,180,0);
-
-}
-
-
-function ComputeFinalRot3D() {
-	
-	var Rot : Vector3 = camera.transform.eulerAngles ;
-	
-	camera.transform.LookAt(selected.transform);
-	finalRot = camera.transform.eulerAngles;
-	
-	camera.transform.eulerAngles = Rot ;
-}
-
 
 /********************
  **** Evénements ****
@@ -410,18 +623,25 @@ function OnDisable(){
 function OnTap(mousePos : Vector2) {
 	
 	// On interronmpt la fonction si les évenements sont désactivé
-	if( !eventEnable )
+	if( !zEventEnable )
 		return ;
 	
-	if( stateMachine == ZOOM_STATES.ONSPHERE && !Trans.isInButton(mousePos) ) {
+	// On interronmpt la fonction si le click se fait par dessus
+	// un éléments de GUI géré par un autre script
+	if( (gameObject.GetComponent( 'Main' ) as Main ).isOnAGUIElmt( mousePos ) )
+		return ;
+	
+	
+	if( zState == ZOOM_STATES.ONUNIV ){
+		
+		var ray : Ray = camera.ScreenPointToRay(mousePos);
+		var hit : RaycastHit = new RaycastHit() ;
+		
 		// Détecte l'objet cliqué
-		for ( var i = 0; i < (Trans.isScene2D() ? Videos2D.length : Videos3D.length) ; i++ ) {
-			var ray : Ray = camera.ScreenPointToRay(mousePos);
-			var hit : RaycastHit = new RaycastHit() ;
+		for ( var i = 0; i < zClickableElmts.length; i++ ) {
+			if( (zClickableElmts[i] as GameObject).collider.Raycast(ray, hit, 1000.0f) ) {
 			
-			var Video : GameObject = Trans.isScene2D() ? Videos2D[i] : Videos3D[i] ;
-			if( Video.collider.Raycast(ray, hit, 1000.0f) ) {
-				toOnZoom(Video);
+				toOnZoom( zClickableElmts[i] as GameObject );
 				break ;
 			} // if
 		} // for

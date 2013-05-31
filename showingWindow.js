@@ -161,6 +161,8 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 			wObj.transform.Rotate( Vector3( 0, 180, 0) );
 			
 			wVideoIsPlaying= true ;
+			
+			size = Vector2(1,1);
 			break ;
 		
 		
@@ -190,12 +192,13 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 			
 			// réinitialise la rotation
 			setRotation();
+			// Calcul des dimensions 
+			size = (size != Vector2.zero) ? size : Vector2( wImgTex.width, wImgTex.height ) ;
 			
 			break ;
 	}
 	
-	// Calcul des dimensions 
-	size = (size != Vector2.zero) ? size : Vector2( wImgTex.width, wImgTex.height ) ;
+	
 	ComputeGUIPosAndScale(size);
 	ComputeFullPosAndScale(size);
 	

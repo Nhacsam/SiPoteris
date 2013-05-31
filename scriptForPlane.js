@@ -20,6 +20,9 @@ private var posPlane : Vector3;
 // rotation of plane in world
 private var rotPlane : Vector3;
 
+// Point vers lequel est orienté le plan
+private var orientedTo : Vector3 ;
+
 // speed of plane
 private var delta : float = 0;
 
@@ -31,8 +34,6 @@ private var GUIFiles : Array = Array() ;
 
 // nom du fichier contenant les adresses des ressources
 private var parsedFilePath : String = "resourcesInfos.txt" ;
-
-
 
 
 /********************** METHODS **********************/
@@ -111,6 +112,21 @@ public function InitRotPlane( v : Vector3 ){
 public function getRotPlane(){
 	return rotPlane;
 }
+
+/*
+	*initialize orientedTo
+*/
+public function InitOrientedTo( v : Vector3 ){
+	orientedTo = v;
+}
+
+/*
+	*get the point where the plane is oriented to
+*/
+public function getOrientedTo(){
+	return orientedTo;
+}
+
 
 /*
 	*initialize speed of plane
