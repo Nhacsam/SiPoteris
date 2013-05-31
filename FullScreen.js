@@ -92,9 +92,13 @@ function OnGUIFullScreen(){
 	if( onFullScreen ) {
 		
 		if( !GUIIsHidden) {
-			var Rectangle : Rect = new Rect(0,Screen.height-50,50,50) ;
+			var returnRectangle : Rect = new Rect(0,Screen.height-Screen.width*marginLeft,Screen.width*marginLeft,Screen.width*marginLeft);
 			var returnTexture : Texture = Resources.Load("blue_left_arrow");
-			if( GUI.Button( Rectangle, returnTexture ) ) {
+			
+			var creditsRectangle : Rect = new Rect(Screen.width*marginRight,Screen.height-Screen.width*marginLeft,Screen.width*marginLeft,Screen.width*marginLeft);
+			var creditsTexture : Texture = Resources.Load("Pictures/credits");
+			
+			if( GUI.Button( returnRectangle, returnTexture ) ) {
 				Debug.Log( 'Sortie de l\'interface demandée' );
 			
 				if( toOnDeZoom )
@@ -102,6 +106,10 @@ function OnGUIFullScreen(){
 				else
 					Debug.LogWarning('Callback de dezoom non renseigné dans FullScreen.' + 
 					'\nNote : setter is public function SetLeaveCallback( f : function() )');
+			}
+			
+			if( GUI.Button( creditsRectangle, creditsTexture ) ) {
+				Debug.Log( 'Bonjour =D' );
 			}
 		}
 		
