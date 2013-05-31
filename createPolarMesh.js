@@ -149,7 +149,7 @@ private function CreatePolarMesh(thetaMin : float, thetaMax : float, Rmin : floa
 	// add mesh collider
 	obj.GetComponent(MeshCollider).sharedMesh = meshBuilding;
 
-	obj.renderer.enabled = true;
+	obj.renderer.enabled = false;
 
 	return obj;
 }
@@ -170,7 +170,6 @@ public function getTruePosition( thetaMin : float , thetaMax : float , RatioRmin
 	a = a * Mathf.PI / 180;
 
 	return Vector3( r * Mathf.Cos( a ) , obj.transform.position.y , r * Mathf.Sin( a ) );
-
 }
 
 /*

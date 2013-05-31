@@ -16,11 +16,11 @@ private var mouseLook : MouseLook ;
 
 private var zoom: Zoom;
 
-private var button:boolean=true;
+private var button:boolean = true;
 private var Videos:videoSettings;
 
 private var rot;
-private var scene2D : boolean=true;
+private var scene2D : boolean = true;
 private var buttonIsPressed : boolean=true;
 
 /* Coordinates of the 2D/3D button */
@@ -28,7 +28,7 @@ private var buttonUp : int = Screen.height - 100;
 private var buttonLeft : int = 0;
 private var buttonHeight : int = 100;
 private var buttonWidth : int = 100;
-private var exitFinished: boolean=true;
+private var exitFinished: boolean = true;
 
 // CallBacks appelés lors d'un changement de vue
 private var OnBeginTrans : Array ;
@@ -77,13 +77,14 @@ function  OnGUI2D3D(){
 	
 		var Rectangle : Rect = new Rect(Screen.width/2 +310 , Screen.height-60, camera.pixelWidth , camera.pixelHeight);		
 		GUI.Label(Rectangle,"Click anywhere on the screen \n   to get further information.");
-			
- 	 	if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), scene2D ? "3D view" : "2D view" )){
-			zoom.disableEvents();
-			Change2D3D();
-			//Videos.test();
-			}
-			
+		
+		if(Videos.GetOtherView()){		
+ 	 		if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), scene2D ? "3D view" : "2D view" )){
+				zoom.disableEvents();
+				Change2D3D();
+				//Videos.test();
+				}
+		}	
     }
         
 }
@@ -124,15 +125,19 @@ function Change2D3D(){
 function cameraTransition(){
 
 	if(scene2D){
+
 		rot= camera.transform.eulerAngles;
 		lightFlag=false;
 		enable=true;
 		done=false;
 		next=false;
+		done2=false;
+		done3=false;
 		
 		
 	}
 	else{
+		rot= Vector3(270,0,0);
 		camera.transform.eulerAngles=Vector3(0,0,0);
 		enable=true;
 		done=false;
@@ -142,7 +147,6 @@ function cameraTransition(){
 		lightFlag=false;
 		light.type=LightType.Point;
 		light.cookie=null;
-		//camera.transform.position=Vector3(0,-10,0);
 		
 	}
 	

@@ -33,6 +33,7 @@ private var sound3D : audio3D;
 
 private var textViewer: text;
 
+private var plane2D : GameObject;
 
 function Start () {
 	
@@ -60,10 +61,11 @@ function Start () {
 
 	sound3D.initSound();
 	// create plane and place camera
-	var s : GameObject = Videos.videoSettings();
+	plane2D = Videos.videoSettings();
 	Trans.init();
 	// give access to this gameobject in createPolarMesh script
-	createPolar.SetSurface(s);
+	if(plane2D)
+		createPolar.SetSurface(plane2D);
 	
 	// create pieces of circle for Diane
 	var func : Hashtable = new Hashtable() ;
@@ -200,45 +202,44 @@ function OnGUI() {
 	*init hashtable in the script attached to the plane
 */
 function placeMeshHash ( t : Hashtable ){
-	
-	var obj = createPolar.placeMesh(	float.Parse( t['theta_min'] ) ,
+	// 2D meshes
+	if(plane2D){
+		var obj = createPolar.placeMesh(	float.Parse( t['theta_min'] ) ,
 										float.Parse( t['theta_max']) ,
 										float.Parse( t['ratioRmin']) ,
 										float.Parse( t['ratioRmax']) ,
 										t['name'] );
+										
+		var s : scriptForPlane = obj.GetComponent("scriptForPlane");
+		if( ! s)
+			s  = obj.AddComponent ("scriptForPlane");
+		s.InitScript( t );
+		if( t.ContainsKey( 'theta_min' ) && t.ContainsKey( 'theta_max' ) && t.ContainsKey( 'ratioRmin' ) && t.ContainsKey( 'name' ) && t.ContainsKey( 'ratioRmax' )) {
 	
-	var obj3D : GameObject = mesh3D.placeMesh3D( t );
+			var p : Vector3 = createPolar.getTruePosition( float.Parse( t['theta_min'] ) , float.Parse( t['theta_max'] ) , float.Parse( t['ratioRmin'] ) , float.Parse( t['ratioRmax'] ) , gameObject );
+			s.InitPosPlane( p );
+			p = createPolar.getOrientedTo( float.Parse( t['theta_min'] ) , float.Parse( t['theta_max'] ) , float.Parse( t['ratioRmin'] ) , float.Parse( t['ratioRmax'] ) , gameObject );
+		s.InitOrientedTo( p );
+		}
+		// add new gameobject to array
+		AllGO2D.Push( obj );
+	}
 	
+	// 3D meshes
+	var obj3D = mesh3D.placeMesh3D( t );
 	
-	var s : scriptForPlane = obj.GetComponent("scriptForPlane");
-	if( ! s)
-		s  = obj.AddComponent ("scriptForPlane");
-		
 	var s3D : scriptForPlane = obj3D.GetComponent("scriptForPlane");
 	if( ! s3D)
 		s3D  = obj3D.AddComponent ("scriptForPlane");
-	
-	s.InitScript( t );
 	s3D.InitScript( t );
 	
 	s3D.InitPosPlane( obj3D.transform.position );
 	
 	s3D.InitOrientedTo( mesh3D.getOrientedTo() );
 	
-	if( t.ContainsKey( 'theta_min' ) && t.ContainsKey( 'theta_max' ) && t.ContainsKey( 'ratioRmin' ) && t.ContainsKey( 'name' ) && t.ContainsKey( 'ratioRmax' )) {
-	
-		var p : Vector3 = createPolar.getTruePosition( float.Parse( t['theta_min'] ) , float.Parse( t['theta_max'] ) , float.Parse( t['ratioRmin'] ) , float.Parse( t['ratioRmax'] ) , gameObject );
-		s.InitPosPlane( p );
-		
-		p = createPolar.getOrientedTo( float.Parse( t['theta_min'] ) , float.Parse( t['theta_max'] ) , float.Parse( t['ratioRmin'] ) , float.Parse( t['ratioRmax'] ) , gameObject );
-		s.InitOrientedTo( p );
-	}
-	
 	if( ! isOnIpad() )
 		s.createParsedFile();
-	
-			
-	AllGO2D.Push( obj );
+		
 	AllGO3D.Push( obj3D );
 }
 
