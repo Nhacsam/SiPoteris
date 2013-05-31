@@ -129,11 +129,11 @@ function InitVideoScreen( path : String , r : Rect ){
 			videoScreen = new GameObject.CreatePrimitive( PrimitiveType.Plane );
 			videoScreen.name = "GUI_stripPlane";
 			disableAll();
-			Console.Warning("File is typeof "+typeof(texture)+" whereas it should be typeof Texture");
+			Console.Warning("File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D");
 		}
 	}
 	else
-		Console.Warning("No file found here : "+path);
+		Console.Warning("No file found here ");
 		
 }
 
@@ -254,8 +254,6 @@ private function getInParameters(){
 ////////////////
 
 function updateStrip(){
-
-	Debug.Log("scale     "+ videoScreen.transform.localScale);
 	if( states == STATES_OF_STRIP.ZOOM_IN )
 		Update_ZOOM_IN();
 	

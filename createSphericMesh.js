@@ -32,7 +32,7 @@ private var quantumOfMesh : float = 0.05f;
 private var sphere : GameObject[];
 
 // radius of piece of sphere
-private var radius : float = 5;
+private var radius : float = 5.1;
 
 private var DATSphere : GameObject[];
 
@@ -51,8 +51,11 @@ function placeMesh3D( t : Hashtable ){
 			phiMin = calculatePHI( float.Parse( t['ratioRmax'] ) , false );
 		}
 		
-		var theta_min : float = float.Parse( t['theta_min'] )* Mathf.PI/180;
-		var theta_max : float = float.Parse( t['theta_max'] )* Mathf.PI/180;
+		// invert theta_max and theta_min cause of mathematical operation : 360-angle
+		// 360-angle because 2D scene looks down (along y-axis) and 3D scene looks up
+		//+93° to covr the right surface of videos
+		var theta_max : float = (360-float.Parse(t['theta_min']) + 93) * Mathf.PI/180;
+		var theta_min : float = (360-float.Parse(t['theta_max']) + 93) * Mathf.PI/180;
 		
 		var g : GameObject = CreateSphericMesh( theta_min , phiMin , theta_max , phiMax , t['name'] );
 
@@ -169,7 +172,7 @@ private function CreateSphericMesh( thetaMin : float , phiMin : float , thetaMax
 	
 	g.transform.position += VerticesInMiddle;
 	
-	g.renderer.enabled = false;
+	g.renderer.enabled = true;
 
 	return g;
 	
@@ -195,4 +198,5 @@ static function calculatePHI( ratio : float , b : boolean) : float {
 }
 
 
+	
 
