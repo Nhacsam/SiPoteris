@@ -39,12 +39,17 @@ private var toOnDeZoom : function() ;
 
 /* Variables qui régissent la disposition du full screen en proportion de la hauteur / largeur (donc entre 0 et 1) */
 /* Le point (0,0) est en bas à gauche. */
-private var marginTop : float = 0.9;
+private var marginTop : float = 0.95;
 private var marginBottom : float = 0.1;
 private var marginLeft : float = 0.05;
 private var marginRight : float = 0.95;
 
-private var textTop : float = marginTop;
+private var stripTop : float = marginTop;
+private var stripBottom : float = stripTop - 0.05;
+private var stripLeft : float = marginLeft;
+private var stripRight : float = marginRight;
+
+private var textTop : float = stripBottom - 0.05;
 private var textBottom : float = 0.26;
 private var textLeft : float = marginLeft;
 private var textRight : float = 0.45;
@@ -53,11 +58,6 @@ private var musicTop : float = textBottom - 0.05;
 private var musicBottom : float = marginBottom;
 private var musicLeft : float = marginLeft + 0.03;
 private var musicRight : float = textRight;
-
-private var stripTop : float = marginTop;
-private var stripBottom : float = stripTop - 0.15;
-private var stripLeft : float = marginLeft;
-private var stripRight : float = marginRight;
 
 private var pictureTop : float = textTop;
 private var pictureBottom : float = textBottom;
@@ -233,10 +233,7 @@ function EnterOnFullScreen( Video : GameObject ) {
 	
 	/* Initialisation de tous les éléments du full screen */
 	
-	if (stripPath) {
-		strip.InitVideoScreen( stripPath , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
-		pictureTop = stripBottom - 0.05;
-	}
+	strip.InitVideoScreen( stripPath , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
 	
 	slideshow.InitSlideShowFactor(slideShowElmts.length, Rect( slideLeft , slideBottom , slideRight - slideLeft , slideTop - slideBottom), 20);
 	windows.InitWindowFactor( Rect( pictureLeft , 1-pictureTop , pictureRight-pictureLeft, pictureTop-pictureBottom), 20 );
