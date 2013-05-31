@@ -30,6 +30,12 @@ private var buttonHeight : int = 100;
 private var buttonWidth : int = 100;
 private var exitFinished: boolean=true;
 
+// CallBacks appelés lors d'un changement de vue
+private var OnBeginTrans : Array ;
+private var OnEndTrans : Array ;
+
+
+
 //instantiate items
 function init(){
 
@@ -47,6 +53,10 @@ function init(){
 	Videos = gameObject.GetComponent("videoSettings") as videoSettings;
 	control.enabled=false;
 	mouseLook.enabled=false;
+	
+	// Initialisation des Callback
+	OnBeginTrans = new Array();
+	OnEndTrans = new Array();
 }
 
 
@@ -136,6 +146,12 @@ function cameraTransition(){
 		
 	}
 	
+	Console.Info('Début de la transition 2D-3D');
+	// Appel des callbacks
+	for( var j = 0; j < OnBeginTrans.length; j++){
+		(OnBeginTrans[j] as function( boolean ) )( scene2D ) ;
+	}
+	
 }
 
 
@@ -180,7 +196,12 @@ function Update2D3D(){
 			
 			control.AttachGyro();
 			zoom.enableEvents();
-		
+			
+			Console.Info('Fin de la transition 2D->3D');
+			// Appel des callbacks
+			for( var j = 0; j < OnEndTrans.length; j++){
+				(OnEndTrans[j] as function( boolean ) )( scene2D ) ;
+			}
 		}
 	}
 	
@@ -221,7 +242,16 @@ function Update3D2D(){
 	//reincrease light
 	if(scene2D && done3){
 		if(light.intensity <= 0.88)light.intensity+=0.02;
-		else {enable=false; zoom.enableEvents();}
+		else {
+			enable=false;
+			zoom.enableEvents();
+			
+			Console.Info('Fin de la transition 2D<-3D');
+			// Appel des callbacks
+			for( var j = 0; j < OnEndTrans.length; j++){
+				(OnEndTrans[j] as function( boolean ) )( scene2D ) ;
+			}
+		}
 	
 	}
 
@@ -273,4 +303,16 @@ function flagExit(){
 
 static function isOnIpad() : boolean {
 	return ( SystemInfo.deviceType == DeviceType.Handheld );
+}
+
+
+/**
+ * Setter de Callback
+ */
+
+function AddOnBeginTrans ( f : function( boolean ) ) {
+	OnBeginTrans.push(f);
+}
+function AddOnEndTrans ( f : function( boolean ) ) {
+	OnEndTrans.push(f);
 }

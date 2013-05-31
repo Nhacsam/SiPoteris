@@ -70,7 +70,7 @@ function Start () {
 
 	
 	//fin debug test
-	Zoom.Init(AllGO2D, AllGO3D, enableMouseLook);
+	Zoom.Init(AllGO2D, ZOOM_TYPE.LOOK_BEHIND ,Vector3.zero );
 	
 	
 	VideoFull.InitFullScreen();
@@ -78,18 +78,22 @@ function Start () {
 	
 	// Link
 	Zoom.AddOnZoom( Videos.videoHDZoomON );
-	Zoom.AddOnZoom(switchFieldOfView);
 	Zoom.AddOnZoom(Trans.flagExit);
 	Zoom.AddOnLeave( VideoFull.LeaveFullScreen );
 	Zoom.AddOnLeave( Videos.videoHDZoomQuit );
 	Zoom.AddOnEndZoom(VideoFull.EnterOnFullScreen);
 	Zoom.AddOnEndDezoom( Trans.flagExit );
 	
+	Zoom.AddOnZoom(disableMouseLook);
+	Zoom.AddOnEndDezoom(enableMouseLook);
 	
 	
 	Zoom.AddOnLeave( switchFieldOfView );
 	
 	VideoFull.SetLeaveCallback( Zoom.toOnDeZoom );
+	
+	Trans.AddOnEndTrans( changeZoomPlane );
+	
 	
 	// Camera
 	camera.backgroundColor = Color.black;
@@ -97,6 +101,8 @@ function Start () {
 	camera.fieldOfView  = 60 ;
 	camera.farClipPlane = 60;
 	camera.nearClipPlane = 0.01;
+	
+	disableMouseLook();
 }
 
 function Update () {
@@ -121,14 +127,45 @@ function Update () {
 	
 }
 
-function enableMouseLook( b : boolean ) {
+function enableMouseLook() {
 	if( isOnIpad() ) {
-		control.enabled = Trans.isScene2D() ? false : b;
+		control.enabled = Trans.isScene2D() ? false : true;
 	}
 	else {	
-		mouseLook.enabled = Trans.isScene2D() ? false : b;
+		mouseLook.enabled = Trans.isScene2D() ? false : true;
 	}
 }
+
+function disableMouseLook() {
+	if( isOnIpad() ) {
+		control.enabled = false;
+	}
+	else {	
+		mouseLook.enabled = false ;
+	}
+}
+
+
+function changeZoomPlane( is2D : boolean ) {
+	
+	if( is2D ) {
+		Zoom.changeClickableElmts( AllGO2D );
+		Zoom.changeType( ZOOM_TYPE.GO_ON_POINT_ROTATING, Vector3.zero );
+	} else {
+		Zoom.changeClickableElmts( AllGO3D );
+		Zoom.changeType( ZOOM_TYPE.GO_ON_PLANE_ROTATING, Vector3.zero );
+	}
+}
+
+function isOnAGUIElmt( pos : Vector2) {
+	
+	if( Trans.isInButton(pos) )
+		return true ;
+	
+	return false ;
+}
+
+
 
 
 static function isOnIpad() : boolean {
@@ -144,14 +181,6 @@ function CreateLight () {
 	light.intensity=0.88;
 	
 }
-
-
-
-function switchFieldOfView() {
-	camera.fieldOfView  = ( camera.fieldOfView == 80 ) ? 60 : 80 ;
-}
-
-
 
 /*
  * Appelle les fonctions des scripts gérant l'interface
