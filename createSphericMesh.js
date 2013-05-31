@@ -9,6 +9,8 @@ This script creates a piece of sphere.
 axis are those of Unity.
 */
 
+private var video : videoSettings;
+
 // vertices corresponding to a filled "line" : leave second loop to increase thetaValue - this is the first vertex of the line
 private var lineFilled : int[];
 
@@ -32,7 +34,7 @@ private var quantumOfMesh : float = 0.05f;
 private var sphere : GameObject[];
 
 // radius of piece of sphere
-private var radius : float = 5;
+private var radius : float = 5.2;
 
 private var DATSphere : GameObject[];
 
@@ -41,22 +43,27 @@ private var DATSphere : GameObject[];
 	*place mesh in 3D
 */
 function placeMesh3D( t : Hashtable ){
-		
-		if( float.Parse( t['ratioRmin'] )  > 0.66 || float.Parse( t['ratioRmax'] )  > 0.66 ){
-			var phiMax : float = calculatePHI( float.Parse( t['ratioRmin'] ) , true );
-			var phiMin : float = calculatePHI( float.Parse( t['ratioRmax'] ) , true );
-		}
-		else{
-			phiMax = calculatePHI( float.Parse( t['ratioRmin'] ) , false );
-			phiMin = calculatePHI( float.Parse( t['ratioRmax'] ) , false );
-		}
-		
-		var theta_min : float = float.Parse( t['theta_min'] )* Mathf.PI/180;
-		var theta_max : float = float.Parse( t['theta_max'] )* Mathf.PI/180;
-		
-		var g : GameObject = CreateSphericMesh( theta_min , phiMin , theta_max , phiMax , t['name'] );
 
-		return g;	
+	video = gameObject.GetComponent("videoSettings") as videoSettings;
+		
+	if( float.Parse( t['ratioRmin'] )  > 0.66 || float.Parse( t['ratioRmax'] )  > 0.66 ){
+		var phiMax : float = calculatePHI( float.Parse( t['ratioRmin'] ) , true );
+		var phiMin : float = calculatePHI( float.Parse( t['ratioRmax'] ) , true );
+	}
+	else{
+		phiMax = calculatePHI( float.Parse( t['ratioRmin'] ) , false );
+		phiMin = calculatePHI( float.Parse( t['ratioRmax'] ) , false );
+	}
+		
+	// invert theta_max and theta_min cause of mathematical operation : 360-angle
+	// 360-angle because 2D scene looks down (along y-axis) and 3D scene looks up
+	//+93° to covr the right surface of videos
+	var theta_max : float = (360-float.Parse(t['theta_min'])) * Mathf.PI/180;
+	var theta_min : float = (360-float.Parse(t['theta_max'])) * Mathf.PI/180;
+		
+	var g : GameObject = CreateSphericMesh( theta_min , phiMin , theta_max , phiMax , t['name'] );
+
+	return g;	
 }
 
 /*
@@ -105,7 +112,7 @@ private function CreateSphericMesh( thetaMin : float , phiMin : float , thetaMax
 			var longi = thetaMin + i*quantumOfMesh ;
 			
 			newX = radius * Mathf.Sin(longi) * Mathf.Cos(latt);
-			newY = radius * Mathf.Sin(latt) + 1.3;
+			newY = radius * Mathf.Sin(latt) + (video.getSpherePos()).y;
 			newZ = radius * Mathf.Cos(longi) * Mathf.Cos(latt);
 			
 			VerticesLocal[i*numberOfLines + j] = Vector3(newX, newY, newZ);
@@ -169,7 +176,7 @@ private function CreateSphericMesh( thetaMin : float , phiMin : float , thetaMax
 	
 	g.transform.position += VerticesInMiddle;
 	
-	g.renderer.enabled = false;
+	g.renderer.enabled = true;
 
 	return g;
 	
@@ -195,4 +202,5 @@ static function calculatePHI( ratio : float , b : boolean) : float {
 }
 
 
+	
 
