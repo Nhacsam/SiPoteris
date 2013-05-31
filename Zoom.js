@@ -101,7 +101,7 @@ function UpDateZoom () {
 	
 		// Si on est en train de zoomer
 		case ZOOM_STATES.ONZOOM :
-			
+		
 			// Conditions d'arrets
 			if( camera.transform.position == zCameraFinalPos && camera.transform.rotation == zCameraFinalRot) {
 				camera.transform.LookAt(zSelected.transform);
