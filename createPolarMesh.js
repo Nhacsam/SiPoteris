@@ -170,7 +170,6 @@ public function getTruePosition( thetaMin : float , thetaMax : float , RatioRmin
 	a = a * Mathf.PI / 180;
 
 	return Vector3( r * Mathf.Cos( a ) , obj.transform.position.y , r * Mathf.Sin( a ) );
-
 }
 
 
