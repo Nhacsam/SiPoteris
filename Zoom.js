@@ -504,7 +504,10 @@ private function computeGoOnPlaneRotatingPosAndRot() : Array {
  */
 private function computeGoOnPointRotatingPosAndRot() : Array {
 	var forward : Vector3 = zDestinationPoint - zCameraBeginPos ;
+	
+	camera.transform.rotation = zCameraBeginRot;
 	var upwards : Vector3 = - camera.transform.up ;
+	
 	return new Array(zDestinationPoint,  Quaternion.LookRotation (forward , upwards)  );
 }
 
@@ -514,7 +517,8 @@ private function computeGoOnPointRotatingPosAndRot() : Array {
  */
 private function computeLookBehindPosAndRot() : Array {
 	
-	var forward : Vector3 = zDestinationPoint - zCameraBeginPos ;
+	camera.transform.rotation = zCameraBeginRot;
+	var forward : Vector3 = camera.transform.forward ;
 	var upwards : Vector3 = camera.transform.up ;
 	return new Array( zCameraBeginPos,  Quaternion.LookRotation ( -forward , upwards)  );
 }
@@ -525,7 +529,10 @@ private function computeLookBehindPosAndRot() : Array {
  */
 private function computeGoAwayBackwardPosAndRot() : Array {
 	
-	var pos : Vector3 = 2*zCameraBeginPos - zDestinationPoint ;
+	camera.transform.rotation = zCameraBeginRot;
+	var forward : Vector3 = camera.transform.forward ;
+	
+	var pos : Vector3 = zCameraBeginPos - forward ;
 	
 	return new Array( 10*pos, zCameraBeginRot );
 }
@@ -552,12 +559,14 @@ private function computeOnPlanePos() : Vector3 {
 	
 	var computedPos : Vector3 ;
 	
+	var planePos : Vector3 = (zSelected.GetComponent('scriptForPlane') as scriptForPlane).getPosPlane();
+	
 	// on oriente la caméra vers le plan
 	camera.transform.LookAt(zSelected.transform);
 	
 	var orientedTo : Vector3 = (zSelected.GetComponent('scriptForPlane') as scriptForPlane).getOrientedTo() ;
 	// vecteur 0M ou O le centre du plan et M le centre de la sphère
-	var axe = orientedTo - zSelected.transform.position ;
+	var axe = orientedTo - planePos ;
 	
 	// distance entre la caméra et le plan
 	var CameraInitialDecal = axe.magnitude ;
@@ -581,7 +590,7 @@ private function computeOnPlanePos() : Vector3 {
 	// qu'un des deux traits collisionne avec le plan
 	do {
 		
-		computedPos = zSelected.transform.position + (CameraInitialDecal - i )*normal ;
+		computedPos = planePos + (CameraInitialDecal - i )*normal ;
 		camera.transform.position = computedPos ;
 		camera.transform.LookAt(zSelected.transform);
 		

@@ -66,7 +66,7 @@ static function getFilesInArrayFromFolder( folder : String, extension : String, 
 	
 		var fileInfo = Directory.GetFiles(root + '/' + folder + '/', "*" + extension) ;
 		for (file in fileInfo) {
-			if(  reg.IsMatch(file) )
+			if(  reg.IsMatch(file) && removeExtension( fromResourcesPath(file) ) != folder + '/')
 				FilesNameTab.Push( removeExtension( fromResourcesPath(file) )  );
 		}
 	}
