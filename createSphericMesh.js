@@ -46,13 +46,13 @@ function placeMesh3D( t : Hashtable ){
 
 	video = gameObject.GetComponent("videoSettings") as videoSettings;
 		
-	if( float.Parse( t['ratioRmin'] )  > 0.66 || float.Parse( t['ratioRmax'] )  > 0.66 ){
-		var phiMax : float = calculatePHI( float.Parse( t['ratioRmin'] ) , true );
-		var phiMin : float = calculatePHI( float.Parse( t['ratioRmax'] ) , true );
+	if( float.Parse( t['ratiormin'] )  > 0.66 || float.Parse( t['ratiormax'] )  > 0.66 ){
+		var phiMax : float = calculatePHI( float.Parse( t['ratiormin'] ) , true );
+		var phiMin : float = calculatePHI( float.Parse( t['ratiormax'] ) , true );
 	}
 	else{
-		phiMax = calculatePHI( float.Parse( t['ratioRmin'] ) , false );
-		phiMin = calculatePHI( float.Parse( t['ratioRmax'] ) , false );
+		phiMax = calculatePHI( float.Parse( t['ratiormin'] ) , false );
+		phiMin = calculatePHI( float.Parse( t['ratiormax'] ) , false );
 	}
 		
 	// invert theta_max and theta_min cause of mathematical operation : 360-angle
