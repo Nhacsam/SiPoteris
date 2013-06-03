@@ -318,7 +318,7 @@ function OnDisable(){
  */
 
 // Balaiement
-function OnSwipe ( info : SwipeInfo) {
+function OnSwipe ( info : SwipeInfo ) {
 	
 	// La fonction s'interrompt si les événements sont désactivés
 	if( !eventEnable)

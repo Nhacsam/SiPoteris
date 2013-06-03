@@ -52,8 +52,8 @@ function placeMesh3D( t : Hashtable ){
 		var phiMin : float = calculatePHI( float.Parse( t['ratioRmax'] ) , true );
 	}
 	else{
-		phiMax = calculatePHI( float.Parse( t['ratioRmin'] ) , false );
-		phiMin = calculatePHI( float.Parse( t['ratioRmax'] ) , false );
+		phiMax = calculatePHI( float.Parse( t['ratiormin'] ) , false );
+		phiMin = calculatePHI( float.Parse( t['ratiormax'] ) , false );
 	}
 		
 	// invert theta_max and theta_min cause of mathematical operation : 360-angle

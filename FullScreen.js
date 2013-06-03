@@ -56,7 +56,7 @@ private var textRight : float = 0.45;
 
 private var musicTop : float = textBottom - 0.05;
 private var musicBottom : float = marginBottom;
-private var musicLeft : float = marginLeft + 0.05;
+private var musicLeft : float = marginLeft + 0.03; // Permet aussi de changer la taille des boutons
 private var musicRight : float = textRight;
 
 private var pictureTop : float = textTop;
@@ -224,7 +224,15 @@ function EnterOnFullScreen( Video : GameObject ) {
 	
 	/* Initialisation de tous les éléments du full screen */
 	
+	try { // On teste s'il y a un strip du bon format ou pas
 	strip.InitVideoScreen( stripPath , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
+	}
+	
+	catch (str) {
+		Console.Warning(str);
+		textTop = marginTop;
+		pictureTop = marginTop;
+	}
 	
 	slideshow.InitSlideShowFactor(slideShowElmts.length, Rect( slideLeft , slideBottom , slideRight - slideLeft , slideTop - slideBottom), 20);
 	windows.InitWindowFactor( Rect( pictureLeft , 1-pictureTop , pictureRight-pictureLeft, pictureTop-pictureBottom), 20 );
@@ -329,6 +337,10 @@ function enableOthers( elemt ) {
 public function nextImg() {
 	slideshow.next( !slideshow.isHidden() );
 }
+public function previousImg() {
+	slideshow.previous( !slideshow.isHidden() );
+}
+
 
 
 /*

@@ -10,6 +10,7 @@ This script parses xml files, informations about videos...
 import System.Xml;
 import System.IO;
 
+
 // number of movies
 private var numberOfMovies : int = 0;
 private var mFile : XmlDocument ;
@@ -25,15 +26,27 @@ function InitXml( XMLToLoad : String ) {
 	
 }
 
-
 /*
 	*parse xml file
 	*this method creates a hashtable containing all informations of this element, and 
 	*thanks to callback, this hashtable will be attached to the plane
 */
-function getElementFromXML( functions : Hashtable ) : Array {
-
+static function getElementFromXML( fileName : String, callbackFunc : function( String, Hashtable ) ) : Array {
+	
 	var Data = new Array();
+	
+	var textAsset : TextAsset = Resources.Load( fileName , typeof(TextAsset) ) as TextAsset;
+	
+	if( !textAsset){
+		Console.CriticalError( 'Xml file '+ fileName + ' not found !');
+		return Data ;
+	}
+	
+	var mFile : XmlDocument = new XmlDocument();
+	mFile.Load( new StringReader( textAsset.text ) );
+	
+	
+	
 	
 	// root hashtable
 	var rootTab : Hashtable ;
@@ -65,8 +78,8 @@ function getElementFromXML( functions : Hashtable ) : Array {
 		// get all the information stored under this element of rootChildren
 		Data.Push( rootTab );
 		
-		if( functions.Contains(nodeList.Name) )
-			(functions[ nodeList.Name ] as function(Hashtable) )(rootTab) ;
+		
+		callbackFunc( (nodeList.Name as String).ToLower(), rootTab);
 		
 	}
 	
@@ -77,11 +90,15 @@ function getElementFromXML( functions : Hashtable ) : Array {
 /*
 	*explore recursively the xml file
 */
-private function exploreRecursively ( list : XmlNodeList , Htab : Hashtable){
+private static function exploreRecursively ( list : XmlNodeList , Htab : Hashtable){
 	
 	for each( var nodeList : XmlNode in list ) {
 	
 		var elementContent : XmlNodeList = nodeList.ChildNodes;
+		
+		// conversion en minuscule (pour insensibilité à la casse)
+		var nodeName = (nodeList.Name as String).ToLower() ;
+		
 		
 		// if there are childNodes
 		if( elementContent.Count > 1 ){
@@ -91,25 +108,24 @@ private function exploreRecursively ( list : XmlNodeList , Htab : Hashtable){
 			// fill nextHT
 			exploreRecursively( elementContent , nextHT );
 			
-			Htab[ nodeList.Name ] = nextHT;
+			Htab[ nodeName ] = nextHT;
 		
 		}
 		else {// if there are no childNodes
-		
-			if( Htab.ContainsKey( nodeList.Name ) && typeof( Htab[ nodeList.Name ] ) != typeof( Array ) ){ // if key already exists and this is not an array
+			if( Htab.ContainsKey( nodeName ) && typeof( Htab[ nodeName ] ) != typeof( Array ) ){ // if key already exists and this is not an array
 				// create an array and start storing all the information
 				var array : Array = new Array();
-				array.Push( Htab[ nodeList.Name ] );
+				array.Push( Htab[ nodeName ] );
 				array.Push( nodeList.InnerText );
-				Htab[ nodeList.Name ] = array;
+				Htab[ nodeName ] = array;
 				
-			} else if( Htab.ContainsKey( nodeList.Name ) && typeof( Htab[ nodeList.Name ] ) == typeof( Array ) ){ // if key already exists and this is an array
+			} else if( Htab.ContainsKey( nodeName ) && typeof( Htab[ nodeName ] ) == typeof( Array ) ){ // if key already exists and this is an array
 			
 				// add another element in the array
 				( Htab[ nodeList.Name ] as Array).Push( nodeList.InnerText );
 			
 			} else // if key does not exist already
-				Htab[ nodeList.Name ] = nodeList.InnerText ;
+				Htab[ nodeName ] = nodeList.InnerText.Trim() ;
 			
 		}
 	}

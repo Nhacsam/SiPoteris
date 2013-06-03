@@ -22,11 +22,29 @@ private var Trans :Transition2D3D;				// Gère la transition 2D <-> 3D
 
 private var Zoom : Zoom ;						// Gère le click sur les plans et les trasitions qui en découlent
 private var VideoFull : FullScreen ;			// Gere la GUI qui s'affiche après avoir cliqué dans un plan
-private var xml : getXML;						// Ouvre le fichier xml et le parse
 
 // Déplacement de la caméra
 private var control : CameraControl ;			// Sur l'ipad
 private var mouseLook : MouseLook ;				// Avec la souris
+
+
+/*
+ * Paramètres de l'application
+ */
+private var haveUniver : boolean ;
+private var beginBy2D : boolean ;			// on commence par la vue 2D (sinon 3D)
+private var have2DAnd3D : boolean ;			// on a une vue 2D et une vue 3D (sinon que la première)
+
+private var soundEnable : boolean ;			// Les sons 3D sont activé
+
+private var transitionToGUIType : String ;	// Type de transition vers la GUI : 'ZOOM', 'VIDEO'
+private var zoomType2D : String ;			// Type d'effet de Zoom 2D <-> GUI
+private var zoomType3D : String ;			// Type d'effet de Zoom 3D <-> GUI
+private var zoomLength : float ;			// Logueur du Zoom
+
+
+
+
 
 private var plane2D : GameObject;
 
@@ -38,6 +56,23 @@ private var plane2D : GameObject;
 function Start () {
 	
 	/*
+	 * Parse le fichier de configuration du système
+	 */
+	setDefaultSystemValues();
+	getXML.getElementFromXML( 'system.xml', systemXmlWrapper ) ;
+	
+	Console.Test( 'haveUniver : "' + haveUniver +'"' ,50 );
+	Console.Test( 'beginBy2D : "' + beginBy2D +'"' ,50 );
+	Console.Test( 'have2DAnd3D : "' + have2DAnd3D +'"' ,50 );
+	Console.Test( 'soundEnable : "' + soundEnable +'"' ,50 );
+	Console.Test( 'transitionToGUIType : "' + transitionToGUIType +'"' ,50 );
+	Console.Test( 'zoomType2D : "' + zoomType2D +'"' ,50 );
+	Console.Test( 'zoomType3D : "' + zoomType3D +'"' ,50 );
+	Console.Test( 'zoomLength : "' + zoomLength +'"' ,50 );
+	
+	
+	
+	/*
 	 * Instanciate the objects
 	 */
 	Videos = gameObject.AddComponent("videoSettings") as videoSettings;
@@ -45,13 +80,15 @@ function Start () {
 	mesh3D = gameObject.AddComponent("createSphericMesh") as createSphericMesh;
 	
 	move = gameObject.AddComponent("moveSurface") as moveSurface;
-	sound3D = gameObject.AddComponent("audio3D") as audio3D;
+	
+	if( soundEnable )
+		sound3D = gameObject.AddComponent("audio3D") as audio3D;
+	
 	Trans = gameObject.AddComponent("Transition2D3D") as Transition2D3D;
 	
 	
 	Zoom = gameObject.AddComponent("Zoom") as Zoom;
 	VideoFull= gameObject.AddComponent("FullScreen") as FullScreen;
-	xml = gameObject.AddComponent("getXML") as getXML;
 	
 	control = gameObject.AddComponent("CameraControl") as CameraControl;
 	mouseLook = gameObject.AddComponent("MouseLook") as MouseLook;
@@ -67,29 +104,22 @@ function Start () {
 	if(plane2D)
 		createPolar.SetSurface(plane2D);
 	
+	
 	// Initialise le script gérant les sons
-	sound3D.initSound();
+	if( soundEnable )
+		sound3D.initSound();
 	
 	// Initialise la transition 2D / 3D
 	Trans.init();
 	
-	// Initialise le parseur xml
-	xml.InitXml("xml_data");
-	
-	// parse le fichier et appelle les fonction correspondante
-	var func : Hashtable = new Hashtable() ;
-	func['diane'] = placeMeshHash ;		//création des éléments clickables
-	func['acteon'] = placeMeshHash ;
-	func['middle'] = placeMeshHash ;
-	func['sound'] = placeAudioHash ;	// création des sons
-	xml.getElementFromXML( func );		// lance le parsage
-	
-	
+	// parse le fichier et appelle la fonction correspondante
+	getXML.getElementFromXML( 'xml_data', datasXmlWrapper ) ;
 	
 	// Initialise le Zoom avec les plans 2D. Type de zoom : on fonce vers le point (0,0,0) en tournant
-	Zoom.Init(AllGO2D, ZOOM_TYPE.GO_ON_POINT_ROTATING ,Vector3.zero );
+	Zoom.Init(AllGO2D, zoomType2D ,Vector3.zero );
+	Zoom.setTransitionTime(zoomLength);
 	
-	// Initialisation de l'iterface.
+	// Initialisation de l'interface.
 	VideoFull.InitFullScreen();
 	 
 	 
@@ -141,7 +171,8 @@ function Update () {
 	Trans.UpdateTrans() ; 				// maj des transitions 2D/3D
 	Zoom.UpDateZoom() ;					// maj du Zoom
 	VideoFull.UpDateFullScreen();		// maj de l'interface
-	sound3D.updateSounds( AllAudio3D );	// maj des sons 3D
+	if( soundEnable )
+		sound3D.updateSounds( AllAudio3D );	// maj des sons 3D
 	
 	// Déplacement des plan en 2D
 	for( var i =0; i < AllGO2D.length; i++) {
@@ -187,10 +218,10 @@ function changeZoomPlane( is2D : boolean ) {
 	
 	if( is2D ) {
 		Zoom.changeClickableElmts( AllGO2D );
-		Zoom.changeType( ZOOM_TYPE.GO_ON_POINT_ROTATING, Vector3.zero );
+		Zoom.changeType( zoomType2D, Vector3.zero );
 	} else {
 		Zoom.changeClickableElmts( AllGO3D );
-		Zoom.changeType( ZOOM_TYPE.GO_ON_PLANE, Vector3.zero );
+		Zoom.changeType( zoomType3D, Vector3.zero );
 	}
 }
 
@@ -259,11 +290,42 @@ function OnGUI() {
 }
 
 
+
+
+
+/*
+ * Fonction de rappel envoyé dans le parsage du xml des datas
+ * Récupère la contenue d'une balise du xml et 
+ * l'envoie à la sous fonction correspondante
+ */
+function datasXmlWrapper( tagName : String, content : Hashtable ) {
+	switch( tagName ) {
+		
+		case 'diane' :
+		case 'acteon' :
+		case 'middle' :
+			 
+			if(!content.ContainsKey( 'shape'))
+				placeMeshHashPolar( content );
+			else if( content['shape'] == 'polar' )
+				placeMeshHashPolar( content );
+			else
+				placeMeshHashPolar( content );
+			
+			
+			break ;
+		
+		case 'sound' :
+			placeAudioHash( content );
+			break ;
+	}
+}
+
 /*
 	*place piece of circle according to xml
 	*init hashtable in the script attached to the plane
 */
-function placeMeshHash ( t : Hashtable ){
+function placeMeshHashPolar ( t : Hashtable ){
 	
 	/*
 	 * Création des éléments clickable en 2D
@@ -271,19 +333,19 @@ function placeMeshHash ( t : Hashtable ){
 	if (	plane2D						 &&
 			t.ContainsKey( 'theta_min' ) &&
 			t.ContainsKey( 'theta_max' ) &&
-			t.ContainsKey( 'ratioRmin' ) &&
-			t.ContainsKey( 'ratioRmax' ) &&
+			t.ContainsKey( 'ratiormin' ) &&
+			t.ContainsKey( 'ratiormax' ) &&
 			t.ContainsKey( 'name' ) 	 ) {
 		
 		// crée des raccourcis
 		var theta_min = float.Parse( t['theta_min'] ) ;
 		var theta_max = float.Parse( t['theta_max'] ) ;
-		var ratioRmin = float.Parse( t['ratioRmin'] ) ;
-		var ratioRmax = float.Parse( t['ratioRmax'] ) ;
+		var ratiormin = float.Parse( t['ratiormin'] ) ;
+		var ratiormax = float.Parse( t['ratiormax'] ) ;
 		
 		// instanciation des éléments
 		var obj = createPolar.placeMesh(	theta_min, theta_max ,
-											ratioRmin, ratioRmax , t['name'] );
+											ratiormin, ratiormax , t['name'] );
 		
 		// Ajout d'un script comprenant une extension des propriété et des methodes des plans clickable
 		var s : scriptForPlane = obj.GetComponent("scriptForPlane");
@@ -293,12 +355,12 @@ function placeMeshHash ( t : Hashtable ){
 		
 		// Ajout de la position réelle du plan dans le script d'extension
 		var p : Vector3 = createPolar.getTruePosition( 	theta_min, theta_max ,
-														ratioRmin, ratioRmax , gameObject );
+														ratiormin, ratiormax , gameObject );
 		s.InitPosPlane( p );
 		
 		// Ajout du point vers lequel le plan est orienté dans le script d'extension
 		p = createPolar.getOrientedTo(	theta_min, theta_max ,
-										ratioRmin, ratioRmax , gameObject );
+										ratiormin, ratiormax , gameObject );
 		s.InitOrientedTo( p );
 		
 		// add new gameobject to array
@@ -330,9 +392,6 @@ function placeMeshHash ( t : Hashtable ){
 		
 		// Ajout du point vers lequel le plan est orienté dans le script d'extension
 		s3D.InitOrientedTo( mesh3D.getOrientedTo() );
-	
-		if( ! isOnIpad()  && plane2D)
-			s.createParsedFile();
 		
 		// add new gameobject to array
 		AllGO3D.Push( obj3D );
@@ -348,7 +407,125 @@ function placeMeshHash ( t : Hashtable ){
 	*create and place sound in 3D
 */
 function placeAudioHash ( t : Hashtable ){
+	if(! soundEnable )
+		return ;
+	
 	var g : GameObject = sound3D.createAudio( t );
 	if( g )
 		AllAudio3D.Push( g );
 }
+
+
+/*
+ * Définie les valeurs par défaut des paramètres système
+ */
+
+function setDefaultSystemValues() {
+	// on démarre dans l'affichage 2D, qui existe
+	haveUniver = true ;
+	beginBy2D = true ;
+	
+	// on peut switcher entre 2D et 3D
+	have2DAnd3D = true ;
+	
+	// les sons dans la 3D sont activé
+	soundEnable = true ;
+	
+	// transition vers la GUI : ZOOM
+	transitionToGUIType = 'ZOOM' ;
+	// Effet du zoom 
+	zoomType2D = 'GO_ON_POINT_ROTATING' ;
+	zoomType3D = 'GO_ON_PLANE' ;
+	// durée du zoom : 1s
+	zoomLength = 1.0 ;
+}
+
+/*
+ * Fonction de rappel envoyé dans le parsage du xml paramètres système
+ * Récupère la contenue d'une balise du xml et 
+ * replis les attributs des paramètres
+ */
+function systemXmlWrapper( tagName : String, content : Hashtable ) {
+	
+	switch (tagName) {
+		
+		// Paramètre de <univer>
+		case 'univer' :
+			
+			/*
+			 * Note si on doit commencer par la 2D ou la 3D ou si on arrive direct
+			 * dans l'interface graphique
+			 * contenu entre <beginby> et </beginby>
+			 * Valeurs possibles : '2D', '3D', 'NONE'
+			 */
+			if( content.ContainsKey( 'beginby' ) ) {
+				switch( content['beginby'] ) {
+					case '3D' :
+						haveUniver = true ;
+						beginBy2D = false ;
+						break ;
+					case 'NONE' :
+						haveUniver = false ;
+						break;
+					case '2D' :
+						haveUniver = true ;
+						beginBy2D = true ;
+						break ;
+				}
+			}
+			
+			// si <oneuniv/> alors on ne peux pas switcher entre 2D et 3D sinon on peux
+			have2DAnd3D = ( content.ContainsKey( 'oneuniv' ) ) ? false : true ;
+			
+			// si <disablesound/> alors les sons en 3D sont désactivés, par défaut, ils ne le sont pas
+			soundEnable = ( content.ContainsKey( 'disablesound' ) ) ? false : true ;
+		break;
+		
+		// Paramètre de <transitiontogui>
+		case 'transitiontogui' :
+			
+			/*
+			 * Enregistre le type de la transition entre l'univers et la GUI
+			 * contenu entre <type> et </type>
+			 * Valeurs possibles : 'ZOOM', 'VIDEO'
+			 */
+			if( content.ContainsKey( 'type' ) ) {
+				switch( content['type'] ) {
+					case 'ZOOM' :
+					case 'VIDEO' :
+						transitionToGUIType = content['type'] ;
+						break ;
+				}
+			}
+			
+			/*
+			 * Enregistre le type de zoom contenu entre <zoomtype2D> et </zoomtype2D>
+			 * et entre <zoomtype3D> et </zoomtype3D>
+			 * utile que si <type>ZOOM</type>
+			 * valeurs possibles : 'GO_ON_PLANE', 'GO_ON_POINT', 'GO_ON_PLANE_ROTATING', 
+			 * 'GO_ON_POINT_ROTATING', 'LOOK_BEHIND', 'GO_AWAY_BACKWARD', 'GO_AWAY_FORWARD'
+			 */
+			if( content.ContainsKey( 'zoomtype2d' ) )
+				zoomType2D = content['zoomtype2d'] ;
+			
+			if( content.ContainsKey( 'zoomtype3d' ) )
+				zoomType3D = content['zoomtype3d'] ;
+			
+			/*
+			 * Enregistre la durée du zoom (en seconde) contenu entre <zoomlength> et </zoomlength>
+			 * utile que si <type>ZOOM</type>
+			 * valeur par défaut : 1.0
+			 */
+			if( content.ContainsKey( 'zoomlength' ) ) {
+				if( float.Parse(content['zoomlength']) != 'NaN' )
+					zoomLength = float.Parse(content['zoomlength']) ;
+			}
+			
+		break ;
+	}
+	
+	
+}
+
+
+
