@@ -71,7 +71,7 @@ private function placeAudioSources( theta : float , ratio : float , g : GameObje
 //////////run/stop clip//////////
 /////////////////////////////////
 
-private function displayAudio3D( source : GameObject ){
+private function playAudio3D( source : GameObject ){
 	if( !source.audio.isPlaying ){
 		source.audio.Play();
 		// clip will not end
@@ -123,7 +123,7 @@ public function updateSounds ( tabSound : Array ){
 				
 			// run clip if not playing
 			if( !(tabSound[i] as GameObject).audio.isPlaying )
-				displayAudio3D( tabSound[i] );
+				playAudio3D( tabSound[i] );
 				
 			if( (tabSound[i] as GameObject).audio.isPlaying ){
 				srcAudioPosViewPoint = Camera.main.WorldToViewportPoint( (tabSound[i] as GameObject).transform.position );

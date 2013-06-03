@@ -211,20 +211,63 @@ public function getType() : ZOOM_TYPE {
  * Si le point de destination est inutile pour le type
  * de tarnsition fournis, il n'est pas enregistré
  */
-public function changeType( t : ZOOM_TYPE, p : Vector3 ) {
+public function changeType( t, p : Vector3 ) {
+	
+	// conversion si besoin
+	if( typeof(t) == String )
+		t = string2ZOOM_TYPE(t);
+	else if ( typeof(t) != ZOOM_TYPE) {
+		Console.HandledError('Invalid type of Zoom given.');
+		t = ZOOM_TYPE.GO_AWAY_FORWARD ;
+	}
+	
 	// enregistrement du type
 	setType(t);
 	
 	// enregistrement du point de destination si besoins
-	if ( 	t == ZOOM_TYPE.GO_ON_POINT 				||
-			t == ZOOM_TYPE.GO_ON_POINT_ROTATING 	||
-			t == ZOOM_TYPE.GO_AWAY_FORWARD 			||
-			t == ZOOM_TYPE.GO_AWAY_BACKWARD 		) {
+	if ( 	zType == ZOOM_TYPE.GO_ON_POINT 				||
+			zType == ZOOM_TYPE.GO_ON_POINT_ROTATING 	||
+			zType == ZOOM_TYPE.GO_AWAY_FORWARD 			||
+			zType == ZOOM_TYPE.GO_AWAY_BACKWARD 		) {
 			
 		zDestinationPoint = p ;
 	}
 }
 
+/*
+ * Converti un type au format String
+ * en type au format ZOOM_TYPE
+ */
+
+public function string2ZOOM_TYPE( s : String) :  ZOOM_TYPE {
+	switch(s) {
+		case 'GO_ON_PLANE' :
+			return  ZOOM_TYPE.GO_ON_PLANE ;
+			break;
+		case 'GO_ON_POINT' :
+			return  ZOOM_TYPE.GO_ON_POINT ;
+			break;
+		case 'GO_ON_PLANE_ROTATING' :
+			return  ZOOM_TYPE.GO_ON_PLANE_ROTATING ;
+			break;
+		case 'GO_ON_POINT_ROTATING' :
+			return  ZOOM_TYPE.GO_ON_POINT_ROTATING ;
+			break;
+		case 'LOOK_BEHIND' :
+			return  ZOOM_TYPE.LOOK_BEHIND ;
+			break;
+		case 'GO_AWAY_BACKWARD' :
+			return  ZOOM_TYPE.GO_AWAY_BACKWARD ;
+			break;
+		case 'GO_AWAY_FORWARD' :
+			return  ZOOM_TYPE.GO_AWAY_FORWARD ;
+			break;
+		default :
+			Console.HandledError('Invalid type of Zoom given.');
+			return ZOOM_TYPE.GO_AWAY_FORWARD ;
+			break ;
+	}
+}
 
 /************************
  **** Machine d'état ****
@@ -580,8 +623,6 @@ private function computeOnPlanePos() : Vector3 {
 	// point milieu gauche de la caméra
 	var left : Vector2 = new Vector2( 	rect.xMin 								, rect.yMin + (rect.yMax - rect.yMin) / 2 ) ;
 	
-	
-	
 	var hit : RaycastHit = new RaycastHit() ;
 	var i : float = 0 ;
 	
@@ -600,8 +641,6 @@ private function computeOnPlanePos() : Vector3 {
 	} while( 	!( 		zSelected.collider.Raycast( camera.ScreenPointToRay(top	) , hit, 1000.0f) ||
 				 		zSelected.collider.Raycast( camera.ScreenPointToRay(left) , hit, 1000.0f) )
 				&& i <= CameraInitialDecal ) ;
-	
-	Console.Test(camera.transform.position ,48);
 	
 	return computedPos ;
 }

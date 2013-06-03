@@ -7,13 +7,14 @@ private var windows  : showingWindow ;
 private var audioPlayer : sound ;
 private var textViewer : text ;
 private var strip : displayStrip;
+private var myCredits : credits;
 
 
 /* On est en mode plein écran ? */
-private var onFullScreen : boolean ;
+private var onFullScreen : boolean;
 
 // Doit on afficher le(s) boutton(s) géré par fullscreen
-private var GUIIsHidden : boolean ;
+private var GUIIsHidden : boolean;
 
 /*	quand on rentre dans l'update pour la premiere fois*/
 private var firstTimeInUpdate : boolean = true;
@@ -38,34 +39,38 @@ private var toOnDeZoom : function() ;
 
 /* Variables qui régissent la disposition du full screen en proportion de la hauteur / largeur (donc entre 0 et 1) */
 /* Le point (0,0) est en bas à gauche. */
-private var marginTop : float = 0.9;
+private var marginTop : float = 0.95;
 private var marginBottom : float = 0.1;
 private var marginLeft : float = 0.05;
 private var marginRight : float = 0.95;
 
-private var textTop : float = marginTop;
+private var stripTop : float = marginTop;
+private var stripBottom : float = stripTop - 0.05;
+private var stripLeft : float = marginLeft;
+private var stripRight : float = marginRight;
+
+private var textTop : float = stripBottom - 0.05;
 private var textBottom : float = 0.26;
 private var textLeft : float = marginLeft;
 private var textRight : float = 0.45;
 
 private var musicTop : float = textBottom - 0.05;
 private var musicBottom : float = marginBottom;
-private var musicLeft : float = marginLeft;
+<<<<<<< HEAD
+private var musicLeft : float = marginLeft + 0.04;
+=======
+private var musicLeft : float = marginLeft + 0.04; // Permet aussi de changer la taille des boutons
+>>>>>>> 1cf341db510cfaf98f4d9d3f8a212e6463d284d9
 private var musicRight : float = textRight;
-
-private var stripTop : float = 1-((1-marginTop)/4); // Le strip prend en hauteur la moitié de la marge du haut
-private var stripBottom : float = 1-(3*(1-marginTop)/4);
-private var stripLeft : float = 0.55;
-private var stripRight : float = marginRight;
 
 private var pictureTop : float = textTop;
 private var pictureBottom : float = textBottom;
-private var pictureLeft : float = stripLeft;
+private var pictureLeft : float = 0.55;
 private var pictureRight : float = stripRight;
 
 private var slideTop : float = musicTop;
 private var slideBottom : float = musicBottom;
-private var slideLeft : float = stripLeft;
+private var slideLeft : float = pictureLeft;
 private var slideRight : float = marginRight;
 
 
@@ -81,20 +86,24 @@ function InitFullScreen( ) {
 	audioPlayer =	gameObject.AddComponent("sound")			as sound ;
 	textViewer =	gameObject.AddComponent("text")				as text ;
 	strip = 		gameObject.AddComponent("displayStrip")		as displayStrip;
+	myCredits = 	gameObject.AddComponent("credits")			as credits;
 	
 	onFullScreen = false ;
 	
-
 }
 
 function OnGUIFullScreen(){
 	
 	if( onFullScreen ) {
-		
+	
 		if( !GUIIsHidden) {
-			var Rectangle : Rect = new Rect(0,Screen.height-50,50,50) ;
+			var returnRectangle : Rect = new Rect(0,Screen.height-Screen.width*musicLeft,Screen.width*musicLeft,Screen.width*musicLeft);
 			var returnTexture : Texture = Resources.Load("blue_left_arrow");
-			if( GUI.Button( Rectangle, returnTexture ) ) {
+			
+			var creditsRectangle : Rect = new Rect(Screen.width-Screen.width*musicLeft,Screen.height-Screen.width*musicLeft,Screen.width*musicLeft,Screen.width*musicLeft);
+			var creditsTexture : Texture = Resources.Load("Pictures/credits");
+			
+			if( GUI.Button( returnRectangle, returnTexture ) ) {
 				Debug.Log( 'Sortie de l\'interface demandée' );
 			
 				if( toOnDeZoom )
@@ -102,11 +111,18 @@ function OnGUIFullScreen(){
 				else
 					Debug.LogWarning('Callback de dezoom non renseigné dans FullScreen.' + 
 					'\nNote : setter is public function SetLeaveCallback( f : function() )');
+			} // end bouton retour
+			
+			if( GUI.Button( creditsRectangle, creditsTexture ) ) {
+				myCredits.initCredits(returnRectangle);
 			}
-		}
+			
+			audioPlayer.OnGUISound();
+			textViewer.OnGUIText();
+		} // end if GUI showed
 		
-		audioPlayer.OnGUISound();
-		textViewer.OnGUIText();
+		if (myCredits.isDisplayed())
+			myCredits.OnGUICredits();
 	}
 
 }
@@ -152,7 +168,6 @@ function EnterOnFullScreen( Video : GameObject ) {
 	
 	CameraInitialLightType = gameObject.light.type ;
 	CameraInitialLightIntesity = gameObject.light.intensity ;
-	
 	// On déplace le tout pour l'isoler ds autres éléments
 	if( isolate ) {
 		camera.transform.position += toMove ;
@@ -171,6 +186,8 @@ function EnterOnFullScreen( Video : GameObject ) {
 	 * Récupération des données
 	 */
 	var Datas : scriptForPlane = Video.GetComponent('scriptForPlane');
+	
+	var stripPath : String = Datas.getStripImg();
 	
 	var slideShowImgs : Array = Datas.getImages();
 	var slideShowMin : Array = Datas.getMiniatures();
@@ -210,21 +227,24 @@ function EnterOnFullScreen( Video : GameObject ) {
 	}
 	
 	/* Initialisation de tous les éléments du full screen */
+	
+	try { // On teste s'il y a un strip du bon format ou pas
+	strip.InitVideoScreen( stripPath , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
+	}
+	
+	catch (str) {
+		Console.Warning(str);
+		textTop = marginTop;
+		pictureTop = marginTop;
+	}
+	
 	slideshow.InitSlideShowFactor(slideShowElmts.length, Rect( slideLeft , slideBottom , slideRight - slideLeft , slideTop - slideBottom), 20);
 	windows.InitWindowFactor( Rect( pictureLeft , 1-pictureTop , pictureRight-pictureLeft, pictureTop-pictureBottom), 20 );
 	
 	textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getText()); // u d l r (margins) + Text to display
 	audioPlayer.placeMusicFactor (1-musicTop, musicBottom, musicLeft, 1-musicRight, Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
 	
-<<<<<<< HEAD
-	
-	Console.Test(  Datas.getStripVideo(),45);
-	Console.Test(  Datas.getStripImg(),45);
-	
-	strip.InitVideoScreen(11 , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
-=======
-	strip.InitVideoScreen("dianeIm" , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
->>>>>>> f59a2ecb1998e56cad5a26d808dbc30e258378d1
+	Console.Test( Datas.getStripVideo() ,45);
 	
 	
 	// On donne les infos au slideShow
@@ -265,18 +285,18 @@ function LeaveFullScreen( Video : GameObject ) {
  * Affiche et active le(s) boutton(s) géré par fullscreen
  */
 public function displayGUI() {
-	GUIIsHidden = false ;
+	GUIIsHidden = false;
 }
 
 /*
  * Cache et désactive le(s) boutton(s) géré par fullscreen
  */
 public function hideGUI() {
-	GUIIsHidden = true ;
+	GUIIsHidden = true;
 }
 
 /*
- * Cache et désactive les objet de la GUI sauf celui envoyer en parametre
+ * Cache et désactive les objet de la GUI sauf celui envoyé en parametre
  */
 function disableOthers( elemt ) {
 	
@@ -296,7 +316,7 @@ function disableOthers( elemt ) {
 }
 
 /*
- * Affiche et active les objet de la GUI sauf celui envoyer en parametre
+ * Affiche et active les objet de la GUI sauf celui envoyé en parametre
  */
 function enableOthers( elemt ) {
 	
@@ -321,6 +341,10 @@ function enableOthers( elemt ) {
 public function nextImg() {
 	slideshow.next( !slideshow.isHidden() );
 }
+public function previousImg() {
+	slideshow.previous( !slideshow.isHidden() );
+}
+
 
 
 /*

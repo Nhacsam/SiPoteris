@@ -129,11 +129,11 @@ function InitVideoScreen( path : String , r : Rect ){
 			videoScreen = new GameObject.CreatePrimitive( PrimitiveType.Plane );
 			videoScreen.name = "GUI_stripPlane";
 			disableAll();
-			Console.Warning("File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D");
+			throw ("File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D");
 		}
 	}
 	else
-		Console.Warning("No file found here ");
+		throw ("No strip file found here ");
 		
 }
 

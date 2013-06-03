@@ -59,6 +59,13 @@ function init(){
 	OnEndTrans = new Array();
 }
 
+// update the transitions statements
+public function UpdateTrans() {
+	Update2D3D();
+	Update3D2D();
+	UpdateEnding();
+}
+
 
 
 //setter for enable at the end of the video, called in videosettings

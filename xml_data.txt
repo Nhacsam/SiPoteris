@@ -426,6 +426,33 @@
 			</GUI>
 			<speed> 0.253 </speed>
 		</middle>
+	<!--position son vue 3D-->
+	
+		<!--SON-->
+		<sound>
+			<name>son1</name>
+			<path>sound3D/DF</path>
+			<theta> 0 </theta>
+			<ratio> 0.7 </ratio>
+		</sound>
+		<sound>
+			<name>son2</name>
+			<path>sound3D/savane</path>
+			<theta> 90 </theta>
+			<ratio> 0.7 </ratio>
+		</sound>
+		<sound>
+			<name>son3</name>
+			<path>sound3D/DF</path>
+			<theta> 180 </theta>
+			<ratio> 0.7 </ratio>
+		</sound>
+		<sound>
+			<name>son4</name>
+			<path>sound3D/savane</path>
+			<theta> 270 </theta>
+			<ratio> 0.7 </ratio>
+		</sound>
 </root>
 
 	
