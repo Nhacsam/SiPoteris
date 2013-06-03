@@ -183,18 +183,18 @@ public function getFolderName	(  root : String ) : String{
 	
 	var folder : String = '' ;
 	
-	if( HT.Contains('GUI') ) {
-		if( typeof(HT['GUI']) == System.Collections.Hashtable ) {
-			if( ( HT['GUI'] as Hashtable ).Contains('folder') ) {
+	if( HT.Contains('gui') ) {
+		if( typeof(HT['gui']) == System.Collections.Hashtable ) {
+			if( ( HT['gui'] as Hashtable ).Contains('folder') ) {
 				
-				folder = ( HT['GUI'] as Hashtable )['folder'] ;
+				folder = ( HT['gui'] as Hashtable )['folder'] ;
 				if( fileSystem.isDirExisting(root + '/' + folder) )
 					return folder ;
 			
 			} // Contain
-		} else if (typeof(HT['GUI']) == System.String) {
+		} else if (typeof(HT['gui']) == System.String) {
 			
-			folder = HT['GUI'] ;
+			folder = HT['gui'] ;
 			if( fileSystem.isDirExisting(root + '/' + folder) )
 				return folder ;
 			         
@@ -449,12 +449,12 @@ public function getEditorFileText() : String {
 	 * Si il y a un champ text dans le xml
 	 * in récupère le fichier associé
 	 */
-	if( HT.Contains('GUI') ) {
-		if( typeof(HT['GUI']) == System.Collections.Hashtable ) {
-			if( ( HT['GUI'] as Hashtable ).Contains('text') ) {
+	if( HT.Contains('gui') ) {
+		if( typeof(HT['gui']) == System.Collections.Hashtable ) {
+			if( ( HT['gui'] as Hashtable ).Contains('text') ) {
 				
 				// lit le contenue du fichier
-				path = getFolderName(null) + (( HT['GUI'] as Hashtable )['text'] as String ) ;
+				path = getFolderName(null) + (( HT['gui'] as Hashtable )['text'] as String ) ;
 				
 				if (fileSystem.getTextFromFile(path)  != -1)
 					return path + '.textefile' ;
@@ -462,7 +462,7 @@ public function getEditorFileText() : String {
 					
 			} // Contains text
 		} // type of
-	} // Contains GUI
+	} // Contains gui
 	
 		
 	/*

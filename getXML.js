@@ -106,7 +106,7 @@ private static function exploreRecursively ( list : XmlNodeList , Htab : Hashtab
 				( Htab[ nodeName ] as Array).Push( nodeList.InnerText );
 			
 			} else // if key does not exist already
-				Htab[ nodeName ] = nodeList.InnerText ;
+				Htab[ nodeName ] = nodeList.InnerText.Trim() ;
 			
 		}
 	}

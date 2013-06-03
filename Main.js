@@ -55,12 +55,20 @@ private var plane2D : GameObject;
  */
 function Start () {
 	
-	
 	/*
 	 * Parse le fichier de configuration du système
 	 */
 	setDefaultSystemValues();
 	getXML.getElementFromXML( 'system.xml', systemXmlWrapper ) ;
+	
+	Console.Test( 'haveUniver : "' + haveUniver +'"' ,50 );
+	Console.Test( 'beginBy2D : "' + beginBy2D +'"' ,50 );
+	Console.Test( 'have2DAnd3D : "' + have2DAnd3D +'"' ,50 );
+	Console.Test( 'soundEnable : "' + soundEnable +'"' ,50 );
+	Console.Test( 'transitionToGUIType : "' + transitionToGUIType +'"' ,50 );
+	Console.Test( 'zoomType2D : "' + zoomType2D +'"' ,50 );
+	Console.Test( 'zoomType3D : "' + zoomType3D +'"' ,50 );
+	Console.Test( 'zoomLength : "' + zoomLength +'"' ,50 );
 	
 	
 	
@@ -72,7 +80,10 @@ function Start () {
 	mesh3D = gameObject.AddComponent("createSphericMesh") as createSphericMesh;
 	
 	move = gameObject.AddComponent("moveSurface") as moveSurface;
-	sound3D = gameObject.AddComponent("audio3D") as audio3D;
+	
+	if( soundEnable )
+		sound3D = gameObject.AddComponent("audio3D") as audio3D;
+	
 	Trans = gameObject.AddComponent("Transition2D3D") as Transition2D3D;
 	
 	
@@ -93,8 +104,10 @@ function Start () {
 	if(plane2D)
 		createPolar.SetSurface(plane2D);
 	
+	
 	// Initialise le script gérant les sons
-	sound3D.initSound();
+	if( soundEnable )
+		sound3D.initSound();
 	
 	// Initialise la transition 2D / 3D
 	Trans.init();
@@ -103,7 +116,8 @@ function Start () {
 	getXML.getElementFromXML( 'xml_data', datasXmlWrapper ) ;
 	
 	// Initialise le Zoom avec les plans 2D. Type de zoom : on fonce vers le point (0,0,0) en tournant
-	Zoom.Init(AllGO2D, ZOOM_TYPE.GO_ON_POINT_ROTATING ,Vector3.zero );
+	Zoom.Init(AllGO2D, zoomType2D ,Vector3.zero );
+	Zoom.setTransitionTime(zoomLength);
 	
 	// Initialisation de l'interface.
 	VideoFull.InitFullScreen();
@@ -157,7 +171,8 @@ function Update () {
 	Trans.UpdateTrans() ; 				// maj des transitions 2D/3D
 	Zoom.UpDateZoom() ;					// maj du Zoom
 	VideoFull.UpDateFullScreen();		// maj de l'interface
-	sound3D.updateSounds( AllAudio3D );	// maj des sons 3D
+	if( soundEnable )
+		sound3D.updateSounds( AllAudio3D );	// maj des sons 3D
 	
 	// Déplacement des plan en 2D
 	for( var i =0; i < AllGO2D.length; i++) {
@@ -203,10 +218,10 @@ function changeZoomPlane( is2D : boolean ) {
 	
 	if( is2D ) {
 		Zoom.changeClickableElmts( AllGO2D );
-		Zoom.changeType( ZOOM_TYPE.GO_ON_POINT_ROTATING, Vector3.zero );
+		Zoom.changeType( zoomType2D, Vector3.zero );
 	} else {
 		Zoom.changeClickableElmts( AllGO3D );
-		Zoom.changeType( ZOOM_TYPE.GO_ON_PLANE, Vector3.zero );
+		Zoom.changeType( zoomType3D, Vector3.zero );
 	}
 }
 
@@ -392,6 +407,9 @@ function placeMeshHashPolar ( t : Hashtable ){
 	*create and place sound in 3D
 */
 function placeAudioHash ( t : Hashtable ){
+	if(! soundEnable )
+		return ;
+	
 	var g : GameObject = sound3D.createAudio( t );
 	if( g )
 		AllAudio3D.Push( g );
