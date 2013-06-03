@@ -11,7 +11,7 @@
 */
 
 // quantum of the mesh
-private var quantumOfMesh : float = 0.03f;
+private var quantumOfMesh : float = 0.05f;
 
 // coordonates of vertices in local space
 private var VerticesLocal : Vector3[];
@@ -22,6 +22,7 @@ private var VerticesInMiddle : Vector3;
 // contain triangles
 private var DatTriangles : Array;
 
+// this surface is the plane where the movie is displayed, the meshes will be created to over the plane
 private var surface : GameObject ;
 
 
@@ -90,13 +91,12 @@ private function CreatePolarMesh(thetaMin : float, thetaMax : float, Rmin : floa
 			var radius = Rmin + j*quantumOfMesh ;
 			var angle = thetaMin + i*quantumOfMesh ;
 			
-							
-				// here you can orientate the mesh
-				coorScreen.x = radius * Mathf.Cos(angle) + surface.transform.position.x;
-				coorScreen.y = surface.transform.position.y;
-				coorScreen.z = radius * Mathf.Sin(angle) + surface.transform.position.z;
+			// position of vertices over the surface that display the movie
+			coorScreen.x = radius * Mathf.Cos(angle) + surface.transform.position.x;
+			coorScreen.y = surface.transform.position.y;
+			coorScreen.z = radius * Mathf.Sin(angle) + surface.transform.position.z;
 
-				VerticesLocal[i*numberOfLines + j] = coorScreen;
+			VerticesLocal[i*numberOfLines + j] = coorScreen;
 		}
 	}
 	
@@ -149,6 +149,7 @@ private function CreatePolarMesh(thetaMin : float, thetaMax : float, Rmin : floa
 	// add mesh collider
 	obj.GetComponent(MeshCollider).sharedMesh = meshBuilding;
 
+	// true if you want to see your gameobject and place it well
 	obj.renderer.enabled = false;
 
 	return obj;
@@ -158,17 +159,22 @@ private function CreatePolarMesh(thetaMin : float, thetaMax : float, Rmin : floa
 	*give the true position of the planes in world coordinates - cause actually they are situated at ( 0 , 0 , 0 )
 */
 public function getTruePosition( thetaMin : float , thetaMax : float , RatioRmin : float , RatioRmax : float , obj : GameObject) : Vector3{
+	// get mesh of the surface that display the movie
 	var meshFilter : MeshFilter = surface.GetComponent("MeshFilter");
 	var mesh : Mesh = meshFilter.mesh;
 	
-	// calculate the true radius
+	// calculate the true radius of meshes we created
 	var Rmax : float = RatioRmax * mesh.bounds.size.x/2;
 	var Rmin : float = RatioRmin * mesh.bounds.size.x/2;
 
+	// middle radius and angle
 	var r : float = Rmin + ( Rmax - Rmin ) / 2;
 	var a : float = thetaMin + ( thetaMax - thetaMin ) / 2;
+	
+	// convert it to radian
 	a = a * Mathf.PI / 180;
 
+	// return in world coordiantes the position of obj
 	return Vector3( r * Mathf.Cos( a ) , obj.transform.position.y , r * Mathf.Sin( a ) );
 }
 
