@@ -11,7 +11,7 @@
 */
 
 // quantum of the mesh
-private var quantumOfMesh : float = 0.05f;
+private var quantumOfMesh : float = 0.03f;
 
 // coordonates of vertices in local space
 private var VerticesLocal : Vector3[];
@@ -92,9 +92,9 @@ private function CreatePolarMesh(thetaMin : float, thetaMax : float, Rmin : floa
 			
 							
 				// here you can orientate the mesh
-				coorScreen.x = radius * Mathf.Cos(angle);
-				coorScreen.y = 0;
-				coorScreen.z = radius * Mathf.Sin(angle);
+				coorScreen.x = radius * Mathf.Cos(angle) + surface.transform.position.x;
+				coorScreen.y = surface.transform.position.y;
+				coorScreen.z = radius * Mathf.Sin(angle) + surface.transform.position.z;
 
 				VerticesLocal[i*numberOfLines + j] = coorScreen;
 		}

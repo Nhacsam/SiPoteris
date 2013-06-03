@@ -81,6 +81,8 @@ function InitWindow( pos : Rect, z : float ) {
 	
 	// affichage et activation des événement
 	enableAll();
+	// AU cas ou
+	stopVideo();
 }
 
 function InitWindowFactor( pos : Rect, z : float ) {
@@ -99,6 +101,7 @@ function InitWindowFactor( pos : Rect, z : float ) {
  */
 function destuctWindow() {
 	wState = W_STATE.NOTONGUI;
+	stopVideo();
 	if( wObj)
 		Destroy(wObj);
 }
@@ -169,12 +172,7 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 		case WINDOWTYPES.IMG : // Si c'est une image
 			
 			// Arret de la video si on était sur une video
-			if( wVideoIsPlaying ) {
-				wVideoSettings.stopVideo( wObj );
-				wObj.renderer.enabled = true ;
-				wVideoIsPlaying= false ;
-				wObj.renderer.material = material;
-			}
+			stopVideo();
 			
 			// Charge la texture
 			wImgTex = Resources.Load(path);
@@ -219,6 +217,17 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 	
 }
 
+
+/*
+ * Stop la video en lecture si elle tourne
+ */
+private function stopVideo() {
+	if( wVideoIsPlaying ) {
+		wVideoSettings.stopVideo( wObj );
+		wVideoIsPlaying= false ;
+		wObj.renderer.material = material;
+	}
+}
 
 /*******************************************************
 **** Cacher / desactiver les evennements de l'objet ****
@@ -423,12 +432,16 @@ private function size2scale( size : Vector2 ) : Vector3 {
  * Ajoute les listener d'envenements
  */
 function OnEnable(){
+	Gesture.onSwipeE += onSwipe;
+	
 	Gesture.onShortTapE += onTap ;
 	Gesture.onLongTapE += onLongTap ;
 	Gesture.onDoubleTapE += onDoubleTap;
 }
 
 function OnDisable(){
+	Gesture.onSwipeE -= onSwipe;
+	
 	Gesture.onShortTapE -= onTap ;
 	Gesture.onLongTapE += onLongTap ;
 	Gesture.onDoubleTapE -= onDoubleTap;
@@ -474,18 +487,42 @@ public function updateWindow() {
 /*
  * Gestion des evennements
  */
+
+public function onSwipe( info : SwipeInfo ) {
+	
+	// La fonction s'interrompt si les événements sont désactivés
+	if( !eventEnable )
+		return ;
+	
+	// Si on est sur les video (2D / 3D)
+	if( wState == W_STATE.NOTONGUI)
+		return ;
+	
+	// Si le point de départ est dans la fenêtre
+	if( clickOnWindow(info.startPoint) ) {
+		
+		var sens = 1 ;
+		
+		// On passe au suivant ou au précédent suivant le sens du balayage
+		if( info.angle  < 90 || info.angle > 270 )
+			(gameObject.GetComponent( FullScreen ) as FullScreen ).previousImg();
+		else
+			(gameObject.GetComponent( FullScreen ) as FullScreen ).nextImg();
+	}
+}
+
 public function onTap( pos : Vector2 ) {
 	
 	// La fonction s'interrompt si les événements sont désactivés
 	if( !eventEnable )
 		return ;
 	
-	// SI on est sur les video (2D / 3D)
+	// Si on est sur les video (2D / 3D)
 	if( wState == W_STATE.NOTONGUI)
 		return ;
 	
 	if( clickOnWindow(pos) ) { 	// Si on a cliqué sur le plan
-		(gameObject.GetComponent( FullScreen ) as FullScreen ).nextImg();			// On change l'image
+		SetUpZoom();			// On zoom
 	} else {
 		if( wState == W_STATE.ONFULL ) // Si on est en plein écran et qu'on a cliqué à coté
 			SetUpZoom();				// On dezoom
@@ -498,7 +535,7 @@ public function onLongTap( pos : Vector2 ) {
 	if( !eventEnable )
 		return ;
 	
-	// SI on est sur les video (2D / 3D)
+	// Si on est sur les video (2D / 3D)
 	if( wState == W_STATE.NOTONGUI)
 		return ;
 	
@@ -516,7 +553,7 @@ public function onDoubleTap( pos : Vector2 ) {
 	if( !eventEnable )
 		return ;
 	
-	// SI on est sur les video (2D / 3D)
+	// Si on est sur les video (2D / 3D)
 	if( wState == W_STATE.NOTONGUI)
 		return ;
 	
