@@ -48,7 +48,7 @@ function initCredits ( returnRectangle : Rect) {
 	if (fileSystem.getTextFromFile(fileSystem.getResourcesPath() + "Resources/defaultDatas/credits/credits") == (-1))
 		exitCredits();
 	else
-		textViewer.placeTextFactor(0, 0, 0.25, 0.25, fileSystem.getTextFromFile(fileSystem.getResourcesPath() + "Resources/defaultDatas/credits/credits")); // u d l r (margins) + Text to display
+		textViewer.placeTextFactor(0.1, 0.1, 0.2, 0.2, fileSystem.getTextFromFile(fileSystem.getResourcesPath() + "Resources/defaultDatas/credits/credits")); // u d l r (margins) + Text to display
 
 }
 

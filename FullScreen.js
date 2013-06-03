@@ -224,7 +224,15 @@ function EnterOnFullScreen( Video : GameObject ) {
 	
 	/* Initialisation de tous les éléments du full screen */
 	
+	try { // On teste s'il y a un strip du bon format ou pas
 	strip.InitVideoScreen( stripPath , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
+	}
+	
+	catch (str) {
+		Console.Warning(str);
+		textTop = marginTop;
+		pictureTop = marginTop;
+	}
 	
 	slideshow.InitSlideShowFactor(slideShowElmts.length, Rect( slideLeft , slideBottom , slideRight - slideLeft , slideTop - slideBottom), 20);
 	windows.InitWindowFactor( Rect( pictureLeft , 1-pictureTop , pictureRight-pictureLeft, pictureTop-pictureBottom), 20 );
