@@ -68,7 +68,7 @@ private var zEventEnable : boolean ;			// événement activé ?
 /*
  * Initialise le Module (constructeur)
  */
-function Init( VideosMeshes : Array, type : ZOOM_TYPE, point : Vector3 ) {
+function Init( VideosMeshes : Array, type, point : Vector3 ) {
 	
 	// Enregistrment des plans cliquables
 	setClickableElmts( VideosMeshes ) ;
@@ -137,6 +137,12 @@ public function disableEvents() {
 	zEventEnable = false ;
 }
 
+/*
+ * change le temps de transition
+ */
+public function setTransitionTime( t : float ) {
+	zTransitionTime = t ;
+}
 
 /**
  * Setter de Callback
