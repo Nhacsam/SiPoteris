@@ -23,6 +23,7 @@ private var MovieController2:GameObject;
 private var MovieController:GameObject;
 private var iOS : GameObject;
 // parameters for the final transition
+
 /*
 private var rotInit;
 private var startRotation;
@@ -82,16 +83,14 @@ function videoSettings () {
 	if(firstView2D){
 		camera.transform.position=Vector3(0,-10,0);
 		camera.transform.Rotate(Vector3(270,180,0));
-		generateScene2D();	
-		
-		//set iOS forwarding
-		controllerIOS.movie[0]=plane2D.GetComponent("PlayFileBasedMovieDefault");
-		
+		generateScene2D();		
 		//set the scene
 		plane2D.AddComponent("PlayFileBasedMovieDefault");
 		controllerScene2D3D.movieClass[0] =  plane2D.GetComponent("PlayFileBasedMovieDefault");
 		controllerScene2D3D.movieClass[0].movieIndex=0;
 		controllerScene2D3D.movieName[0] ="SIPO_full.mov";
+		//set iOS forwarding
+		controllerIOS.movie[0]=plane2D.GetComponent("PlayFileBasedMovieDefault");		
 		if(otherView){
 			generateScene3D();
 			/*
@@ -108,14 +107,13 @@ function videoSettings () {
 		camera.transform.position=Vector3(0,0.7,0);
 		camera.transform.Rotate(Vector3(270,180,0));
 		generateScene3D();
-		//set iOS forwarding
-		controllerIOS.movie[0]=sphere3D.GetComponent("PlayFileBasedMovieDefault");
-		
 		//set the scene
 		sphere3D.AddComponent("PlayFileBasedMovieDefault");
 		controllerScene2D3D.movieClass[0] =  sphere3D.GetComponent("PlayFileBasedMovieDefault");
 		controllerScene2D3D.movieClass[0].movieIndex=0;
-		controllerScene2D3D.movieName[0] ="SIPO_full.mov";	
+		controllerScene2D3D.movieName[0] ="SIPO_full.mov";
+		//set iOS forwarding
+		controllerIOS.movie[0]=sphere3D.GetComponent("PlayFileBasedMovieDefault");
 		if(otherView){
 			generateScene2D();	
 			/*
@@ -319,6 +317,10 @@ function effectsOnEnd(){
 	}
 
 }
+
+/*
+* alternative ending effect
+*/
 
 /*
 function endTransition(){

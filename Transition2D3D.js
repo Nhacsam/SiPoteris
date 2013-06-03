@@ -16,12 +16,10 @@ private var mouseLook : MouseLook ;
 
 private var zoom: Zoom;
 
-private var button:boolean = true;
 private var Videos:videoSettings;
 
 private var rot;
 private var scene2D : boolean = true;
-private var buttonIsPressed : boolean=true;
 
 /* Coordinates of the 2D/3D button */
 private var buttonUp : int = Screen.height - 100;
