@@ -140,7 +140,7 @@ function generateScene2D(){
 	plane2D = GameObject.CreatePrimitive(PrimitiveType.Plane);
     plane2D.transform.localScale=Vector3(1.1,1.1,1.1);
     plane2D.name = "screen";
-    plane2D.transform.Rotate(Vector3(180,180,0));
+    plane2D.transform.Rotate(Vector3(0,0,180));
     plane2D.transform.position = Vector3(0,0,0);
   	plane2D.renderer.material = Resources.Load("MovieTexture");
   
@@ -250,13 +250,15 @@ function putVideo( focus: GameObject, nom : String){
 * To stop the video put with putvideo (also release memory)
 */
 function stopVideo(focus: GameObject){
-
+	
+	if(focus.GetComponent("PlayFileBasedMovieDefault")){
 	var controllerMovie:PlayFileBasedMovieDefault;
 	controllerMovie=focus.GetComponent("PlayFileBasedMovieDefault");
 	controllerMovie.StopMovie ();
 	Destroy(focus.GetComponent("PlayFileBasedMovieDefault"));
+	return true;}
+	else return false;
 	
-	return true;
 
 }
 
@@ -266,7 +268,7 @@ function stopVideo(focus: GameObject){
 function getFlagEndVideo(){
 	var controllerScene:SceneController;
 	controllerScene = MovieController.GetComponent("SceneController");
-	return controllerScene.movieClass[0].movieFinished;
+	return controllerScene.movieClass[0].isMovieFinished();
 	//Trans.endingEnable();
 	//return true;
 }
@@ -275,7 +277,7 @@ function EndFlagOff(){
 
 	var controllerScene:SceneController;
 	controllerScene = MovieController.GetComponent("SceneController");
-	controllerScene.movieClass[0].movieFinished=false;
+	controllerScene.movieClass[0].moviePlaying();
 }
 
 /*
@@ -299,11 +301,7 @@ function test(){
 function VideoWH(){
 	var controllerScene:SceneController;
 	controllerScene = MovieController2.GetComponent("SceneController");
-	var WH:Vector2;
-	WH.x = controllerScene.movieClass[0].Mwidth;
-	WH.y = controllerScene.movieClass[0].Mheight;
-	Console.Test("largeur: "+ WH.x +" // hauteur: "+ WH.y,0);
-	return WH;
+	return controllerScene.movieClass[1].movieWH();
 
 }
 
