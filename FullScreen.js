@@ -329,6 +329,10 @@ function enableOthers( elemt ) {
 public function nextImg() {
 	slideshow.next( !slideshow.isHidden() );
 }
+public function previousImg() {
+	slideshow.previous( !slideshow.isHidden() );
+}
+
 
 
 /*
