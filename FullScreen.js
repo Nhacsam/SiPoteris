@@ -211,7 +211,7 @@ function EnterOnFullScreen( Video : GameObject ) {
 		// On verifie qu'il y a une miniature associé à la video
 		var min = fileSystem.getAssociatedMin( slideShowVideo[i], slideShowMin ) ;
 		if( min == slideShowVideo[i])
-			continue;
+			min = 'Pictures/play';
 		
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
 													WINDOWTYPES.VIDEO,
