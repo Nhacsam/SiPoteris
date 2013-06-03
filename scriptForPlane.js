@@ -481,10 +481,14 @@ public function getEditorFileText() : String {
 	 * sinon si un fichier de type txt est présent dans le dossier par defaut
 	 * C'est lui qu'on utilise
 	 */
-	path = fileSystem.getFirstFileFromFolder( getDefaultFolder(null), '.txt', null ) ;
+	allPaths = fileSystem.getFilesInArrayFromFolder( getDefaultFolder(null), '.txt', null ) ;
 	
-	if( path )
-		return path + '.textefile' ;
+	for( i = 0; i < allPaths.length; i++ ) {
+		
+		if( allPaths[i] != getDefaultFolder(null) +'/'+ fileSystem.removeExtension(parsedFilePath) )
+			return allPaths[i] + '.textefile' ;
+	}
+	
 	/*
 	 * si rien de concluent est trouvé
 	 * Warning + renvoie d'une chaine vide

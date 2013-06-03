@@ -47,9 +47,9 @@ function placeMesh3D( t : Hashtable ){
 	video = gameObject.GetComponent("videoSettings") as videoSettings;
 	
 	// caculate phi min and max thanks to the value contained in the hashtable
-	if( float.Parse( t['ratioRmin'] )  > 0.66 || float.Parse( t['ratioRmax'] )  > 0.66 ){
-		var phiMax : float = calculatePHI( float.Parse( t['ratioRmin'] ) , true );
-		var phiMin : float = calculatePHI( float.Parse( t['ratioRmax'] ) , true );
+	if( float.Parse( t['ratiormin'] )  > 0.66 || float.Parse( t['ratiormax'] )  > 0.66 ){
+		var phiMax : float = calculatePHI( float.Parse( t['ratiormin'] ) , true );
+		var phiMin : float = calculatePHI( float.Parse( t['ratiormax'] ) , true );
 	}
 	else{
 		phiMax = calculatePHI( float.Parse( t['ratiormin'] ) , false );
