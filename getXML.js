@@ -59,7 +59,7 @@ static function getElementFromXML( fileName : String, callbackFunc : function( S
 		Data.Push( rootTab );
 		
 		
-		callbackFunc(nodeList.Name, rootTab);
+		callbackFunc( (nodeList.Name as String).ToLower(), rootTab);
 		
 	}
 	
@@ -76,6 +76,10 @@ private static function exploreRecursively ( list : XmlNodeList , Htab : Hashtab
 	
 		var elementContent : XmlNodeList = nodeList.ChildNodes;
 		
+		// conversion en minuscule (pour insensibilité à la casse)
+		var nodeName = (nodeList.Name as String).ToLower() ;
+		
+		
 		// if there are childNodes
 		if( elementContent.Count > 1 ){
 			
@@ -84,25 +88,25 @@ private static function exploreRecursively ( list : XmlNodeList , Htab : Hashtab
 			// fill nextHT
 			exploreRecursively( elementContent , nextHT );
 			
-			Htab[ nodeList.Name ] = nextHT;
+			Htab[ nodeName ] = nextHT;
 		
 		}
 		else {// if there are no childNodes
 		
-			if( Htab.ContainsKey( nodeList.Name ) && typeof( Htab[ nodeList.Name ] ) != typeof( Array ) ){ // if key already exists and this is not an array
+			if( Htab.ContainsKey( nodeName ) && typeof( Htab[ nodeName ] ) != typeof( Array ) ){ // if key already exists and this is not an array
 			
 				var array : Array = new Array();
-				array.Push( Htab[ nodeList.Name ] );
+				array.Push( Htab[ nodeName ] );
 				array.Push( nodeList.InnerText );
-				Htab[ nodeList.Name ] = array;
+				Htab[ nodeName ] = array;
 				
-			} else if( Htab.ContainsKey( nodeList.Name ) && typeof( Htab[ nodeList.Name ] ) == typeof( Array ) ){ // if key already exists and this is an array
+			} else if( Htab.ContainsKey( nodeName ) && typeof( Htab[ nodeName ] ) == typeof( Array ) ){ // if key already exists and this is an array
 			
 				// add another element
-				( Htab[ nodeList.Name ] as Array).Push( nodeList.InnerText );
+				( Htab[ nodeName ] as Array).Push( nodeList.InnerText );
 			
 			} else // if key does not exist already
-				Htab[ nodeList.Name ] = nodeList.InnerText ;
+				Htab[ nodeName ] = nodeList.InnerText ;
 			
 		}
 	}

@@ -27,6 +27,25 @@ private var VideoFull : FullScreen ;			// Gere la GUI qui s'affiche après avoir
 private var control : CameraControl ;			// Sur l'ipad
 private var mouseLook : MouseLook ;				// Avec la souris
 
+
+/*
+ * Paramètres de l'application
+ */
+private var haveUniver : boolean ;
+private var beginBy2D : boolean ;			// on commence par la vue 2D (sinon 3D)
+private var have2DAnd3D : boolean ;			// on a une vue 2D et une vue 3D (sinon que la première)
+
+private var soundEnable : boolean ;			// Les sons 3D sont activé
+
+private var transitionToGUIType : String ;	// Type de transition vers la GUI : 'ZOOM', 'VIDEO'
+private var zoomType2D : String ;			// Type d'effet de Zoom 2D <-> GUI
+private var zoomType3D : String ;			// Type d'effet de Zoom 3D <-> GUI
+private var zoomLength : float ;			// Logueur du Zoom
+
+
+
+
+
 private var plane2D : GameObject;
 
 
@@ -35,6 +54,15 @@ private var plane2D : GameObject;
  * Instancie et initialise les éléments
  */
 function Start () {
+	
+	
+	/*
+	 * Parse le fichier de configuration du système
+	 */
+	setDefaultSystemValues();
+	getXML.getElementFromXML( 'system.xml', systemXmlWrapper ) ;
+	
+	
 	
 	/*
 	 * Instanciate the objects
@@ -251,17 +279,10 @@ function OnGUI() {
 
 
 /*
- * Fonction de rappel envoyé dans le parsage du xml
+ * Fonction de rappel envoyé dans le parsage du xml des datas
  * Récupère la contenue d'une balise du xml et 
  * l'envoie à la sous fonction correspondante
  */
-
-
-
-
-
-
-// pour les datas
 function datasXmlWrapper( tagName : String, content : Hashtable ) {
 	switch( tagName ) {
 		
@@ -297,19 +318,19 @@ function placeMeshHashPolar ( t : Hashtable ){
 	if (	plane2D						 &&
 			t.ContainsKey( 'theta_min' ) &&
 			t.ContainsKey( 'theta_max' ) &&
-			t.ContainsKey( 'ratioRmin' ) &&
-			t.ContainsKey( 'ratioRmax' ) &&
+			t.ContainsKey( 'ratiormin' ) &&
+			t.ContainsKey( 'ratiormax' ) &&
 			t.ContainsKey( 'name' ) 	 ) {
 		
 		// crée des raccourcis
 		var theta_min = float.Parse( t['theta_min'] ) ;
 		var theta_max = float.Parse( t['theta_max'] ) ;
-		var ratioRmin = float.Parse( t['ratioRmin'] ) ;
-		var ratioRmax = float.Parse( t['ratioRmax'] ) ;
+		var ratiormin = float.Parse( t['ratiormin'] ) ;
+		var ratiormax = float.Parse( t['ratiormax'] ) ;
 		
 		// instanciation des éléments
 		var obj = createPolar.placeMesh(	theta_min, theta_max ,
-											ratioRmin, ratioRmax , t['name'] );
+											ratiormin, ratiormax , t['name'] );
 		
 		// Ajout d'un script comprenant une extension des propriété et des methodes des plans clickable
 		var s : scriptForPlane = obj.GetComponent("scriptForPlane");
@@ -319,12 +340,12 @@ function placeMeshHashPolar ( t : Hashtable ){
 		
 		// Ajout de la position réelle du plan dans le script d'extension
 		var p : Vector3 = createPolar.getTruePosition( 	theta_min, theta_max ,
-														ratioRmin, ratioRmax , gameObject );
+														ratiormin, ratiormax , gameObject );
 		s.InitPosPlane( p );
 		
 		// Ajout du point vers lequel le plan est orienté dans le script d'extension
 		p = createPolar.getOrientedTo(	theta_min, theta_max ,
-										ratioRmin, ratioRmax , gameObject );
+										ratiormin, ratiormax , gameObject );
 		s.InitOrientedTo( p );
 		
 		// add new gameobject to array
@@ -375,3 +396,118 @@ function placeAudioHash ( t : Hashtable ){
 	if( g )
 		AllAudio3D.Push( g );
 }
+
+
+/*
+ * Définie les valeurs par défaut des paramètres système
+ */
+
+function setDefaultSystemValues() {
+	// on démarre dans l'affichage 2D, qui existe
+	haveUniver = true ;
+	beginBy2D = true ;
+	
+	// on peut switcher entre 2D et 3D
+	have2DAnd3D = true ;
+	
+	// les sons dans la 3D sont activé
+	soundEnable = true ;
+	
+	// transition vers la GUI : ZOOM
+	transitionToGUIType = 'ZOOM' ;
+	// Effet du zoom 
+	zoomType2D = 'GO_ON_POINT_ROTATING' ;
+	zoomType3D = 'GO_ON_PLANE' ;
+	// durée du zoom : 1s
+	zoomLength = 1.0 ;
+}
+
+/*
+ * Fonction de rappel envoyé dans le parsage du xml paramètres système
+ * Récupère la contenue d'une balise du xml et 
+ * replis les attributs des paramètres
+ */
+function systemXmlWrapper( tagName : String, content : Hashtable ) {
+	
+	switch (tagName) {
+		
+		// Paramètre de <univer>
+		case 'univer' :
+			
+			/*
+			 * Note si on doit commencer par la 2D ou la 3D ou si on arrive direct
+			 * dans l'interface graphique
+			 * contenu entre <beginby> et </beginby>
+			 * Valeurs possibles : '2D', '3D', 'NONE'
+			 */
+			if( content.ContainsKey( 'beginby' ) ) {
+				switch( content['beginby'] ) {
+					case '3D' :
+						haveUniver = true ;
+						beginBy2D = false ;
+						break ;
+					case 'NONE' :
+						haveUniver = false ;
+						break;
+					case '2D' :
+						haveUniver = true ;
+						beginBy2D = true ;
+						break ;
+				}
+			}
+			
+			// si <oneuniv/> alors on ne peux pas switcher entre 2D et 3D sinon on peux
+			have2DAnd3D = ( content.ContainsKey( 'oneuniv' ) ) ? false : true ;
+			
+			// si <disablesound/> alors les sons en 3D sont désactivés, par défaut, ils ne le sont pas
+			soundEnable = ( content.ContainsKey( 'disablesound' ) ) ? false : true ;
+		break;
+		
+		// Paramètre de <transitiontogui>
+		case 'transitiontogui' :
+			
+			/*
+			 * Enregistre le type de la transition entre l'univers et la GUI
+			 * contenu entre <type> et </type>
+			 * Valeurs possibles : 'ZOOM', 'VIDEO'
+			 */
+			if( content.ContainsKey( 'type' ) ) {
+				switch( content['type'] ) {
+					case 'ZOOM' :
+					case 'VIDEO' :
+						transitionToGUIType = content['type'] ;
+						break ;
+				}
+			}
+			
+			/*
+			 * Enregistre le type de zoom contenu entre <zoomtype2D> et </zoomtype2D>
+			 * et entre <zoomtype3D> et </zoomtype3D>
+			 * utile que si <type>ZOOM</type>
+			 * valeurs possibles : 'GO_ON_PLANE', 'GO_ON_POINT', 'GO_ON_PLANE_ROTATING', 
+			 * 'GO_ON_POINT_ROTATING', 'LOOK_BEHIND', 'GO_AWAY_BACKWARD', 'GO_AWAY_FORWARD'
+			 */
+			if( content.ContainsKey( 'zoomtype2d' ) )
+				zoomType2D = content['zoomtype2d'] ;
+			
+			if( content.ContainsKey( 'zoomtype3d' ) )
+				zoomType3D = content['zoomtype3d'] ;
+			
+			/*
+			 * Enregistre la durée du zoom (en seconde) contenu entre <zoomlength> et </zoomlength>
+			 * utile que si <type>ZOOM</type>
+			 * valeur par défaut : 1.0
+			 */
+			if( content.ContainsKey( 'zoomlength' ) ) {
+				if( float.Parse(content['zoomlength']) != 'NaN' )
+					zoomLength = float.Parse(content['zoomlength']) ;
+			}
+			
+		break ;
+	}
+	
+	
+}
+
+
+

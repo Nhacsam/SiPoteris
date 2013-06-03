@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+	<univer>
+		<beginby>2D</beginby>
+		<!--<oneuniv/>-->
+		<!--<disablesound/>-->
+	</univer>
+	
+	<transitionToGUI>
+		<type>ZOOM</type>
+		<zoomtype2D> GO_ON_POINT_ROTATING </zoomtype2D>
+		<zoomtype3D> GO_ON_PLANE </zoomtype3D>
+		<zoomlength>2</zoomlength>
+	</transitionToGUI>
+
+	
+</root>
