@@ -56,7 +56,7 @@ private var textRight : float = 0.45;
 
 private var musicTop : float = textBottom - 0.05;
 private var musicBottom : float = marginBottom;
-private var musicLeft : float = marginLeft + 0.03;
+private var musicLeft : float = marginLeft + 0.05;
 private var musicRight : float = textRight;
 
 private var pictureTop : float = textTop;
@@ -117,17 +117,8 @@ function OnGUIFullScreen(){
 			textViewer.OnGUIText();
 		} // end if GUI showed
 		
-		if (myCredits.isDisplayed()) {
+		if (myCredits.isDisplayed())
 			myCredits.OnGUICredits();
-			strip.hide();
-			windows.hide();
-			slideshow.hide();
-		}
-		else {
-			strip.show();
-			windows.show();
-			slideshow.show();
-		}
 	}
 
 }
@@ -293,7 +284,7 @@ public function hideGUI() {
 }
 
 /*
- * Cache et désactive les objet de la GUI sauf celui envoyer en parametre
+ * Cache et désactive les objet de la GUI sauf celui envoyé en parametre
  */
 function disableOthers( elemt ) {
 	
@@ -313,7 +304,7 @@ function disableOthers( elemt ) {
 }
 
 /*
- * Affiche et active les objet de la GUI sauf celui envoyer en parametre
+ * Affiche et active les objet de la GUI sauf celui envoyé en parametre
  */
 function enableOthers( elemt ) {
 	
