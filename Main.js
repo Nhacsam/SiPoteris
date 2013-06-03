@@ -31,7 +31,7 @@ private var mouseLook : MouseLook ;				// Avec la souris
 /*
  * Paramètres de l'application
  */
-private var haveUniver : boolean ;
+private var haveUniver : boolean ;			// on passe directe à l'interface ?
 private var beginBy2D : boolean ;			// on commence par la vue 2D (sinon 3D)
 private var have2DAnd3D : boolean ;			// on a une vue 2D et une vue 3D (sinon que la première)
 
@@ -70,6 +70,25 @@ function Start () {
 	Console.Test( 'zoomType3D : "' + zoomType3D +'"' ,50 );
 	Console.Test( 'zoomLength : "' + zoomLength +'"' ,50 );
 	
+	
+	/*
+	 * Si on a que l'interface, on l'instancie vite fait et on squezze le reste
+	 */
+	if( !haveUniver ) {
+		VideoFull= gameObject.AddComponent("FullScreen") as FullScreen;
+		VideoFull.InitFullScreen();
+		
+		var obj : GameObject = new GameObject() ;
+		var s : scriptForPlane = obj.AddComponent ("scriptForPlane");
+		s.InitScript( new Hashtable() );
+		if( ! isOnIpad() )
+			s.createParsedFile();
+		
+		CameraConfig();
+		
+		VideoFull.EnterOnFullScreen(obj);
+		return;
+	}
 	
 	
 	/*
@@ -168,9 +187,13 @@ function Start () {
  */
 function Update () {
 	
+	VideoFull.UpDateFullScreen();		// maj de l'interface
+	if( !haveUniver )					// si on a que l'interface, on update pas le reste
+		return ;
+	
 	Trans.UpdateTrans() ; 				// maj des transitions 2D/3D
 	Zoom.UpDateZoom() ;					// maj du Zoom
-	VideoFull.UpDateFullScreen();		// maj de l'interface
+	
 	if( soundEnable )
 		sound3D.updateSounds( AllAudio3D );	// maj des sons 3D
 	
@@ -260,12 +283,14 @@ private function CameraConfig() {
 	
 	CreateLight ();
 	
-	// active ou ppas le déplacement de la caméra
+	// active ou pas le déplacement de la caméra
 	// en fonction de la scene en cours
-	if( Videos.GetFirstView() )
-		disableMouseLook();
-	else
-		enableMouseLook();
+	if( haveUniver ) {
+		if( !beginBy2D )
+			enableMouseLook();
+		else
+			disableMouseLook();
+	}
 }
 
 
@@ -285,7 +310,10 @@ function CreateLight () {
  * Appelle les fonctions des scripts gérant l'interface
  */
 function OnGUI() {
-	Trans.OnGUI2D3D();
+	
+	if( haveUniver && have2DAnd3D )
+		Trans.OnGUI2D3D();
+	
 	VideoFull.OnGUIFullScreen();
 }
 
