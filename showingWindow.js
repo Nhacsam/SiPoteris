@@ -81,6 +81,8 @@ function InitWindow( pos : Rect, z : float ) {
 	
 	// affichage et activation des événement
 	enableAll();
+	// AU cas ou
+	stopVideo();
 }
 
 function InitWindowFactor( pos : Rect, z : float ) {
@@ -99,6 +101,7 @@ function InitWindowFactor( pos : Rect, z : float ) {
  */
 function destuctWindow() {
 	wState = W_STATE.NOTONGUI;
+	stopVideo();
 	if( wObj)
 		Destroy(wObj);
 }
@@ -169,12 +172,7 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 		case WINDOWTYPES.IMG : // Si c'est une image
 			
 			// Arret de la video si on était sur une video
-			if( wVideoIsPlaying ) {
-				wVideoSettings.stopVideo( wObj );
-				wObj.renderer.enabled = true ;
-				wVideoIsPlaying= false ;
-				wObj.renderer.material = material;
-			}
+			stopVideo();
 			
 			// Charge la texture
 			wImgTex = Resources.Load(path);
@@ -219,6 +217,17 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 	
 }
 
+
+/*
+ * Stop la video en lecture si elle tourne
+ */
+private function stopVideo() {
+	if( wVideoIsPlaying ) {
+		wVideoSettings.stopVideo( wObj );
+		wVideoIsPlaying= false ;
+		wObj.renderer.material = material;
+	}
+}
 
 /*******************************************************
 **** Cacher / desactiver les evennements de l'objet ****

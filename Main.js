@@ -22,7 +22,6 @@ private var Trans :Transition2D3D;				// Gère la transition 2D <-> 3D
 
 private var Zoom : Zoom ;						// Gère le click sur les plans et les trasitions qui en découlent
 private var VideoFull : FullScreen ;			// Gere la GUI qui s'affiche après avoir cliqué dans un plan
-private var xml : getXML;						// Ouvre le fichier xml et le parse
 
 // Déplacement de la caméra
 private var control : CameraControl ;			// Sur l'ipad
@@ -51,7 +50,6 @@ function Start () {
 	
 	Zoom = gameObject.AddComponent("Zoom") as Zoom;
 	VideoFull= gameObject.AddComponent("FullScreen") as FullScreen;
-	xml = gameObject.AddComponent("getXML") as getXML;
 	
 	control = gameObject.AddComponent("CameraControl") as CameraControl;
 	mouseLook = gameObject.AddComponent("MouseLook") as MouseLook;
@@ -73,23 +71,13 @@ function Start () {
 	// Initialise la transition 2D / 3D
 	Trans.init();
 	
-	// Initialise le parseur xml
-	xml.InitXml("xml_data");
-	
-	// parse le fichier et appelle les fonction correspondante
-	var func : Hashtable = new Hashtable() ;
-	func['diane'] = placeMeshHash ;		//création des éléments clickables
-	func['acteon'] = placeMeshHash ;
-	func['middle'] = placeMeshHash ;
-	func['sound'] = placeAudioHash ;	// création des sons
-	xml.getElementFromXML( func );		// lance le parsage
-	
-	
+	// parse le fichier et appelle la fonction correspondante
+	getXML.getElementFromXML( 'xml_data', datasXmlWrapper ) ;
 	
 	// Initialise le Zoom avec les plans 2D. Type de zoom : on fonce vers le point (0,0,0) en tournant
 	Zoom.Init(AllGO2D, ZOOM_TYPE.GO_ON_POINT_ROTATING ,Vector3.zero );
 	
-	// Initialisation de l'iterface.
+	// Initialisation de l'interface.
 	VideoFull.InitFullScreen();
 	 
 	 
@@ -259,11 +247,49 @@ function OnGUI() {
 }
 
 
+
+
+
+/*
+ * Fonction de rappel envoyé dans le parsage du xml
+ * Récupère la contenue d'une balise du xml et 
+ * l'envoie à la sous fonction correspondante
+ */
+
+
+
+
+
+
+// pour les datas
+function datasXmlWrapper( tagName : String, content : Hashtable ) {
+	switch( tagName ) {
+		
+		case 'diane' :
+		case 'acteon' :
+		case 'middle' :
+			 
+			if(!content.ContainsKey( 'shape'))
+				placeMeshHashPolar( content );
+			else if( content['shape'] == 'polar' )
+				placeMeshHashPolar( content );
+			else
+				placeMeshHashPolar( content );
+			
+			
+			break ;
+		
+		case 'sound' :
+			placeAudioHash( content );
+			break ;
+	}
+}
+
 /*
 	*place piece of circle according to xml
 	*init hashtable in the script attached to the plane
 */
-function placeMeshHash ( t : Hashtable ){
+function placeMeshHashPolar ( t : Hashtable ){
 	
 	/*
 	 * Création des éléments clickable en 2D
@@ -330,9 +356,6 @@ function placeMeshHash ( t : Hashtable ){
 		
 		// Ajout du point vers lequel le plan est orienté dans le script d'extension
 		s3D.InitOrientedTo( mesh3D.getOrientedTo() );
-	
-		if( ! isOnIpad()  && plane2D)
-			s.createParsedFile();
 		
 		// add new gameobject to array
 		AllGO3D.Push( obj3D );

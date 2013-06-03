@@ -10,29 +10,27 @@ This script parses xml files, informations about videos.
 import System.Xml;
 import System.IO;
 
-// number of movies
-private var numberOfMovies : int = 0;
-private var mFile : XmlDocument ;
-
-
-	
-function InitXml( XMLToLoad : String ) {
-	
-	var textAsset : TextAsset = Resources.Load( XMLToLoad , typeof(TextAsset) ) as TextAsset;
-	mFile = new XmlDocument();
-	mFile.Load( new StringReader( textAsset.text ) );
-	
-}
-
-
 /*
 	*parse xml file
 	*this method creates a hashtable containing all informations of this element, and 
 	*thanks to callback, this hashtable will be attached to the plane
 */
-function getElementFromXML( functions : Hashtable ) : Array {
-
+static function getElementFromXML( fileName : String, callbackFunc : function( String, Hashtable ) ) : Array {
+	
 	var Data = new Array();
+	
+	var textAsset : TextAsset = Resources.Load( fileName , typeof(TextAsset) ) as TextAsset;
+	
+	if( !textAsset){
+		Console.CriticalError( 'Xml file '+ fileName + ' not found !');
+		return Data ;
+	}
+	
+	var mFile : XmlDocument = new XmlDocument();
+	mFile.Load( new StringReader( textAsset.text ) );
+	
+	
+	
 	
 	// root hashtable
 	var rootTab : Hashtable ;
@@ -60,8 +58,8 @@ function getElementFromXML( functions : Hashtable ) : Array {
 		
 		Data.Push( rootTab );
 		
-		if( functions.Contains(nodeList.Name) )
-			(functions[ nodeList.Name ] as function(Hashtable) )(rootTab) ;
+		
+		callbackFunc(nodeList.Name, rootTab);
 		
 	}
 	
@@ -72,7 +70,7 @@ function getElementFromXML( functions : Hashtable ) : Array {
 /*
 	*explore recursively the xml file
 */
-private function exploreRecursively ( list : XmlNodeList , Htab : Hashtable){
+private static function exploreRecursively ( list : XmlNodeList , Htab : Hashtable){
 	
 	for each( var nodeList : XmlNode in list ) {
 	
