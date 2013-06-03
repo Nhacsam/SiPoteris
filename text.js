@@ -85,7 +85,7 @@ private function initText(u: int, d: int, l: int, r: int) {
 	
 	// enable event and dispy the text
 	enableAll();
-	
+
 }
 
 /*
@@ -210,7 +210,10 @@ function GetNumberOfSpaces(numLine : int){
 */
 function CalculateSpace(numLine : int){
 	var moveToNextInt : int = moveToNext[numLine];
-	return lBorder + widthText - letterSpots[moveToNextInt - 1].x;
+	if (!moveToNextInt)
+		return lBorder + widthText;
+	else
+		return lBorder + widthText - letterSpots[moveToNextInt - 1].x;
 }
 
 /*
@@ -252,7 +255,6 @@ function JustifyText(numLine : int){
 function displayText() {
 	for (var i : int = 0; i < textToDisplay.Length; i++) {
 		if (letterSpots[i].y >= uBorder && (letterSpots[i].y + heightLetter) <= Screen.height - dBorder)
-				
 			GUI.Label (letterSpots[i], ""+textToDisplay[i], styleLetterMiddle);
 	}
 }

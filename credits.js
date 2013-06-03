@@ -23,6 +23,9 @@ function initCredits ( returnRectangle : Rect) {
 	windows = gameObject.GetComponent("showingWindow") as showingWindow;
 	slideshow = gameObject.GetComponent("slideShow") as slideShow;
 	
+	gameObject.GetComponent("AudioSource");
+	audio.Stop();
+	
 	myReturnRectangle = returnRectangle;
 	myReturnTexture = Resources.Load("blue_left_arrow");
 	
@@ -35,7 +38,8 @@ function initCredits ( returnRectangle : Rect) {
 		slideshow.disableAll();
 	displayCredits = true;
 	
-	//textViewer.placeTextFactor(0, 0, 0.5, 0.5, fileSystem.getTextFromFile(fileSystem.getResourcesPath() + "Resources/defaultDatas/credits/credits")); // u d l r (margins) + Text to display
+	textViewer.placeTextFactor(0, 0, 0.25, 0.25, fileSystem.getTextFromFile(fileSystem.getResourcesPath() + "Resources/defaultDatas/credits/credits")); // u d l r (margins) + Text to display
+	//textViewer.placeTextFactor(0, 0, 0.25, 0.25, "Ceci est un test de crédits pour tester la disposition, les accents, la justification, tout ce genre de choses !!! =D");
 
 }
 
@@ -48,7 +52,7 @@ function OnGUICredits () {
 		if( GUI.Button( myReturnRectangle, myReturnTexture ) ) {
 			exitCredits();
 		}
-		//textViewer.OnGUIText();
+		textViewer.OnGUIText();
 	}
 }
 
@@ -61,4 +65,5 @@ function exitCredits() {
 	if (slideshow)
 		slideshow.enableAll();
 	displayCredits = false;
+	audio.Play();
 }
