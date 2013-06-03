@@ -56,7 +56,7 @@ private var textRight : float = 0.45;
 
 private var musicTop : float = textBottom - 0.05;
 private var musicBottom : float = marginBottom;
-private var musicLeft : float = marginLeft + 0.05;
+private var musicLeft : float = marginLeft + 0.04; // Permet aussi de changer la taille des boutons
 private var musicRight : float = textRight;
 
 private var pictureTop : float = textTop;

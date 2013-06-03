@@ -58,6 +58,8 @@ private var textInitialized : boolean = false;
 private var eventEnable : boolean ;
 private var textIsHidden : boolean ;
 
+/* How fast is the dragging ? */
+private var coefDragging : float = 1.0 ;
 
 
 
@@ -287,7 +289,7 @@ function onDragging(dragData : DragInfo) {
 		/* If finger/mouse on the text and if not blocked */	
 		if (dragData.pos.x > lBorder && dragData.pos.x < Screen.width - rBorder && dragData.pos.y < Screen.height - uBorder && dragData.pos.y > dBorder && !block) {
 			for (var i : int = 0; i < textToDisplay.Length; i++) {
-				letterSpots[i].y -= dragData.delta.y/2;
+				letterSpots[i].y -= dragData.delta.y * coefDragging;
 			}
 		}
 	}

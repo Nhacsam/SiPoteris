@@ -12,6 +12,8 @@ private var myReturnTexture : Texture;
 
 private var displayCredits : boolean = false;
 
+private var audioWasPlaying : boolean = false;
+
 function initCredits ( returnRectangle : Rect) {
 	VideoFull = gameObject.GetComponent("FullScreen") as FullScreen;
 	if (!VideoFull)
@@ -24,7 +26,12 @@ function initCredits ( returnRectangle : Rect) {
 	slideshow = gameObject.GetComponent("slideShow") as slideShow;
 	
 	gameObject.GetComponent("AudioSource");
-	audio.Stop();
+	if (audio.isPlaying) {
+		audioWasPlaying = true;
+		audio.Stop();
+	}
+	else
+		audioWasPlaying = false;
 	
 	myReturnRectangle = returnRectangle;
 	myReturnTexture = Resources.Load("blue_left_arrow");
@@ -38,8 +45,10 @@ function initCredits ( returnRectangle : Rect) {
 		slideshow.disableAll();
 	displayCredits = true;
 	
-	textViewer.placeTextFactor(0, 0, 0.25, 0.25, fileSystem.getTextFromFile(fileSystem.getResourcesPath() + "Resources/defaultDatas/credits/credits")); // u d l r (margins) + Text to display
-	//textViewer.placeTextFactor(0, 0, 0.25, 0.25, "Ceci est un test de crédits pour tester la disposition, les accents, la justification, tout ce genre de choses !!! =D");
+	if (fileSystem.getTextFromFile(fileSystem.getResourcesPath() + "Resources/defaultDatas/credits/credits") == (-1))
+		exitCredits();
+	else
+		textViewer.placeTextFactor(0, 0, 0.25, 0.25, fileSystem.getTextFromFile(fileSystem.getResourcesPath() + "Resources/defaultDatas/credits/credits")); // u d l r (margins) + Text to display
 
 }
 
@@ -65,5 +74,9 @@ function exitCredits() {
 	if (slideshow)
 		slideshow.enableAll();
 	displayCredits = false;
-	audio.Play();
+	
+	Destroy(textViewer);
+	
+	if (audioWasPlaying)
+		audio.Play();
 }
