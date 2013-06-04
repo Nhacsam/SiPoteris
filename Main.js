@@ -466,82 +466,64 @@ private function placeMeshHashPolar ( t : Hashtable ){
 	/*
 	 * Création des éléments clickable en 2D
 	 */
-	if (	createPolar					 &&
-			t.ContainsKey( 'theta_min' ) &&
-			t.ContainsKey( 'theta_max' ) &&
-			t.ContainsKey( 'ratiormin' ) &&
-			t.ContainsKey( 'ratiormax' ) &&
-			t.ContainsKey( 'name' ) 	 ) {
-		
-		// crée des raccourcis
-		var theta_min = float.Parse( t['theta_min'] ) ;
-		var theta_max = float.Parse( t['theta_max'] ) ;
-		var ratiormin = float.Parse( t['ratiormin'] ) ;
-		var ratiormax = float.Parse( t['ratiormax'] ) ;
+	if ( createPolar ) {
 		
 		// instanciation des éléments
-		var obj = createPolar.placeMesh(	theta_min, theta_max ,
-											ratiormin, ratiormax , t['name'] );
+		var obj = createPolar.placeMesh( t );
+		if(obj){// if obj has been created
+			// Ajout d'un script comprenant une extension des propriété et des methodes des plans clickable
+			var s : scriptForPlane = obj.GetComponent("scriptForPlane");
+			if( ! s)
+				s  = obj.AddComponent ("scriptForPlane");
+			s.InitScript( t );
 		
-		// Ajout d'un script comprenant une extension des propriété et des methodes des plans clickable
-		var s : scriptForPlane = obj.GetComponent("scriptForPlane");
-		if( ! s)
-			s  = obj.AddComponent ("scriptForPlane");
-		s.InitScript( t );
+			// Ajout de la position réelle du plan dans le script d'extension
+			var p : Vector3 = createPolar.getTruePosition( t , gameObject );
+			s.InitPosPlane( p );
 		
-		// Ajout de la position réelle du plan dans le script d'extension
-		var p : Vector3 = createPolar.getTruePosition( 	theta_min, theta_max ,
-														ratiormin, ratiormax , gameObject );
-		s.InitPosPlane( p );
+			// Ajout du point vers lequel le plan est orienté dans le script d'extension
+			p = createPolar.getOrientedTo( t , gameObject );
+			s.InitOrientedTo( p );
 		
-		// Ajout du point vers lequel le plan est orienté dans le script d'extension
-		p = createPolar.getOrientedTo(	theta_min, theta_max ,
-										ratiormin, ratiormax , gameObject );
-		s.InitOrientedTo( p );
+			// add new gameobject to array
+			AllGO2D.Push( obj );
 		
-		// add new gameobject to array
-		AllGO2D.Push( obj );
-		
-		// génère les fichiers comprenant l'architecture des ressources
-		// si on est sur l'ordinateur
-		if( ! isOnIpad() )
-			s.createParsedFile();
-		
-	}
+			// génère les fichiers comprenant l'architecture des ressources
+			// si on est sur l'ordinateur
+			if( ! isOnIpad() )
+				s.createParsedFile();
+		}//if
+	}//if
 	
 	/*
 	 * Création des éléments clickable en 3D
 	 */
-	if( 	mesh3D 						 &&
-			t.ContainsKey( 'theta_min' ) &&
-			t.ContainsKey( 'theta_max' ) &&
-			t.ContainsKey( 'ratiormin' ) &&
-			t.ContainsKey( 'ratiormax' ) &&
-			t.ContainsKey( 'name' ) 	 ) {
-		
+	if( mesh3D ){
 		// instanciation des éléments
 		var obj3D = mesh3D.placeMesh3D( t );
 		
-		// Ajout d'un script comprenant une extension des propriété et des methodes des plans clickable
-		var s3D : scriptForPlane = obj3D.GetComponent("scriptForPlane");
-		if( ! s3D)
-			s3D  = obj3D.AddComponent ("scriptForPlane");
-		s3D.InitScript( t );
+		if(obj3D){//if obj3D has been created
+			// Ajout d'un script comprenant une extension des propriété et des methodes des plans clickable
+			var s3D : scriptForPlane = obj3D.GetComponent("scriptForPlane");
+			if( ! s3D)
+				s3D  = obj3D.AddComponent ("scriptForPlane");
+			s3D.InitScript( t );
 		
-		// Ajout de la position réelle du plan dans le script d'extension
-		s3D.InitPosPlane( obj3D.transform.position );
+			// Ajout de la position réelle du plan dans le script d'extension
+			s3D.InitPosPlane( obj3D.transform.position );
 		
-		// Ajout du point vers lequel le plan est orienté dans le script d'extension
-		s3D.InitOrientedTo( mesh3D.getOrientedTo() );
+			// Ajout du point vers lequel le plan est orienté dans le script d'extension
+			s3D.InitOrientedTo( mesh3D.getOrientedTo() );
 		
-		// add new gameobject to array
-		AllGO3D.Push( obj3D );
+			// add new gameobject to array
+			AllGO3D.Push( obj3D );
 		
-		// génère les fichiers comprenant l'architecture des ressources
-		// si on est sur l'ordinateur
-		if( ! isOnIpad() )
-			s3D.createParsedFile();
-	}
+			// génère les fichiers comprenant l'architecture des ressources
+			// si on est sur l'ordinateur
+			if( ! isOnIpad() )
+				s3D.createParsedFile();
+		}//if
+	}//if
 }
 
 /*
