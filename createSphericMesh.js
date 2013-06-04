@@ -48,7 +48,6 @@ function placeMesh3D( t : Hashtable ){
 		t.ContainsKey( 'ratiormin' ) &&
 		t.ContainsKey( 'ratiormax' ) &&
 		t.ContainsKey( 'name' ) 	 ) {
-			Debug.Log("name " + t['name']);
 			video = gameObject.GetComponent("videoSettings") as videoSettings;
 	
 			// caculate phi min and max thanks to the value contained in the hashtable
