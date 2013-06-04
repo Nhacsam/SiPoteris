@@ -11,7 +11,7 @@
 */
 
 // quantum of the mesh
-private var quantumOfMesh : float = 0.03f;
+private var quantumOfMesh : float = 0.05f;
 
 // coordonates of vertices in local space
 private var VerticesLocal : Vector3[];
@@ -22,6 +22,7 @@ private var VerticesInMiddle : Vector3;
 // contain triangles
 private var DatTriangles : Array;
 
+// this surface is the plane where the movie is displayed, the meshes will be created to over the plane
 private var surface : GameObject ;
 
 
@@ -43,27 +44,41 @@ function SetSurface( s : GameObject ) {
 	*RatioRmax/min are a ratio between the position of plane and the radius of circle
 	*create a script attached to this plane
 */
-function placeMesh( thetaMin : float, thetaMax : float, RatioRmin : float, RatioRmax : float, mesh_name : String) : GameObject{
-	
-	var meshFilter : MeshFilter;
-	meshFilter = surface.GetComponent("MeshFilter");
-	
-	var mesh : Mesh = meshFilter.mesh;
-	
-	// calculate the true radius
-	var Rmax : float = RatioRmax * mesh.bounds.size.x/2;
-	var Rmin : float = RatioRmin * mesh.bounds.size.x/2;
+function placeMesh( t : Hashtable ) : GameObject{
+	if( t.ContainsKey( 'theta_min' ) &&
+		t.ContainsKey( 'theta_max' ) &&
+		t.ContainsKey( 'ratiormin' ) &&
+		t.ContainsKey( 'ratiormax' ) &&
+		t.ContainsKey( 'name' ) 	){
 
-	// from degrees to radian
-	thetaMin = thetaMin * Mathf.PI/180;
-	thetaMax = thetaMax * Mathf.PI/180;
+			// crée des raccourcis
+			var thetaMin = float.Parse( t['theta_min'] ) ;
+			var thetaMax = float.Parse( t['theta_max'] ) ;
+			var RatioRmin = float.Parse( t['ratiormin'] ) ;
+			var RatioRmax = float.Parse( t['ratiormax'] ) ;
 	
-	// create meshes at the right position
-	var obj : GameObject = CreatePolarMesh(thetaMin, thetaMax, Rmin, Rmax, mesh_name);
+			var meshFilter : MeshFilter;
+			meshFilter = surface.GetComponent("MeshFilter");
 	
-	obj.transform.position.y = surface.transform.position.y - 1;
+			var mesh : Mesh = meshFilter.mesh;
 	
-	return obj;
+			// calculate the true radius
+			var Rmax : float = RatioRmax * mesh.bounds.size.x/2;
+			var Rmin : float = RatioRmin * mesh.bounds.size.x/2;
+
+			// from degrees to radian
+			thetaMin = thetaMin * Mathf.PI/180;
+			thetaMax = thetaMax * Mathf.PI/180;
+	
+			// create meshes at the right position
+			var obj : GameObject = CreatePolarMesh(thetaMin, thetaMax, Rmin, Rmax, t['name']);
+	
+			obj.transform.position.y = surface.transform.position.y - 1;
+	
+			return obj;
+	}
+	else// gameobject is not created
+		return;
 }
 
 
@@ -90,13 +105,12 @@ private function CreatePolarMesh(thetaMin : float, thetaMax : float, Rmin : floa
 			var radius = Rmin + j*quantumOfMesh ;
 			var angle = thetaMin + i*quantumOfMesh ;
 			
-							
-				// here you can orientate the mesh
-				coorScreen.x = radius * Mathf.Cos(angle) + surface.transform.position.x;
-				coorScreen.y = surface.transform.position.y;
-				coorScreen.z = radius * Mathf.Sin(angle) + surface.transform.position.z;
+			// position of vertices over the surface that display the movie
+			coorScreen.x = radius * Mathf.Cos(angle) + surface.transform.position.x;
+			coorScreen.y = surface.transform.position.y;
+			coorScreen.z = radius * Mathf.Sin(angle) + surface.transform.position.z;
 
-				VerticesLocal[i*numberOfLines + j] = coorScreen;
+			VerticesLocal[i*numberOfLines + j] = coorScreen;
 		}
 	}
 	
@@ -149,6 +163,7 @@ private function CreatePolarMesh(thetaMin : float, thetaMax : float, Rmin : floa
 	// add mesh collider
 	obj.GetComponent(MeshCollider).sharedMesh = meshBuilding;
 
+	// true if you want to see your gameobject and place it well
 	obj.renderer.enabled = false;
 
 	return obj;
@@ -157,26 +172,36 @@ private function CreatePolarMesh(thetaMin : float, thetaMax : float, Rmin : floa
 /*
 	*give the true position of the planes in world coordinates - cause actually they are situated at ( 0 , 0 , 0 )
 */
-public function getTruePosition( thetaMin : float , thetaMax : float , RatioRmin : float , RatioRmax : float , obj : GameObject) : Vector3{
+public function getTruePosition( t : Hashtable , obj : GameObject) : Vector3{
+	var thetaMin = float.Parse( t['theta_min'] ) ;
+	var thetaMax = float.Parse( t['theta_max'] ) ;
+	var RatioRmin = float.Parse( t['ratiormin'] ) ;
+	var RatioRmax = float.Parse( t['ratiormax'] ) ;
+	
+	// get mesh of the surface that display the movie
 	var meshFilter : MeshFilter = surface.GetComponent("MeshFilter");
 	var mesh : Mesh = meshFilter.mesh;
 	
-	// calculate the true radius
+	// calculate the true radius of meshes we created
 	var Rmax : float = RatioRmax * mesh.bounds.size.x/2;
 	var Rmin : float = RatioRmin * mesh.bounds.size.x/2;
 
+	// middle radius and angle
 	var r : float = Rmin + ( Rmax - Rmin ) / 2;
 	var a : float = thetaMin + ( thetaMax - thetaMin ) / 2;
+	
+	// convert it to radian
 	a = a * Mathf.PI / 180;
 
+	// return in world coordiantes the position of obj
 	return Vector3( r * Mathf.Cos( a ) , obj.transform.position.y , r * Mathf.Sin( a ) );
 }
 
 /*
  * give a point in the normal axe of the plane which is passing by the center
  */
-public function getOrientedTo( thetaMin : float , thetaMax : float , RatioRmin : float , RatioRmax : float , obj : GameObject) : Vector3 {
+public function getOrientedTo( t : Hashtable , obj : GameObject) : Vector3 {
 	
-	var v : Vector3 = getTruePosition( thetaMin, thetaMax, RatioRmin, RatioRmax, obj );
+	var v : Vector3 = getTruePosition( t , obj );
 	return v + Vector3( 0,1,0);
 }
