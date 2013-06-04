@@ -12,7 +12,6 @@ private var done3:boolean = false;
 private var lightFlag:boolean = false;
 //to access accelerometer
 private var control:CameraControl;
-private var mouseLook : MouseLook ;
 
 private var zoom: Zoom;
 
@@ -38,10 +37,6 @@ private var OnEndTrans : Array ;
 
 //instantiate items
 function init(){
-
-	mouseLook = gameObject.GetComponent("MouseLook");
-	if (!mouseLook)
-		mouseLook = gameObject.AddComponent("mouseLook");
 	
 	control = gameObject.GetComponent("CameraControl");
 	if (!control)	
@@ -51,8 +46,8 @@ function init(){
 	if (!zoom)	
 		zoom = gameObject.AddComponent("Zoom");
 	Videos = gameObject.GetComponent("videoSettings") as videoSettings;
-	control.enabled=false;
-	mouseLook.enabled=false;
+	
+	control.enabled = false ;
 	
 	scene2D = Videos.GetFirstView();
 	
@@ -111,16 +106,7 @@ function isInButton (pos : Vector2) {
 function Change2D3D(){
 
 	end=false;
-	
-	if(scene2D){	
-		cameraTransition();
-	}
-	else{
-		mouseLook.enabled = false;
-		control.enabled = false;
-		cameraTransition();
-	}
-
+	cameraTransition();
 	switchScene();
 	
 
@@ -154,6 +140,7 @@ function cameraTransition(){
 		done2=false;
 		done3=false;
 		lightFlag=false;
+		
 		light.type=LightType.Point;
 		light.cookie=null;
 		
@@ -199,12 +186,7 @@ function Update2D3D(){
 		if(camera.transform.eulerAngles.x >= 358 ){
 			enable=false;
 			
-			if( isOnIpad() ) {
-				control.enabled=  true;
-			} 
-			else {
-				mouseLook.enabled = true ;
-			}
+			(gameObject.GetComponent("Main") as Main).enableMouseLook();
 			
 			control.AttachGyro();
 			zoom.enableEvents();
