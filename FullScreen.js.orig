@@ -57,10 +57,10 @@ private var textRight : float = 0.45;
 private var musicTop : float = textBottom - 0.05;
 private var musicBottom : float = marginBottom;
 <<<<<<< HEAD
-private var musicLeft : float = marginLeft + 0.04;
+private var musicLeft : float = marginLeft + 0.03; // Permet aussi de changer la taille des boutons
 =======
-private var musicLeft : float = marginLeft + 0.04; // Permet aussi de changer la taille des boutons
->>>>>>> 1cf341db510cfaf98f4d9d3f8a212e6463d284d9
+private var musicLeft : float = marginLeft + 0.028; // Permet aussi de changer la taille des boutons
+>>>>>>> 7efddf91b2d209b9834d768f0219851bab38fd66
 private var musicRight : float = textRight;
 
 private var pictureTop : float = textTop;
@@ -164,20 +164,12 @@ function EnterOnFullScreen( Video : GameObject ) {
 	VideoInitialPos = Video.transform.position ;
 	VideoInitialRot = Video.transform.eulerAngles ;
 	CameraInitialPos = camera.transform.position ;
-	CameraInitialOrthographic = camera.orthographic ;
 	
-	CameraInitialLightType = gameObject.light.type ;
-	CameraInitialLightIntesity = gameObject.light.intensity ;
 	// On déplace le tout pour l'isoler ds autres éléments
 	if( isolate ) {
 		camera.transform.position += toMove ;
 		//Video.transform.position += toMove ;
 	}
-	
-	// Configuration de la camera et de la lumière
-	camera.orthographic = true ;
-	gameObject.light.type = LightType.Directional ;
-	gameObject.light.intensity = 0.4 ;
 	
 	onFullScreen = true ;
 	
@@ -215,7 +207,7 @@ function EnterOnFullScreen( Video : GameObject ) {
 		// On verifie qu'il y a une miniature associé à la video
 		var min = fileSystem.getAssociatedMin( slideShowVideo[i], slideShowMin ) ;
 		if( min == slideShowVideo[i])
-			continue;
+			min = 'Pictures/play';
 		
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
 													WINDOWTYPES.VIDEO,
@@ -261,10 +253,6 @@ function LeaveFullScreen( Video : GameObject ) {
 	Video.transform.position = VideoInitialPos ;
 	Video.transform.eulerAngles = VideoInitialRot;
 	camera.transform.position = CameraInitialPos ;
-	camera.orthographic = CameraInitialOrthographic ;
-	
-	gameObject.light.type  = CameraInitialLightType ;
-	gameObject.light.intensity  = CameraInitialLightIntesity ;
 
 
 	audioPlayer.removeMusic();
