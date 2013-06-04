@@ -43,28 +43,36 @@ private var DATSphere : GameObject[];
 	*place mesh in 3D
 */
 function placeMesh3D( t : Hashtable ){
-
-	video = gameObject.GetComponent("videoSettings") as videoSettings;
+	if(	t.ContainsKey( 'theta_min' ) &&
+		t.ContainsKey( 'theta_max' ) &&
+		t.ContainsKey( 'ratiormin' ) &&
+		t.ContainsKey( 'ratiormax' ) &&
+		t.ContainsKey( 'name' ) 	 ) {
+			Debug.Log("name " + t['name']);
+			video = gameObject.GetComponent("videoSettings") as videoSettings;
 	
-	// caculate phi min and max thanks to the value contained in the hashtable
-	if( float.Parse( t['ratiormin'] )  > 0.66 || float.Parse( t['ratiormax'] )  > 0.66 ){
-		var phiMax : float = calculatePHI( float.Parse( t['ratiormin'] ) , true );
-		var phiMin : float = calculatePHI( float.Parse( t['ratiormax'] ) , true );
-	}
-	else{
-		phiMax = calculatePHI( float.Parse( t['ratiormin'] ) , false );
-		phiMin = calculatePHI( float.Parse( t['ratiormax'] ) , false );
-	}
+			// caculate phi min and max thanks to the value contained in the hashtable
+			if( float.Parse( t['ratiormin'] )  > 0.66 || float.Parse( t['ratiormax'] )  > 0.66 ){
+				var phiMax : float = calculatePHI( float.Parse( t['ratiormin'] ) , true );
+				var phiMin : float = calculatePHI( float.Parse( t['ratiormax'] ) , true );
+			}
+			else{
+				phiMax = calculatePHI( float.Parse( t['ratiormin'] ) , false );
+				phiMin = calculatePHI( float.Parse( t['ratiormax'] ) , false );
+			}
 		
-	// invert theta_max and theta_min cause of mathematical operation : 360-angle
-	// 360-angle because 2D scene looks down (along y-axis) and 3D scene looks up
-	//+93° to cover the right surface of videos
-	var theta_max : float = (360-float.Parse(t['theta_min'])) * Mathf.PI/180;
-	var theta_min : float = (360-float.Parse(t['theta_max'])) * Mathf.PI/180;
-		
-	var g : GameObject = CreateSphericMesh( theta_min , phiMin , theta_max , phiMax , t['name'] );
+			// invert theta_max and theta_min cause of mathematical operation : 360-angle
+			// 360-angle because 2D scene looks down (along y-axis) and 3D scene looks up
+			//+93° to cover the right surface of videos
+			var theta_max : float = (360-float.Parse(t['theta_min'])) * Mathf.PI/180;
+			var theta_min : float = (360-float.Parse(t['theta_max'])) * Mathf.PI/180;
+				
+			var g : GameObject = CreateSphericMesh( theta_min , phiMin , theta_max , phiMax , t['name'] );
 
-	return g;	
+			return g;	
+	}
+	else// return null if a parameter is missing in the xml file - the gameobject is not created
+		return;
 }
 
 /*
