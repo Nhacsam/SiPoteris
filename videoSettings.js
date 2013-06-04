@@ -214,7 +214,7 @@ function videoHDZoomQuit(plane : GameObject){
 
 
 /*
-* Set the parameters for the video (see the plug to know how to do it)
+* Set the parameters for the video (see the plug to know how to do it), here the video is supposed to be in the format .mov
 */
 function putVideo( focus: GameObject, nom : String){
 
@@ -226,21 +226,20 @@ function putVideo( focus: GameObject, nom : String){
 	}
 	 
 	controllerScene2 = MovieController2.GetComponent("SceneController");      
+	if(!controllerScene2.movieClass){
 	controllerScene2.movieClass = new PlayHardwareMovieClassPro[1];
 	controllerScene2.movieName = new  String[1];
 	controllerScene2.seekTime = new float[1];
-	
+	}
 	if(!focus.GetComponent("PlayFileBasedMovieDefault"))focus.AddComponent("PlayFileBasedMovieDefault");
   	focus.renderer.material = Resources.Load("Movie3");
 	controllerIOS.movie[1] = focus.GetComponent("PlayFileBasedMovieDefault"); 
 	   
 	controllerScene2.movieClass[0] =  focus.GetComponent("PlayFileBasedMovieDefault");
-	controllerScene2.movieClass[0].movieIndex=1;
+	controllerScene2.movieClass[0].movieIndex = 1;
 	controllerScene2.movieName[0] = nom +".mov";
-	
-	var controllerMovie:PlayFileBasedMovieDefault;
-	controllerMovie = focus.GetComponent("PlayFileBasedMovieDefault");
-	controllerMovie.PlayMovie(nom +".mov");
+
+	controllerScene2.movieClass[0].PlayMovie(nom +".mov");
 
 	return true;
 	
@@ -252,9 +251,9 @@ function putVideo( focus: GameObject, nom : String){
 function stopVideo(focus: GameObject){
 	
 	if(focus.GetComponent("PlayFileBasedMovieDefault")){
-	var controllerMovie:PlayFileBasedMovieDefault;
-	controllerMovie=focus.GetComponent("PlayFileBasedMovieDefault");
-	controllerMovie.StopMovie ();
+	controllerScene2.movieClass[0] = focus.GetComponent("PlayFileBasedMovieDefault");
+	controllerScene2.movieClass[0].StopMovie();
+	controllerScene2.movieClass[0].moviePlaying();
 	Destroy(focus.GetComponent("PlayFileBasedMovieDefault"));
 	return true;}
 	else return false;

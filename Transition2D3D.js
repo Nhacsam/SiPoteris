@@ -145,7 +145,7 @@ function cameraTransition(){
 	}
 	else{
 		rot= Vector3(270,180,0);
-		camera.transform.eulerAngles=Vector3(0,180,0);
+		camera.transform.eulerAngles=Vector3(0,0,0);
 		enable=true;
 		done=false;
 		next=false;
@@ -186,7 +186,7 @@ function Update2D3D(){
 	//load the pshere and reincrease light
 	if(!scene2D && !done && lightFlag){
 		Videos.changeSettings(true);
-		camera.transform.eulerAngles=Vector3(270,180,0);
+		camera.transform.eulerAngles=Vector3(270,0,0);
 		if(light.intensity <= 0.88)light.intensity+=0.02;
 		camera.transform.position.y += 1/TransitionTime;
 		if(camera.transform.position.y >= 0.7 )  {done = true; next=true;}
