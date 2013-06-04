@@ -54,7 +54,11 @@ function OnPlay(){
 /*
 *function to set the parameters of the 2D scene
 */
-function videoSettings () {
+function videoSettings (beginBy2D : boolean, have2DAnd3D : boolean) {
+	
+	firstView2D = beginBy2D ;
+	otherView = have2DAnd3D ;
+	
 
 	Trans = gameObject.GetComponent("Transition2D3D") as Transition2D3D;
 	//instantiate plugin

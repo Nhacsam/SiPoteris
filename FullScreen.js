@@ -160,20 +160,12 @@ function EnterOnFullScreen( Video : GameObject ) {
 	VideoInitialPos = Video.transform.position ;
 	VideoInitialRot = Video.transform.eulerAngles ;
 	CameraInitialPos = camera.transform.position ;
-	CameraInitialOrthographic = camera.orthographic ;
 	
-	CameraInitialLightType = gameObject.light.type ;
-	CameraInitialLightIntesity = gameObject.light.intensity ;
 	// On déplace le tout pour l'isoler ds autres éléments
 	if( isolate ) {
 		camera.transform.position += toMove ;
 		//Video.transform.position += toMove ;
 	}
-	
-	// Configuration de la camera et de la lumière
-	camera.orthographic = true ;
-	gameObject.light.type = LightType.Directional ;
-	gameObject.light.intensity = 0.4 ;
 	
 	onFullScreen = true ;
 	
@@ -211,7 +203,7 @@ function EnterOnFullScreen( Video : GameObject ) {
 		// On verifie qu'il y a une miniature associé à la video
 		var min = fileSystem.getAssociatedMin( slideShowVideo[i], slideShowMin ) ;
 		if( min == slideShowVideo[i])
-			continue;
+			min = 'Pictures/play';
 		
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
 													WINDOWTYPES.VIDEO,
@@ -257,10 +249,6 @@ function LeaveFullScreen( Video : GameObject ) {
 	Video.transform.position = VideoInitialPos ;
 	Video.transform.eulerAngles = VideoInitialRot;
 	camera.transform.position = CameraInitialPos ;
-	camera.orthographic = CameraInitialOrthographic ;
-	
-	gameObject.light.type  = CameraInitialLightType ;
-	gameObject.light.intensity  = CameraInitialLightIntesity ;
 
 
 	audioPlayer.removeMusic();

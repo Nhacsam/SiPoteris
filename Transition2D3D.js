@@ -196,7 +196,6 @@ function Update2D3D(){
 		camera.transform.Rotate(Vector3(10,0,0)/TransitionTime);
 		if(camera.transform.eulerAngles.x >= 358 ){
 			enable=false;
-			finalSettings();
 			
 			if( isOnIpad() ) {
 				control.enabled=  true;
@@ -288,18 +287,6 @@ function UpdateEnding(){
 	}
 
 }
-
-//adjust final settings at the end of the transition
-function finalSettings(){
-
-	//light
-	light.type=LightType.Spot;
-	light.range=70;
-	light.intensity=0.88;
-	light.cookie=Resources.Load("camMask");
-	light.spotAngle=50;
-}
-
 
 //called in Transition2D3D
 function switchScene(){

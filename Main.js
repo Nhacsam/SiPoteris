@@ -21,7 +21,7 @@ private var sound3D : audio3D;					// Gere les sons dans la visualisation 3D
 private var Trans :Transition2D3D;				// Gère la transition 2D <-> 3D
 
 private var Zoom : Zoom ;						// Gère le click sur les plans et les trasitions qui en découlent
-private var VideoFull : FullScreen ;			// Gere la GUI qui s'affiche après avoir cliqué dans un plan
+private var GUI : FullScreen ;			// Gere la GUI qui s'affiche après avoir cliqué dans un plan
 
 // Déplacement de la caméra
 private var control : CameraControl ;			// Sur l'ipad
@@ -75,8 +75,8 @@ function Start () {
 	 * Si on a que l'interface, on l'instancie vite fait et on squezze le reste
 	 */
 	if( !haveUniver ) {
-		VideoFull= gameObject.AddComponent("FullScreen") as FullScreen;
-		VideoFull.InitFullScreen();
+		GUI= gameObject.AddComponent("FullScreen") as FullScreen;
+		GUI.InitFullScreen();
 		
 		var obj : GameObject = new GameObject() ;
 		var s : scriptForPlane = obj.AddComponent ("scriptForPlane");
@@ -84,9 +84,9 @@ function Start () {
 		if( ! isOnIpad() )
 			s.createParsedFile();
 		
-		CameraConfig();
+		CameraConfigGUI();
 		
-		VideoFull.EnterOnFullScreen(obj);
+		GUI.EnterOnFullScreen(obj);
 		return;
 	}
 	
@@ -95,19 +95,24 @@ function Start () {
 	 * Instanciate the objects
 	 */
 	Videos = gameObject.AddComponent("videoSettings") as videoSettings;
-	createPolar = gameObject.AddComponent("createPolarMesh") as createPolarMesh;
-	mesh3D = gameObject.AddComponent("createSphericMesh") as createSphericMesh;
+	
+	if( beginBy2D || have2DAnd3D )
+		createPolar = gameObject.AddComponent("createPolarMesh") as createPolarMesh;
+	
+	if( !beginBy2D || have2DAnd3D )
+		mesh3D = gameObject.AddComponent("createSphericMesh") as createSphericMesh;
 	
 	move = gameObject.AddComponent("moveSurface") as moveSurface;
 	
 	if( soundEnable )
 		sound3D = gameObject.AddComponent("audio3D") as audio3D;
 	
-	Trans = gameObject.AddComponent("Transition2D3D") as Transition2D3D;
+	if( have2DAnd3D )
+		Trans = gameObject.AddComponent("Transition2D3D") as Transition2D3D;
 	
 	
 	Zoom = gameObject.AddComponent("Zoom") as Zoom;
-	VideoFull= gameObject.AddComponent("FullScreen") as FullScreen;
+	GUI= gameObject.AddComponent("FullScreen") as FullScreen;
 	
 	control = gameObject.AddComponent("CameraControl") as CameraControl;
 	mouseLook = gameObject.AddComponent("MouseLook") as MouseLook;
@@ -118,28 +123,33 @@ function Start () {
 	 */
 	 
 	// create plane
-	plane2D = Videos.videoSettings();
+	plane2D = Videos.videoSettings(beginBy2D, have2DAnd3D);
 	// give access to this gameobject in createPolarMesh script
-	if(plane2D)
+	if(plane2D && createPolar)
 		createPolar.SetSurface(plane2D);
 	
 	
 	// Initialise le script gérant les sons
-	if( soundEnable )
+	if( sound3D )
 		sound3D.initSound();
 	
 	// Initialise la transition 2D / 3D
-	Trans.init();
+	if( Trans )
+		Trans.init();
 	
 	// parse le fichier et appelle la fonction correspondante
 	getXML.getElementFromXML( 'xml_data', datasXmlWrapper ) ;
 	
-	// Initialise le Zoom avec les plans 2D. Type de zoom : on fonce vers le point (0,0,0) en tournant
-	Zoom.Init(AllGO2D, zoomType2D ,Vector3.zero );
+	
+	// Initialise le Zoom avec les plans qui vont bien.
+	if( beginBy2D )
+		Zoom.Init(AllGO2D, zoomType2D ,Vector3.zero );
+	else
+		Zoom.Init(AllGO3D, zoomType3D ,Vector3.zero );
 	Zoom.setTransitionTime(zoomLength);
 	
 	// Initialisation de l'interface.
-	VideoFull.InitFullScreen();
+	GUI.InitFullScreen();
 	 
 	 
 	 
@@ -152,17 +162,23 @@ function Start () {
 	 
 	// Au Zoom vers l'iterface graphique
 	Zoom.AddOnZoom( Videos.videoHDZoomON );			// mis en pause de la video
-	Zoom.AddOnZoom( Trans.flagExit );				// ?????????????????????????????
+	if( Trans )
+		Zoom.AddOnZoom( Trans.flagExit );				// ?????????????????????????????
 	
 	// Quand on repart de l'iterface graphique
-	Zoom.AddOnLeave( VideoFull.LeaveFullScreen );	// Détruit l'interface
+	Zoom.AddOnLeave( GUI.LeaveFullScreen );			// Détruit l'interface
 	Zoom.AddOnLeave( Videos.videoHDZoomQuit );		// Relance la video
+	Zoom.AddOnLeave( CameraConfigUnivComputed );	// Restitution de la caméra et de la lumière
 	
 	// Quand le zoom est fini : quand on arrive sur l'interface
-	Zoom.AddOnEndZoom(VideoFull.EnterOnFullScreen);	// Construction de l'interface graphique
+	Zoom.AddOnEndZoom(CameraConfigGUI);				// Paramètrage de la caméra et de la lumière
+	Zoom.AddOnEndZoom(GUI.EnterOnFullScreen);		// Construction de l'interface graphique
+	
 	
 	// Quand le dezoom est fini : quand on retourne dans l'univers
-	Zoom.AddOnEndDezoom( Trans.flagExit );			// ?????????????????????????????
+	if( Trans )
+		Zoom.AddOnEndDezoom( Trans.flagExit );			// ?????????????????????????????
+	
 	
 	// Gestion de l'activation / desactivation des mouvements de caméra
 	// avec la souris dans l'interface graphique
@@ -170,14 +186,17 @@ function Start () {
 	Zoom.AddOnEndDezoom(enableMouseLook);
 	
 	// Au click sur le boutton retour de l'interface
-	VideoFull.SetLeaveCallback( Zoom.toOnDeZoom );	// Dezoom vers l'univers
+	GUI.SetLeaveCallback( Zoom.toOnDeZoom );	// Dezoom vers l'univers
 	
 	// A la fin de la transition 2D/3D
-	Trans.AddOnEndTrans( changeZoomPlane );			// Changement des plans clickables
+	if( Trans ) {
+		Trans.AddOnEndTrans( changeZoomPlane );			// Changement des plans clickables
+		Trans.AddOnEndTrans( CameraConfigUniv );		// Changement des paramètre de caméra
+	}
 	
 	
 	// Paramètrage de la caméra
-	CameraConfig();
+	CameraConfigUniv( beginBy2D );
 }
 
 
@@ -187,17 +206,20 @@ function Start () {
  */
 function Update () {
 	
-	VideoFull.UpDateFullScreen();		// maj de l'interface
-	if( !haveUniver )					// si on a que l'interface, on update pas le reste
+	GUI.UpDateFullScreen();				// maj de l'interface
+	if( !haveUniver )						// si on a que l'interface, on update pas le reste
 		return ;
 	
-	Trans.UpdateTrans() ; 				// maj des transitions 2D/3D
-	Zoom.UpDateZoom() ;					// maj du Zoom
+	if( Trans )
+		Trans.UpdateTrans() ; 				// maj des transitions 2D/3D
 	
-	if( soundEnable )
+	Zoom.UpDateZoom() ;						// maj du Zoom
+	
+	if( sound3D )
 		sound3D.updateSounds( AllAudio3D );	// maj des sons 3D
 	
-	// Déplacement des plan en 2D
+	
+	// Déplacement des plan en 2D (si il y en a)
 	for( var i =0; i < AllGO2D.length; i++) {
 	
 		if(!Videos.getFlagEndVideo())
@@ -212,7 +234,7 @@ function Update () {
 /*
  * Désactive les mouvements de la caméra
  */
-function enableMouseLook() {
+public function enableMouseLook() {
 	if( isOnIpad() ) {
 		control.enabled = Trans.isScene2D() ? false : true;
 	}
@@ -224,7 +246,7 @@ function enableMouseLook() {
 /*
  * Active les mouvements de la caméra
  */
-function disableMouseLook() {
+public function disableMouseLook() {
 	if( isOnIpad() ) {
 		control.enabled = false;
 	}
@@ -237,7 +259,7 @@ function disableMouseLook() {
  * Change les plans clickables dans le zoom
  * ainsi que l'animation de zoom
  */
-function changeZoomPlane( is2D : boolean ) {
+public function changeZoomPlane( is2D : boolean ) {
 	
 	if( is2D ) {
 		Zoom.changeClickableElmts( AllGO2D );
@@ -252,10 +274,11 @@ function changeZoomPlane( is2D : boolean ) {
  * Renvoie true si pos est sur un élément de type gui de l'interface
  * (pour ne pas mettre deux événements sur un click au même endroit)
  */
-function isOnAGUIElmt( pos : Vector2) {
+public function isOnAGUIElmt( pos : Vector2) {
 	
-	if( Trans.isInButton(pos) )
-		return true ;
+	if(Trans)
+		if( Trans.isInButton(pos) )
+			return true ;
 	
 	return false ;
 }
@@ -271,39 +294,87 @@ static function isOnIpad() : boolean {
 	return ( SystemInfo.deviceType == DeviceType.Handheld );
 }
 
+
 /*
- * Configure la caméra
+ * Configure la caméra et la lumière
+ * pour l'univer en calculant lui même si on est en 2D ou 3D
  */
-private function CameraConfig() {
+public function CameraConfigUnivComputed() {
+	
+	if( Trans ) {
+		CameraConfigUniv(Trans.isScene2D());
+	} else {
+		
+		if( !haveUniver || have2DAnd3D ) {
+			Console.CriticalError(	"Une erreur est survenue dans le main, détectée dans CameraConfigUnivComputed.\n" +
+									"Trans : NULL, haveUniver : " + haveUniver +", have2DAnd3D : "+have2DAnd3D);
+			CameraConfigGUI();
+		} else
+			CameraConfigUniv(beginBy2D);
+	}
+}
+
+
+/*
+ * Configure la caméra et la lumière
+ * pour l'univer ( 2D et 3D )
+ */
+public function CameraConfigUniv( is2D : boolean) {
+	
+	CameraSharedConfig();
+	if( is2D ) {
+	
+		camera.orthographic = false ;
+		
+		light.type=LightType.Point;
+		light.range=70;
+		light.intensity=0.88;
+		
+		// active le déplacement de la caméra
+		enableMouseLook();
+	} else {
+		
+		camera.orthographic = false ;
+		
+		//light
+		light.type=LightType.Spot;
+		light.range=70;
+		light.intensity=0.88;
+		light.cookie=Resources.Load("camMask");
+		light.spotAngle=50;
+		
+		// desactive le déplacement de la caméra
+		disableMouseLook();
+	}
+
+}
+
+/*
+ * Configure la caméra et la lumière
+ * pour la GUI
+ */
+public function CameraConfigGUI() {
+	
+	CameraSharedConfig();
+	
+	camera.orthographic = true ;
+	gameObject.light.type = LightType.Directional ;
+	gameObject.light.intensity = 0.4 ;
+}
+
+/*
+ * Configure les paramètre commun de la caméra
+ * entre 2D, 3D et GUI
+ */
+private function CameraSharedConfig() {
 	
 	camera.backgroundColor = Color.black ;
 	camera.fieldOfView  = 60 ;
 	camera.farClipPlane = 60 ;
 	camera.nearClipPlane = 0.01 ;
 	
-	CreateLight ();
-	
-	// active ou pas le déplacement de la caméra
-	// en fonction de la scene en cours
-	if( haveUniver ) {
-		if( !beginBy2D )
-			enableMouseLook();
-		else
-			disableMouseLook();
-	}
-}
-
-
-/*
- * Crée la lumière éclairant les objets
- */
-function CreateLight () {
-	
-	gameObject.AddComponent(Light);
-	light.type=LightType.Point;
-	light.range=70;
-	light.intensity=0.88;
-	
+	if( ! light)
+		gameObject.AddComponent(Light);
 }
 
 /*
@@ -311,10 +382,10 @@ function CreateLight () {
  */
 function OnGUI() {
 	
-	if( haveUniver && have2DAnd3D )
+	if( Trans )
 		Trans.OnGUI2D3D();
 	
-	VideoFull.OnGUIFullScreen();
+	GUI.OnGUIFullScreen();
 }
 
 
@@ -326,7 +397,7 @@ function OnGUI() {
  * Récupère la contenue d'une balise du xml et 
  * l'envoie à la sous fonction correspondante
  */
-function datasXmlWrapper( tagName : String, content : Hashtable ) {
+public function datasXmlWrapper( tagName : String, content : Hashtable ) {
 	switch( tagName ) {
 		
 		case 'diane' :
@@ -353,89 +424,77 @@ function datasXmlWrapper( tagName : String, content : Hashtable ) {
 	*place piece of circle according to xml
 	*init hashtable in the script attached to the plane
 */
-function placeMeshHashPolar ( t : Hashtable ){
+private function placeMeshHashPolar ( t : Hashtable ){
 	
 	/*
 	 * Création des éléments clickable en 2D
 	 */
-	if (	plane2D						 &&
-			t.ContainsKey( 'theta_min' ) &&
-			t.ContainsKey( 'theta_max' ) &&
-			t.ContainsKey( 'ratiormin' ) &&
-			t.ContainsKey( 'ratiormax' ) &&
-			t.ContainsKey( 'name' ) 	 ) {
-		
-		// crée des raccourcis
-		var theta_min = float.Parse( t['theta_min'] ) ;
-		var theta_max = float.Parse( t['theta_max'] ) ;
-		var ratiormin = float.Parse( t['ratiormin'] ) ;
-		var ratiormax = float.Parse( t['ratiormax'] ) ;
+	if ( createPolar ) {
 		
 		// instanciation des éléments
-		var obj = createPolar.placeMesh(	theta_min, theta_max ,
-											ratiormin, ratiormax , t['name'] );
+		var obj = createPolar.placeMesh( t );
+		if(obj){// if obj has been created
+			// Ajout d'un script comprenant une extension des propriété et des methodes des plans clickable
+			var s : scriptForPlane = obj.GetComponent("scriptForPlane");
+			if( ! s)
+				s  = obj.AddComponent ("scriptForPlane");
+			s.InitScript( t );
 		
-		// Ajout d'un script comprenant une extension des propriété et des methodes des plans clickable
-		var s : scriptForPlane = obj.GetComponent("scriptForPlane");
-		if( ! s)
-			s  = obj.AddComponent ("scriptForPlane");
-		s.InitScript( t );
+			// Ajout de la position réelle du plan dans le script d'extension
+			var p : Vector3 = createPolar.getTruePosition( t , gameObject );
+			s.InitPosPlane( p );
 		
-		// Ajout de la position réelle du plan dans le script d'extension
-		var p : Vector3 = createPolar.getTruePosition( 	theta_min, theta_max ,
-														ratiormin, ratiormax , gameObject );
-		s.InitPosPlane( p );
+			// Ajout du point vers lequel le plan est orienté dans le script d'extension
+			p = createPolar.getOrientedTo( t , gameObject );
+			s.InitOrientedTo( p );
 		
-		// Ajout du point vers lequel le plan est orienté dans le script d'extension
-		p = createPolar.getOrientedTo(	theta_min, theta_max ,
-										ratiormin, ratiormax , gameObject );
-		s.InitOrientedTo( p );
+			// add new gameobject to array
+			AllGO2D.Push( obj );
 		
-		// add new gameobject to array
-		AllGO2D.Push( obj );
-		
-		// génère les fichiers comprenant l'architecture des ressources
-		// si on est sur l'ordinateur
-		if( ! isOnIpad() )
-			s.createParsedFile();
-		
-	}
+			// génère les fichiers comprenant l'architecture des ressources
+			// si on est sur l'ordinateur
+			if( ! isOnIpad() )
+				s.createParsedFile();
+		}//if
+	}//if
 	
 	/*
 	 * Création des éléments clickable en 3D
 	 */
-	// if( plane3D ) {  -- Pourrait être utile non ?
-		
+	if( mesh3D ){
 		// instanciation des éléments
 		var obj3D = mesh3D.placeMesh3D( t );
 		
-		// Ajout d'un script comprenant une extension des propriété et des methodes des plans clickable
-		var s3D : scriptForPlane = obj3D.GetComponent("scriptForPlane");
-		if( ! s3D)
-			s3D  = obj3D.AddComponent ("scriptForPlane");
-		s3D.InitScript( t );
+		if(obj3D){//if obj3D has been created
+			// Ajout d'un script comprenant une extension des propriété et des methodes des plans clickable
+			var s3D : scriptForPlane = obj3D.GetComponent("scriptForPlane");
+			if( ! s3D)
+				s3D  = obj3D.AddComponent ("scriptForPlane");
+			s3D.InitScript( t );
 		
-		// Ajout de la position réelle du plan dans le script d'extension
-		s3D.InitPosPlane( obj3D.transform.position );
+			// Ajout de la position réelle du plan dans le script d'extension
+			s3D.InitPosPlane( obj3D.transform.position );
 		
-		// Ajout du point vers lequel le plan est orienté dans le script d'extension
-		s3D.InitOrientedTo( mesh3D.getOrientedTo() );
+			// Ajout du point vers lequel le plan est orienté dans le script d'extension
+			s3D.InitOrientedTo( mesh3D.getOrientedTo() );
 		
-		// add new gameobject to array
-		AllGO3D.Push( obj3D );
+			// add new gameobject to array
+			AllGO3D.Push( obj3D );
 		
-		// génère les fichiers comprenant l'architecture des ressources
-		// si on est sur l'ordinateur
-		if( ! isOnIpad() )
-			s3D.createParsedFile();
-	// }
+			// génère les fichiers comprenant l'architecture des ressources
+			// si on est sur l'ordinateur
+			if( ! isOnIpad() )
+				s3D.createParsedFile();
+		}//if
+	}//if
 }
 
 /*
 	*create and place sound in 3D
 */
-function placeAudioHash ( t : Hashtable ){
-	if(! soundEnable )
+private function placeAudioHash ( t : Hashtable ){
+	
+	if(! sound3D )
 		return ;
 	
 	var g : GameObject = sound3D.createAudio( t );
@@ -448,7 +507,7 @@ function placeAudioHash ( t : Hashtable ){
  * Définie les valeurs par défaut des paramètres système
  */
 
-function setDefaultSystemValues() {
+private function setDefaultSystemValues() {
 	// on démarre dans l'affichage 2D, qui existe
 	haveUniver = true ;
 	beginBy2D = true ;
@@ -473,7 +532,7 @@ function setDefaultSystemValues() {
  * Récupère la contenue d'une balise du xml et 
  * replis les attributs des paramètres
  */
-function systemXmlWrapper( tagName : String, content : Hashtable ) {
+public function systemXmlWrapper( tagName : String, content : Hashtable ) {
 	
 	switch (tagName) {
 		
