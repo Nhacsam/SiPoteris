@@ -543,7 +543,7 @@ private function placeMeshHashPolar ( t : Hashtable ){
 private function placeRectHash( t : Hashtable ){
 	if( meshRect ){
 		var obj2D : GameObject = meshRect.createRect2D( t );
-		var obj3D : GameObject = meshRect.createRect3D( t );
+		var obj3D : GameObject = meshRect.createRect3D( t , null );
 		
 		if(obj2D){// check if the plane is created and init script for plane
 			var s2 : scriptForPlane = obj2D.GetComponent("scriptForPlane");
