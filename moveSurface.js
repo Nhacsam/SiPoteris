@@ -5,10 +5,7 @@
 	*this script moves gameobject to cover the same interesting part of the movie all the time
 */
 
-private var lastTime : float = 0 ;
-
-private var numberIn : float = 0;
-
+private var video : videoSettings;
 
 /*
 	*move 2D surface to fit with the movement of the movie
@@ -28,7 +25,47 @@ public function moveSurface( t : GameObject , OnPlay : boolean){
         s.updateLastMoveTime();
 }
 
+/*
+	*move a mesh around the y axis and the center of the sphere
+*/
+public function rotateY_3D( g : GameObject ){
+	video = gameObject.GetComponent("videoSettings") as videoSettings;
+	var s : scriptForPlane = g.GetComponent( "scriptForPlane" );
+	
+	// calculate time between this moment and the previous call of the method
+	var dt = Time.time-s.getLastMoveTime();
+	
+	// A FAIRE: mettre la bonne vitesse
+	g.transform.RotateAround( video.getSpherePos() , Vector3.up , 20*Time.deltaTime );
+}
 
+/*
+	*move a mesh around the x axis and the center of the sphere
+*/
+public function rotateX_3D( g : GameObject ){
+	video = gameObject.GetComponent("videoSettings") as videoSettings;
+	var s : scriptForPlane = g.GetComponent( "scriptForPlane" );
+	
+	// calculate time between this moment and the previous call of the method
+	var dt = Time.time-s.getLastMoveTime();
+	
+	// A FAIRE: mettre la bonne vitesse
+	g.transform.RotateAround( video.getSpherePos() , Vector3.right , 20*Time.deltaTime );
+}
+
+/*
+	*move a mesh around the z axis and the center of the sphere
+*/
+public function rotateZ_3D( g : GameObject ){
+	video = gameObject.GetComponent("videoSettings") as videoSettings;
+	var s : scriptForPlane = g.GetComponent( "scriptForPlane" );
+	
+	// calculate time between this moment and the previous call of the method
+	var dt = Time.time-s.getLastMoveTime();
+	
+	// A FAIRE: mettre la bonne vitesse
+	g.transform.RotateAround( video.getSpherePos() , Vector3.forward , 20*Time.deltaTime );
+}
 
 /*
 	*reset rotation of planes when the movie is ended

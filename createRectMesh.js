@@ -115,14 +115,14 @@ function createRect3D( t : Hashtable , path : String ){
 	if(	t.ContainsKey( 'theta' ) 	&&
 		t.ContainsKey( 'phi' ) 		&&
 		t.ContainsKey( 'scale' ) 	&&
-		t.ContainsKey( 'name' ) 	&&
-		path    ) {
+		t.ContainsKey( 'name' ) 	/*&&
+		path    */) {
 		
 			// load asset
 			var texture = Resources.Load( path );
 			
 			//test if the asset has the appropriate type
-			if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
+			//if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
 				video = gameObject.GetComponent("videoSettings") as videoSettings;
 			
 				// convert from degree to radian
@@ -135,9 +135,9 @@ function createRect3D( t : Hashtable , path : String ){
 				
 				// set position of plane around the sphere
 				var v : Vector3 = new Vector3();
-				v.x = radius * Mathf.Sin(theta) * Mathf.Cos(phi)  	+ (video.getSpherePos()).x ;
-				v.y = radius * Mathf.Sin(phi) 						+ (video.getSpherePos()).y;
-				v.z = radius * Mathf.Cos(theta) * Mathf.Cos(phi)  	+ (video.getSpherePos()).z;
+				v.x = radius * Mathf.Sin(theta) * Mathf.Cos(phi)  	+ ( video.getSpherePos() ).x ;
+				v.y = radius * Mathf.Sin(phi) 						+ ( video.getSpherePos() ).y;
+				v.z = radius * Mathf.Cos(theta) * Mathf.Cos(phi)  	+ ( video.getSpherePos() ).z;
 				obj.transform.position = v;
 			
 				// set rotation of plane to face the center of the sphere
@@ -149,14 +149,15 @@ function createRect3D( t : Hashtable , path : String ){
 				obj.transform.localScale = Vector3( scale , scale , scale );
 			
 				// add texture to display on the plane
-				obj.renderer.material.mainTexture = texture;
-
+				//obj.renderer.material.mainTexture = texture;
+				obj.renderer.enabled = true;
+				
 				return obj;
-			}//if
+			/*}//if
 			else{
 				Console.Warning("File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D");
 				return;
-			}
+			}*/
 	}
 	else{// return null if a parameter is missing in the xml file - the gameobject is not created
 		Console.Warning("An element is missing in xml_data to create the mesh");
