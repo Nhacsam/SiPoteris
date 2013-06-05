@@ -18,7 +18,7 @@ private var video : videoSettings;
 
 
 // radius of sphere where th rectangle will be splited
-private var radius : float = 5.2;
+private var radius : float = 5;
 
 
 ///////////////////
@@ -108,7 +108,9 @@ public function getOrientedTo( t : Hashtable , obj : GameObject) : Vector3 {
 //////3D view//////
 ///////////////////
 
-
+/*
+	*create rectangle in 3D view
+*/
 function createRect3D( t : Hashtable , path : String ){
 	if(	t.ContainsKey( 'theta' ) 	&&
 		t.ContainsKey( 'phi' ) 		&&
@@ -116,35 +118,45 @@ function createRect3D( t : Hashtable , path : String ){
 		t.ContainsKey( 'name' ) 	&&
 		path    ) {
 		
-			video = gameObject.GetComponent("videoSettings") as videoSettings;
+			// load asset
+			var texture = Resources.Load( path );
 			
-			// convert from degree to radian
-			var theta : float = float.Parse(t['theta']) * Mathf.PI/180;
-			var phi : float = float.Parse(t['phi']) * Mathf.PI/180;
+			//test if the asset has the appropriate type
+			if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
+				video = gameObject.GetComponent("videoSettings") as videoSettings;
+			
+				// convert from degree to radian
+				var theta : float = float.Parse(t['theta']) * Mathf.PI/180;
+				var phi : float = float.Parse(t['phi']) * Mathf.PI/180;
 				
-			// create new plane
-			var obj : GameObject = GameObject.CreatePrimitive( PrimitiveType.Plane );
-			obj.name = "3D_rect_"+t['name'];
+				// create new plane
+				var obj : GameObject = GameObject.CreatePrimitive( PrimitiveType.Plane );
+				obj.name = "3D_rect_"+t['name'];
+				
+				// set position of plane around the sphere
+				var v : Vector3 = new Vector3();
+				v.x = radius * Mathf.Sin(theta) * Mathf.Cos(phi)  	+ (video.getSpherePos()).x ;
+				v.y = radius * Mathf.Sin(phi) 						+ (video.getSpherePos()).y;
+				v.z = radius * Mathf.Cos(theta) * Mathf.Cos(phi)  	+ (video.getSpherePos()).z;
+				obj.transform.position = v;
 			
-			// set position of plane around the sphere
-			var v : Vector3 = new Vector3();
-			v.x = radius * Mathf.Sin(theta) * Mathf.Cos(phi)  	+ (video.getSpherePos()).x ;
-			v.y = radius * Mathf.Sin(phi) 						+ (video.getSpherePos()).y;
-			v.z = radius * Mathf.Cos(theta) * Mathf.Cos(phi)  	+ (video.getSpherePos()).z;
-			obj.transform.position = v;
+				// set rotation of plane to face the center of the sphere
+				obj.transform.LookAt( video.getSpherePos() );
+				obj.transform.localEulerAngles += Vector3(90,0,0);
 			
-			// set rotation of plane to face the center of the sphere
-			obj.transform.LookAt( video.getSpherePos() );
-			obj.transform.localEulerAngles += Vector3(90,0,0);
+				// set scale
+				var scale : float = float.Parse( t['scale'] );
+				obj.transform.localScale = Vector3( scale , scale , scale );
 			
-			// set scale
-			var scale : float = float.Parse( t['scale'] );
-			obj.transform.localScale = Vector3( scale , scale , scale );
-			
-			// add texture to display on the plane
-			obj.renderer.material.mainTexture = Resources.Load( path );
+				// add texture to display on the plane
+				obj.renderer.material.mainTexture = texture;
 
-			return obj;
+				return obj;
+			}//if
+			else{
+				Console.Warning("File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D");
+				return;
+			}
 	}
 	else{// return null if a parameter is missing in the xml file - the gameobject is not created
 		Console.Warning("An element is missing in xml_data to create the mesh");

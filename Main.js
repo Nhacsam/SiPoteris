@@ -226,6 +226,9 @@ function Update () {
 			move.resetPlane(AllGO2D[i]);
 	}
 	
+	for( i = 0; i < AllGO3D.length; i++)
+		move.moveSurface( AllGO3D[i], true ) ;
+	
 }
 
 
