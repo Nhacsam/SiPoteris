@@ -223,7 +223,7 @@ function videoHDZoomQuit(plane : GameObject){
 function putVideo( focus: GameObject, nom : String){
 
 
-	if(!iOS.GetComponent("ForwardiOSMessages")){
+	if(!iOS){
 	iOS = new GameObject(); 
 	iOS.transform.position= Vector3(10,0,0);
 	iOS.name="iOS";
