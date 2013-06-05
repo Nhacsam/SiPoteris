@@ -192,6 +192,8 @@ function EnterOnFullScreen( Video : GameObject ) {
 	var slideShowImgs : Array = Datas.getImages();
 	var slideShowMin : Array = Datas.getMiniatures();
 	var slideShowVideo : Array = Datas.getVideos();
+	var slideShowVideoRight : Array = Datas.getVideosRight();
+	var slideShowVideoLeft : Array = Datas.getVideosLeft();
 	
 	var slideShowTempElmt : SLIDESHOWELMT ;
 	var slideShowElmts : Array = Array() ;
@@ -219,6 +221,38 @@ function EnterOnFullScreen( Video : GameObject ) {
 		
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
 													WINDOWTYPES.VIDEO,
+													Vector2.zero,
+													id );
+		
+		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
+		id++ ;
+	}
+	for (i = 0; i < slideShowVideoRight.length; i++ ) {
+		
+		
+		// On verifie qu'il y a une miniature associé à la video
+		min = fileSystem.getAssociatedMin( slideShowVideo[i], slideShowMin ) ;
+		if( min == slideShowVideo[i])
+			min = 'Pictures/play';
+		
+		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
+													WINDOWTYPES.VIDEORIGHT,
+													Vector2.zero,
+													id );
+		
+		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
+		id++ ;
+	}
+	for (i = 0; i < slideShowVideoLeft.length; i++ ) {
+		
+		
+		// On verifie qu'il y a une miniature associé à la video
+		min = fileSystem.getAssociatedMin( slideShowVideo[i], slideShowMin ) ;
+		if( min == slideShowVideo[i])
+			min = 'Pictures/play';
+		
+		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
+													WINDOWTYPES.VIDEOLEFT,
 													Vector2.zero,
 													id );
 		
