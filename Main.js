@@ -13,8 +13,9 @@ var AllAudio3D : Array = Array();
  * Dépendances : Scripts appelés dans le main
  */
 private var Videos : videoSettings ;			// Gère l'ajout, le démarage, l'arret, ... des videos ( + la sphère3D et le plan 2D -_-" )
-private var createPolar : createPolarMesh;		// Crée les plan cliquables en 2D avec une forme de morceaux de disque
-private var mesh3D : createSphericMesh;			// Crée les plan cliquables en 3D avec une forme de morceaux de sphère
+private var createPolar : createPolarMesh;		// Crée les plans cliquables en 2D avec une forme de morceaux de disque
+private var mesh3D : createSphericMesh;			// Crée les plans cliquables en 3D avec une forme de morceaux de sphère
+private var meshRect : createRectMesh;		// Crée les plans cliquables en 2D 
 
 private var move : moveSurface;					// Déplace les plans de manière à qu'il suive la video
 private var sound3D : audio3D;					// Gere les sons dans la visualisation 3D 
@@ -96,8 +97,10 @@ function Start () {
 	 */
 	Videos = gameObject.AddComponent("videoSettings") as videoSettings;
 	
-	if( beginBy2D || have2DAnd3D )
+	if( beginBy2D || have2DAnd3D ){
 		createPolar = gameObject.AddComponent("createPolarMesh") as createPolarMesh;
+		meshRect = gameObject.AddComponent("createRectMesh") as createRectMesh;
+	}
 	
 	if( !beginBy2D || have2DAnd3D )
 		mesh3D = gameObject.AddComponent("createSphericMesh") as createSphericMesh;
@@ -125,8 +128,10 @@ function Start () {
 	// create plane
 	plane2D = Videos.videoSettings(beginBy2D, have2DAnd3D);
 	// give access to this gameobject in createPolarMesh script
-	if(plane2D && createPolar)
+	if(plane2D && createPolar){
 		createPolar.SetSurface(plane2D);
+		meshRect.SetSurface(plane2D);
+	}
 	
 	
 	// Initialise le script gérant les sons
@@ -408,6 +413,8 @@ public function datasXmlWrapper( tagName : String, content : Hashtable ) {
 				placeMeshHashPolar( content );
 			else if( content['shape'] == 'polar' )
 				placeMeshHashPolar( content );
+			else if( content['shape'] == 'rectangle' )
+				placeRectHash( content );
 			else
 				placeMeshHashPolar( content );
 			
@@ -419,6 +426,10 @@ public function datasXmlWrapper( tagName : String, content : Hashtable ) {
 			break ;
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////
+/////Create and place gameobject (meshes, sound..) in 2D and 3D view/////
+/////////////////////////////////////////////////////////////////////////
 
 /*
 	*place piece of circle according to xml
@@ -488,6 +499,34 @@ private function placeMeshHashPolar ( t : Hashtable ){
 		}//if
 	}//if
 }
+
+/*
+	*place plane according to the xml
+*/
+private function placeRectHash( t : Hashtable ){
+	if( meshRect ){
+		var obj : GameObject = meshRect.createRect( t );
+		
+		if(obj){// check if the plane is created
+			var s : scriptForPlane = obj.GetComponent("scriptForPlane");
+			if( ! s)// if no script found, scriptforplane is added to the gameobject
+				s = obj.AddComponent ("scriptForPlane");
+				
+				// init variables of script
+				s.InitScript( t );
+		
+				// Ajout de la position réelle du plan dans le script d'extension
+				s.InitPosPlane( obj.transform.position );
+		
+				// Ajout du point vers lequel le plan est orienté dans le script d'extension
+				var p = meshRect.getOrientedTo( t , gameObject );
+				s.InitOrientedTo( p );
+				
+				AllGO2D.Push( obj );
+		}//if
+	}//if
+}
+
 
 /*
 	*create and place sound in 3D

@@ -49,8 +49,9 @@ function placeMesh( t : Hashtable ) : GameObject{
 		t.ContainsKey( 'theta_max' ) &&
 		t.ContainsKey( 'ratiormin' ) &&
 		t.ContainsKey( 'ratiormax' ) &&
-		t.ContainsKey( 'name' ) 	){
-
+		t.ContainsKey( 'name' ) 	 &&
+		surface							//check that the plane where the movie is displayed exist
+		){
 			// crée des raccourcis
 			var thetaMin = float.Parse( t['theta_min'] ) ;
 			var thetaMax = float.Parse( t['theta_max'] ) ;
@@ -77,8 +78,10 @@ function placeMesh( t : Hashtable ) : GameObject{
 	
 			return obj;
 	}
-	else// gameobject is not created
+	else{
+		Console.Warning("An element is missing in xml_data to create the mesh or the gameobject on which the movie is displayed is not assigned");
 		return;
+	}
 }
 
 
@@ -164,7 +167,7 @@ private function CreatePolarMesh(thetaMin : float, thetaMax : float, Rmin : floa
 	obj.GetComponent(MeshCollider).sharedMesh = meshBuilding;
 
 	// true if you want to see your gameobject and place it well
-	obj.renderer.enabled = false;
+	obj.renderer.enabled = true;
 
 	return obj;
 }
