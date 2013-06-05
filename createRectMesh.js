@@ -14,6 +14,16 @@ private var surface : GameObject;
 
 // scripts
 private var show : showingWindow;
+private var video : videoSettings;
+
+
+// radius of sphere where th rectangle will be splited
+private var radius : float = 5.2;
+
+
+///////////////////
+//////2D view//////
+///////////////////
 
 /*
  * get plane where the movie is displayed
@@ -23,9 +33,9 @@ function SetSurface( s : GameObject ) {
 }
 
 /*
-	*create rectangle
+	*create rectangle in 2D view
 */
-public function createRect( t : Hashtable ){
+public function createRect2D( t : Hashtable ){
 	if(	t.ContainsKey( 'posx' ) &&
 		t.ContainsKey( 'posy' ) &&
 		t.ContainsKey( 'sizex' ) &&
@@ -43,7 +53,7 @@ public function createRect( t : Hashtable ){
 		setPlane( t , obj );
 	
 		// disable renderer
-		obj.renderer.enabled = true;
+		obj.renderer.enabled = false;
 	
 		return obj;
 	}
@@ -92,4 +102,51 @@ public function getOrientedTo( t : Hashtable , obj : GameObject) : Vector3 {
 	
 	var v : Vector3 = obj.transform.position;
 	return v + Vector3( 0,1,0);
+}
+
+///////////////////
+//////3D view//////
+///////////////////
+
+
+function createRect3D( t : Hashtable ){
+	if(	t.ContainsKey( 'theta' ) 	&&
+		t.ContainsKey( 'phi' ) 		&&
+		t.ContainsKey( 'scale' ) 		&&
+		t.ContainsKey( 'name' ) 	 ) {
+		
+			video = gameObject.GetComponent("videoSettings") as videoSettings;
+			
+			// convert from degree to radian
+			var theta : float = float.Parse(t['theta']) * Mathf.PI/180;
+			var phi : float = float.Parse(t['phi']) * Mathf.PI/180;
+				
+			// create new plane
+			var obj : GameObject = GameObject.CreatePrimitive( PrimitiveType.Plane );
+			obj.name = "3D_rect_"+t['name'];
+			
+			// set position of plane around the sphere
+			var v : Vector3 = new Vector3();
+			v.x = radius * Mathf.Sin(theta) * Mathf.Cos(phi)  	+ (video.getSpherePos()).x ;
+			v.y = radius * Mathf.Sin(phi) 						+ (video.getSpherePos()).y;
+			v.z = radius * Mathf.Cos(theta) * Mathf.Cos(phi)  	+ (video.getSpherePos()).z;
+			obj.transform.position = v;
+			
+			// set rotation of plane to face the center of the sphere
+			obj.transform.LookAt( video.getSpherePos() );
+			obj.transform.localEulerAngles += Vector3(90,0,0);
+			
+			// set scale
+			var scale : float = float.Parse( t['scale'] );
+			obj.transform.localScale = Vector3( scale , scale , scale );
+			
+			// disable renderer
+			obj.renderer.enabled = true;
+
+			return obj;
+	}
+	else{// return null if a parameter is missing in the xml file - the gameobject is not created
+		Console.Warning("An element is missing in xml_data to create the mesh");
+		return;
+	}
 }
