@@ -61,6 +61,11 @@ private var textIsHidden : boolean ;
 /* How fast is the dragging ? */
 private var coefDragging : float = 1.0 ;
 
+/* Arrows showing possible scrolling */
+private var upArrow : Texture;
+private var downArrow : Texture;
+
+
 
 
 /*
@@ -84,6 +89,9 @@ private function initText(u: int, d: int, l: int, r: int) {
 		
 	widthText = Screen.width - lBorder - rBorder;
 	REF_RECT = Rect(lBorder, uBorder, widthLetter, heightLetter);
+	
+	upArrow = Resources.Load("Pictures/up_arrow");
+	downArrow = Resources.Load("Pictures/down_arrow");
 	
 	// enable event and dispy the text
 	enableAll();
@@ -259,6 +267,13 @@ function displayText() {
 		if (letterSpots[i].y >= uBorder && (letterSpots[i].y + heightLetter) <= Screen.height - dBorder)
 			GUI.Label (letterSpots[i], ""+textToDisplay[i], styleLetterMiddle);
 	}
+	
+	if (letterSpots[0].y < uBorder)
+		//GUI.Label ( Rect (lBorder - widthLetter, uBorder - heightLetter, 2*widthLetter, heightLetter), "/\\"); // Text version
+		GUI.Label ( Rect (lBorder - 15, uBorder - 15, 15, 15), upArrow);
+	if (letterSpots[textToDisplay.Length-1].y > Screen.height - dBorder)
+		//GUI.Label ( Rect (lBorder - widthLetter, Screen.height - dBorder, 2*widthLetter, heightLetter), "\\/"); // Text version
+		GUI.Label ( Rect (lBorder - 15, Screen.height - dBorder, 15, 15), downArrow);
 }
 
 function removeText() {
