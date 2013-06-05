@@ -231,15 +231,16 @@ function putVideo( focus: GameObject, nom : String){
 	controllerIOS = iOS.GetComponent("ForwardiOSMessages");
 	controllerIOS.movie = new PlayHardwareMovieClassPro[2]; 
 	}
+	controllerIOS = iOS.GetComponent("ForwardiOSMessages");
 	
 	if(!MovieController2){
 	MovieController2 = new GameObject(); 
 	MovieController2.transform.position= Vector3(10,0,0);
 	MovieController2.name = "MovieControllerBis";
-	MovieController2.AddComponent("SceneController");      
+	MovieController2.AddComponent("SceneController");          
 	}
-	controllerScene2 = MovieController2.GetComponent("SceneController");     
-	 
+	controllerScene2 = MovieController2.GetComponent("SceneController");
+	
 	if(!controllerScene2.movieClass){
 	controllerScene2.movieClass = new PlayHardwareMovieClassPro[1];
 	controllerScene2.movieName = new  String[1];
@@ -268,7 +269,7 @@ function stopVideo(focus: GameObject){
 	if(focus.GetComponent("PlayFileBasedMovieDefault")){
 	controllerScene2.movieClass[0] = focus.GetComponent("PlayFileBasedMovieDefault");
 	controllerScene2.movieClass[0].StopMovie();
-	controllerScene2.movieClass[0].moviePlaying();
+	//controllerScene2.movieClass[0].moviePlaying();
 	Destroy(focus.GetComponent("PlayFileBasedMovieDefault"));
 	}
 
@@ -376,4 +377,9 @@ function GetOtherView(){
 function GetFirstView(){
 
 	return firstView2D;
+}
+
+function videoIsReady(){
+
+	return controllerScene2.movieClass[0].videoIsReady();
 }

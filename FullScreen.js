@@ -219,11 +219,11 @@ function EnterOnFullScreen( Video : GameObject ) {
 		
 		
 		// On verifie qu'il y a une miniature associé à la video
-		min = fileSystem.getAssociatedMin( slideShowVideo[i], slideShowMin ) ;
-		if( min == slideShowVideo[i])
+		min = fileSystem.getAssociatedMin( slideShowVideoRight[i], slideShowMin ) ;
+		if( min == slideShowVideoRight[i])
 			min = 'Pictures/play';
 		
-		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
+		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideoRight[i],
 													WINDOWTYPES.VIDEORIGHT,
 													Vector2.zero,
 													id );
@@ -235,11 +235,11 @@ function EnterOnFullScreen( Video : GameObject ) {
 		
 		
 		// On verifie qu'il y a une miniature associé à la video
-		min = fileSystem.getAssociatedMin( slideShowVideo[i], slideShowMin ) ;
-		if( min == slideShowVideo[i])
+		min = fileSystem.getAssociatedMin( slideShowVideoLeft[i], slideShowMin ) ;
+		if( min == slideShowVideoLeft[i])
 			min = 'Pictures/play';
 		
-		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
+		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideoLeft[i],
 													WINDOWTYPES.VIDEOLEFT,
 													Vector2.zero,
 													id );

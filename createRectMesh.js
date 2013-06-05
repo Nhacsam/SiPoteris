@@ -43,7 +43,7 @@ public function createRect( t : Hashtable ){
 		setPlane( t , obj );
 	
 		// disable renderer
-		obj.renderer.enabled = true;
+		obj.renderer.enabled = false;
 	
 		return obj;
 	}
