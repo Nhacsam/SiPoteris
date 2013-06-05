@@ -268,11 +268,10 @@ function displayText() {
 			GUI.Label (letterSpots[i], ""+textToDisplay[i], styleLetterMiddle);
 	}
 	
+	/* Arrows to show possible scrolling */
 	if (letterSpots[0].y < uBorder)
-		//GUI.Label ( Rect (lBorder - widthLetter, uBorder - heightLetter, 2*widthLetter, heightLetter), "/\\"); // Text version
 		GUI.Label ( Rect (lBorder - 15, uBorder - 15, 15, 15), upArrow);
 	if (letterSpots[textToDisplay.Length-1].y > Screen.height - dBorder - heightLetter)
-		//GUI.Label ( Rect (lBorder - widthLetter, Screen.height - dBorder, 2*widthLetter, heightLetter), "\\/"); // Text version
 		GUI.Label ( Rect (lBorder - 15, Screen.height - dBorder, 15, 15), downArrow);
 }
 
@@ -296,11 +295,30 @@ function OnDisable(){
 function onDragging(dragData : DragInfo) {
 	if (textInitialized && eventEnable) {
 		var block = false; // If true, you cannot scroll
-		if ( letterSpots[0].y >= uBorder && dragData.delta.y < 0 ) // Blocking Up
-			block = true;
-		if ( letterSpots[textToDisplay.Length-1].y <= Screen.height - dBorder - heightLetter && dragData.delta.y > 0 ) // Blocking Down
-			block = true;
-			
+		var gap = 0; // gap between the top (resp bottom) of the text, and the top (resp bottom) of the frame
+		
+		if ( letterSpots[0].y >= uBorder) {// Blocking Up
+			gap = letterSpots[0].y - uBorder;
+			if (gap > heightLetter / 2) { // Then we have to realign the text
+				for (var j : int = 0; j < textToDisplay.Length; j++) {
+					letterSpots[j].y -= gap;
+				}
+			}
+			if (dragData.delta.y < 0)
+				block = true;
+		}
+		
+		if ( letterSpots[textToDisplay.Length-1].y <= Screen.height - dBorder - heightLetter) {// Blocking Down
+			gap = Screen.height - dBorder - heightLetter - letterSpots[textToDisplay.Length-1].y;
+			if (gap > heightLetter / 2) { // Then we have to realign the text
+				for (var k : int = 0; k < textToDisplay.Length; k++) {
+					letterSpots[k].y += gap;
+				}
+			}
+			if (dragData.delta.y > 0)
+				block = true;
+		}
+
 		/* If finger/mouse on the text and if not blocked */	
 		if (dragData.pos.x > lBorder && dragData.pos.x < Screen.width - rBorder && dragData.pos.y < Screen.height - uBorder && dragData.pos.y > dBorder && !block) {
 			for (var i : int = 0; i < textToDisplay.Length; i++) {
