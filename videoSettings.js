@@ -315,7 +315,7 @@ function test(){
 public function VideoWH() : Vector2 {
 	var controllerScene:SceneController;
 	controllerScene = MovieController2.GetComponent("SceneController");
-	return controllerScene.movieClass[1].movieWH();
+	return controllerScene.movieClass[0].movieWH();
 
 }
 
