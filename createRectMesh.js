@@ -109,11 +109,12 @@ public function getOrientedTo( t : Hashtable , obj : GameObject) : Vector3 {
 ///////////////////
 
 
-function createRect3D( t : Hashtable ){
+function createRect3D( t : Hashtable , path : String ){
 	if(	t.ContainsKey( 'theta' ) 	&&
 		t.ContainsKey( 'phi' ) 		&&
-		t.ContainsKey( 'scale' ) 		&&
-		t.ContainsKey( 'name' ) 	 ) {
+		t.ContainsKey( 'scale' ) 	&&
+		t.ContainsKey( 'name' ) 	&&
+		path    ) {
 		
 			video = gameObject.GetComponent("videoSettings") as videoSettings;
 			
@@ -140,8 +141,8 @@ function createRect3D( t : Hashtable ){
 			var scale : float = float.Parse( t['scale'] );
 			obj.transform.localScale = Vector3( scale , scale , scale );
 			
-			// disable renderer
-			obj.renderer.enabled = true;
+			// add texture to display on the plane
+			obj.renderer.material.mainTexture = Resources.Load( path );
 
 			return obj;
 	}
