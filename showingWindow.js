@@ -145,7 +145,7 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 	}
 	
 	// Arret de la video si on était sur une video
-	stopVideo();
+	//stopVideo();
 	
 	wType = type ;
 	
