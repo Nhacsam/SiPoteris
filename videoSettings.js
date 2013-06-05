@@ -223,13 +223,13 @@ function videoHDZoomQuit(plane : GameObject){
 function putVideo( focus: GameObject, nom : String){
 
 
-	if(!iOS){
+	if(!iOS.GetComponent("ForwardiOSMessages")){
 	iOS = new GameObject(); 
 	iOS.transform.position= Vector3(10,0,0);
 	iOS.name="iOS";
 	iOS.AddComponent("ForwardiOSMessages");
 	controllerIOS = iOS.GetComponent("ForwardiOSMessages");
-	controllerIOS.movie = new PlayHardwareMovieClassPro[1]; 
+	controllerIOS.movie = new PlayHardwareMovieClassPro[2]; 
 	}
 	
 	if(!MovieController2){
@@ -315,7 +315,7 @@ function test(){
 public function VideoWH() : Vector2 {
 	var controllerScene:SceneController;
 	controllerScene = MovieController2.GetComponent("SceneController");
-	return controllerScene.movieClass[1].movieWH();
+	return controllerScene.movieClass[0].movieWH();
 
 }
 
