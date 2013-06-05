@@ -271,7 +271,7 @@ function displayText() {
 	if (letterSpots[0].y < uBorder)
 		//GUI.Label ( Rect (lBorder - widthLetter, uBorder - heightLetter, 2*widthLetter, heightLetter), "/\\"); // Text version
 		GUI.Label ( Rect (lBorder - 15, uBorder - 15, 15, 15), upArrow);
-	if (letterSpots[textToDisplay.Length-1].y > Screen.height - dBorder)
+	if (letterSpots[textToDisplay.Length-1].y > Screen.height - dBorder - heightLetter)
 		//GUI.Label ( Rect (lBorder - widthLetter, Screen.height - dBorder, 2*widthLetter, heightLetter), "\\/"); // Text version
 		GUI.Label ( Rect (lBorder - 15, Screen.height - dBorder, 15, 15), downArrow);
 }
