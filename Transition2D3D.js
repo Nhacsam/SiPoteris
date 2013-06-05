@@ -256,7 +256,7 @@ function UpdateEnding(){
 
 	if (!enableEnding)
 		return ;
-
+				
 	if(!end && !lightFlag){
 	
 		light.intensity-=0.02;

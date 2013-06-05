@@ -91,7 +91,7 @@ function videoSettings (beginBy2D : boolean, have2DAnd3D : boolean) {
 		//set the scene
 		plane2D.AddComponent("PlayFileBasedMovieDefault");
 		controllerScene2D3D.movieClass[0] =  plane2D.GetComponent("PlayFileBasedMovieDefault");
-		controllerScene2D3D.movieClass[0].movieIndex=0;
+		controllerScene2D3D.movieClass[0].movieIndex = 0;
 		controllerScene2D3D.movieName[0] ="SIPO_full.mov";
 		//set iOS forwarding
 		controllerIOS.movie[0]=plane2D.GetComponent("PlayFileBasedMovieDefault");		
@@ -222,19 +222,30 @@ function videoHDZoomQuit(plane : GameObject){
 */
 function putVideo( focus: GameObject, nom : String){
 
+
+	if(!iOS){
+	iOS = new GameObject(); 
+	iOS.transform.position= Vector3(10,0,0);
+	iOS.name="iOS";
+	iOS.AddComponent("ForwardiOSMessages");
+	controllerIOS = iOS.GetComponent("ForwardiOSMessages");
+	controllerIOS.movie = new PlayHardwareMovieClassPro[1]; 
+	}
+	
 	if(!MovieController2){
 	MovieController2 = new GameObject(); 
 	MovieController2.transform.position= Vector3(10,0,0);
 	MovieController2.name = "MovieControllerBis";
 	MovieController2.AddComponent("SceneController");      
 	}
+	controllerScene2 = MovieController2.GetComponent("SceneController");     
 	 
-	controllerScene2 = MovieController2.GetComponent("SceneController");      
 	if(!controllerScene2.movieClass){
 	controllerScene2.movieClass = new PlayHardwareMovieClassPro[1];
 	controllerScene2.movieName = new  String[1];
 	controllerScene2.seekTime = new float[1];
 	}
+	
 	if(!focus.GetComponent("PlayFileBasedMovieDefault"))focus.AddComponent("PlayFileBasedMovieDefault");
   	focus.renderer.material = Resources.Load("Movie3");
 	controllerIOS.movie[1] = focus.GetComponent("PlayFileBasedMovieDefault"); 
@@ -259,8 +270,8 @@ function stopVideo(focus: GameObject){
 	controllerScene2.movieClass[0].StopMovie();
 	controllerScene2.movieClass[0].moviePlaying();
 	Destroy(focus.GetComponent("PlayFileBasedMovieDefault"));
-	return true;}
-	else return false;
+	}
+
 	
 
 }
@@ -315,6 +326,10 @@ function effectsOnEnd(){
 	if(getFlagEndVideo()){
 	
 		Trans.endingEnable();
+		if(light.type!=LightType.Point){
+		light.type=LightType.Point;
+		light.cookie=null;
+		}
 	}
 
 }
@@ -346,46 +361,7 @@ function endTransition(){
 }*/
 
 /*
-* part to hanlde zoom on a position
-*/
-
-/*
-private var pos3D:Vector3;
-private var prevamp:float;
-
-function OnEnable(){
-
-	Gesture.onPinchE += UpdateZoom;
-	Gesture.onDownE +=  onDown;
-	
-}
-
-function UpdateZoom(amp:float){
-
-
-	
-	//gameObject.transform.LookAt(pos3D);
-	if(pos3D.y>-3 && pos3D.y<-10){
-		if(pos3D.y>-3){pos3D.y=-3;}
-		if(pos3D.y<-10){pos3D.y=-10;gameObject.transform.LookAt(Vector3.zero);}
-		//gameObject.transform.Translate(pos3D*1.3);	
-		if(prevamp<amp*1.1)gameObject.transform.position.y= pos3D.y+1;//3*amp/10;
-		if(prevamp>amp*1.1)gameObject.transform.position.y= pos3D.y-1;//3*amp/10;
-		
-	}
-	prevamp=amp;
-}
-
-function onDown(pos:Vector2){
-
-	pos3D=camera.ScreenToWorldPoint(Vector3(pos.x,-10,pos.y));
-	
-}
-
-*/
-
-/*
-	*get sphere3D_pos
+ * get sphere3D_pos
 */
 function getSpherePos() : Vector3{
 	return sphere3D_pos;
