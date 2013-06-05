@@ -36,39 +36,50 @@ private var CameraInitialLightIntesity : float ;
 // A appeller pour sortir
 private var toOnDeZoom : function() ;
 
+private var returnTexture : Texture;
+private var creditsTexture : Texture;
+
 
 /* Variables qui régissent la disposition du full screen en proportion de la hauteur / largeur (donc entre 0 et 1) */
 /* Le point (0,0) est en bas à gauche. */
-private var marginTop : float = 0.95;
-private var marginBottom : float = 0.1;
+/* Attention aux dépendances ! */
+
+private var hauteurStripSlide : float = 9.0; // % de la hauteur de l'écran
+private var sizeButtons : float = hauteurStripSlide / 100; // Taille boutons = hauteur strip = hauteur slide
+
+private var marginTop : float = 0.97;
+private var marginBottom : float = 0.03;
 private var marginLeft : float = 0.05;
 private var marginRight : float = 0.95;
 
 private var stripTop : float = marginTop;
-private var stripBottom : float = stripTop - 0.05;
+private var stripBottom : float = stripTop - hauteurStripSlide/100;
 private var stripLeft : float = marginLeft;
 private var stripRight : float = marginRight;
 
-private var textTop : float = stripBottom - 0.05;
-private var textBottom : float = 0.26;
-private var textLeft : float = marginLeft;
-private var textRight : float = 0.45;
-
-private var musicTop : float = textBottom - 0.05;
 private var musicBottom : float = marginBottom;
-private var musicLeft : float = marginLeft + 0.028; // Permet aussi de changer la taille des boutons
-private var musicRight : float = textRight;
+private var musicTop : float = marginBottom + sizeButtons;
+private var musicLeft : float = marginLeft + sizeButtons;
+private var musicRight : float = 0.48 - sizeButtons;
+
+private var textTop : float = stripBottom - 0.05;
+private var textBottom : float = musicTop + 0.05;
+private var textLeft : float = marginLeft;
+private var textRight : float = musicRight + sizeButtons;
 
 private var pictureTop : float = textTop;
 private var pictureBottom : float = textBottom;
-private var pictureLeft : float = 0.55;
+private var pictureLeft : float = 0.52;
 private var pictureRight : float = stripRight;
 
-private var slideTop : float = musicTop;
-private var slideBottom : float = musicBottom;
+private var slideBottom : float = marginBottom;
+private var slideTop : float = slideBottom + hauteurStripSlide/100;
 private var slideLeft : float = pictureLeft;
 private var slideRight : float = marginRight;
 
+private var sizeButtonsPix : int = sizeButtons * Screen.height; // Taille boutons = hauteur strip = hauteur slide
+private var returnRectangle : Rect = new Rect(Screen.width*marginLeft, Screen.height*(1-marginBottom)-sizeButtonsPix, sizeButtonsPix, sizeButtonsPix);
+private var creditsRectangle : Rect = new Rect(Screen.width*textRight-sizeButtonsPix, Screen.height*(1-marginBottom)-sizeButtonsPix, sizeButtonsPix, sizeButtonsPix);
 
 
 /*
@@ -86,6 +97,13 @@ function InitFullScreen( ) {
 	
 	onFullScreen = false ;
 	
+	returnTexture = Resources.Load("Pictures/blue_left_arrow");
+	if (!returnTexture)
+		Console.Warning("Pas de texture pour le bouton return");
+		
+	creditsTexture = Resources.Load("Pictures/credits");
+	if (!creditsTexture)
+		Console.Warning("Pas de texture pour le bouton crédits");
 }
 
 function OnGUIFullScreen(){
@@ -93,12 +111,6 @@ function OnGUIFullScreen(){
 	if( onFullScreen ) {
 	
 		if( !GUIIsHidden) {
-			var returnRectangle : Rect = new Rect(0,Screen.height-Screen.width*musicLeft,Screen.width*musicLeft,Screen.width*musicLeft);
-			var returnTexture : Texture = Resources.Load("Pictures/blue_left_arrow");
-			
-			var creditsRectangle : Rect = new Rect(Screen.width-Screen.width*musicLeft,Screen.height-Screen.width*musicLeft,Screen.width*musicLeft,Screen.width*musicLeft);
-			var creditsTexture : Texture = Resources.Load("Pictures/credits");
-			
 			if( GUI.Button( returnRectangle, returnTexture ) ) {
 				Debug.Log( 'Sortie de l\'interface demandée' );
 			
