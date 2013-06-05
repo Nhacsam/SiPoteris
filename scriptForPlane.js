@@ -225,6 +225,14 @@ public function getVideoFolder() : String {
 	return  fileSystem.getChildFolder( 'video', getFolderName(  fileSystem.getStreamingFolder() ), fileSystem.getStreamingFolder() ) ;
 }
 
+public function getVideoRightFolder() : String {
+	return  fileSystem.getChildFolder( 'videoRight', getFolderName(  fileSystem.getStreamingFolder() ), fileSystem.getStreamingFolder() ) ;
+}
+
+public function getVideoLeftFolder() : String {
+	return  fileSystem.getChildFolder( 'videoLeft', getFolderName(  fileSystem.getStreamingFolder() ), fileSystem.getStreamingFolder() ) ;
+}
+
 public function getMiniatureFolder() : String {
 	return fileSystem.getChildFolder( 'min', getFolderName(null), null );
 }
@@ -266,6 +274,14 @@ public function getDefaultAudioFolder() : String {
 
 public function getDefaultVideoFolder() : String {
 	return fileSystem.getChildFolder( 'video', getDefaultFolder( fileSystem.getStreamingFolder() ), fileSystem.getStreamingFolder() ) ;
+}
+
+public function getDefaultVideoRightFolder() : String {
+	return fileSystem.getChildFolder( 'videoRight', getDefaultFolder( fileSystem.getStreamingFolder() ), fileSystem.getStreamingFolder() ) ;
+}
+
+public function getDefaultVideoLeftFolder() : String {
+	return fileSystem.getChildFolder( 'videoLeft', getDefaultFolder( fileSystem.getStreamingFolder() ), fileSystem.getStreamingFolder() ) ;
 }
 
 public function getDefaultMiniatureFolder() : String {
@@ -322,6 +338,22 @@ public function getVideos() : Array {
 		return getIpadVideos() ;
 	else
 		return getEditorVideos() ;
+}
+
+public function getVideosRight() : Array {
+	
+	if( isOnIpad() )
+		return getIpadVideosRight() ;
+	else
+		return getEditorVideosRight() ;
+}
+
+public function getVideosLeft() : Array {
+	
+	if( isOnIpad() )
+		return getIpadVideosLeft() ;
+	else
+		return getEditorVideosLeft() ;
 }
 
 public function getMiniatures() : Array {
@@ -390,6 +422,32 @@ public function getEditorVideos() : Array {
 	
 	if( Datas.length <= 0 ) // not found
 		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultVideoFolder(), '', fileSystem.getStreamingFolder() ) ;
+	
+	
+	for( var i = 0; i < Datas.length; i++ )
+		Datas[i] = fileSystem.fromAssetsPath( Datas[i] ) ;
+	
+	return Datas ;
+}
+
+public function getEditorVideosRight() : Array {
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getVideoRightFolder(), '', fileSystem.getStreamingFolder() ) ;
+	
+	if( Datas.length <= 0 ) // not found
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultVideoRightFolder(), '', fileSystem.getStreamingFolder() ) ;
+	
+	
+	for( var i = 0; i < Datas.length; i++ )
+		Datas[i] = fileSystem.fromAssetsPath( Datas[i] ) ;
+	
+	return Datas ;
+}
+
+public function getEditorVideosLeft() : Array {
+	var Datas : Array = fileSystem.getFilesInArrayFromFolder( getVideoLeftFolder(), '', fileSystem.getStreamingFolder() ) ;
+	
+	if( Datas.length <= 0 ) // not found
+		Datas = fileSystem.getFilesInArrayFromFolder( getDefaultVideoLeftFolder(), '', fileSystem.getStreamingFolder() ) ;
 	
 	
 	for( var i = 0; i < Datas.length; i++ )
@@ -543,6 +601,30 @@ public function getIpadVideos() : Array {
 
 }
 
+
+public function getIpadVideosRight() : Array {
+	
+	// Si la liste des fichiers et vides, on la génère
+	if( GUIFiles.length == 0 )
+		GUIFiles = fileSystem.parseFile( fileSystem.getResourcesPath() +'/'+ getFolderName(null) +'/'+ parsedFilePath ) ;
+	
+	// Ensuite on cheche ceux qui contiennent '/videoRight/' et on renvoie les résultats
+	return fileSystem.getStringContainInArray(GUIFiles, '/videoRight/' );
+
+}
+
+
+public function getIpadVideosLeft() : Array {
+	
+	// Si la liste des fichiers et vides, on la génère
+	if( GUIFiles.length == 0 )
+		GUIFiles = fileSystem.parseFile( fileSystem.getResourcesPath() +'/'+ getFolderName(null) +'/'+ parsedFilePath ) ;
+	
+	// Ensuite on cheche ceux qui contiennent '/videoLeft/' et on renvoie les résultats
+	return fileSystem.getStringContainInArray(GUIFiles, '/videoLeft/' );
+
+}
+
 public function getIpadMiniatures() : Array {
 	
 	// Si la liste des fichiers et vides, on la génère
@@ -613,7 +695,9 @@ public function createParsedFile() {
 	var gettingFilesFunctions : Array = new Array() ;
 	gettingFilesFunctions.Push( getSounds );
 	gettingFilesFunctions.Push( getImages );
-	gettingFilesFunctions.Push( getVideos );
+	gettingFilesFunctions.Push( getVideos ) ;
+	gettingFilesFunctions.Push( getVideosRight );
+	gettingFilesFunctions.Push( getVideosLeft );
 	gettingFilesFunctions.Push( getMiniatures );
 	gettingFilesFunctions.Push( getTextArrayWrapper );
 	gettingFilesFunctions.Push( getStripVideoArrayWrapper );

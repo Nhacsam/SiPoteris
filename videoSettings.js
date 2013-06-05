@@ -302,7 +302,7 @@ function test(){
 
 
 //revoi largeur et auteur de la video
-function VideoWH(){
+public function VideoWH() : Vector2 {
 	var controllerScene:SceneController;
 	controllerScene = MovieController2.GetComponent("SceneController");
 	var WH:Vector2;
