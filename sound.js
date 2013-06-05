@@ -45,9 +45,6 @@ private var chooseNextSoundRandomly: boolean = true;
 private var repeatButton : Texture;
 
 
-
-
-
 function OnGUISound() {
 	if( !soundIsHidden )
 		displayMusic();
@@ -65,11 +62,11 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
 	tabOfSounds = tab;
 	currentIndex = 0;
 		
-	enableAll();
-
 	gameObject.AddComponent("AudioSource");
 	audio.clip = Resources.Load(tab[0]) as AudioClip;
 	audio.Play();
+	
+	enableAll();
 	
 	playBtn = Resources.Load("Pictures/play");
 	pauseBtn = Resources.Load("Pictures/pause");
@@ -205,6 +202,7 @@ function removeMusic() {
 public function enableAll() {
 	show() ;
 	enableEvents() ;
+	audio.Play();
 }
 
 /*
@@ -212,7 +210,8 @@ public function enableAll() {
  */
 public function disableAll() {
 	hide() ;
-	disableEvents() ;
+	disableEvents();
+	audio.Pause();
 }
 
 /*

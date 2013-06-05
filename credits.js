@@ -28,7 +28,7 @@ function initCredits ( returnRectangle : Rect) {
 	gameObject.GetComponent("AudioSource");
 	if (audio.isPlaying) {
 		audioWasPlaying = true;
-		audio.Stop();
+		audio.Pause();
 	}
 	else
 		audioWasPlaying = false;
