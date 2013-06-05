@@ -72,8 +72,8 @@ private function setPlane( t : Hashtable , g : GameObject ){
 	var posX = float.Parse( t['posx'] );
 	var posY = float.Parse( t['posy'] );
 	
-	g.transform.position.x += posX*meshVideo.bounds.size.x/2;
-	g.transform.position.z += posY*meshVideo.bounds.size.y/2;
+	g.transform.position.x -= posX*meshVideo.bounds.size.x/2;
+	g.transform.position.z += posY*meshVideo.bounds.size.z/2;
 	
 	// set scale of plane
 	// get scale of videoplane
