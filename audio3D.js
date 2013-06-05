@@ -124,8 +124,8 @@ private function manageVolume( d : float , g : GameObject , srcAudioPosViewPoint
 //////////update//////////
 //////////////////////////
 
-public function updateSounds ( tabSound : Array ){
-	if( !trans.isScene2D() && !full.getOnFullScreen() ){// if in 3D view
+public function updateSounds ( on3D : boolean, tabSound : Array ){
+	if( on3D ){// if in 3D view
 		//position viewpoint of audiosource
 		var srcAudioPosViewPoint : Vector3;
 		//distance between gameObject and center of screen

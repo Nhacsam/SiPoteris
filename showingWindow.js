@@ -18,7 +18,7 @@ private var material : Material ;
 private var wImgTex : Texture = null ;
 
 // Types
-enum WINDOWTYPES { NONE, IMG, VIDEO } ;
+enum WINDOWTYPES { NONE, IMG, VIDEO, VIDEORIGHT, VIDEOLEFT } ;
 private var wType : WINDOWTYPES = WINDOWTYPES.NONE;
 
 // Id de l'element en lecture
@@ -81,7 +81,7 @@ function InitWindow( pos : Rect, z : float ) {
 	
 	// affichage et activation des événement
 	enableAll();
-	// AU cas ou
+	// Au cas ou
 	stopVideo();
 }
 
@@ -144,10 +144,15 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 		return ;
 	}
 	
+	// Arret de la video si on était sur une video
+	stopVideo();
+	
 	wType = type ;
 	
 	switch( wType ) {
-	
+		
+		case WINDOWTYPES.VIDEORIGHT :
+		case WINDOWTYPES.VIDEOLEFT :
 		case WINDOWTYPES.VIDEO : // Si c'est une video
 			
 			// on retire du chemin StreamingAssets
@@ -161,18 +166,20 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 			
 			// inversion de la rotation
 			setRotation();
-			wObj.transform.Rotate( Vector3( 0, 180, 0) );
+			if( wType == WINDOWTYPES.VIDEO )
+				wObj.transform.Rotate( Vector3( 0, 180, 0) );
+			else if ( wType == WINDOWTYPES.VIDEORIGHT )
+				wObj.transform.Rotate( Vector3( 0, 90, 0) );
+			else if ( wType == WINDOWTYPES.VIDEOLEFT )
+				wObj.transform.Rotate( Vector3( 0, 270, 0) );
 			
 			wVideoIsPlaying= true ;
 			
-			size = Vector2(1,1);
+			size = (size != Vector2.zero) ? size : wVideoSettings.VideoWH() ;
 			break ;
 		
 		
 		case WINDOWTYPES.IMG : // Si c'est une image
-			
-			// Arret de la video si on était sur une video
-			stopVideo();
 			
 			// Charge la texture
 			wImgTex = Resources.Load(path);
@@ -188,10 +195,15 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 			wObj.renderer.material.mainTexture = wImgTex ;
 			wObj.renderer.enabled = true ;
 			
+			wObj.transform.Rotate( Vector3( 0, 180, 0) );
+			wObj.transform.Rotate( Vector3( 0, 90, 0) );
+			
 			// réinitialise la rotation
 			setRotation();
 			// Calcul des dimensions 
 			size = (size != Vector2.zero) ? size : Vector2( wImgTex.width, wImgTex.height ) ;
+			
+			
 			
 			break ;
 	}
@@ -339,6 +351,13 @@ private function setRotation() {
  * sans redimentionner l'image
  */
 private function getOptimalSize( VideoDim : Vector2, container : Vector2 ) : Vector2 {
+	
+	// Gestion des erreurs
+	if( VideoDim.x == 0 || VideoDim.y==0) {
+		Console.HandledError('One of two composant of the dimension is null : VideoDim = '+VideoDim);
+		return container ;
+	}
+	
 	
 	// calcul des ratios
 	var videoRatio = VideoDim.y/VideoDim.x ;

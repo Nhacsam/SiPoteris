@@ -94,7 +94,7 @@ function OnGUIFullScreen(){
 	
 		if( !GUIIsHidden) {
 			var returnRectangle : Rect = new Rect(0,Screen.height-Screen.width*musicLeft,Screen.width*musicLeft,Screen.width*musicLeft);
-			var returnTexture : Texture = Resources.Load("blue_left_arrow");
+			var returnTexture : Texture = Resources.Load("Pictures/blue_left_arrow");
 			
 			var creditsRectangle : Rect = new Rect(Screen.width-Screen.width*musicLeft,Screen.height-Screen.width*musicLeft,Screen.width*musicLeft,Screen.width*musicLeft);
 			var creditsTexture : Texture = Resources.Load("Pictures/credits");
@@ -180,6 +180,8 @@ function EnterOnFullScreen( Video : GameObject ) {
 	var slideShowImgs : Array = Datas.getImages();
 	var slideShowMin : Array = Datas.getMiniatures();
 	var slideShowVideo : Array = Datas.getVideos();
+	var slideShowVideoRight : Array = Datas.getVideosRight();
+	var slideShowVideoLeft : Array = Datas.getVideosLeft();
 	
 	var slideShowTempElmt : SLIDESHOWELMT ;
 	var slideShowElmts : Array = Array() ;
@@ -207,6 +209,38 @@ function EnterOnFullScreen( Video : GameObject ) {
 		
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
 													WINDOWTYPES.VIDEO,
+													Vector2.zero,
+													id );
+		
+		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
+		id++ ;
+	}
+	for (i = 0; i < slideShowVideoRight.length; i++ ) {
+		
+		
+		// On verifie qu'il y a une miniature associé à la video
+		min = fileSystem.getAssociatedMin( slideShowVideo[i], slideShowMin ) ;
+		if( min == slideShowVideo[i])
+			min = 'Pictures/play';
+		
+		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
+													WINDOWTYPES.VIDEORIGHT,
+													Vector2.zero,
+													id );
+		
+		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
+		id++ ;
+	}
+	for (i = 0; i < slideShowVideoLeft.length; i++ ) {
+		
+		
+		// On verifie qu'il y a une miniature associé à la video
+		min = fileSystem.getAssociatedMin( slideShowVideo[i], slideShowMin ) ;
+		if( min == slideShowVideo[i])
+			min = 'Pictures/play';
+		
+		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
+													WINDOWTYPES.VIDEOLEFT,
 													Vector2.zero,
 													id );
 		

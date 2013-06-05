@@ -12,16 +12,13 @@ private var done3:boolean = false;
 private var lightFlag:boolean = false;
 //to access accelerometer
 private var control:CameraControl;
-private var mouseLook : MouseLook ;
 
 private var zoom: Zoom;
 
-private var button:boolean = true;
 private var Videos:videoSettings;
 
 private var rot;
 private var scene2D : boolean = true;
-private var buttonIsPressed : boolean=true;
 
 /* Coordinates of the 2D/3D button */
 private var buttonUp : int = Screen.height - 100;
@@ -38,10 +35,6 @@ private var OnEndTrans : Array ;
 
 //instantiate items
 function init(){
-
-	mouseLook = gameObject.GetComponent("MouseLook");
-	if (!mouseLook)
-		mouseLook = gameObject.AddComponent("mouseLook");
 	
 	control = gameObject.GetComponent("CameraControl");
 	if (!control)	
@@ -51,8 +44,8 @@ function init(){
 	if (!zoom)	
 		zoom = gameObject.AddComponent("Zoom");
 	Videos = gameObject.GetComponent("videoSettings") as videoSettings;
-	control.enabled=false;
-	mouseLook.enabled=false;
+	
+	control.enabled = false ;
 	
 	scene2D = Videos.GetFirstView();
 	
@@ -111,16 +104,7 @@ function isInButton (pos : Vector2) {
 function Change2D3D(){
 
 	end=false;
-	
-	if(scene2D){	
-		cameraTransition();
-	}
-	else{
-		mouseLook.enabled = false;
-		control.enabled = false;
-		cameraTransition();
-	}
-
+	cameraTransition();
 	switchScene();
 	
 
@@ -146,7 +130,7 @@ function cameraTransition(){
 		
 	}
 	else{
-		rot= Vector3(270,0,0);
+		rot= Vector3(270,180,0);
 		camera.transform.eulerAngles=Vector3(0,0,0);
 		enable=true;
 		done=false;
@@ -154,6 +138,7 @@ function cameraTransition(){
 		done2=false;
 		done3=false;
 		lightFlag=false;
+		
 		light.type=LightType.Point;
 		light.cookie=null;
 		
@@ -199,12 +184,7 @@ function Update2D3D(){
 		if(camera.transform.eulerAngles.x >= 358 ){
 			enable=false;
 			
-			if( isOnIpad() ) {
-				control.enabled=  true;
-			} 
-			else {
-				mouseLook.enabled = true ;
-			}
+			(gameObject.GetComponent("Main") as Main).enableMouseLook();
 			
 			control.AttachGyro();
 			zoom.enableEvents();
@@ -276,7 +256,7 @@ function UpdateEnding(){
 
 	if (!enableEnding)
 		return ;
-
+				
 	if(!end && !lightFlag){
 	
 		light.intensity-=0.02;

@@ -62,15 +62,6 @@ function Start () {
 	setDefaultSystemValues();
 	getXML.getElementFromXML( 'system.xml', systemXmlWrapper ) ;
 	
-	Console.Test( 'haveUniver : "' + haveUniver +'"' ,50 );
-	Console.Test( 'beginBy2D : "' + beginBy2D +'"' ,50 );
-	Console.Test( 'have2DAnd3D : "' + have2DAnd3D +'"' ,50 );
-	Console.Test( 'soundEnable : "' + soundEnable +'"' ,50 );
-	Console.Test( 'transitionToGUIType : "' + transitionToGUIType +'"' ,50 );
-	Console.Test( 'zoomType2D : "' + zoomType2D +'"' ,50 );
-	Console.Test( 'zoomType3D : "' + zoomType3D +'"' ,50 );
-	Console.Test( 'zoomLength : "' + zoomLength +'"' ,50 );
-	
 	
 	/*
 	 * Si on a que l'interface, on l'instancie vite fait et on squezze le reste
@@ -97,28 +88,30 @@ function Start () {
 	 */
 	Videos = gameObject.AddComponent("videoSettings") as videoSettings;
 	
-	if( beginBy2D || have2DAnd3D ){
+	if( beginBy2D || have2DAnd3D )	{	// Si on a la 2D
 		createPolar = gameObject.AddComponent("createPolarMesh") as createPolarMesh;
 		meshRect = gameObject.AddComponent("createRectMesh") as createRectMesh;
 	}
 	
-	if( !beginBy2D || have2DAnd3D )
+	if( !beginBy2D || have2DAnd3D )		// Si on a la 3D
 		mesh3D = gameObject.AddComponent("createSphericMesh") as createSphericMesh;
 	
 	move = gameObject.AddComponent("moveSurface") as moveSurface;
 	
-	if( soundEnable )
+	if( soundEnable )	// Si on a du son
 		sound3D = gameObject.AddComponent("audio3D") as audio3D;
 	
-	if( have2DAnd3D )
+	if( have2DAnd3D )	// Si on a la 2D et la 3D
 		Trans = gameObject.AddComponent("Transition2D3D") as Transition2D3D;
 	
 	
 	Zoom = gameObject.AddComponent("Zoom") as Zoom;
 	GUI= gameObject.AddComponent("FullScreen") as FullScreen;
 	
-	control = gameObject.AddComponent("CameraControl") as CameraControl;
-	mouseLook = gameObject.AddComponent("MouseLook") as MouseLook;
+	if( !beginBy2D || have2DAnd3D ) {	// Si on a la 3D
+		control = gameObject.AddComponent("CameraControl") as CameraControl;
+		mouseLook = gameObject.AddComponent("MouseLook") as MouseLook;
+	}
 	
 	
 	/*
@@ -167,13 +160,15 @@ function Start () {
 	 
 	// Au Zoom vers l'iterface graphique
 	Zoom.AddOnZoom( Videos.videoHDZoomON );			// mis en pause de la video
+	Zoom.AddOnZoom( disableMouseLook );				// mis en pause de la video
+	
 	if( Trans )
-		Zoom.AddOnZoom( Trans.flagExit );				// ?????????????????????????????
+		Zoom.AddOnZoom( Trans.flagExit );			// ?????????????????????????????
 	
 	// Quand on repart de l'iterface graphique
 	Zoom.AddOnLeave( GUI.LeaveFullScreen );			// Détruit l'interface
 	Zoom.AddOnLeave( Videos.videoHDZoomQuit );		// Relance la video
-	Zoom.AddOnLeave( CameraConfigUnivComputed );	// Restitution de la caméra et de la lumière
+	Zoom.AddOnLeave( CameraConfigTrans );			// Camera en mode transition
 	
 	// Quand le zoom est fini : quand on arrive sur l'interface
 	Zoom.AddOnEndZoom(CameraConfigGUI);				// Paramètrage de la caméra et de la lumière
@@ -183,18 +178,16 @@ function Start () {
 	// Quand le dezoom est fini : quand on retourne dans l'univers
 	if( Trans )
 		Zoom.AddOnEndDezoom( Trans.flagExit );			// ?????????????????????????????
+	Zoom.AddOnEndDezoom( CameraConfigUnivComputed );	// Restitution de la caméra et de la lumière
 	
-	
-	// Gestion de l'activation / desactivation des mouvements de caméra
-	// avec la souris dans l'interface graphique
-	Zoom.AddOnZoom(disableMouseLook);
-	Zoom.AddOnEndDezoom(enableMouseLook);
 	
 	// Au click sur le boutton retour de l'interface
 	GUI.SetLeaveCallback( Zoom.toOnDeZoom );	// Dezoom vers l'univers
 	
 	// A la fin de la transition 2D/3D
 	if( Trans ) {
+		Trans.AddOnBeginTrans( disableMouseLook );
+		
 		Trans.AddOnEndTrans( changeZoomPlane );			// Changement des plans clickables
 		Trans.AddOnEndTrans( CameraConfigUniv );		// Changement des paramètre de caméra
 	}
@@ -221,7 +214,7 @@ function Update () {
 	Zoom.UpDateZoom() ;						// maj du Zoom
 	
 	if( sound3D )
-		sound3D.updateSounds( AllAudio3D );	// maj des sons 3D
+		sound3D.updateSounds( !isOn2D(), AllAudio3D );	// maj des sons 3D
 	
 	
 	// Déplacement des plan en 2D (si il y en a)
@@ -241,10 +234,20 @@ function Update () {
  */
 public function enableMouseLook() {
 	if( isOnIpad() ) {
-		control.enabled = Trans.isScene2D() ? false : true;
+	
+		if( control )
+			control.enabled = isOn2D() ? false : true;
+			
+		if( mouseLook )
+			mouseLook.enabled = false ;
 	}
-	else {	
-		mouseLook.enabled = Trans.isScene2D() ? false : true;
+	else {
+	
+		if( mouseLook )
+			mouseLook.enabled = isOn2D() ? false : true;
+			
+		if( control )
+			control.enabled = false ;
 	}
 }
 
@@ -252,13 +255,33 @@ public function enableMouseLook() {
  * Active les mouvements de la caméra
  */
 public function disableMouseLook() {
-	if( isOnIpad() ) {
+	if( control )
 		control.enabled = false;
-	}
-	else {	
+	
+	if( mouseLook )
 		mouseLook.enabled = false ;
-	}
 }
+
+/*
+ * Revoie vrai si on est en 2D
+ */
+public function isOn2D() {
+	
+	if( Trans ) {
+		return Trans.isScene2D() ;
+	} else {
+		
+		if( !haveUniver || have2DAnd3D ) {
+			Console.CriticalError(	"Une erreur est survenue dans le main, détectée dans CameraConfigUnivComputed.\n" +
+									"Trans : NULL, haveUniver : " + haveUniver +", have2DAnd3D : "+have2DAnd3D);
+			return true ;
+		} else
+			return beginBy2D;
+	}
+	
+}
+
+
 
 /*
  * Change les plans clickables dans le zoom
@@ -305,18 +328,7 @@ static function isOnIpad() : boolean {
  * pour l'univer en calculant lui même si on est en 2D ou 3D
  */
 public function CameraConfigUnivComputed() {
-	
-	if( Trans ) {
-		CameraConfigUniv(Trans.isScene2D());
-	} else {
-		
-		if( !haveUniver || have2DAnd3D ) {
-			Console.CriticalError(	"Une erreur est survenue dans le main, détectée dans CameraConfigUnivComputed.\n" +
-									"Trans : NULL, haveUniver : " + haveUniver +", have2DAnd3D : "+have2DAnd3D);
-			CameraConfigGUI();
-		} else
-			CameraConfigUniv(beginBy2D);
-	}
+	CameraConfigUniv(isOn2D());
 }
 
 
@@ -332,24 +344,26 @@ public function CameraConfigUniv( is2D : boolean) {
 		camera.orthographic = false ;
 		
 		light.type=LightType.Point;
-		light.range=70;
 		light.intensity=0.88;
 		
-		// active le déplacement de la caméra
-		enableMouseLook();
+		light.cookie=null ;
+		
+		// desactive le déplacement de la caméra
+		disableMouseLook();
+		
 	} else {
 		
 		camera.orthographic = false ;
 		
 		//light
 		light.type=LightType.Spot;
-		light.range=70;
 		light.intensity=0.88;
+		
 		light.cookie=Resources.Load("camMask");
 		light.spotAngle=50;
 		
-		// desactive le déplacement de la caméra
-		disableMouseLook();
+		// active le déplacement de la caméra
+		enableMouseLook();
 	}
 
 }
@@ -360,12 +374,33 @@ public function CameraConfigUniv( is2D : boolean) {
  */
 public function CameraConfigGUI() {
 	
+	Console.Test( 'CameraConfigGUI', 50);
+	
 	CameraSharedConfig();
 	
 	camera.orthographic = true ;
 	gameObject.light.type = LightType.Directional ;
 	gameObject.light.intensity = 0.4 ;
+	
+	light.cookie=null ;
+	
+	// desactive le déplacement de la caméra
+	disableMouseLook();
 }
+
+/*
+ * Configure la caméra et la lumière
+ * pendant les transitions
+ */
+public function CameraConfigTrans() {
+	
+	CameraConfigUnivComputed();
+	camera.orthographic = false ;
+	
+	// desactive le déplacement de la caméra
+	disableMouseLook();
+}
+
 
 /*
  * Configure les paramètre commun de la caméra
@@ -380,6 +415,8 @@ private function CameraSharedConfig() {
 	
 	if( ! light)
 		gameObject.AddComponent(Light);
+	
+	light.range=70;
 }
 
 /*
