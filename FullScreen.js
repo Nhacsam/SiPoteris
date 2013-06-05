@@ -94,7 +94,7 @@ function OnGUIFullScreen(){
 	
 		if( !GUIIsHidden) {
 			var returnRectangle : Rect = new Rect(0,Screen.height-Screen.width*musicLeft,Screen.width*musicLeft,Screen.width*musicLeft);
-			var returnTexture : Texture = Resources.Load("blue_left_arrow");
+			var returnTexture : Texture = Resources.Load("Pictures/blue_left_arrow");
 			
 			var creditsRectangle : Rect = new Rect(Screen.width-Screen.width*musicLeft,Screen.height-Screen.width*musicLeft,Screen.width*musicLeft,Screen.width*musicLeft);
 			var creditsTexture : Texture = Resources.Load("Pictures/credits");

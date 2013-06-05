@@ -42,6 +42,8 @@ private var soundIsHidden : boolean ;
 
 private var chooseNextSoundRandomly: boolean = true;
 
+private var repeatButton : Texture;
+
 
 
 
@@ -74,6 +76,8 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
 	currentBtn = pauseBtn;
 	
 	customGUISkin = Resources.Load("mySkin");
+	
+	repeatButton = Resources.Load("Pictures/repeat_music");
 	
 	if (buttonSizeFactor > 1)
 		buttonSizeFactor = 1;
@@ -122,7 +126,7 @@ function displayMusic() {
 	}
 		
 	/* Test bouton changer musique, amené à disparaitre un jour */
-	if (GUI.Button(Rect( Screen.width-rBorder-35, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), 35, buttonSize), "OO") && eventEnable) {
+	if (GUI.Button(Rect( Screen.width-rBorder-35, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), repeatButton) && eventEnable) {
 		changeMusic("");
 	}
 		
