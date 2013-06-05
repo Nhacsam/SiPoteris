@@ -15,7 +15,7 @@ private var rBorder : int;
 private var uBorder : int;
 private var dBorder : int;
 
-private var buttonSizeFactor : float = 0.5; // is <= 1. If 1, the button takes all the room available
+private var buttonSizeFactor : float = 0.60; // is <= 1. If 1, the button takes all the room available
 
 private var customGUISkin : GUISkin;
 
@@ -126,7 +126,7 @@ function displayMusic() {
 	}
 		
 	/* Test bouton changer musique, amené à disparaitre un jour */
-	if (GUI.Button(Rect( Screen.width-rBorder-35, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), repeatButton) && eventEnable) {
+	if (GUI.Button(Rect( Screen.width-rBorder-buttonSize, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), repeatButton) && eventEnable) {
 		changeMusic("");
 	}
 		
@@ -138,7 +138,6 @@ function displayMusic() {
 					heightLetter
 					),
 			soundNameStr);
-	
 }
 
 /* If soundName = "", the function chooses the next sound to play (random or not). If not, plays the sound named soundName */
