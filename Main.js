@@ -227,7 +227,7 @@ function Update () {
 	}
 	
 	for( i = 0; i < AllGO3D.length; i++)
-		move.rotateX_3D( AllGO3D[i] ) ;
+		move.rotateY_3D( AllGO3D[i] ) ;
 	
 }
 

@@ -112,18 +112,20 @@ public function getOrientedTo( t : Hashtable , obj : GameObject) : Vector3 {
 	*create rectangle in 3D view
 */
 function createRect3D( t : Hashtable , path : String ){
+
+	video = gameObject.GetComponent("videoSettings") as videoSettings;
+	
 	if(	t.ContainsKey( 'theta' ) 	&&
 		t.ContainsKey( 'phi' ) 		&&
 		t.ContainsKey( 'scale' ) 	&&
-		t.ContainsKey( 'name' ) 	/*&&
-		path    */) {
+		t.ContainsKey( 'name' ) 	&&
+		path    ) {
 		
 			// load asset
 			var texture = Resources.Load( path );
 			
 			//test if the asset has the appropriate type
-			//if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
-				video = gameObject.GetComponent("videoSettings") as videoSettings;
+			if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
 			
 				// convert from degree to radian
 				var theta : float = float.Parse(t['theta']) * Mathf.PI/180;
@@ -146,18 +148,60 @@ function createRect3D( t : Hashtable , path : String ){
 			
 				// set scale
 				var scale : float = float.Parse( t['scale'] );
-				obj.transform.localScale = Vector3( scale , scale , scale );
+				if( t.ContainsKey( 'ratiotexture' ) ){
+					var ratio : float = float.Parse( t['ratiotexture'] );
+					obj.transform.localScale = Vector3( scale*ratio , 0 , scale/ratio );
+				}
+				else
+					obj.transform.localScale = Vector3( scale , 0 , scale );
 			
 				// add texture to display on the plane
-				//obj.renderer.material.mainTexture = texture;
+				obj.renderer.material.mainTexture = texture;
 				obj.renderer.enabled = true;
 				
 				return obj;
-			/*}//if
+			}
 			else{
 				Console.Warning("File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D");
 				return;
-			}*/
+			}
+	}
+	else if(	t.ContainsKey( 'theta' ) 	&&
+				t.ContainsKey( 'phi' ) 		&&
+				t.ContainsKey( 'scale' ) 	&&
+				t.ContainsKey( 'name' ) ){
+						
+								// convert from degree to radian
+		theta = float.Parse(t['theta']) * Mathf.PI/180;
+		phi = float.Parse(t['phi']) * Mathf.PI/180;
+				
+		// create new plane
+		obj = GameObject.CreatePrimitive( PrimitiveType.Plane );
+		obj.name = "3D_rect_"+t['name'];
+				
+		// set position of plane around the sphere
+		v.x = radius * Mathf.Sin(theta) * Mathf.Cos(phi)  	+ ( video.getSpherePos() ).x ;
+		v.y = radius * Mathf.Sin(phi) 						+ ( video.getSpherePos() ).y;
+		v.z = radius * Mathf.Cos(theta) * Mathf.Cos(phi)  	+ ( video.getSpherePos() ).z;
+		obj.transform.position = v;
+			
+		// set rotation of plane to face the center of the sphere
+		obj.transform.LookAt( video.getSpherePos() );
+		obj.transform.localEulerAngles += Vector3(90,0,0);
+			
+		// set scale
+		scale  = float.Parse( t['scale'] );
+		if( t.ContainsKey( 'ratiotexture' ) ){
+			ratio = float.Parse( t['ratiotexture'] );
+			obj.transform.localScale = Vector3( scale*ratio , 0 , scale/ratio );
+		}
+		else
+			obj.transform.localScale = Vector3( scale , 0 , scale );		
+						
+		// disable/enable renderer
+		obj.renderer.enabled = true;
+				
+		return obj;
 	}
 	else{// return null if a parameter is missing in the xml file - the gameobject is not created
 		Console.Warning("An element is missing in xml_data to create the mesh");

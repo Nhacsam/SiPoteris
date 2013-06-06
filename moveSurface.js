@@ -32,11 +32,8 @@ public function rotateY_3D( g : GameObject ){
 	video = gameObject.GetComponent("videoSettings") as videoSettings;
 	var s : scriptForPlane = g.GetComponent( "scriptForPlane" );
 	
-	// calculate time between this moment and the previous call of the method
-	var dt = Time.time-s.getLastMoveTime();
-	
-	// A FAIRE: mettre la bonne vitesse
-	g.transform.RotateAround( video.getSpherePos() , Vector3.up , 20*Time.deltaTime );
+	// rotate the gameobject around y axis at speed s.getdelta
+	g.transform.RotateAround( video.getSpherePos() , Vector3.up , s.getDelta()*Time.deltaTime );
 }
 
 /*
@@ -46,11 +43,8 @@ public function rotateX_3D( g : GameObject ){
 	video = gameObject.GetComponent("videoSettings") as videoSettings;
 	var s : scriptForPlane = g.GetComponent( "scriptForPlane" );
 	
-	// calculate time between this moment and the previous call of the method
-	var dt = Time.time-s.getLastMoveTime();
-	
-	// A FAIRE: mettre la bonne vitesse
-	g.transform.RotateAround( video.getSpherePos() , Vector3.right , 20*Time.deltaTime );
+	// rotate the gameobject around x axis at speed s.getdelta
+	g.transform.RotateAround( video.getSpherePos() , Vector3.right , s.getDelta()*Time.deltaTime );
 }
 
 /*
@@ -60,11 +54,8 @@ public function rotateZ_3D( g : GameObject ){
 	video = gameObject.GetComponent("videoSettings") as videoSettings;
 	var s : scriptForPlane = g.GetComponent( "scriptForPlane" );
 	
-	// calculate time between this moment and the previous call of the method
-	var dt = Time.time-s.getLastMoveTime();
-	
-	// A FAIRE: mettre la bonne vitesse
-	g.transform.RotateAround( video.getSpherePos() , Vector3.forward , 20*Time.deltaTime );
+	// rotate the gameobject around z axis at speed s.getdelta
+	g.transform.RotateAround( video.getSpherePos() , Vector3.forward , s.getDelta()*Time.deltaTime );
 }
 
 /*
