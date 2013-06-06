@@ -18,6 +18,8 @@ private var wObj : GameObject ;
 private var material : Material ;
 private var wImgTex : Texture2D = null ;
 private var wTexAlsoUseAway : boolean = true ; // La texture est-elle utilisé par qq1 d'autre
+private var wVideoIsLoading : boolean = false ;
+private var wVideoSizeGiven : Vector2 ;
 
 // Types
 enum WINDOWTYPES { NONE, IMG, VIDEO, VIDEORIGHT, VIDEOLEFT } ;
@@ -84,6 +86,7 @@ function InitWindow( pos : Rect, z : float ) {
 	// affichage et activation des événement
 	enableAll();
 	wObj.renderer.material = material;
+	wVideoIsLoading = false ;
 }
 
 function InitWindowFactor( pos : Rect, z : float ) {
@@ -139,7 +142,8 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 	
 	// erreur si chemin vide
 	if(path == '' ) {
-		Debug.LogWarning('Empty data path in SetTexture(' + path + ' ,' + type + ' ,' + size + ' ) ');
+		Debug.LogWarning('Empty data path in SetTexture('
+						 + path + ' ,' + type + ' ,' + size + ' ,' + alsoUseAway +' ) ');
 		wObj.renderer.enabled = false ;
 		return ;
 	}
@@ -156,24 +160,80 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 	}
 	
 	wType = type ;
+	wVideoIsLoading = false ;
 	
 	switch( wType ) {
 		
 		case WINDOWTYPES.VIDEORIGHT :
 		case WINDOWTYPES.VIDEOLEFT :
 		case WINDOWTYPES.VIDEO : // Si c'est une video
-			
 			wTexAlsoUseAway = true ;
+			SetTextureVideo(path, size);
+			break ;
+		
+		
+		case WINDOWTYPES.IMG : // Si c'est une image
+			wTexAlsoUseAway = alsoUseAway ;
+			SetTextureImg(path, size);
+			break ;
+	}
+}
+
+/*****************************************
+**** Gestion des texture video et img ****
+******************************************/
+
+private function SetTextureImg(path : String, size : Vector2 ) : boolean{
+	
+	// Charge la texture
+	try {
+		wImgTex = Resources.Load(path, Texture2D);
+	} catch( e) {
+		wImgTex = null;
+	}
+	// texture invalide
+	if(! wImgTex) {
+		Debug.LogWarning('Invalid image path in SetTextureImg(' + path + ' ,' + size + ' ) ');
+		wObj.renderer.enabled = false ;
+		return false;
+	}
 			
-			// on retire du chemin StreamingAssets
-			path = fileSystem.fromFolderPath( path, 'StreamingAssets' );
+	// application de la texture
+	wObj.renderer.material.mainTexture = wImgTex ;
+	wObj.renderer.enabled = wVisible ;
 			
-			Console.Info( 'Chargement de la video "' + path + '" sur la fenetre de la GUI');
+	// réinitialise la rotation
+	setRotation();
+	// Calcul des dimensions
+	size = (size != Vector2.zero) ? size : Vector2( wImgTex.width, wImgTex.height ) ;
 			
-			// Applique la video sur l'objet
-			wVideoSettings.putVideo( wObj, path );
+	applyNewSize(size);
+	
+	return true ;
+}
+
+
+private function SetTextureVideo(path : String, size : Vector2 ) : boolean {
+	// on retire du chemin StreamingAssets
+	path = fileSystem.fromFolderPath( path, 'StreamingAssets' );
+			
+	Console.Info( 'Chargement de la video "' + path + '" sur la fenetre de la GUI');
+		
+	// Applique la video sur l'objet
+	wVideoSettings.putVideo( wObj, path );
+	
+	wVideoIsLoading = true ;
+	wVideoSizeGiven = size ;
+	return true;
+}
+
+private function TestVideoLoaded() {
+	
+	if( wVideoIsLoading ) {
+		if(wVideoSettings.videoIsReady()) {
+	
 			wObj.renderer.enabled = wVisible ;
-			
+	
 			// inversion de la rotation
 			setRotation();
 			if( wType == WINDOWTYPES.VIDEO )
@@ -185,59 +245,14 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 				rotated = true ;
 				wObj.transform.Rotate( Vector3( 0, 270, 0) );
 			}
-			size = (size != Vector2.zero) ? size : wVideoSettings.VideoWH() ;
-			break ;
-		
-		
-		case WINDOWTYPES.IMG : // Si c'est une image
-			
-			wTexAlsoUseAway = alsoUseAway ;
-			
-			// Charge la texture
-			try {
-				wImgTex = Resources.Load(path, Texture2D);
-			} catch( e) {
-				wImgTex = null;
-			}
-			// texture invalide
-			if(! wImgTex) {
-				Debug.LogWarning('Invalid image path in SetTexture(' + path + ' ,' + type + ' ,' + size + ' ) ');
-				wObj.renderer.enabled = false ;
-				return;
-			}
-			
-			// application de la texture
-			wObj.renderer.material.mainTexture = wImgTex ;
-			wObj.renderer.enabled = wVisible ;
-			
-			// réinitialise la rotation
-			setRotation();
-			// Calcul des dimensions 
-			size = (size != Vector2.zero) ? size : Vector2( wImgTex.width, wImgTex.height ) ;
-			
-			break ;
+			wVideoSizeGiven = (wVideoSizeGiven != Vector2.zero) ? wVideoSizeGiven : wVideoSettings.VideoWH() ;
+			applyNewSize(wVideoSizeGiven);
+		}
 	}
-	
-	
-	ComputeGUIPosAndScale(size);
-	ComputeFullPosAndScale(size);
-	
-	// Aplication des bonnes dimensions
-	if( wState == W_STATE.ONFULL ) {
-		
-		wObj.transform.position = wFullPos;
-		wObj.transform.localScale = wFullScale ;
-		
-	} else if ( wState == W_STATE.ONGUI ) {
-		
-		wObj.transform.position = wGUIPos;
-		wObj.transform.localScale = wGUIScale ;
-		
-	}
-		
-	
-	
 }
+
+
+
 
 /*******************************************************
 **** Cacher / desactiver les evennements de l'objet ****
@@ -347,6 +362,31 @@ private function setRotation() {
 	wObj.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
 	wObj.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );
 }
+
+
+/*
+ * Applique une nouvelle dimension à la fenetre
+ */
+private function applyNewSize( size : Vector2 ) {
+	
+	ComputeGUIPosAndScale(size);
+	ComputeFullPosAndScale(size);
+	
+	// Aplication des bonnes dimensions
+	if( wState == W_STATE.ONFULL ) {
+		
+		wObj.transform.position = wFullPos;
+		wObj.transform.localScale = wFullScale ;
+		
+	} else if ( wState == W_STATE.ONGUI ) {
+		
+		wObj.transform.position = wGUIPos;
+		wObj.transform.localScale = wGUIScale ;
+		
+	}
+	
+}
+
 
 /*
  * Calcul les dimension optimales pour entrer dans le conteneur
@@ -482,6 +522,8 @@ function OnDisable(){
  * MaJ de la position
  */
 public function updateWindow() {
+	
+	TestVideoLoaded();
 	
 	if( wState == W_STATE.ONZOOM ) {
 		
