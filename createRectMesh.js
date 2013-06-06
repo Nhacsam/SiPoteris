@@ -50,7 +50,7 @@ public function createRect2D( t : Hashtable ){
 		obj.name = "2D_rect_"+t['name'];
 		
 		// set position of plane
-		setPlane( t , obj );
+		setPlane2D( t , obj );
 	
 		// disable renderer
 		obj.renderer.enabled = false;
@@ -67,7 +67,7 @@ public function createRect2D( t : Hashtable ){
 	*positionnate the plane according to the information loaded in the xml
 	*video plane is perpendicular to the y-axis
 */
-private function setPlane( t : Hashtable , g : GameObject ){
+private function setPlane2D( t : Hashtable , g : GameObject ){
 	// set the rotation and position of plane
 	// now the plane is at the center of the video plane and has the same rotation
 	g.transform.position = surface.transform.position;
@@ -118,93 +118,81 @@ function createRect3D( t : Hashtable , path : String ){
 	if(	t.ContainsKey( 'theta' ) 	&&
 		t.ContainsKey( 'phi' ) 		&&
 		t.ContainsKey( 'scale' ) 	&&
-		t.ContainsKey( 'name' ) 	&&
-		path    ) {
+		t.ContainsKey( 'name' )		&&
+		t.ContainsKey( 'ratiotexture')	) {
 		
-			// load asset
-			var texture = Resources.Load( path );
-			
-			//test if the asset has the appropriate type
-			if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
-			
-				// convert from degree to radian
-				var theta : float = float.Parse(t['theta']) * Mathf.PI/180;
-				var phi : float = float.Parse(t['phi']) * Mathf.PI/180;
+			var theta : float = float.Parse( t['theta'] ) * Mathf.PI/180;// convert to radian
+			var phi : float = float.Parse( t['phi'] ) * Mathf.PI/180;
+			var scale : float = float.Parse( t['scale'] );
+			var ratiotexture : float = float.Parse( t['ratiotexture'] );
+			var name : String = t['name'];
+		
+			// set position, scale, rotation of rectangle
+			var obj : GameObject = setRect3D( theta , phi , scale , ratiotexture , name );
+			if( path ){
+				// load asset
+				var texture = Resources.Load( path );
 				
-				// create new plane
-				var obj : GameObject = GameObject.CreatePrimitive( PrimitiveType.Plane );
-				obj.name = "3D_rect_"+t['name'];
+				if( texture ){// if file exists
+					//test if the asset has the appropriate type
+					if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
+						// add texture to display on the plane
+						obj.renderer.material.mainTexture = texture;
+						obj.renderer.enabled = true;
 				
-				// set position of plane around the sphere
-				var v : Vector3 = new Vector3();
-				v.x = radius * Mathf.Sin(theta) * Mathf.Cos(phi)  	+ ( video.getSpherePos() ).x ;
-				v.y = radius * Mathf.Sin(phi) 						+ ( video.getSpherePos() ).y;
-				v.z = radius * Mathf.Cos(theta) * Mathf.Cos(phi)  	+ ( video.getSpherePos() ).z;
-				obj.transform.position = v;
-			
-				// set rotation of plane to face the center of the sphere
-				obj.transform.LookAt( video.getSpherePos() );
-				obj.transform.localEulerAngles += Vector3(90,0,0);
-			
-				// set scale
-				var scale : float = float.Parse( t['scale'] );
-				if( t.ContainsKey( 'ratiotexture' ) ){
-					var ratio : float = float.Parse( t['ratiotexture'] );
-					obj.transform.localScale = Vector3( scale*ratio , 0 , scale/ratio );
-				}
+						return obj;
+					}//if
+					else{
+						// disable renderer
+						obj.renderer.enabled = false;
+						Console.Warning("File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D");
+						return obj;
+					}
+				}//if
 				else
-					obj.transform.localScale = Vector3( scale , 0 , scale );
-			
-				// add texture to display on the plane
-				obj.renderer.material.mainTexture = texture;
-				obj.renderer.enabled = true;
-				
-				return obj;
-			}
+					Console.Warning("No file found at path : " + path);
+			}//if
 			else{
-				Console.Warning("File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D");
-				return;
-			}
-	}
-	else if(	t.ContainsKey( 'theta' ) 	&&
-				t.ContainsKey( 'phi' ) 		&&
-				t.ContainsKey( 'scale' ) 	&&
-				t.ContainsKey( 'name' ) ){
-						
-								// convert from degree to radian
-		theta = float.Parse(t['theta']) * Mathf.PI/180;
-		phi = float.Parse(t['phi']) * Mathf.PI/180;
-				
-		// create new plane
-		obj = GameObject.CreatePrimitive( PrimitiveType.Plane );
-		obj.name = "3D_rect_"+t['name'];
-				
-		// set position of plane around the sphere
-		v.x = radius * Mathf.Sin(theta) * Mathf.Cos(phi)  	+ ( video.getSpherePos() ).x ;
-		v.y = radius * Mathf.Sin(phi) 						+ ( video.getSpherePos() ).y;
-		v.z = radius * Mathf.Cos(theta) * Mathf.Cos(phi)  	+ ( video.getSpherePos() ).z;
-		obj.transform.position = v;
-			
-		// set rotation of plane to face the center of the sphere
-		obj.transform.LookAt( video.getSpherePos() );
-		obj.transform.localEulerAngles += Vector3(90,0,0);
-			
-		// set scale
-		scale  = float.Parse( t['scale'] );
-		if( t.ContainsKey( 'ratiotexture' ) ){
-			ratio = float.Parse( t['ratiotexture'] );
-			obj.transform.localScale = Vector3( scale*ratio , 0 , scale/ratio );
-		}
-		else
-			obj.transform.localScale = Vector3( scale , 0 , scale );		
-						
-		// disable/enable renderer
-		obj.renderer.enabled = true;
-				
-		return obj;
-	}
+				// disable/enable renderer
+				obj.renderer.enabled = true;
+				return obj;
+			}		
+	}//if
 	else{// return null if a parameter is missing in the xml file - the gameobject is not created
 		Console.Warning("An element is missing in xml_data to create the mesh");
 		return;
 	}
+}
+
+/*
+	*set rectangle 3D
+*/
+private function setRect3D( theta : float , phi : float , scale : float , ratiotexture : float , name : String ) : GameObject{
+				
+	// create new plane
+	var obj : GameObject = GameObject.CreatePrimitive( PrimitiveType.Plane );
+	obj.name = "3D_rect_"+name;
+			
+	// set position of plane around the sphere
+	var v : Vector3;
+	v.x = radius * Mathf.Sin(theta) * Mathf.Cos(phi)  	+ ( video.getSpherePos() ).x ;
+	v.y = radius * Mathf.Sin(phi) 						+ ( video.getSpherePos() ).y;
+	v.z = radius * Mathf.Cos(theta) * Mathf.Cos(phi)  	+ ( video.getSpherePos() ).z;
+	obj.transform.position = v;
+		
+	// set rotation of plane to face the center of the sphere
+	obj.transform.LookAt( video.getSpherePos() );
+	obj.transform.localEulerAngles += Vector3(90,0,0);
+		
+	// set scale
+	if( ratiotexture ){
+		obj.transform.localScale = Vector3( scale*ratiotexture , 0 , scale );
+	}
+	else
+		obj.transform.localScale = Vector3( scale , 0 , scale );		
+					
+	// disable/enable renderer
+	obj.renderer.enabled = false;
+			
+	return obj;
 }
