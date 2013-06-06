@@ -15,7 +15,8 @@ private var wObj : GameObject ;
 
 // Texture
 private var material : Material ;
-private var wImgTex : Texture = null ;
+private var wImgTex : Texture2D = null ;
+private var wTexAlsoUseAway : boolean = true ; // La texture est-elle utilisé par qq1 d'autre
 
 // Types
 enum WINDOWTYPES { NONE, IMG, VIDEO, VIDEORIGHT, VIDEOLEFT } ;
@@ -34,12 +35,14 @@ class SLIDESHOWELMT extends System.ValueType{
   var path : String ;
   var size : Vector2 ;
   var id : int ;
+  var alsoUseAway : boolean ;
  
-  public function SLIDESHOWELMT( p : String, t : WINDOWTYPES, s : Vector2, id : int ){
+  public function SLIDESHOWELMT( p : String, t : WINDOWTYPES, s : Vector2, id : int, alsoUseAway : boolean ){
      this.type = t;
      this.path = p;
 	 this.size = s;
 	 this.id = id ;
+	 this.alsoUseAway = alsoUseAway ;
   }
 }
 
@@ -57,8 +60,9 @@ enum W_STATE { NOTONGUI, ONGUI, ONZOOM, ONDEZOOM, ONFULL };
 private var wState : W_STATE = W_STATE.NOTONGUI ;
 
 // evenement activé ?
-private var eventEnable : boolean ;
-
+private var wEventEnable : boolean ;
+// affichage non désactivé ? visible ?
+private var wVisible : boolean ;
 
 
 
@@ -76,8 +80,8 @@ function InitWindow( pos : Rect, z : float ) {
 	if( ! wVideoSettings)
 		wVideoSettings = gameObject.AddComponent("videoSettings");
 	
+	material = Resources.Load('GUI/window/mat') ;
 	placeRenderingPlane();
-	material = wObj.renderer.material ;
 	
 	// affichage et activation des événement
 	enableAll();
@@ -119,7 +123,7 @@ function SetNewTextureObj( e ) {
 	if( typeof(e) == SLIDESHOWELMT ) {
 	
 		var t : SLIDESHOWELMT = e ;
-		SetNewTexture( t.path, t.type, Vector2.zero, t.id );
+		SetNewTexture( t.path, t.type, Vector2.zero, t.id, t.alsoUseAway );
 		
 	} else {
 		if( wObj)
@@ -129,7 +133,7 @@ function SetNewTextureObj( e ) {
 	}
 }
 
-function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id : int ) {
+function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id : int, alsoUseAway : boolean ) {
 	
 	// l'objet affiché n'a pas changé
 	if( id == wId )
@@ -147,6 +151,15 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 	// Arret de la video si on était sur une video
 	stopVideo();
 	
+	// Si la texture n'est pas utilisé par qq1 d'autre, on libère la mémoire
+	if( !wTexAlsoUseAway && wImgTex) {
+		Console.Test('deleted ' + wImgTex, 50);
+		Resources.UnloadAsset(wImgTex);
+		wImgTex = null;
+	}
+	wTexAlsoUseAway = alsoUseAway ;
+	
+	
 	wType = type ;
 	
 	switch( wType ) {
@@ -162,7 +175,7 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 			
 			// Applique la video sur l'objet
 			wVideoSettings.putVideo( wObj, path );
-			wObj.renderer.enabled = true ;
+			wObj.renderer.enabled = wVisible ;
 			
 			// inversion de la rotation
 			setRotation();
@@ -182,8 +195,11 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 		case WINDOWTYPES.IMG : // Si c'est une image
 			
 			// Charge la texture
-			wImgTex = Resources.Load(path);
-			
+			try {
+				wImgTex = Resources.Load(path, Texture2D);
+			} catch( e) {
+				wImgTex = null;
+			}
 			// texture invalide
 			if(! wImgTex) {
 				Debug.LogWarning('Invalid image path in SetTexture(' + path + ' ,' + type + ' ,' + size + ' ) ');
@@ -193,7 +209,7 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 			
 			// application de la texture
 			wObj.renderer.material.mainTexture = wImgTex ;
-			wObj.renderer.enabled = true ;
+			wObj.renderer.enabled = wVisible ;
 			
 			wObj.transform.Rotate( Vector3( 0, 180, 0) );
 			wObj.transform.Rotate( Vector3( 0, 90, 0) );
@@ -265,14 +281,14 @@ public function disableAll() {
  * Active les evenements
  */
 public function enableEvents() {
-	eventEnable = true ;
+	wEventEnable = true ;
 }
 
 /*
  * Desactive les evenements
  */
 public function disableEvents() {
-	eventEnable = false ;
+	wEventEnable = false ;
 }
 
 /*
@@ -280,6 +296,7 @@ public function disableEvents() {
  */
 public function show() {
 	wObj.renderer.enabled = true ;
+	wVisible = true ;
 }
 
 /*
@@ -287,16 +304,17 @@ public function show() {
  */
 public function hide() {
 	wObj.renderer.enabled = false ;
+	wVisible = false ;
 }
 
 /*
  * Getters
  */
 public function areEventEnabled() : boolean {
-	return eventEnable ;
+	return wEventEnable ;
 }
 public function isHidden() : boolean {
-	return !(wObj.renderer.enabled) ;
+	return !(wVisible) ;
 }
 
 
@@ -335,6 +353,8 @@ private function placeRenderingPlane() {
 	var testRenderer = wObj.GetComponent(Renderer);
 	if( !testRenderer)
 		wObj.AddComponent(Renderer);
+	
+	wObj.renderer.material = material;
 }
 
 /*
@@ -510,11 +530,12 @@ public function updateWindow() {
 public function onSwipe( info : SwipeInfo ) {
 	
 	// La fonction s'interrompt si les événements sont désactivés
-	if( !eventEnable )
+	if( !wEventEnable || !wObj)
 		return ;
 	
 	// Si on est sur les video (2D / 3D)
-	if( wState == W_STATE.NOTONGUI)
+	// ou si la fenetre n'est pas visible
+	if( wState == W_STATE.NOTONGUI || !wObj.renderer.enabled)
 		return ;
 	
 	// Si le point de départ est dans la fenêtre
@@ -533,11 +554,12 @@ public function onSwipe( info : SwipeInfo ) {
 public function onTap( pos : Vector2 ) {
 	
 	// La fonction s'interrompt si les événements sont désactivés
-	if( !eventEnable )
+	if( !wEventEnable || !wObj)
 		return ;
 	
 	// Si on est sur les video (2D / 3D)
-	if( wState == W_STATE.NOTONGUI)
+	// ou si la fenetre n'est pas visible
+	if( wState == W_STATE.NOTONGUI || !wObj.renderer.enabled)
 		return ;
 	
 	if( clickOnWindow(pos) ) { 	// Si on a cliqué sur le plan
@@ -551,11 +573,12 @@ public function onTap( pos : Vector2 ) {
 public function onLongTap( pos : Vector2 ) {
 	
 	// La fonction s'interrompt si les événements sont désactivés
-	if( !eventEnable )
+	if( !wEventEnable || !wObj)
 		return ;
 	
 	// Si on est sur les video (2D / 3D)
-	if( wState == W_STATE.NOTONGUI)
+	// ou si la fenetre n'est pas visible
+	if( wState == W_STATE.NOTONGUI || !wObj.renderer.enabled)
 		return ;
 	
 	if( clickOnWindow(pos) ) { 	// Si on a cliqué sur le plan
@@ -569,11 +592,12 @@ public function onLongTap( pos : Vector2 ) {
 public function onDoubleTap( pos : Vector2 ) {
 	
 	// La fonction s'interrompt si les événements sont désactivés
-	if( !eventEnable )
+	if( !wEventEnable || !wObj)
 		return ;
 	
 	// Si on est sur les video (2D / 3D)
-	if( wState == W_STATE.NOTONGUI)
+	// ou si la fenetre n'est pas visible
+	if( wState == W_STATE.NOTONGUI || !wObj.renderer.enabled)
 		return ;
 	
 	if( clickOnWindow(pos) ) { 	// Si on a cliqué sur le plan
