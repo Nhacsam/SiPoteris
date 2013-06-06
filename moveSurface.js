@@ -5,10 +5,7 @@
 	*this script moves gameobject to cover the same interesting part of the movie all the time
 */
 
-private var lastTime : float = 0 ;
-
-private var numberIn : float = 0;
-
+private var video : videoSettings;
 
 /*
 	*move 2D surface to fit with the movement of the movie
@@ -28,7 +25,38 @@ public function moveSurface( t : GameObject , OnPlay : boolean){
         s.updateLastMoveTime();
 }
 
+/*
+	*move a mesh around the y axis and the center of the sphere
+*/
+public function rotateY_3D( g : GameObject ){
+	video = gameObject.GetComponent("videoSettings") as videoSettings;
+	var s : scriptForPlane = g.GetComponent( "scriptForPlane" );
+	
+	// rotate the gameobject around y axis at speed s.getdelta
+	g.transform.RotateAround( video.getSpherePos() , Vector3.up , s.getDelta()*Time.deltaTime );
+}
 
+/*
+	*move a mesh around the x axis and the center of the sphere
+*/
+public function rotateX_3D( g : GameObject ){
+	video = gameObject.GetComponent("videoSettings") as videoSettings;
+	var s : scriptForPlane = g.GetComponent( "scriptForPlane" );
+	
+	// rotate the gameobject around x axis at speed s.getdelta
+	g.transform.RotateAround( video.getSpherePos() , Vector3.right , s.getDelta()*Time.deltaTime );
+}
+
+/*
+	*move a mesh around the z axis and the center of the sphere
+*/
+public function rotateZ_3D( g : GameObject ){
+	video = gameObject.GetComponent("videoSettings") as videoSettings;
+	var s : scriptForPlane = g.GetComponent( "scriptForPlane" );
+	
+	// rotate the gameobject around z axis at speed s.getdelta
+	g.transform.RotateAround( video.getSpherePos() , Vector3.forward , s.getDelta()*Time.deltaTime );
+}
 
 /*
 	*reset rotation of planes when the movie is ended

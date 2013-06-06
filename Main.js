@@ -87,11 +87,11 @@ function Start () {
 	 * Instanciate the objects
 	 */
 	Videos = gameObject.AddComponent("videoSettings") as videoSettings;
+	// 3D and 2D, create rectangles
+	meshRect = gameObject.AddComponent("createRectMesh") as createRectMesh;
 	
-	if( beginBy2D || have2DAnd3D )	{	// Si on a la 2D
+	if( beginBy2D || have2DAnd3D )		// Si on a la 2D
 		createPolar = gameObject.AddComponent("createPolarMesh") as createPolarMesh;
-		meshRect = gameObject.AddComponent("createRectMesh") as createRectMesh;
-	}
 	
 	if( !beginBy2D || have2DAnd3D )		// Si on a la 3D
 		mesh3D = gameObject.AddComponent("createSphericMesh") as createSphericMesh;
@@ -225,6 +225,9 @@ function Update () {
 		else
 			move.resetPlane(AllGO2D[i]);
 	}
+	
+	for( i = 0; i < AllGO3D.length; i++)
+		move.rotateY_3D( AllGO3D[i] ) ;
 	
 }
 
@@ -542,24 +545,44 @@ private function placeMeshHashPolar ( t : Hashtable ){
 */
 private function placeRectHash( t : Hashtable ){
 	if( meshRect ){
-		var obj : GameObject = meshRect.createRect( t );
+		var obj2D : GameObject = meshRect.createRect2D( t );
+		var obj3D : GameObject = meshRect.createRect3D( t , null );
 		
-		if(obj){// check if the plane is created
-			var s : scriptForPlane = obj.GetComponent("scriptForPlane");
-			if( ! s)// if no script found, scriptforplane is added to the gameobject
-				s = obj.AddComponent ("scriptForPlane");
+		if(obj2D){// check if the plane is created and init script for plane
+			var s2 : scriptForPlane = obj2D.GetComponent("scriptForPlane");
+			if( ! s2)// if no script found, scriptforplane is added to the gameobject
+				s2 = obj2D.AddComponent ("scriptForPlane");
+				
+			// init variables of script
+			s2.InitScript( t );
+		
+			// Ajout de la position réelle du plan dans le script d'extension
+			s2.InitPosPlane( obj2D.transform.position );
+		
+			// Ajout du point vers lequel le plan est orienté dans le script d'extension
+			var p = meshRect.getOrientedTo( t , gameObject );
+			s2.InitOrientedTo( p );
+				
+			AllGO2D.Push( obj2D );
+		}//if
+		
+		if(obj3D){// check if the plane is created and init script for plane
+			var s3 : scriptForPlane = obj3D.GetComponent("scriptForPlane");
+			if( ! s3)// if no script found, scriptforplane is added to the gameobject
+				s3 = obj3D.AddComponent ("scriptForPlane");
 				
 				// init variables of script
-				s.InitScript( t );
+				s3.InitScript( t );
 		
 				// Ajout de la position réelle du plan dans le script d'extension
-				s.InitPosPlane( obj.transform.position );
+				s3.InitPosPlane( obj3D.transform.position );
 		
 				// Ajout du point vers lequel le plan est orienté dans le script d'extension
-				var p = meshRect.getOrientedTo( t , gameObject );
-				s.InitOrientedTo( p );
+				s3.InitOrientedTo( Videos.getSpherePos() );
 				
-				AllGO2D.Push( obj );
+				AllGO3D.Push( obj3D );
+		
+		
 		}//if
 	}//if
 }

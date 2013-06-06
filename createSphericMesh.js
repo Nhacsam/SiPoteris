@@ -34,7 +34,7 @@ private var quantumOfMesh : float = 0.05f;
 private var sphere : GameObject[];
 
 // radius of piece of sphere
-private var radius : float = 5.2;
+private var radius : float = 5;
 
 private var DATSphere : GameObject[];
 

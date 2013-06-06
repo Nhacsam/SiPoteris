@@ -39,10 +39,7 @@ private var z_coor : float = 20;
 // length of zoom
 private var zoomLength : float = 2;
 
-
-
-
-// events are enable ?
+// events are enabled ?
 private var eventEnable : boolean = false;
 
 
@@ -112,7 +109,9 @@ private function initZoom(){
 function InitVideoScreen( path : String , r : Rect ){
 	// init state of the state machine
 	states = STATES_OF_STRIP.STATE_OUT;
+	
 	var texture = Resources.Load( path );
+	
 	if( path ){
 		if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
 			// get ratio of strip

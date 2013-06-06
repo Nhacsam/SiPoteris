@@ -9,6 +9,7 @@ private var wVideoSettings : videoSettings ;
 // Proriétés de l'objet
 private var wPos : Rect ;
 private var wZ : float ;
+private var rotated : boolean = false ;
 
 // objet
 private var wObj : GameObject ;
@@ -25,9 +26,6 @@ private var wType : WINDOWTYPES = WINDOWTYPES.NONE;
 // Id de l'element en lecture
 private var wId : int = -1;
 
-
-// Video en lecture ?
-private var wVideoIsPlaying : boolean = false ;
 
 // Informations sur un éléments
 class SLIDESHOWELMT extends System.ValueType{
@@ -85,8 +83,7 @@ function InitWindow( pos : Rect, z : float ) {
 	
 	// affichage et activation des événement
 	enableAll();
-	// Au cas ou
-	stopVideo();
+	wObj.renderer.material = material;
 }
 
 function InitWindowFactor( pos : Rect, z : float ) {
@@ -105,7 +102,6 @@ function InitWindowFactor( pos : Rect, z : float ) {
  */
 function destuctWindow() {
 	wState = W_STATE.NOTONGUI;
-	stopVideo();
 	if( wObj)
 		Destroy(wObj);
 }
@@ -147,9 +143,7 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 		wObj.renderer.enabled = false ;
 		return ;
 	}
-	
-	// Arret de la video si on était sur une video
-	stopVideo();
+	wObj.renderer.material = material;
 	
 	// Si la texture n'est pas utilisé par qq1 d'autre, on libère la mémoire
 	if( !wTexAlsoUseAway && wImgTex) {
@@ -185,8 +179,6 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 				wObj.transform.Rotate( Vector3( 0, 90, 0) );
 			else if ( wType == WINDOWTYPES.VIDEOLEFT )
 				wObj.transform.Rotate( Vector3( 0, 270, 0) );
-			
-			wVideoIsPlaying= true ;
 			
 			size = (size != Vector2.zero) ? size : wVideoSettings.VideoWH() ;
 			break ;
@@ -243,18 +235,6 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 		
 	
 	
-}
-
-
-/*
- * Stop la video en lecture si elle tourne
- */
-private function stopVideo() {
-	if( wVideoIsPlaying ) {
-		wVideoSettings.stopVideo( wObj );
-		wVideoIsPlaying= false ;
-		wObj.renderer.material = material;
-	}
 }
 
 /*******************************************************
