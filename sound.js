@@ -65,9 +65,9 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
 	gameObject.AddComponent("AudioSource");
 	audio.clip = Resources.Load(tab[0]) as AudioClip;
 	audio.Play();
-	
+			
 	enableAll();
-	
+		
 	playBtn = Resources.Load("Pictures/play");
 	pauseBtn = Resources.Load("Pictures/pause");
 	currentBtn = pauseBtn;
@@ -202,7 +202,8 @@ function removeMusic() {
 public function enableAll() {
 	show() ;
 	enableEvents() ;
-	audio.Play();
+	if (currentBtn == pauseBtn)
+		audio.Play();
 }
 
 /*
