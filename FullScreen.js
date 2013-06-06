@@ -231,9 +231,7 @@ function CreateGUI() {
 													Vector2.zero,
 													id,
 													(min == slideShowImgs[i]) );
-		
-		Console.Test( slideShowImgs[i] +' -- ' +  fileSystem.getAssociatedMin( slideShowImgs[i], slideShowMin ) , 50);
-		
+	
 		slideShowElmts.Push( new Array( min, slideShowTempElmt ) );
 		id++ ;
 	}
@@ -306,9 +304,6 @@ function CreateGUI() {
 	
 	textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getText()); // u d l r (margins) + Text to display
 	audioPlayer.placeMusicFactor (1-musicTop, musicBottom, musicLeft, 1-musicRight, Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
-	
-	Console.Test( Datas.getStripVideo() ,45);
-	
 	
 	// On donne les infos au slideShow
 	for (i = 0; i < slideShowElmts.length; i++ ) {

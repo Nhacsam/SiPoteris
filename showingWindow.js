@@ -151,12 +151,9 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 	
 	// Si la texture n'est pas utilisé par qq1 d'autre, on libère la mémoire
 	if( !wTexAlsoUseAway && wImgTex) {
-		Console.Test('deleted ' + wImgTex, 50);
 		Resources.UnloadAsset(wImgTex);
 		wImgTex = null;
 	}
-	wTexAlsoUseAway = alsoUseAway ;
-	
 	
 	wType = type ;
 	
@@ -165,6 +162,8 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 		case WINDOWTYPES.VIDEORIGHT :
 		case WINDOWTYPES.VIDEOLEFT :
 		case WINDOWTYPES.VIDEO : // Si c'est une video
+			
+			wTexAlsoUseAway = true ;
 			
 			// on retire du chemin StreamingAssets
 			path = fileSystem.fromFolderPath( path, 'StreamingAssets' );
@@ -191,6 +190,8 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 		
 		
 		case WINDOWTYPES.IMG : // Si c'est une image
+			
+			wTexAlsoUseAway = alsoUseAway ;
 			
 			// Charge la texture
 			try {
