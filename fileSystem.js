@@ -66,6 +66,11 @@ static function getFilesInArrayFromFolder( folder : String, extension : String, 
 	
 		var fileInfo = Directory.GetFiles(root + '/' + folder + '/', "*" + extension) ;
 		for (file in fileInfo) {
+			
+			// On ignore les fichiers cachés
+			if( getName(file)[0] == '.'[0])
+				continue ;
+			
 			if(  reg.IsMatch(file) && removeExtension( fromResourcesPath(file) ) != folder + '/')
 				FilesNameTab.Push( removeExtension( fromResourcesPath(file) )  );
 		}
@@ -216,11 +221,10 @@ static function fromAssetsPath( path : String ) : String {
  */
 static function removeExtension(file : String ) : String {
 	
-	var pointPos : int = file.IndexOf( '.' );
-	if( pointPos >= 0)
-		return file.Substring( 0, pointPos ) ;
-	else
-		return file ;
+	var found = file.IndexOf( '.' + getExtension(file) ) ;
+	if( found != -1 )
+		return file.Substring( 0, found ) ;
+	else return file ;
 }
 
 /*
@@ -228,11 +232,11 @@ static function removeExtension(file : String ) : String {
  */
 static function getExtension(file : String ) : String {
 	
-	var pointPos : int = file.IndexOf( '.' );
-	if( pointPos >= 0)
-		return file.Substring( pointPos ) ;
-	else
-		return '' ;
+	var pathTab = file.Split('.'[0]);
+	if( pathTab.length > 1 )
+		return pathTab[ pathTab.length -1 ] ;
+	
+	else return '' ;
 }
 
 /*
@@ -258,7 +262,7 @@ static function getName( path : String ) : String {
 
 static function getAssociatedMin( img : String, minTab : Array) {
 	
-	var imgName = removeExtension( getName(img) );
+	var imgName = removeExtension( getName(img) ) + '_' ;
 	
 	for (var i = 0; i < minTab.length; i++) {
 		if( (minTab[i] as String).IndexOf(imgName) != -1 )

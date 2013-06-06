@@ -23,6 +23,12 @@ private var firstTimeInUpdate : boolean = true;
 private var isolate : boolean = true ;
 private var toMove : Vector3 = new Vector3( -2000, -2000, -2000) ;
 
+// Donnée pour la GUI
+private var Datas : scriptForPlane ;
+
+// pour l'ecran de chargement
+private var LoadObj : GameObject = null ;
+private var FrameElapsedSinceGUIInitialized : int = -1 ;
 
 /* Position et rotation quand au début */
 private var VideoInitialPos : Vector3 ;
@@ -97,7 +103,7 @@ function InitFullScreen( ) {
 	
 	onFullScreen = false ;
 	
-	returnTexture = Resources.Load("Pictures/blue_left_arrow");
+	returnTexture = Resources.Load('GUI/back');
 	if (!returnTexture)
 		Console.Warning("Pas de texture pour le bouton return");
 		
@@ -111,14 +117,12 @@ function OnGUIFullScreen(){
 	if( onFullScreen ) {
 	
 		if( !GUIIsHidden) {
-			if( GUI.Button( returnRectangle, returnTexture ) ) {
-				Debug.Log( 'Sortie de l\'interface demandée' );
 			
-				if( toOnDeZoom )
+			if( toOnDeZoom ) {
+				if( GUI.Button( returnRectangle, returnTexture ) ) {
+					Debug.Log( 'Sortie de l\'interface demandée' );
 					toOnDeZoom();
-				else
-					Debug.LogWarning('Callback de dezoom non renseigné dans FullScreen.' + 
-					'\nNote : setter is public function SetLeaveCallback( f : function() )');
+				}
 			} // end bouton retour
 			
 			if( GUI.Button( creditsRectangle, creditsTexture ) ) {
@@ -142,7 +146,17 @@ function OnGUIFullScreen(){
  */
 function UpDateFullScreen() {
 	
-	if( onFullScreen ) {
+	if( FrameElapsedSinceGUIInitialized >= 0 )
+		FrameElapsedSinceGUIInitialized++ ;
+	
+	
+	if( onFullScreen && LoadObj && LoadObj.renderer.enabled && FrameElapsedSinceGUIInitialized < 0) {
+		CreateGUI();
+		disableOthers('');
+	} else if ( onFullScreen && LoadObj && LoadObj.renderer.enabled && FrameElapsedSinceGUIInitialized > 20 ) {
+		LoadObj.renderer.enabled = false ;
+		enableOthers('');
+	} else if( onFullScreen ) {
 		slideshow.UpDateSlideShow();
 		windows.SetNewTextureObj( slideshow.getCurrentAssociedInfo() );
 		windows.updateWindow();
@@ -160,13 +174,7 @@ public function SetLeaveCallback( f : function() ) {
 }
 
 
-
-
-
-/*
- * Les CallBack des entrées et sorties
- */
-function EnterOnFullScreen( Video : GameObject ) {
+public function EnterOnFullScreen(Video : GameObject ) {
 	
 	// On retient les positions initiale pour pouvoir les restituer
 	VideoInitialPos = Video.transform.position ;
@@ -176,16 +184,29 @@ function EnterOnFullScreen( Video : GameObject ) {
 	// On déplace le tout pour l'isoler ds autres éléments
 	if( isolate ) {
 		camera.transform.position += toMove ;
-		//Video.transform.position += toMove ;
 	}
 	
 	onFullScreen = true ;
 	
+	Datas = Video.GetComponent('scriptForPlane');
+	
+	
+	CreateLoadingPlane();
+	
+	LoadObj.renderer.enabled = true ;
+	hideGUI();
+}
+
+
+/*
+ * Les CallBack des entrées et sorties
+ */
+function CreateGUI() {
 		
 	/*
 	 * Récupération des données
 	 */
-	var Datas : scriptForPlane = Video.GetComponent('scriptForPlane');
+	
 	
 	var stripPath : String = Datas.getStripImg();
 	
@@ -202,27 +223,31 @@ function EnterOnFullScreen( Video : GameObject ) {
 	// Remplis un tableau d'éléments pour le slideshow et la fenètre
 	for (var i = 0; i < slideShowImgs.length; i++ ) {
 		
+		
+		
+		var min = fileSystem.getAssociatedMin( slideShowImgs[i], slideShowMin ) ;
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowImgs[i],
 													WINDOWTYPES.IMG,
 													Vector2.zero,
-													id );
-		
-		slideShowElmts.Push( new Array( 	fileSystem.getAssociatedMin( slideShowImgs[i], slideShowMin ),
-											slideShowTempElmt ) );
+													id,
+													(min == slideShowImgs[i]) );
+	
+		slideShowElmts.Push( new Array( min, slideShowTempElmt ) );
 		id++ ;
 	}
 	for (i = 0; i < slideShowVideo.length; i++ ) {
 		
 		
 		// On verifie qu'il y a une miniature associé à la video
-		var min = fileSystem.getAssociatedMin( slideShowVideo[i], slideShowMin ) ;
+		min = fileSystem.getAssociatedMin( slideShowVideo[i], slideShowMin ) ;
 		if( min == slideShowVideo[i])
 			min = 'Pictures/play';
 		
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
 													WINDOWTYPES.VIDEO,
 													Vector2.zero,
-													id );
+													id,
+													false );
 		
 		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
 		id++ ;
@@ -238,7 +263,8 @@ function EnterOnFullScreen( Video : GameObject ) {
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideoRight[i],
 													WINDOWTYPES.VIDEORIGHT,
 													Vector2.zero,
-													id );
+													id,
+													false );
 		
 		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
 		id++ ;
@@ -254,7 +280,8 @@ function EnterOnFullScreen( Video : GameObject ) {
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideoLeft[i],
 													WINDOWTYPES.VIDEOLEFT,
 													Vector2.zero,
-													id );
+													id,
+													false );
 		
 		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
 		id++ ;
@@ -278,14 +305,13 @@ function EnterOnFullScreen( Video : GameObject ) {
 	textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getText()); // u d l r (margins) + Text to display
 	audioPlayer.placeMusicFactor (1-musicTop, musicBottom, musicLeft, 1-musicRight, Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
 	
-	Console.Test( Datas.getStripVideo() ,45);
-	
-	
 	// On donne les infos au slideShow
 	for (i = 0; i < slideShowElmts.length; i++ ) {
 		var tempArray = slideShowElmts[i] as Array ;
 		slideshow.AddElmt(tempArray[0], tempArray[1] );
 	}
+	
+	FrameElapsedSinceGUIInitialized = 0 ;
 	
 }
 
@@ -308,7 +334,47 @@ function LeaveFullScreen( Video : GameObject ) {
 	firstTimeInUpdate = true;
 	
 	onFullScreen = false ;
+	FrameElapsedSinceGUIInitialized = -1 ;
 }
+
+/*
+ * Crée un plan avec la texture de chargement
+ */
+private function CreateLoadingPlane() {
+	
+	// Création
+	if( !LoadObj) {
+		LoadObj = new GameObject.CreatePrimitive(PrimitiveType.Plane);
+		
+		LoadObj.name = "LOADING" ;
+	
+		// ajoute un renderer si tel n'est pas le cas
+		var testRenderer = LoadObj.GetComponent(Renderer);
+		if( !testRenderer)
+			LoadObj.AddComponent(Renderer);
+	
+		LoadObj.renderer.material.mainTexture = Resources.Load('GUI/Loading') ;
+	}
+	
+	
+	LoadObj.transform.position = camera.ScreenToWorldPoint( Vector3(camera.pixelWidth/2, camera.pixelHeight/2, 50 ) ) ;
+	
+	LoadObj.transform.rotation = new Quaternion();
+	
+	// Application des dimentions
+	var boundsize = LoadObj.renderer.bounds.size ;
+	var size = showingWindow.getRealSize( Vector2(camera.pixelWidth,  camera.pixelHeight), Vector2( camera.pixelWidth/2, camera.pixelHeight/2 ), 50, camera ) ;
+	var scale = LoadObj.transform.localScale ;
+	LoadObj.transform.localScale  = Vector3(scale.x* size.x/boundsize.x, scale.y ,scale.z* size.y/boundsize.z );
+	
+	LoadObj.transform.rotation = camera.transform.rotation ;
+	LoadObj.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
+	LoadObj.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );
+	
+}
+
+
+
 
 
 /*

@@ -9,13 +9,15 @@ private var wVideoSettings : videoSettings ;
 // Proriétés de l'objet
 private var wPos : Rect ;
 private var wZ : float ;
+private var rotated : boolean = false ;
 
 // objet
 private var wObj : GameObject ;
 
 // Texture
 private var material : Material ;
-private var wImgTex : Texture = null ;
+private var wImgTex : Texture2D = null ;
+private var wTexAlsoUseAway : boolean = true ; // La texture est-elle utilisé par qq1 d'autre
 
 // Types
 enum WINDOWTYPES { NONE, IMG, VIDEO, VIDEORIGHT, VIDEOLEFT } ;
@@ -25,21 +27,20 @@ private var wType : WINDOWTYPES = WINDOWTYPES.NONE;
 private var wId : int = -1;
 
 
-// Video en lecture ?
-private var wVideoIsPlaying : boolean = false ;
-
 // Informations sur un éléments
 class SLIDESHOWELMT extends System.ValueType{
   var type : WINDOWTYPES ;
   var path : String ;
   var size : Vector2 ;
   var id : int ;
+  var alsoUseAway : boolean ;
  
-  public function SLIDESHOWELMT( p : String, t : WINDOWTYPES, s : Vector2, id : int ){
+  public function SLIDESHOWELMT( p : String, t : WINDOWTYPES, s : Vector2, id : int, alsoUseAway : boolean ){
      this.type = t;
      this.path = p;
 	 this.size = s;
 	 this.id = id ;
+	 this.alsoUseAway = alsoUseAway ;
   }
 }
 
@@ -57,8 +58,9 @@ enum W_STATE { NOTONGUI, ONGUI, ONZOOM, ONDEZOOM, ONFULL };
 private var wState : W_STATE = W_STATE.NOTONGUI ;
 
 // evenement activé ?
-private var eventEnable : boolean ;
-
+private var wEventEnable : boolean ;
+// affichage non désactivé ? visible ?
+private var wVisible : boolean ;
 
 
 
@@ -76,13 +78,12 @@ function InitWindow( pos : Rect, z : float ) {
 	if( ! wVideoSettings)
 		wVideoSettings = gameObject.AddComponent("videoSettings");
 	
+	material = Resources.Load('GUI/window/mat') ;
 	placeRenderingPlane();
-	material = wObj.renderer.material ;
 	
 	// affichage et activation des événement
 	enableAll();
-	// Au cas ou
-	stopVideo();
+	wObj.renderer.material = material;
 }
 
 function InitWindowFactor( pos : Rect, z : float ) {
@@ -101,7 +102,6 @@ function InitWindowFactor( pos : Rect, z : float ) {
  */
 function destuctWindow() {
 	wState = W_STATE.NOTONGUI;
-	stopVideo();
 	if( wObj)
 		Destroy(wObj);
 }
@@ -119,7 +119,7 @@ function SetNewTextureObj( e ) {
 	if( typeof(e) == SLIDESHOWELMT ) {
 	
 		var t : SLIDESHOWELMT = e ;
-		SetNewTexture( t.path, t.type, Vector2.zero, t.id );
+		SetNewTexture( t.path, t.type, Vector2.zero, t.id, t.alsoUseAway );
 		
 	} else {
 		if( wObj)
@@ -129,7 +129,7 @@ function SetNewTextureObj( e ) {
 	}
 }
 
-function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id : int ) {
+function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id : int, alsoUseAway : boolean ) {
 	
 	// l'objet affiché n'a pas changé
 	if( id == wId )
@@ -144,8 +144,16 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 		return ;
 	}
 	
-	// Arret de la video si on était sur une video
-	//stopVideo();
+	// On réinitialise certains paramètres
+	wObj.renderer.material = material;
+	rotated = false ;
+	
+	
+	// Si la texture n'est pas utilisé par qq1 d'autre, on libère la mémoire
+	if( !wTexAlsoUseAway && wImgTex) {
+		Resources.UnloadAsset(wImgTex);
+		wImgTex = null;
+	}
 	
 	wType = type ;
 	
@@ -155,6 +163,8 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 		case WINDOWTYPES.VIDEOLEFT :
 		case WINDOWTYPES.VIDEO : // Si c'est une video
 			
+			wTexAlsoUseAway = true ;
+			
 			// on retire du chemin StreamingAssets
 			path = fileSystem.fromFolderPath( path, 'StreamingAssets' );
 			
@@ -162,28 +172,33 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 			
 			// Applique la video sur l'objet
 			wVideoSettings.putVideo( wObj, path );
-			wObj.renderer.enabled = true ;
+			wObj.renderer.enabled = wVisible ;
 			
 			// inversion de la rotation
 			setRotation();
 			if( wType == WINDOWTYPES.VIDEO )
 				wObj.transform.Rotate( Vector3( 0, 180, 0) );
-			else if ( wType == WINDOWTYPES.VIDEORIGHT )
+			else if ( wType == WINDOWTYPES.VIDEORIGHT ) {
+				rotated = true ;
 				wObj.transform.Rotate( Vector3( 0, 90, 0) );
-			else if ( wType == WINDOWTYPES.VIDEOLEFT )
+			} else if ( wType == WINDOWTYPES.VIDEOLEFT ) {
+				rotated = true ;
 				wObj.transform.Rotate( Vector3( 0, 270, 0) );
-			
-			wVideoIsPlaying= true ;
-			
+			}
 			size = (size != Vector2.zero) ? size : wVideoSettings.VideoWH() ;
 			break ;
 		
 		
 		case WINDOWTYPES.IMG : // Si c'est une image
 			
-			// Charge la texture
-			wImgTex = Resources.Load(path);
+			wTexAlsoUseAway = alsoUseAway ;
 			
+			// Charge la texture
+			try {
+				wImgTex = Resources.Load(path, Texture2D);
+			} catch( e) {
+				wImgTex = null;
+			}
 			// texture invalide
 			if(! wImgTex) {
 				Debug.LogWarning('Invalid image path in SetTexture(' + path + ' ,' + type + ' ,' + size + ' ) ');
@@ -193,17 +208,12 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 			
 			// application de la texture
 			wObj.renderer.material.mainTexture = wImgTex ;
-			wObj.renderer.enabled = true ;
-			
-			wObj.transform.Rotate( Vector3( 0, 180, 0) );
-			wObj.transform.Rotate( Vector3( 0, 90, 0) );
+			wObj.renderer.enabled = wVisible ;
 			
 			// réinitialise la rotation
 			setRotation();
 			// Calcul des dimensions 
 			size = (size != Vector2.zero) ? size : Vector2( wImgTex.width, wImgTex.height ) ;
-			
-			
 			
 			break ;
 	}
@@ -227,18 +237,6 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 		
 	
 	
-}
-
-
-/*
- * Stop la video en lecture si elle tourne
- */
-private function stopVideo() {
-	if( wVideoIsPlaying ) {
-		wVideoSettings.stopVideo( wObj );
-		wVideoIsPlaying= false ;
-		wObj.renderer.material = material;
-	}
 }
 
 /*******************************************************
@@ -265,14 +263,14 @@ public function disableAll() {
  * Active les evenements
  */
 public function enableEvents() {
-	eventEnable = true ;
+	wEventEnable = true ;
 }
 
 /*
  * Desactive les evenements
  */
 public function disableEvents() {
-	eventEnable = false ;
+	wEventEnable = false ;
 }
 
 /*
@@ -280,6 +278,7 @@ public function disableEvents() {
  */
 public function show() {
 	wObj.renderer.enabled = true ;
+	wVisible = true ;
 }
 
 /*
@@ -287,16 +286,17 @@ public function show() {
  */
 public function hide() {
 	wObj.renderer.enabled = false ;
+	wVisible = false ;
 }
 
 /*
  * Getters
  */
 public function areEventEnabled() : boolean {
-	return eventEnable ;
+	return wEventEnable ;
 }
 public function isHidden() : boolean {
-	return !(wObj.renderer.enabled) ;
+	return !(wVisible) ;
 }
 
 
@@ -335,6 +335,8 @@ private function placeRenderingPlane() {
 	var testRenderer = wObj.GetComponent(Renderer);
 	if( !testRenderer)
 		wObj.AddComponent(Renderer);
+	
+	wObj.renderer.material = material;
 }
 
 /*
@@ -403,7 +405,11 @@ private function ComputeGUIPosAndScale(size : Vector2) {
 	wGUIPos = camera.ScreenToWorldPoint(Vector3( wPos.center.x, camera.pixelHeight - wPos.center.y, wZ ) ) ;
 	
 	// récupère les dimension optimales
-	var newSize = getOptimalSize(size, Vector2(wPos.width, wPos.height) );
+	var newSize : Vector2 ;
+	if( !rotated)
+		newSize = getOptimalSize(size, Vector2(wPos.width, wPos.height) );
+	else
+		newSize = getOptimalSize(size, Vector2(wPos.height, wPos.width) );
 	wGUIScale = size2scale( getRealSize( newSize, Vector2( wPos.x, wPos.y ), wZ, camera ) );
 }
 
@@ -416,7 +422,13 @@ private function ComputeFullPosAndScale(size : Vector2) {
 	wFullPos = camera.ScreenToWorldPoint( Vector3(camera.pixelWidth/2, camera.pixelHeight/2, wZ ) ) ;
 	
 	// récupère les dimension optimales
-	var newSize = getOptimalSize(size, Vector2(camera.pixelWidth,  camera.pixelHeight) );
+	//var newSize = getOptimalSize(size, Vector2(camera.pixelWidth,  camera.pixelHeight) );
+	var newSize : Vector2 ;
+	if( !rotated)
+		newSize = getOptimalSize(size, Vector2(camera.pixelWidth, camera.pixelHeight) );
+	else
+		newSize = getOptimalSize(size, Vector2(camera.pixelHeight, camera.pixelWidth) );
+	
 	wFullScale = size2scale( getRealSize( newSize, Vector2( camera.pixelWidth/2, camera.pixelHeight/2 ), wZ, camera ) );
 }
 
@@ -510,11 +522,12 @@ public function updateWindow() {
 public function onSwipe( info : SwipeInfo ) {
 	
 	// La fonction s'interrompt si les événements sont désactivés
-	if( !eventEnable )
+	if( !wEventEnable || !wObj)
 		return ;
 	
 	// Si on est sur les video (2D / 3D)
-	if( wState == W_STATE.NOTONGUI)
+	// ou si la fenetre n'est pas visible
+	if( wState == W_STATE.NOTONGUI || !wObj.renderer.enabled)
 		return ;
 	
 	// Si le point de départ est dans la fenêtre
@@ -533,11 +546,12 @@ public function onSwipe( info : SwipeInfo ) {
 public function onTap( pos : Vector2 ) {
 	
 	// La fonction s'interrompt si les événements sont désactivés
-	if( !eventEnable )
+	if( !wEventEnable || !wObj)
 		return ;
 	
 	// Si on est sur les video (2D / 3D)
-	if( wState == W_STATE.NOTONGUI)
+	// ou si la fenetre n'est pas visible
+	if( wState == W_STATE.NOTONGUI || !wObj.renderer.enabled)
 		return ;
 	
 	if( clickOnWindow(pos) ) { 	// Si on a cliqué sur le plan
@@ -551,11 +565,12 @@ public function onTap( pos : Vector2 ) {
 public function onLongTap( pos : Vector2 ) {
 	
 	// La fonction s'interrompt si les événements sont désactivés
-	if( !eventEnable )
+	if( !wEventEnable || !wObj)
 		return ;
 	
 	// Si on est sur les video (2D / 3D)
-	if( wState == W_STATE.NOTONGUI)
+	// ou si la fenetre n'est pas visible
+	if( wState == W_STATE.NOTONGUI || !wObj.renderer.enabled)
 		return ;
 	
 	if( clickOnWindow(pos) ) { 	// Si on a cliqué sur le plan
@@ -569,11 +584,12 @@ public function onLongTap( pos : Vector2 ) {
 public function onDoubleTap( pos : Vector2 ) {
 	
 	// La fonction s'interrompt si les événements sont désactivés
-	if( !eventEnable )
+	if( !wEventEnable || !wObj)
 		return ;
 	
 	// Si on est sur les video (2D / 3D)
-	if( wState == W_STATE.NOTONGUI)
+	// ou si la fenetre n'est pas visible
+	if( wState == W_STATE.NOTONGUI || !wObj.renderer.enabled)
 		return ;
 	
 	if( clickOnWindow(pos) ) { 	// Si on a cliqué sur le plan

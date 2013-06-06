@@ -45,7 +45,7 @@ private var toBg : boolean = true ; 	// rotation vers l'arrière ? (ou vers l'av
 private var spacingFactor : float = 1.7 ; // Espacement des elmts
 
 
-// Evenement activés aou non
+// Evenement activés ou non
 private var eventEnable : boolean = false ;
 
 
@@ -105,8 +105,16 @@ function InitSlideShowFactor ( nbOfElmts : int, pos : Rect, Z : float ) {
 function destuctSlideShow() {
 	
 	for(var i = 0 ; i < mobilesElmts.length; i++) {
-		if( mobilesElmts[i]  )
+		
+		
+		if( mobilesElmts[i]  ) {
+			if( mobilesElmts[i].renderer )
+				if(mobilesElmts[i].renderer.material )
+					if( mobilesElmts[i].renderer.material.mainTexture )
+						Resources.UnloadAsset( mobilesElmts[i].renderer.material.mainTexture );
+			
 			Destroy( mobilesElmts[i] );
+		}
 	}
 	effNbElmts = 0 ;
 	
@@ -128,6 +136,9 @@ function UpDateSlideShow() {
 	
 	// Si on est pas en mvt, on place directement les objets
 	if( ! isMovingUpdate() ) {
+		
+		InitialElmtsPos = null ;
+		InitialElmtsRot = null ;
 		
 		effectiveCurrentPage = currentPage ;
 		
@@ -168,11 +179,22 @@ public function AddElmt( texture : String, info ) : boolean {
 		return false ;
 	}
 	
+	try {
+		var imgTex : Texture2D = Resources.Load(texture, Texture2D);
+	} catch(e) {
+		imgTex = null ;
+	}
+	if( ! imgTex) {
+		Debug.LogWarning('Invalid image path in AddElmt : ' + texture);
+		return;
+	}
+	
+	
 	AddElmtPlane( effNbElmts );
 	
 	elmtsInfo[ effNbElmts ] = info ;
 	
-	var imgTex = Resources.Load(texture);
+	
 	mobilesElmts[ effNbElmts].renderer.material.mainTexture = imgTex ;
 	
 	
@@ -404,10 +426,12 @@ function OnDrag ( info : DragInfo) {
 			}
 			
 		}
-				
-		isMoving = true ;
-		useSpeed = false ;
-		isDragging = true ;
+		
+		if( InitialElmtsPos ) {
+			isMoving = true ;
+			useSpeed = false ;
+			isDragging = true ;
+		}
 	}
 		
 }
@@ -516,7 +540,6 @@ private function isMovingUpdate() : boolean {
  * Décalage vers la droite
  */
 private function decalRight() {
-	
 	if (! isMoving && currentPage > 0 )
 		decalTo( currentPage - 1 );
 	
@@ -526,7 +549,6 @@ private function decalRight() {
  * Décalage vers la gauche
  */
 private function decalLeft() {
-	
 	if (currentPage < effNbElmts-1 )
 		decalTo( currentPage +1 );
 }
@@ -535,7 +557,6 @@ private function decalLeft() {
  * Décalage vers la gauche depuis encore plus a gauche
  */
 private function decalLeftfromLeft() {
-	
 	if (currentPage < effNbElmts-2 ) {
 		currentPage += 2 ;
 		decalTo( currentPage - 1 );
@@ -546,7 +567,6 @@ private function decalLeftfromLeft() {
  * Décalage vers la droite depuis encore plus a droite
  */
 private function decalRightFromRight() {
-	
 	if (currentPage < effNbElmts-2 ) {
 		currentPage -= 2 ;
 		decalTo( currentPage + 1 );
@@ -593,7 +613,7 @@ private function moveGradualy(pos : Vector3[], rot : Quaternion[] ) {
 		
 	// Maj des pos/rot
 	for( var i = 0 ; i < effNbElmts; i++) {
-	
+		
 		mobilesElmts[i].transform.position =Vector3.Slerp( 	InitialElmtsPos[i],pos[i],timeFactor ) ;
 		mobilesElmts[i].transform.rotation = Quaternion.Slerp( InitialElmtsRot[i], rot[i], timeFactor );
 		
