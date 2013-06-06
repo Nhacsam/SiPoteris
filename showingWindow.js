@@ -143,7 +143,11 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 		wObj.renderer.enabled = false ;
 		return ;
 	}
+	
+	// On réinitialise certains paramètres
 	wObj.renderer.material = material;
+	rotated = false ;
+	
 	
 	// Si la texture n'est pas utilisé par qq1 d'autre, on libère la mémoire
 	if( !wTexAlsoUseAway && wImgTex) {
@@ -175,11 +179,13 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 			setRotation();
 			if( wType == WINDOWTYPES.VIDEO )
 				wObj.transform.Rotate( Vector3( 0, 180, 0) );
-			else if ( wType == WINDOWTYPES.VIDEORIGHT )
+			else if ( wType == WINDOWTYPES.VIDEORIGHT ) {
+				rotated = true ;
 				wObj.transform.Rotate( Vector3( 0, 90, 0) );
-			else if ( wType == WINDOWTYPES.VIDEOLEFT )
+			} else if ( wType == WINDOWTYPES.VIDEOLEFT ) {
+				rotated = true ;
 				wObj.transform.Rotate( Vector3( 0, 270, 0) );
-			
+			}
 			size = (size != Vector2.zero) ? size : wVideoSettings.VideoWH() ;
 			break ;
 		
@@ -203,15 +209,10 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 			wObj.renderer.material.mainTexture = wImgTex ;
 			wObj.renderer.enabled = wVisible ;
 			
-			wObj.transform.Rotate( Vector3( 0, 180, 0) );
-			wObj.transform.Rotate( Vector3( 0, 90, 0) );
-			
 			// réinitialise la rotation
 			setRotation();
 			// Calcul des dimensions 
 			size = (size != Vector2.zero) ? size : Vector2( wImgTex.width, wImgTex.height ) ;
-			
-			
 			
 			break ;
 	}
@@ -403,7 +404,11 @@ private function ComputeGUIPosAndScale(size : Vector2) {
 	wGUIPos = camera.ScreenToWorldPoint(Vector3( wPos.center.x, camera.pixelHeight - wPos.center.y, wZ ) ) ;
 	
 	// récupère les dimension optimales
-	var newSize = getOptimalSize(size, Vector2(wPos.width, wPos.height) );
+	var newSize : Vector2 ;
+	if( !rotated)
+		newSize = getOptimalSize(size, Vector2(wPos.width, wPos.height) );
+	else
+		newSize = getOptimalSize(size, Vector2(wPos.height, wPos.width) );
 	wGUIScale = size2scale( getRealSize( newSize, Vector2( wPos.x, wPos.y ), wZ, camera ) );
 }
 
@@ -416,7 +421,13 @@ private function ComputeFullPosAndScale(size : Vector2) {
 	wFullPos = camera.ScreenToWorldPoint( Vector3(camera.pixelWidth/2, camera.pixelHeight/2, wZ ) ) ;
 	
 	// récupère les dimension optimales
-	var newSize = getOptimalSize(size, Vector2(camera.pixelWidth,  camera.pixelHeight) );
+	//var newSize = getOptimalSize(size, Vector2(camera.pixelWidth,  camera.pixelHeight) );
+	var newSize : Vector2 ;
+	if( !rotated)
+		newSize = getOptimalSize(size, Vector2(camera.pixelWidth, camera.pixelHeight) );
+	else
+		newSize = getOptimalSize(size, Vector2(camera.pixelHeight, camera.pixelWidth) );
+	
 	wFullScale = size2scale( getRealSize( newSize, Vector2( camera.pixelWidth/2, camera.pixelHeight/2 ), wZ, camera ) );
 }
 
