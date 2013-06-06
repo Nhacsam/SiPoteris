@@ -159,6 +159,8 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 		wImgTex = null;
 	}
 	
+	if(wType==WINDOWTYPES.VIDEO)wVideoSettings.stopVideo(wObj);
+	
 	wType = type ;
 	wVideoIsLoading = false ;
 	
@@ -230,7 +232,7 @@ private function SetTextureVideo(path : String, size : Vector2 ) : boolean {
 private function TestVideoLoaded() {
 	
 	if( wVideoIsLoading ) {
-		if(wVideoSettings.videoIsReady()) {
+		if(wVideoSettings.isVideoReady()) {
 	
 			wObj.renderer.enabled = wVisible ;
 	
