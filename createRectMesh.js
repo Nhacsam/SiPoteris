@@ -79,19 +79,35 @@ private function setPlane2D( t : Hashtable , g : GameObject ){
 	var meshVideo : Mesh = meshFilterVideo.mesh;
 	
 	// set the position of plane
-	var posX = float.Parse( t['posx'] );
-	var posY = float.Parse( t['posy'] );
+	if( typeof(t['posx']) == typeof(String) )//check type of elements
+		var posX = float.Parse( t['posx'] );
+	else
+		posX = t['posx'];
+	if( typeof(t['posy']) == typeof(String) )
+		var posY = float.Parse( t['posy'] );
+	else
+		posY = t['posy'];
 	
 	g.transform.position.x -= posX*meshVideo.bounds.size.x/2;
 	g.transform.position.z += posY*meshVideo.bounds.size.z/2;
 	
 	// set scale of plane
 	// get scale of videoplane
+	
+		if( typeof(t['sizex']) == typeof(String) )//check type of elements
+			var sizX : float = float.Parse( t['sizex'] );
+		else
+			sizX = t['sizex'];
+		if( typeof(t['sizey']) == typeof(String) )//check type of elements
+			var sizY : float = float.Parse( t['sizey'] );
+		else
+			sizY = t['sizey'];
+	
 	var v : Vector3 = surface.transform.localScale;
 	var vPlane : Vector3;
-	vPlane.x = v.x*float.Parse( t['sizex'] );
+	vPlane.x = v.x*sizX;
 	vPlane.y = v.y;
-	vPlane.z = v.z*float.Parse( t['sizey'] );
+	vPlane.z = v.z*sizY;
 	g.transform.localScale = vPlane;
 }
 
@@ -154,16 +170,29 @@ function createRect3D( t : Hashtable , path : String ) : GameObject {
 
 	video = gameObject.GetComponent("videoSettings") as videoSettings;
 	
-	if(	t.ContainsKey( 'theta' ) 	&&
-		t.ContainsKey( 'phi' ) 		&&
+	if(	t.ContainsKey( 'longitude' ) 	&&
+		t.ContainsKey( 'latitude' ) 		&&
 		t.ContainsKey( 'scale' ) 	&&
 		t.ContainsKey( 'name' )		&&
 		t.ContainsKey( 'ratiotexture')	) {
 		
-			var theta : float = float.Parse( t['theta'] ) * Mathf.PI/180;// convert to radian
-			var phi : float = float.Parse( t['phi'] ) * Mathf.PI/180;
-			var scale : float = float.Parse( t['scale'] );
-			var ratiotexture : float = float.Parse( t['ratiotexture'] );
+			if( typeof(t['longitude']) == typeof(String) )// check type of elements in hashtable
+				var theta : float = float.Parse( t['longitude'] ) * Mathf.PI/180;// convert to radian
+			else
+				theta = t['longitude'] * Mathf.PI/180;// convert to radian
+			if( typeof(t['latitude']) == typeof(String) )// check type of elements in hashtable
+				var phi : float = float.Parse( t['latitude'] ) * Mathf.PI/180;// convert to radian
+			else
+				phi = t['longitude'] * Mathf.PI/180;// convert to radian
+			if( typeof(t['scale']) == typeof(String) )// check type of elements in hashtable
+				var scale : float = float.Parse( t['scale'] );
+			else
+				scale = t['scale'];
+			if( typeof(t['ratiotexture']) == typeof(String) )//check type of elements in hashtable
+				var ratiotexture : float = float.Parse( t['ratiotexture'] );
+			else			
+				ratiotexture = t['ratiotexture'];
+			
 			var name : String = t['name'];
 			return createRect3DParam(theta, phi, scale, ratiotexture, name, path);
 	}//if

@@ -240,13 +240,13 @@ function Update () {
 	for( var i =0; i < AllGO2D.length; i++) {
 	
 		if(!Videos.getFlagEndVideo())
-			move.moveSurface( AllGO2D[i], Videos.OnPlay() ) ;
+			move.moveSurface( AllGO2D[i] as GameObject, Videos.OnPlay() ) ;
 		else
-			move.resetPlane(AllGO2D[i]);
+			move.resetPlane(AllGO2D[i] as GameObject);
 	}
 	
 	for( i = 0; i < AllGO3D.length; i++)
-		move.rotateY_3D( AllGO3D[i] ) ;
+		move.rotateY_3D( AllGO3D[i] as GameObject ) ;
 	
 }
 
@@ -522,9 +522,9 @@ private function placeMeshHashPolar ( t : Hashtable ){
 		var obj = createPolar.placeMesh( t );
 		if(obj){// if obj has been created
 			// Ajout d'un script comprenant une extension des propriété et des methodes des plans clickable
-			var s : scriptForPlane = obj.GetComponent("scriptForPlane");
+			var s : scriptForPlane = obj.GetComponent("scriptForPlane") as scriptForPlane;
 			if( ! s)
-				s  = obj.AddComponent ("scriptForPlane");
+				s  = obj.AddComponent ("scriptForPlane") as scriptForPlane;
 			s.InitScript( t );
 		
 			// Ajout de la position réelle du plan dans le script d'extension
@@ -554,9 +554,9 @@ private function placeMeshHashPolar ( t : Hashtable ){
 		
 		if(obj3D){//if obj3D has been created
 			// Ajout d'un script comprenant une extension des propriété et des methodes des plans clickable
-			var s3D : scriptForPlane = obj3D.GetComponent("scriptForPlane");
+			var s3D : scriptForPlane = obj3D.GetComponent("scriptForPlane") as scriptForPlane;
 			if( ! s3D)
-				s3D  = obj3D.AddComponent ("scriptForPlane");
+				s3D  = obj3D.AddComponent ("scriptForPlane") as scriptForPlane;
 			s3D.InitScript( t );
 		
 			// Ajout de la position réelle du plan dans le script d'extension
@@ -586,9 +586,9 @@ public function placeRectHash( t : Hashtable ){
 		var obj3D : GameObject = meshRect.createRect3D( t , null );
 		
 		if(obj2D){// check if the plane is created and init script for plane
-			var s2 : scriptForPlane = obj2D.GetComponent("scriptForPlane");
+			var s2 : scriptForPlane = obj2D.GetComponent("scriptForPlane") as scriptForPlane;
 			if( ! s2)// if no script found, scriptforplane is added to the gameobject
-				s2 = obj2D.AddComponent ("scriptForPlane");
+				s2 = obj2D.AddComponent ("scriptForPlane") as scriptForPlane;
 				
 			// init variables of script
 			s2.InitScript( t );
@@ -604,9 +604,9 @@ public function placeRectHash( t : Hashtable ){
 		}//if
 		
 		if(obj3D){// check if the plane is created and init script for plane
-			var s3 : scriptForPlane = obj3D.GetComponent("scriptForPlane");
+			var s3 : scriptForPlane = obj3D.GetComponent("scriptForPlane") as scriptForPlane;
 			if( ! s3)// if no script found, scriptforplane is added to the gameobject
-				s3 = obj3D.AddComponent ("scriptForPlane");
+				s3 = obj3D.AddComponent ("scriptForPlane") as scriptForPlane;
 				
 				// init variables of script
 				s3.InitScript( t );
@@ -719,7 +719,7 @@ public function systemXmlWrapper( tagName : String, content : Hashtable ) {
 				switch( content['type'] ) {
 					case 'ZOOM' :
 					case 'VIDEO' :
-						transitionToGUIType = content['type'] ;
+						transitionToGUIType = content['type'];
 						break ;
 				}
 			}
