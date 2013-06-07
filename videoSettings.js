@@ -222,7 +222,6 @@ function videoHDZoomQuit(plane : GameObject){
 */
 function putVideo( focus: GameObject, nom : String){
 
-
 	if(!iOS){
 	iOS = new GameObject(); 
 	iOS.transform.position= Vector3(10,0,0);
@@ -250,7 +249,8 @@ function putVideo( focus: GameObject, nom : String){
 	if(!focus.GetComponent("PlayFileBasedMovieDefault"))focus.AddComponent("PlayFileBasedMovieDefault");
   	focus.renderer.material = Resources.Load("Movie3");
 	controllerIOS.movie[1] = focus.GetComponent("PlayFileBasedMovieDefault"); 
-	   
+	var temp: PlayFileBasedMovieDefault =  focus.GetComponent("PlayFileBasedMovieDefault");
+	temp.enabled = true;  
 	controllerScene2.movieClass[0] =  focus.GetComponent("PlayFileBasedMovieDefault");
 	controllerScene2.movieClass[0].movieIndex = 1;
 	controllerScene2.movieName[0] = nom +".mov";
@@ -266,12 +266,18 @@ function putVideo( focus: GameObject, nom : String){
 */
 function stopVideo(focus: GameObject){
 	
-	if(focus.GetComponent("PlayFileBasedMovieDefault")){
+	if(focus!= null && focus.GetComponent("PlayFileBasedMovieDefault")){
+	var temp:PlayFileBasedMovieDefault = focus.GetComponent("PlayFileBasedMovieDefault");
+	temp.enabled = false;
+	controllerScene2.movieClass[0].videoShutter();
+	}
+	/*
+	{
 	controllerScene2.movieClass[0] = focus.GetComponent("PlayFileBasedMovieDefault");
 	controllerScene2.movieClass[0].StopMovie();
 	//controllerScene2.movieClass[0].moviePlaying();
 	Destroy(focus.GetComponent("PlayFileBasedMovieDefault"));
-	}
+	}*/
 
 	
 
@@ -379,7 +385,7 @@ function GetFirstView(){
 	return firstView2D;
 }
 
-function videoIsReady(){
+function isVideoReady(){
 
 	return controllerScene2.movieClass[0].videoIsReady();
 }
