@@ -76,17 +76,14 @@ public function createRect2D( t : Hashtable , path : String ){
 				if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
 					// add texture to display on the plane
 					obj.renderer.material.mainTexture = texture;
+					obj.renderer.enabled = true;
 					// get ratio of texture
 					var ratio : float = (texture as Texture).width/(texture as Texture).height;
-					// create rect with right ratio for texture
-					if( sizeX > sizeY )
-						sizeX = sizeY*ratio;
-					else
-						sizeY = sizeX/ratio;
-					obj.renderer.enabled = true;
+					// calculate optimal size
+					var SIZE : float[] = optimalSize( sizeX , sizeY , ratio );
 					
 					// set position of plane
-					setRect2D( posX , posY , sizeX , sizeY , obj );
+					setRect2D( posX , posY , SIZE[0] , SIZE[1] , obj );
 					
 					return obj;
 				}//if
@@ -141,6 +138,39 @@ private function setRect2D( posX : float , posY : float , sizex : float , sizey 
 	vPlane.z = v.z*sizey;
 	g.transform.localScale = vPlane;
 }
+
+/*
+	*calculate optimal size of height and width to fit the area 
+*/
+private function optimalSize( sizex : float , sizey : float , ratio ){
+	var ratioMax : float = sizex/sizey;
+	var width : float;
+	var height : float;
+	var SIZE : float[] = new float[2];
+	// resize plane to fit ratio
+	if( ratio >= 1 ){
+		height = sizex/ratio;
+		width = sizex;
+		if( height > sizey ){
+			height = sizey;
+			width = height*ratio;
+		}
+	}
+	if( ratio < 1 ){
+		width = sizey*ratio;
+		height = sizey;
+		if( width > sizex ){
+			width = sizex;
+			height = width/ratio;
+		}
+	}
+	
+	SIZE[0] = width;
+	SIZE[1] = height;
+	
+	return SIZE;
+}
+
 
 /*
  * give a point in the normal axe of the plane which is passing by the center

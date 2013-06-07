@@ -582,7 +582,7 @@ private function placeMeshHashPolar ( t : Hashtable ){
 public function placeRectHash( t : Hashtable ){
 	
 	if( meshRect ){
-		var obj2D : GameObject = meshRect.createRect2D( t , null );
+		var obj2D : GameObject = meshRect.createRect2D( t , "pano" );
 		var obj3D : GameObject = meshRect.createRect3D( t , null );
 		
 		if(obj2D){// check if the plane is created and init script for plane
