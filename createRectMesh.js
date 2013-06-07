@@ -164,7 +164,7 @@ function createRect3DParam(theta : float , phi : float , scale : float , ratiote
 				obj.renderer.material.mainTexture = texture;
 				obj.renderer.enabled = true;
 				// get ratio of texture
-				var ratio : float = texture.width/texture.height;
+				var ratio : float = (texture as Texture).width/(texture as Texture).height;
 				// apply this ratio to the rectangle
 				obj.transform.localScale = Vector3( scale*Mathf.Sqrt(ratio) , 0 , scale/Mathf.Sqrt(ratio) );
 				
@@ -204,12 +204,16 @@ function createRect3D( t : Hashtable , path : String ) : GameObject {
 		
 			if( typeof(t['longitude']) == typeof(String) )// check type of elements in hashtable
 				var theta : float = float.Parse( t['longitude'] ) * Mathf.PI/180;// convert to radian
-			else
-				theta = t['longitude'] * Mathf.PI/180;// convert to radian
+			else{
+				theta = t['longitude'];
+				theta = theta * Mathf.PI/180;// convert to radian
+			}
 			if( typeof(t['latitude']) == typeof(String) )// check type of elements in hashtable
 				var phi : float = float.Parse( t['latitude'] ) * Mathf.PI/180;// convert to radian
-			else
-				phi = t['latitude'] * Mathf.PI/180;// convert to radian
+			else{
+				phi = t['latitude'];
+				phi*= Mathf.PI/180;// convert to radian
+			}
 			if( typeof(t['scale']) == typeof(String) )// check type of elements in hashtable
 				var scale : float = float.Parse( t['scale'] );
 			else
@@ -221,11 +225,12 @@ function createRect3D( t : Hashtable , path : String ) : GameObject {
 			
 			var name : String = t['name'];
 			return createRect3DParam(theta, phi, scale, ratiotexture, name, path);
-	
+	}
 	else{// return null if a parameter is missing in the xml file - the gameobject is not created
 		Console.Warning("An element is missing in xml_data to create the mesh");
 		return null ;
-	}
+		
+		}
 }
 
 /*
