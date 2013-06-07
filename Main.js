@@ -13,16 +13,19 @@ var AllAudio3D : Array = Array();
  * Dépendances : Scripts appelés dans le main
  */
 private var Videos : videoSettings ;			// Gère l'ajout, le démarage, l'arret, ... des videos ( + la sphère3D et le plan 2D -_-" )
+
 private var createPolar : createPolarMesh;		// Crée les plans cliquables en 2D avec une forme de morceaux de disque
 private var mesh3D : createSphericMesh;			// Crée les plans cliquables en 3D avec une forme de morceaux de sphère
-private var meshRect : createRectMesh;		// Crée les plans cliquables en 2D 
+private var meshRect : createRectMesh;			// Crée les plans cliquables en 2D
+
+private var autoPlacer : placeAuto;				// permet de placer automatiquement les plans rectangle
 
 private var move : moveSurface;					// Déplace les plans de manière à qu'il suive la video
 private var sound3D : audio3D;					// Gere les sons dans la visualisation 3D 
 private var Trans :Transition2D3D;				// Gère la transition 2D <-> 3D
 
 private var Zoom : Zoom ;						// Gère le click sur les plans et les trasitions qui en découlent
-private var GUI : FullScreen ;			// Gere la GUI qui s'affiche après avoir cliqué dans un plan
+private var GUI : FullScreen ;					// Gere la GUI qui s'affiche après avoir cliqué dans un plan
 
 // Déplacement de la caméra
 private var control : CameraControl ;			// Sur l'ipad
@@ -35,6 +38,9 @@ private var mouseLook : MouseLook ;				// Avec la souris
 private var haveUniver : boolean ;			// on passe directe à l'interface ?
 private var beginBy2D : boolean ;			// on commence par la vue 2D (sinon 3D)
 private var have2DAnd3D : boolean ;			// on a une vue 2D et une vue 3D (sinon que la première)
+
+private var placeRectAuto : boolean ;		// Place automatiquement les plans rectangles
+
 
 private var soundEnable : boolean ;			// Les sons 3D sont activé
 
@@ -87,14 +93,19 @@ function Start () {
 	 * Instanciate the objects
 	 */
 	Videos = gameObject.AddComponent("videoSettings") as videoSettings;
+	
+	if( (beginBy2D || have2DAnd3D) && !placeRectAuto )		// Si on a la 2D
+		createPolar = gameObject.AddComponent("createPolarMesh") as createPolarMesh;
+	
+	if( (!beginBy2D || have2DAnd3D) && !placeRectAuto)		// Si on a la 3D
+		mesh3D = gameObject.AddComponent("createSphericMesh") as createSphericMesh;
+	
+	if( placeRectAuto)
+		autoPlacer = gameObject.AddComponent("placeAuto") as placeAuto;
+	
 	// 3D and 2D, create rectangles
 	meshRect = gameObject.AddComponent("createRectMesh") as createRectMesh;
 	
-	if( beginBy2D || have2DAnd3D )		// Si on a la 2D
-		createPolar = gameObject.AddComponent("createPolarMesh") as createPolarMesh;
-	
-	if( !beginBy2D || have2DAnd3D )		// Si on a la 3D
-		mesh3D = gameObject.AddComponent("createSphericMesh") as createSphericMesh;
 	
 	move = gameObject.AddComponent("moveSurface") as moveSurface;
 	
@@ -123,9 +134,14 @@ function Start () {
 	// give access to this gameobject in createPolarMesh script
 	if(plane2D && createPolar){
 		createPolar.SetSurface(plane2D);
+	}
+	if(plane2D && meshRect) {
 		meshRect.SetSurface(plane2D);
 	}
 	
+	// Initialise le script permettant de placer automatiquement les plans
+	if( placeRectAuto)
+		autoPlacer.InitPlacer();
 	
 	// Initialise le script gérant les sons
 	if( sound3D )
@@ -137,6 +153,9 @@ function Start () {
 	
 	// parse le fichier et appelle la fonction correspondante
 	getXML.getElementFromXML( 'xml_data', datasXmlWrapper ) ;
+	
+	if( placeRectAuto )
+		autoPlacer.compute( placeRectHash );
 	
 	
 	// Initialise le Zoom avec les plans qui vont bien.
@@ -221,13 +240,13 @@ function Update () {
 	for( var i =0; i < AllGO2D.length; i++) {
 	
 		if(!Videos.getFlagEndVideo())
-			move.moveSurface( AllGO2D[i], Videos.OnPlay() ) ;
+			move.moveSurface( AllGO2D[i] as GameObject, Videos.OnPlay() ) ;
 		else
-			move.resetPlane(AllGO2D[i]);
+			move.resetPlane(AllGO2D[i] as GameObject);
 	}
 	
 	for( i = 0; i < AllGO3D.length; i++)
-		move.rotateY_3D( AllGO3D[i] ) ;
+		move.rotateY_3D( AllGO3D[i] as GameObject ) ;
 	
 }
 
@@ -445,11 +464,17 @@ function OnGUI() {
 public function datasXmlWrapper( tagName : String, content : Hashtable ) {
 	switch( tagName ) {
 		
+		case 'sound' :
+			placeAudioHash( content );
+			break ;
+		
+		
 		case 'diane' :
 		case 'acteon' :
 		case 'middle' :
-			 
-			if(!content.ContainsKey( 'shape'))
+			if( placeRectAuto )
+					autoPlacer.addPlane( content );
+			else if(!content.ContainsKey( 'shape'))
 				placeMeshHashPolar( content );
 			else if( content['shape'] == 'polar' )
 				placeMeshHashPolar( content );
@@ -460,9 +485,20 @@ public function datasXmlWrapper( tagName : String, content : Hashtable ) {
 			
 			
 			break ;
-		
-		case 'sound' :
-			placeAudioHash( content );
+		default :
+			 
+			 if( placeRectAuto )
+					autoPlacer.addPlane( content );
+			else if(!content.ContainsKey( 'shape'))
+				placeMeshHashPolar( content );
+			else if( content['shape'] == 'polar' )
+				placeMeshHashPolar( content );
+			else if( content['shape'] == 'rectangle' )
+				placeRectHash( content );
+			else
+				placeMeshHashPolar( content );
+			
+			
 			break ;
 	}
 }
@@ -486,9 +522,9 @@ private function placeMeshHashPolar ( t : Hashtable ){
 		var obj = createPolar.placeMesh( t );
 		if(obj){// if obj has been created
 			// Ajout d'un script comprenant une extension des propriété et des methodes des plans clickable
-			var s : scriptForPlane = obj.GetComponent("scriptForPlane");
+			var s : scriptForPlane = obj.GetComponent("scriptForPlane") as scriptForPlane;
 			if( ! s)
-				s  = obj.AddComponent ("scriptForPlane");
+				s  = obj.AddComponent ("scriptForPlane") as scriptForPlane;
 			s.InitScript( t );
 		
 			// Ajout de la position réelle du plan dans le script d'extension
@@ -518,9 +554,9 @@ private function placeMeshHashPolar ( t : Hashtable ){
 		
 		if(obj3D){//if obj3D has been created
 			// Ajout d'un script comprenant une extension des propriété et des methodes des plans clickable
-			var s3D : scriptForPlane = obj3D.GetComponent("scriptForPlane");
+			var s3D : scriptForPlane = obj3D.GetComponent("scriptForPlane") as scriptForPlane;
 			if( ! s3D)
-				s3D  = obj3D.AddComponent ("scriptForPlane");
+				s3D  = obj3D.AddComponent ("scriptForPlane") as scriptForPlane;
 			s3D.InitScript( t );
 		
 			// Ajout de la position réelle du plan dans le script d'extension
@@ -543,15 +579,16 @@ private function placeMeshHashPolar ( t : Hashtable ){
 /*
 	*place plane according to the xml
 */
-private function placeRectHash( t : Hashtable ){
+public function placeRectHash( t : Hashtable ){
+	
 	if( meshRect ){
 		var obj2D : GameObject = meshRect.createRect2D( t );
 		var obj3D : GameObject = meshRect.createRect3D( t , null );
 		
 		if(obj2D){// check if the plane is created and init script for plane
-			var s2 : scriptForPlane = obj2D.GetComponent("scriptForPlane");
+			var s2 : scriptForPlane = obj2D.GetComponent("scriptForPlane") as scriptForPlane;
 			if( ! s2)// if no script found, scriptforplane is added to the gameobject
-				s2 = obj2D.AddComponent ("scriptForPlane");
+				s2 = obj2D.AddComponent ("scriptForPlane") as scriptForPlane;
 				
 			// init variables of script
 			s2.InitScript( t );
@@ -567,9 +604,9 @@ private function placeRectHash( t : Hashtable ){
 		}//if
 		
 		if(obj3D){// check if the plane is created and init script for plane
-			var s3 : scriptForPlane = obj3D.GetComponent("scriptForPlane");
+			var s3 : scriptForPlane = obj3D.GetComponent("scriptForPlane") as scriptForPlane;
 			if( ! s3)// if no script found, scriptforplane is added to the gameobject
-				s3 = obj3D.AddComponent ("scriptForPlane");
+				s3 = obj3D.AddComponent ("scriptForPlane") as scriptForPlane;
 				
 				// init variables of script
 				s3.InitScript( t );
@@ -613,6 +650,9 @@ private function setDefaultSystemValues() {
 	
 	// on peut switcher entre 2D et 3D
 	have2DAnd3D = true ;
+	
+	// Les plans sont poisitionnnés automatiquements
+	placeRectAuto = false ;
 	
 	// les sons dans la 3D sont activé
 	soundEnable = true ;
@@ -679,7 +719,7 @@ public function systemXmlWrapper( tagName : String, content : Hashtable ) {
 				switch( content['type'] ) {
 					case 'ZOOM' :
 					case 'VIDEO' :
-						transitionToGUIType = content['type'] ;
+						transitionToGUIType = content['type'];
 						break ;
 				}
 			}
