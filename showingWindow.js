@@ -162,7 +162,7 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 	
 
 	wVideoSettings.stopVideo(wObj);
-	
+
 	wType = type ;
 	wVideoIsLoading = false ;
 	
@@ -204,7 +204,6 @@ private function SetTextureImg(path : String, size : Vector2 ) : boolean{
 			
 	// application de la texture
 	wObj.renderer.material.mainTexture = wImgTex ;
-	wObj.renderer.enabled = wVisible ;
 			
 	// réinitialise la rotation
 	setRotation();
@@ -212,6 +211,8 @@ private function SetTextureImg(path : String, size : Vector2 ) : boolean{
 	size = (size != Vector2.zero) ? size : Vector2( wImgTex.width, wImgTex.height ) ;
 			
 	applyNewSize(size);
+	
+	wObj.renderer.enabled = wVisible ;
 	
 	return true ;
 }
@@ -222,11 +223,11 @@ private function SetTextureVideo(path : String, size : Vector2 ) : boolean {
 	path = fileSystem.fromFolderPath( path, 'StreamingAssets' );
 			
 	Console.Info( 'Chargement de la video "' + path + '" sur la fenetre de la GUI');
-		
+	
+	wVideoIsLoading = true ;	
 	// Applique la video sur l'objet
 	wVideoSettings.putVideo( wObj, path );
-	
-	wVideoIsLoading = true ;
+
 	wVideoSizeGiven = size ;
 	return true;
 }
@@ -235,8 +236,6 @@ private function TestVideoLoaded() {
 	
 	if( wVideoIsLoading ) {
 		if(wVideoSettings.isVideoReady()) {
-	
-			wObj.renderer.enabled = wVisible ;
 	
 			// inversion de la rotation
 			setRotation();
@@ -251,6 +250,8 @@ private function TestVideoLoaded() {
 			}
 			wVideoSizeGiven = (wVideoSizeGiven != Vector2.zero) ? wVideoSizeGiven : wVideoSettings.VideoWH() ;
 			applyNewSize(wVideoSizeGiven);
+			
+			wObj.renderer.enabled = wVisible ;
 		}
 	}
 }

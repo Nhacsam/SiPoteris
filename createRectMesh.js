@@ -35,27 +35,68 @@ function SetSurface( s : GameObject ) {
 /*
 	*create rectangle in 2D view
 */
-public function createRect2D( t : Hashtable ){
-	if(	t.ContainsKey( 'posx' ) &&
-		t.ContainsKey( 'posy' ) &&
-		t.ContainsKey( 'sizex' ) &&
-		t.ContainsKey( 'sizey' ) &&
-		t.ContainsKey( 'name' ) 	 &&
+public function createRect2D( t : Hashtable , path : String ){
+	if(	t.ContainsKey( 'posx' ) 		&&
+		t.ContainsKey( 'posy' ) 		&&
+		t.ContainsKey( 'sizex' )		&&
+		t.ContainsKey( 'sizey' ) 		&&
+		t.ContainsKey( 'name' )  		&&
 		surface){// check if all elements needed to create the plane are not null
 		
 		show = gameObject.GetComponent("showingWindow") as showingWindow;
+		
+		// set the position of plane
+		if( typeof(t['posx']) == typeof(String) )//check type of elements
+			var posX = float.Parse( t['posx'] );
+		else
+			posX = t['posx'];
+		if( typeof(t['posy']) == typeof(String) )//check type of elements
+			var posY = float.Parse( t['posy'] );
+		else
+			posY = t['posy'];
+		if( typeof(t['sizex']) == typeof(String) )//check type of elements
+			var sizeX : float = float.Parse( t['sizex'] );
+		else
+			sizeX = t['sizex'];
+		if( typeof(t['sizey']) == typeof(String) )//check type of elements
+			var sizeY : float = float.Parse( t['sizey'] );
+		else
+			sizeY = t['sizey'];
 
 		// create a new plane
 		var obj : GameObject = GameObject.CreatePrimitive( PrimitiveType.Plane );
 		obj.name = "2D_rect_"+t['name'];
 		
 		// set position of plane
-		setPlane2D( t , obj );
+		setRect2D( posX , posY , sizeX , sizeY , obj );
 	
-		// disable renderer
-		obj.renderer.enabled = false;
-	
-		return obj;
+		if( path ){
+			// load asset
+			var texture = Resources.Load( path );
+				
+			if( texture ){// if file exists
+				//test if the asset has the appropriate type
+				if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
+					// add texture to display on the plane
+					obj.renderer.material.mainTexture = texture;
+					obj.renderer.enabled = true;
+					return obj;
+				}//if
+				else{
+					// disable renderer
+					obj.renderer.enabled = false;
+					Console.Warning("File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D");
+					return obj;
+				}
+			}//if
+			else
+				Console.Warning("No file found at path : " + path);
+		}//if
+		else{
+			// disable/enable renderer
+			obj.renderer.enabled = true;
+			return obj;
+		}
 	}
 	else{
 		Console.Warning("An element is missing in xml_data to create the plane or the gameobject on which the movie is displayed is not assigned");
@@ -67,7 +108,7 @@ public function createRect2D( t : Hashtable ){
 	*positionnate the plane according to the information loaded in the xml
 	*video plane is perpendicular to the y-axis
 */
-private function setPlane2D( t : Hashtable , g : GameObject ){
+private function setRect2D( posX : float , posY : float , sizex : float , sizey : float , g : GameObject ){
 	// set the rotation and position of plane
 	// now the plane is at the center of the video plane and has the same rotation
 	g.transform.position = surface.transform.position;
@@ -78,36 +119,17 @@ private function setPlane2D( t : Hashtable , g : GameObject ){
 	meshFilterVideo = surface.GetComponent("MeshFilter");
 	var meshVideo : Mesh = meshFilterVideo.mesh;
 	
-	// set the position of plane
-	if( typeof(t['posx']) == typeof(String) )//check type of elements
-		var posX = float.Parse( t['posx'] );
-	else
-		posX = t['posx'];
-	if( typeof(t['posy']) == typeof(String) )
-		var posY = float.Parse( t['posy'] );
-	else
-		posY = t['posy'];
-	
 	g.transform.position.x -= posX*meshVideo.bounds.size.x/2;
 	g.transform.position.z += posY*meshVideo.bounds.size.z/2;
 	
 	// set scale of plane
 	// get scale of videoplane
 	
-		if( typeof(t['sizex']) == typeof(String) )//check type of elements
-			var sizX : float = float.Parse( t['sizex'] );
-		else
-			sizX = t['sizex'];
-		if( typeof(t['sizey']) == typeof(String) )//check type of elements
-			var sizY : float = float.Parse( t['sizey'] );
-		else
-			sizY = t['sizey'];
-	
 	var v : Vector3 = surface.transform.localScale;
 	var vPlane : Vector3;
-	vPlane.x = v.x*sizX;
+	vPlane.x = v.x*sizex;
 	vPlane.y = v.y;
-	vPlane.z = v.z*sizY;
+	vPlane.z = v.z*sizey;
 	g.transform.localScale = vPlane;
 }
 
