@@ -255,7 +255,6 @@ function putVideo( focus: GameObject, nom : String){
 	controllerScene2.movieClass[0].movieIndex = 1;
 	controllerScene2.movieName[0] = nom +".mov";
 
-	Console.Test("put",0);
 	controllerScene2.movieClass[0].PlayMovie(nom +".mov");
 
 	return true;
@@ -267,9 +266,11 @@ function putVideo( focus: GameObject, nom : String){
 */
 function stopVideo(focus: GameObject){
 	
-	if(focus.GetComponent("PlayFileBasedMovieDefault"))
+	if(focus!= null && focus.GetComponent("PlayFileBasedMovieDefault")){
 	var temp:PlayFileBasedMovieDefault = focus.GetComponent("PlayFileBasedMovieDefault");
 	temp.enabled = false;
+	controllerScene2.movieClass[0].videoShutter();
+	}
 	/*
 	{
 	controllerScene2.movieClass[0] = focus.GetComponent("PlayFileBasedMovieDefault");

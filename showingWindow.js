@@ -87,6 +87,7 @@ function InitWindow( pos : Rect, z : float ) {
 	enableAll();
 	wObj.renderer.material = material;
 	wVideoIsLoading = false ;
+	
 }
 
 function InitWindowFactor( pos : Rect, z : float ) {
@@ -159,7 +160,8 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 		wImgTex = null;
 	}
 	
-	if(wType==WINDOWTYPES.VIDEO)wVideoSettings.stopVideo(wObj);
+
+	wVideoSettings.stopVideo(wObj);
 	
 	wType = type ;
 	wVideoIsLoading = false ;
