@@ -294,10 +294,10 @@ public function changeZoomPlane( is2D : boolean ) {
 	
 	if( is2D ) {
 		Zoom.changeClickableElmts( AllGO2D );
-		Zoom.changeType( zoomType2D, Vector3.zero );
+		Zoom.changeType( zoomType2D, Vector3(0, -5, 0) );
 	} else {
 		Zoom.changeClickableElmts( AllGO3D );
-		Zoom.changeType( zoomType3D, Vector3.zero );
+		Zoom.changeType( zoomType3D, Vector3(0, -5, 0)  );
 	}
 }
 
