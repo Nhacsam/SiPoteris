@@ -134,14 +134,18 @@ function createRect3DParam(theta : float , phi : float , scale : float , ratiote
 	if( path ){
 		// load asset
 		var texture = Resources.Load( path );
-		
+				
 		if( texture ){// if file exists
 			//test if the asset has the appropriate type
 			if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
 				// add texture to display on the plane
 				obj.renderer.material.mainTexture = texture;
 				obj.renderer.enabled = true;
-		
+				// get ratio of texture
+				var ratio : float = texture.width/texture.height;
+				// apply this ratio to the rectangle
+				obj.transform.localScale = Vector3( scale*Mathf.Sqrt(ratio) , 0 , scale/Mathf.Sqrt(ratio) );
+				
 				return obj;
 			}//if
 			else{
@@ -195,7 +199,7 @@ function createRect3D( t : Hashtable , path : String ) : GameObject {
 			
 			var name : String = t['name'];
 			return createRect3DParam(theta, phi, scale, ratiotexture, name, path);
-	}//if
+	
 	else{// return null if a parameter is missing in the xml file - the gameobject is not created
 		Console.Warning("An element is missing in xml_data to create the mesh");
 		return null ;
