@@ -245,8 +245,11 @@ function Update () {
 			move.resetPlane(AllGO2D[i] as GameObject);
 	}
 	
-	for( i = 0; i < AllGO3D.length; i++)
+	for( i = 0; i < AllGO3D.length; i++){
+		var s : scriptForPlane = (AllGO3D[i] as GameObject).GetComponent("scriptForPlane") as scriptForPlane;
+		s.InitPosPlane( (AllGO3D[i] as GameObject).transform.position );
 		move.rotateY_3D( AllGO3D[i] as GameObject ) ;
+	}
 	
 }
 
