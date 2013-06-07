@@ -269,6 +269,7 @@ function stopVideo(focus: GameObject){
 	if(focus!= null && focus.GetComponent("PlayFileBasedMovieDefault")){
 	var temp:PlayFileBasedMovieDefault = focus.GetComponent("PlayFileBasedMovieDefault");
 	temp.enabled = false;
+	focus.renderer.enabled = false;
 	controllerScene2.movieClass[0].videoShutter();
 	}
 	/*
