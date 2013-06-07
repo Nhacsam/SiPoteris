@@ -64,28 +64,54 @@ public function compute( placeRect : function(Hashtable) ) {
 	
 	for( var i = 0 ; i < pDatasList.length; i++ ) {
 		
-		if( i < nbOnFirstFloor ) {
+		var params : Hashtable = pDatasList[i] ;
+		var PositionningFactor : float ;
+		
+		// Random value !! I have no idea what I'm doing !
+		params['scale'] = 1.0 ;
+		
+		if( i < nbOnFirstFloor && nbOnFirstFloor > 0) {
 			
-			var PositionningFactor = i / nbOnFirstFloor ;
+			PositionningFactor = i / nbOnFirstFloor ;
+			params['latitude'] = firstFloorLat ;
+			params['posy'] = 0.0 ;
+			params['sizey'] = 0.333 ;
 			
+		} else if( i < nbOnFirstFloor + nbOnSecondFloor && nbOnSecondFloor > 0) {
 			
+			PositionningFactor = (i - nbOnFirstFloor) / nbOnSecondFloor;
+			params['latitude'] = secondFloorLat ;
+			params['posy'] = 0.333 ;
+			params['sizey'] = 0.333 ;
+			
+		} else if( i < nbOnFirstFloor + nbOnSecondFloor+ nbOnThirdFloor && nbOnThirdFloor > 0) {
+			
+			PositionningFactor = (i - nbOnFirstFloor - nbOnSecondFloor) / nbOnThirdFloor;
+			params['latitude'] = thirdFloorLat ;
+			params['posy'] = 0.666 ;
+			params['sizey'] = 0.334 ;
 			
 		}
 		
+		params['posx'] = PositionningFactor ;
+		params['sizex'] = 1/PositionningFactor ;
+		params['longitude'] = 360*PositionningFactor ;
 		
+		var s : scriptForPlane = new scriptForPlane();
+		// init variables of script
+		s.InitScript( pDatasList[i] as Hashtable );
 		
+		var imgs : Array = s.getImages();
+		var img : String ;
 		
+		if( imgs.length > 0) {
+			
+			img = imgs[0];
+		} else {
+			img = null ;
+			params['ratiotexture'] = 1.0 ;
+		}
 		
-		
-		var params : Hashtable = pDatasList[i] ;
-		params['longitude'] = i+'' ;
-		params['latitude'] = i+'' ;
-		params['scale'] = i%5/5+'' ;
-		params['ratiotexture'] = (i%10/5)+'' ;
-		params['posx'] = 0.0 ;
-		params['posy'] = 0.0 ;
-		params['sizex'] = 0.33 ;
-		params['sizey'] = 0.33 ;
 		
 		if( ! params.ContainsKey( 'name') )
 			params['name'] = 'name'+i ;

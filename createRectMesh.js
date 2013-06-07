@@ -200,7 +200,7 @@ function createRect3D( t : Hashtable , path : String ) : GameObject {
 			var name : String = t['name'];
 			return createRect3DParam(theta, phi, scale, ratiotexture, name, path);
 	
-	else{// return null if a parameter is missing in the xml file - the gameobject is not created
+	} else{// return null if a parameter is missing in the xml file - the gameobject is not created
 		Console.Warning("An element is missing in xml_data to create the mesh");
 		return null ;
 	}
