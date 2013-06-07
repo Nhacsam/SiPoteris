@@ -67,9 +67,6 @@ public function createRect2D( t : Hashtable , path : String ){
 		var obj : GameObject = GameObject.CreatePrimitive( PrimitiveType.Plane );
 		obj.name = "2D_rect_"+t['name'];
 		
-		// set position of plane
-		setRect2D( posX , posY , sizeX , sizeY , obj );
-	
 		if( path ){
 			// load asset
 			var texture = Resources.Load( path );
@@ -79,12 +76,25 @@ public function createRect2D( t : Hashtable , path : String ){
 				if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
 					// add texture to display on the plane
 					obj.renderer.material.mainTexture = texture;
+					// get ratio of texture
+					var ratio : float = (texture as Texture).width/(texture as Texture).height;
+					// create rect with right ratio for texture
+					if( sizeX > sizeY )
+						sizeX = sizeY*ratio;
+					else
+						sizeY = sizeX/ratio;
 					obj.renderer.enabled = true;
+					
+					// set position of plane
+					setRect2D( posX , posY , sizeX , sizeY , obj );
+					
 					return obj;
 				}//if
 				else{
 					// disable renderer
 					obj.renderer.enabled = false;
+					// set position of plane
+					setRect2D( posX , posY , sizeX , sizeY , obj );
 					Console.Warning("File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D");
 					return obj;
 				}
@@ -95,12 +105,14 @@ public function createRect2D( t : Hashtable , path : String ){
 		else{
 			// disable/enable renderer
 			obj.renderer.enabled = true;
+			// set position of plane
+			setRect2D( posX , posY , sizeX , sizeY , obj );
 			return obj;
 		}
 	}
 	else{
 		Console.Warning("An element is missing in xml_data to create the plane or the gameobject on which the movie is displayed is not assigned");
-		return;
+		return null;
 	}
 }
 
@@ -109,22 +121,19 @@ public function createRect2D( t : Hashtable , path : String ){
 	*video plane is perpendicular to the y-axis
 */
 private function setRect2D( posX : float , posY : float , sizex : float , sizey : float , g : GameObject ){
-	// set the rotation and position of plane
-	// now the plane is at the center of the video plane and has the same rotation
-	g.transform.position = surface.transform.position;
-	g.transform.rotation = surface.transform.rotation;
-
 	// get mesh of the video plane
 	var meshFilterVideo : MeshFilter;
 	meshFilterVideo = surface.GetComponent("MeshFilter");
 	var meshVideo : Mesh = meshFilterVideo.mesh;
 	
-	g.transform.position.x -= posX*meshVideo.bounds.size.x/2;
-	g.transform.position.z += posY*meshVideo.bounds.size.z/2;
+	// set the rotation of plane
+	g.transform.rotation = surface.transform.rotation;
+	
+	g.transform.position.x = posX*meshVideo.bounds.size.x + meshVideo.bounds.size.x/2 + surface.transform.position.x;
+	g.transform.position.z = posY*meshVideo.bounds.size.z - meshVideo.bounds.size.z/2 + surface.transform.position.z;
 	
 	// set scale of plane
 	// get scale of videoplane
-	
 	var v : Vector3 = surface.transform.localScale;
 	var vPlane : Vector3;
 	vPlane.x = v.x*sizex;
@@ -197,9 +206,9 @@ function createRect3D( t : Hashtable , path : String ) : GameObject {
 	video = gameObject.GetComponent("videoSettings") as videoSettings;
 	
 	if(	t.ContainsKey( 'longitude' ) 	&&
-		t.ContainsKey( 'latitude' ) 		&&
-		t.ContainsKey( 'scale' ) 	&&
-		t.ContainsKey( 'name' )		&&
+		t.ContainsKey( 'latitude' ) 	&&
+		t.ContainsKey( 'scale' ) 		&&
+		t.ContainsKey( 'name' )			&&
 		t.ContainsKey( 'ratiotexture')	) {
 		
 			if( typeof(t['longitude']) == typeof(String) )// check type of elements in hashtable
@@ -221,7 +230,7 @@ function createRect3D( t : Hashtable , path : String ) : GameObject {
 			
 			var name : String = t['name'];
 			return createRect3DParam(theta, phi, scale, ratiotexture, name, path);
-	
+	}
 	else{// return null if a parameter is missing in the xml file - the gameobject is not created
 		Console.Warning("An element is missing in xml_data to create the mesh");
 		return null ;
