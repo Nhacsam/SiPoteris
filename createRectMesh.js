@@ -127,6 +127,7 @@ private function setRect2D( posX : float , posY : float , sizex : float , sizey 
 	
 	var v : Vector3 = surface.transform.localScale;
 	var vPlane : Vector3;
+	Console.Test(v + '   -   ' + sizex + '  -  ' + sizey, 100);
 	vPlane.x = v.x*sizex;
 	vPlane.y = v.y;
 	vPlane.z = v.z*sizey;
@@ -249,8 +250,9 @@ private function setRect3D( theta : float , phi : float , scale : float , ratiot
 	obj.transform.localEulerAngles += Vector3(90,0,0);
 		
 	// set scale
-	if( ratiotexture ){
-		obj.transform.localScale = Vector3( scale*Mathf.Sqrt(ratiotexture) , 0 , scale/Mathf.Sqrt(ratiotexture) );
+	if( ratiotexture > 0){
+		Console.Test(scale + '   -   ' + ratiotexture + '  -  ' + Mathf.Sqrt(ratiotexture) + ' --- ' + scale*1.0/Mathf.Sqrt(ratiotexture), 100);
+		obj.transform.localScale = Vector3( scale*Mathf.Sqrt(ratiotexture) , 0 , scale*1.0/Mathf.Sqrt(ratiotexture) );
 	}
 	else
 		obj.transform.localScale = Vector3( scale , 0 , scale );		

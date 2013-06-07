@@ -479,7 +479,7 @@ public function datasXmlWrapper( tagName : String, content : Hashtable ) {
 			else if( content['shape'] == 'polar' )
 				placeMeshHashPolar( content );
 			else if( content['shape'] == 'rectangle' )
-				placeRectHash( content );
+				placeRectHash( content, null );
 			else
 				placeMeshHashPolar( content );
 			
@@ -494,7 +494,7 @@ public function datasXmlWrapper( tagName : String, content : Hashtable ) {
 			else if( content['shape'] == 'polar' )
 				placeMeshHashPolar( content );
 			else if( content['shape'] == 'rectangle' )
-				placeRectHash( content );
+				placeRectHash( content, null );
 			else
 				placeMeshHashPolar( content );
 			
@@ -579,11 +579,11 @@ private function placeMeshHashPolar ( t : Hashtable ){
 /*
 	*place plane according to the xml
 */
-public function placeRectHash( t : Hashtable ){
+public function placeRectHash( t : Hashtable, texturePath : String ){
 	
 	if( meshRect ){
-		var obj2D : GameObject = meshRect.createRect2D( t , null );
-		var obj3D : GameObject = meshRect.createRect3D( t , null );
+		var obj2D : GameObject = meshRect.createRect2D( t , texturePath );
+		var obj3D : GameObject = meshRect.createRect3D( t , texturePath );
 		
 		if(obj2D){// check if the plane is created and init script for plane
 			var s2 : scriptForPlane = obj2D.GetComponent("scriptForPlane") as scriptForPlane;
