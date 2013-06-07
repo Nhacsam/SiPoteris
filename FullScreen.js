@@ -231,7 +231,10 @@ function CreateGUI() {
 													Vector2.zero,
 													id,
 													(min == slideShowImgs[i]) );
-	
+		
+		if( i == 0)
+			slideShowTempElmt.alsoUseAway = true ;
+		
 		slideShowElmts.Push( new Array( min, slideShowTempElmt ) );
 		id++ ;
 	}

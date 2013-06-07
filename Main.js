@@ -245,9 +245,14 @@ function Update () {
 			move.resetPlane(AllGO2D[i] as GameObject);
 	}
 	
-	for( i = 0; i < AllGO3D.length; i++)
-		move.rotateY_3D( AllGO3D[i] as GameObject ) ;
-	
+	for( i = 0; i < AllGO3D.length; i++) {
+		move.rotateY_3D( AllGO3D[i] as GameObject, true ) ;
+		
+		if( !isOn2D() ) {
+			move.rotateX_3D( AllGO3D[i] as GameObject, true ) ;
+			move.rotateZ_3D( AllGO3D[i] as GameObject, true ) ;
+		}
+	}
 }
 
 
@@ -652,7 +657,7 @@ private function setDefaultSystemValues() {
 	have2DAnd3D = true ;
 	
 	// Les plans sont poisitionnnés automatiquements
-	placeRectAuto = false ;
+	placeRectAuto = true ;
 	
 	// les sons dans la 3D sont activé
 	soundEnable = true ;

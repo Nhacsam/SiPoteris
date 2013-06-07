@@ -18,7 +18,7 @@ private var video : videoSettings;
 
 
 // radius of sphere where th rectangle will be splited
-private var radius : float = 5;
+private var radius : float = 4.9;
 
 
 ///////////////////
@@ -111,7 +111,7 @@ public function createRect2D( t : Hashtable , path : String ){
 private function setRect2D( posX : float , posY : float , sizex : float , sizey : float , g : GameObject ){
 	// set the rotation and position of plane
 	// now the plane is at the center of the video plane and has the same rotation
-	g.transform.position = surface.transform.position;
+	g.transform.position = surface.transform.position - Vector3(0, 0.1, 0);
 	g.transform.rotation = surface.transform.rotation;
 
 	// get mesh of the video plane
@@ -155,31 +155,32 @@ function createRect3DParam(theta : float , phi : float , scale : float , ratiote
 	// set position, scale, rotation of rectangle
 	var obj : GameObject = setRect3D( theta , phi , scale , ratiotexture , name );
 	if( path ){
-		// load asset
-		var texture = Resources.Load( path );
-				
-		if( texture ){// if file exists
-			//test if the asset has the appropriate type
-			if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
-				// add texture to display on the plane
-				obj.renderer.material.mainTexture = texture;
-				obj.renderer.enabled = true;
-				// get ratio of texture
-				var ratio : float = texture.width/texture.height;
-				// apply this ratio to the rectangle
-				obj.transform.localScale = Vector3( scale*Mathf.Sqrt(ratio) , 0 , scale/Mathf.Sqrt(ratio) );
-				
-				return obj;
-			}//if
-			else{
-				// disable renderer
-				obj.renderer.enabled = false;
-				Console.Warning("File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D");
-				return obj;
-			}
-		}//if
-		else
+		
+		try {
+			// load asset
+			var texture : Texture2D = Resources.Load( path,Texture2D ) as Texture2D;
+		} catch( e) {
+			texture = null;
+		}
+		// texture invalide
+		if(! texture) {
 			Console.Warning("No file found at path : " + path);
+		}
+		
+		// add texture to display on the plane
+		obj.renderer.material = Resources.Load('GUI/window/mat');
+		obj.renderer.material.mainTexture = texture;
+		obj.renderer.enabled = true;
+		
+		Console.Test(  texture.width + ' - ' + texture.height,101);
+		
+		// get ratio of texture
+		var ratio : float = 1.0*texture.width/texture.height;
+		// apply this ratio to the rectangle
+		obj.transform.localScale = Vector3( scale*Mathf.Sqrt(ratio) , 0 , scale/Mathf.Sqrt(ratio) );
+		
+		return obj;
+			
 	}//if
 	else{
 		// disable/enable renderer
@@ -205,12 +206,16 @@ function createRect3D( t : Hashtable , path : String ) : GameObject {
 		
 			if( typeof(t['longitude']) == typeof(String) )// check type of elements in hashtable
 				var theta : float = float.Parse( t['longitude'] ) * Mathf.PI/180;// convert to radian
-			else
-				theta = t['longitude'] * Mathf.PI/180;// convert to radian
+			else{
+				theta = t['longitude'];
+				theta = theta * Mathf.PI/180;// convert to radian
+			}
 			if( typeof(t['latitude']) == typeof(String) )// check type of elements in hashtable
 				var phi : float = float.Parse( t['latitude'] ) * Mathf.PI/180;// convert to radian
-			else
-				phi = t['latitude'] * Mathf.PI/180;// convert to radian
+			else{
+				phi = t['latitude'];
+				phi*= Mathf.PI/180;// convert to radian
+			}
 			if( typeof(t['scale']) == typeof(String) )// check type of elements in hashtable
 				var scale : float = float.Parse( t['scale'] );
 			else
@@ -226,7 +231,8 @@ function createRect3D( t : Hashtable , path : String ) : GameObject {
 	} else{// return null if a parameter is missing in the xml file - the gameobject is not created
 		Console.Warning("An element is missing in xml_data to create the mesh");
 		return null ;
-	}
+		
+		}
 }
 
 /*

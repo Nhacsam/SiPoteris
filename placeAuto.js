@@ -5,25 +5,6 @@
 private var pDatasList : Array ;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 public function InitPlacer() {
 	pDatasList = new Array();
 }
@@ -38,80 +19,84 @@ public function addPlane( datas : Hashtable ) {
 
 public function compute( placeRect : function(Hashtable, String) ) {
 	
-	var firstFloorLat = 25 ;
-	var secondFloorLat = 45 ;
-	var thirdFloorLat = 65 ;
+	var firstFloorLat = -10 ;
+	var secondFloorLat = 20 ;
+	var thirdFloorLat = 50 ;
 	
+	var latVariationRange : float = 10 ;
 	
+	var obj = new GameObject();
+	var s : scriptForPlane = obj.AddComponent('scriptForPlane') as scriptForPlane ;
 	
+	// Calcul du nombre d'élément par étage
+	var nbOnFloor : int[] = nbByFloor( 3, pDatasList.length ) ;
 	
-	
-	var nbByFloor : int = Mathf.Floor( pDatasList.length /3 ) ;
-	var unplaced : int  = pDatasList.length % 3 ;
-	
-	var nbOnFirstFloor = nbByFloor;
-	var nbOnSecondFloor = nbByFloor;
-	var nbOnThirdFloor = nbByFloor;
-	
-	if( unplaced > 0 ) {
-		nbOnFirstFloor ++ ;
-		unplaced-- ;
-	}
-	if( unplaced > 0 ) {
-		nbOnSecondFloor ++ ;
-		unplaced-- ;
-	}
-	
-	Console.Test( 'nbOnFirstFloor : ' + nbOnFirstFloor, 100);
-	Console.Test( 'nbOnSecondFloor : ' + nbOnSecondFloor, 100);
-	Console.Test( 'nbOnThirdFloor : ' + nbOnThirdFloor, 100);
-	
+		
 	
 	for( var i = 0 ; i < pDatasList.length; i++ ) {
 		
 		var params : Hashtable = pDatasList[i] ;
 		var PositionningFactor : float ;
-		var nbOnFloor : int ;
+		var nbOnThisFloor : int ;
 		
 		// Random value !! I have no idea what I'm doing !
-		params['scale'] = 1.0 ;
+		params['scale'] = 0.14 ;
 		
-		Console.Test( 'i : ' + i, 100);
+		var randomVariation : float = Random.Range(0, latVariationRange);
+		randomVariation -= latVariationRange/2 ;
 		
-		if( i < nbOnFirstFloor && nbOnFirstFloor > 0) {
+		/*
+		 * On détermine à quel étage on se situe
+		 */
+		if( i < nbOnFloor[0] && nbOnFloor[0] > 0) {
 			
-			PositionningFactor = 1.0*i / nbOnFirstFloor ;
-			nbOnFloor = nbOnFirstFloor ;
-			params['latitude'] = firstFloorLat ;
+			nbOnThisFloor = nbOnFloor[0] ;
+			PositionningFactor = 1.0*i / nbOnThisFloor ;
+			
+			params['latitude'] = firstFloorLat + randomVariation ;
 			params['posy'] = -0.666 ;
 			params['sizey'] = 0.333 ;
 			
-		} else if( i < nbOnFirstFloor + nbOnSecondFloor && nbOnSecondFloor > 0) {
+		} else if( i < nbOnFloor[0] + nbOnFloor[1] && nbOnFloor[1] > 0) {
 			
-			PositionningFactor = (1.0*i - nbOnFirstFloor) / nbOnSecondFloor;
-			nbOnFloor = nbOnSecondFloor ;
-			params['latitude'] = secondFloorLat ;
+			nbOnThisFloor = nbOnFloor[1] ;
+			PositionningFactor = (1.0*i - nbOnFloor[0]) / nbOnFloor[1];
+			
+			params['latitude'] = secondFloorLat + randomVariation ;
 			params['posy'] = 0;
 			params['sizey'] = 0.333 ;
 			
-		} else if( i < nbOnFirstFloor + nbOnSecondFloor+ nbOnThirdFloor && nbOnThirdFloor > 0) {
+		} else if( i < nbOnFloor[0] + nbOnFloor[1]+ nbOnFloor[2] && nbOnFloor[2] > 0) {
 			
-			PositionningFactor = (1.0*i - nbOnFirstFloor - nbOnSecondFloor) / nbOnThirdFloor;
-			nbOnFloor = nbOnThirdFloor ;
-			params['latitude'] = thirdFloorLat ;
+			nbOnThisFloor = nbOnFloor[2] ;
+			PositionningFactor = (1.0*i - nbOnFloor[0] - nbOnFloor[1]) / nbOnFloor[2];
+			
+			params['latitude'] = thirdFloorLat + randomVariation ;
 			params['posy'] = 0.666 ;
 			params['sizey'] = 0.334 ;
 			
 		}
-		Console.Test( 'PositionningFactor : ' + PositionningFactor, 100);
-		params['posx'] = (PositionningFactor+1/2*nbOnFloor) *2 - 1 ;
-		Console.Test( 'params[\'posx\'] : ' + params['posx'], 101);
-		Console.Test( 'params[\'posy\'] : ' + params['posy'], 101);
 		
-		params['sizex'] = 1.0/(nbOnFloor-1) ;
-		params['longitude'] = 360.0*PositionningFactor ;
 		
-		var s : scriptForPlane = new scriptForPlane();
+		
+		
+		
+		params['posx'] = (PositionningFactor+1/nbOnThisFloor) *2 - 1 ;
+		
+		
+		params['sizex'] = 1.0/(nbOnThisFloor-1) ;
+		
+		
+
+		
+		// écart entre deux elmts consécutifs
+		var longdistance : float = 360.0/nbOnThisFloor ;
+		randomVariation = Random.Range(0, longdistance/2);
+		randomVariation -= longdistance/4 ;
+		
+		params['longitude'] = 360.0*PositionningFactor + randomVariation ;
+		
+		
 		// init variables of script
 		s.InitScript( pDatasList[i] as Hashtable );
 		
@@ -122,10 +107,42 @@ public function compute( placeRect : function(Hashtable, String) ) {
 			img = imgs[0];
 		}
 		params['ratiotexture'] = 1.0 ;
+		params['deltax'] = 3.0 ;
+		params['deltay'] = 5.0 ;
+		params['deltaz'] = 8.0 ;
 		
 		if( ! params.ContainsKey( 'name') )
 			params['name'] = 'name'+i ;
 		placeRect(params, img);
 	}
-	
+	Destroy(obj);
 }
+
+
+private function nbByFloor( nbFloor : int, nbElemt : int ) : int[] {
+	
+	
+	var nbBaseByFloor : int = Mathf.Floor( nbElemt*1.0/nbFloor ) ;
+	var unplaced : int  = nbElemt % nbFloor ;
+	
+	var resultArray : int[] = new int[nbFloor];
+	
+	for( var i = 0; i < nbFloor; i ++) {
+		
+		if( unplaced > 0 ) {
+			resultArray[i] = nbBaseByFloor+1  ;
+			unplaced-- ;
+		} else
+			resultArray[i] = nbBaseByFloor ;
+		
+	}
+	
+	return resultArray ;
+}
+
+
+
+
+
+
+

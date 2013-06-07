@@ -24,7 +24,10 @@ private var rotPlane : Vector3;
 private var orientedTo : Vector3 ;
 
 // speed of plane
-private var delta : float = 0;
+private var deltaX : float = 0;
+private var deltaY : float = 0;
+private var deltaZ : float = 0;
+
 
 // Time when the object have been moved last
 private var lastMoveTime : float = 0;
@@ -51,7 +54,13 @@ function InitScript( t : Hashtable ){
 	InitHT( t );
 	
 	if( t.ContainsKey( 'speed' ) )
-		InitDelta( float.Parse( t['speed'] ) );
+		InitDelta( 'y', float.Parse( t['speed']+'' ) );
+	if( t.ContainsKey( 'deltax' ) )
+		InitDelta( 'x', float.Parse( t['deltax']+'' ) );
+	if( t.ContainsKey( 'deltay' ) )
+		InitDelta( 'y', float.Parse( t['deltay']+'' ) );
+	if( t.ContainsKey( 'deltaz' ) )
+		InitDelta( 'z', float.Parse( t['deltaz']+'' ) );
 }
 
 
@@ -131,15 +140,25 @@ public function getOrientedTo(){
 /*
 	*initialize speed of plane
 */
-public function InitDelta( s : float ){
-	delta = s;
+public function InitDelta( coord : String,  s : float ){
+	switch(coord) {
+		case'x' : deltaX = s; break;
+		case'y' : deltaY = s; break;
+		case'z' : deltaZ = s; break;
+		default : deltaY = s; break;
+	}
 }
 
 /*
 	*get speed of plane
 */
-public function getDelta(){
-	return delta;
+public function getDelta( coord : String ){
+	switch(coord) {
+		case'x' : return deltaX; break;
+		case'y' : return deltaY; break;
+		case'z' : return deltaZ; break;
+		default : return deltaY; break;
+	}
 }
 
 
