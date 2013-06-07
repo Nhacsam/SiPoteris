@@ -108,10 +108,49 @@ public function getOrientedTo( t : Hashtable , obj : GameObject) : Vector3 {
 //////3D view//////
 ///////////////////
 
+
+
+
+function createRect3DParam(theta : float , phi : float , scale : float , ratiotexture : float , name : String, path : String ) : GameObject {
+	
+	// set position, scale, rotation of rectangle
+	var obj : GameObject = setRect3D( theta , phi , scale , ratiotexture , name );
+	if( path ){
+		// load asset
+		var texture = Resources.Load( path );
+		
+		if( texture ){// if file exists
+			//test if the asset has the appropriate type
+			if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
+				// add texture to display on the plane
+				obj.renderer.material.mainTexture = texture;
+				obj.renderer.enabled = true;
+		
+				return obj;
+			}//if
+			else{
+				// disable renderer
+				obj.renderer.enabled = false;
+				Console.Warning("File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D");
+				return obj;
+			}
+		}//if
+		else
+			Console.Warning("No file found at path : " + path);
+	}//if
+	else{
+		// disable/enable renderer
+		obj.renderer.enabled = true;
+		return obj;
+	}
+}
+
+
+
 /*
 	*create rectangle in 3D view
 */
-function createRect3D( t : Hashtable , path : String ){
+function createRect3D( t : Hashtable , path : String ) : GameObject {
 
 	video = gameObject.GetComponent("videoSettings") as videoSettings;
 	
@@ -126,41 +165,11 @@ function createRect3D( t : Hashtable , path : String ){
 			var scale : float = float.Parse( t['scale'] );
 			var ratiotexture : float = float.Parse( t['ratiotexture'] );
 			var name : String = t['name'];
-		
-			// set position, scale, rotation of rectangle
-			var obj : GameObject = setRect3D( theta , phi , scale , ratiotexture , name );
-			if( path ){
-				// load asset
-				var texture = Resources.Load( path );
-				
-				if( texture ){// if file exists
-					//test if the asset has the appropriate type
-					if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
-						// add texture to display on the plane
-						obj.renderer.material.mainTexture = texture;
-						obj.renderer.enabled = true;
-				
-						return obj;
-					}//if
-					else{
-						// disable renderer
-						obj.renderer.enabled = false;
-						Console.Warning("File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D");
-						return obj;
-					}
-				}//if
-				else
-					Console.Warning("No file found at path : " + path);
-			}//if
-			else{
-				// disable/enable renderer
-				obj.renderer.enabled = true;
-				return obj;
-			}		
+			return createRect3DParam(theta, phi, scale, ratiotexture, name, path);
 	}//if
 	else{// return null if a parameter is missing in the xml file - the gameobject is not created
 		Console.Warning("An element is missing in xml_data to create the mesh");
-		return;
+		return null ;
 	}
 }
 
@@ -186,7 +195,7 @@ private function setRect3D( theta : float , phi : float , scale : float , ratiot
 		
 	// set scale
 	if( ratiotexture ){
-		obj.transform.localScale = Vector3( scale*ratiotexture , 0 , scale );
+		obj.transform.localScale = Vector3( scale*Mathf.Sqrt(ratiotexture) , 0 , scale/Mathf.Sqrt(ratiotexture) );
 	}
 	else
 		obj.transform.localScale = Vector3( scale , 0 , scale );		
