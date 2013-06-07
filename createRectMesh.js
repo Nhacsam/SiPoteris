@@ -168,7 +168,11 @@ function createRect3D( t : Hashtable , path : String ){
 						// add texture to display on the plane
 						obj.renderer.material.mainTexture = texture;
 						obj.renderer.enabled = true;
-				
+						// get ratio of texture
+						var ratio : float = texture.width/texture.height;
+						// apply this ratio to the rectangle
+						obj.transform.localScale = Vector3( scale*Mathf.Sqrt(ratio) , 0 , scale/Mathf.Sqrt(ratio) );
+						
 						return obj;
 					}//if
 					else{
