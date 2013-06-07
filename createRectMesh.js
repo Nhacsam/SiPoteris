@@ -183,7 +183,7 @@ function createRect3D( t : Hashtable , path : String ) : GameObject {
 			if( typeof(t['latitude']) == typeof(String) )// check type of elements in hashtable
 				var phi : float = float.Parse( t['latitude'] ) * Mathf.PI/180;// convert to radian
 			else
-				phi = t['longitude'] * Mathf.PI/180;// convert to radian
+				phi = t['latitude'] * Mathf.PI/180;// convert to radian
 			if( typeof(t['scale']) == typeof(String) )// check type of elements in hashtable
 				var scale : float = float.Parse( t['scale'] );
 			else

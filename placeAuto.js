@@ -78,8 +78,8 @@ public function compute( placeRect : function(Hashtable) ) {
 		
 		
 		var params : Hashtable = pDatasList[i] ;
-		params['theta'] = i+'' ;
-		params['phi'] = i+'' ;
+		params['longitude'] = i+'' ;
+		params['latitude'] = i+'' ;
 		params['scale'] = i%5/5+'' ;
 		params['ratiotexture'] = (i%10/5)+'' ;
 		params['posx'] = 0.0 ;
