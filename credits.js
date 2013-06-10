@@ -34,7 +34,7 @@ function initCredits ( returnRectangle : Rect) {
 		audioWasPlaying = false;
 	
 	myReturnRectangle = returnRectangle;
-	myReturnTexture = Resources.Load("Pictures/blue_left_arrow");
+	myReturnTexture = Resources.Load("GUI/back");
 	
 	VideoFull.hideGUI();
 	if (strip)

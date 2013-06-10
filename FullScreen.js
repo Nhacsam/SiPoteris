@@ -9,6 +9,7 @@ private var textViewer : text ;
 private var strip : displayStrip;
 private var myCredits : credits;
 
+private var customGUISkin : GUISkin;
 
 /* On est en mode plein écran ? */
 private var onFullScreen : boolean;
@@ -110,11 +111,15 @@ function InitFullScreen( ) {
 	creditsTexture = Resources.Load("Pictures/credits");
 	if (!creditsTexture)
 		Console.Warning("Pas de texture pour le bouton crédits");
+		
+	customGUISkin = Resources.Load("mySkin");
 }
 
 function OnGUIFullScreen(){
 	
 	if( onFullScreen ) {
+	
+		GUI.skin = customGUISkin; // Transparent buttons
 	
 		if( !GUIIsHidden) {
 			

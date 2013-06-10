@@ -17,8 +17,6 @@ private var dBorder : int;
 
 private var buttonSizeFactor : float = 0.60; // is <= 1. If 1, the button takes all the room available
 
-private var customGUISkin : GUISkin;
-
 private var playBtn : Texture;
 private var pauseBtn : Texture;
 private var currentBtn : Texture;
@@ -72,8 +70,6 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
 	pauseBtn = Resources.Load("Pictures/pause");
 	currentBtn = pauseBtn;
 	
-	customGUISkin = Resources.Load("mySkin");
-	
 	repeatButton = Resources.Load("Pictures/repeat_music");
 	
 	if (buttonSizeFactor > 1)
@@ -108,7 +104,6 @@ function displayMusic() {
 		return;
 	
 	var buttonSize = (Screen.height - uBorder - dBorder ) * buttonSizeFactor;  // size of the square
-	GUI.skin = customGUISkin; // Transparent buttons
 
 	/* The button is centered regarding the y axis */
 	if (GUI.Button(Rect(lBorder, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), currentBtn) && eventEnable ) { // Rect: left top width height
