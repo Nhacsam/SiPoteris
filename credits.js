@@ -19,12 +19,12 @@ function initCredits ( returnRectangle : Rect) {
 	if (!VideoFull)
 		VideoFull = gameObject.AddComponent("FullScreen") as FullScreen;
 		
-	textViewer = gameObject.AddComponent("text")	as text ;
-		
-	strip = gameObject.GetComponent("displayStrip")	as displayStrip;
-	windows = gameObject.GetComponent("showingWindow") as showingWindow;
-	slideshow = gameObject.GetComponent("slideShow") as slideShow;
+	textViewer = 	gameObject.AddComponent("text")				as text ;
+	strip = 		gameObject.GetComponent("displayStrip")		as displayStrip;
+	windows = 		gameObject.GetComponent("showingWindow") 	as showingWindow;
+	slideshow = 	gameObject.GetComponent("slideShow") 		as slideShow;
 	
+	// manage audio of GUI
 	gameObject.GetComponent("AudioSource");
 	if (audio.isPlaying) {
 		audioWasPlaying = true;
