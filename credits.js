@@ -172,7 +172,7 @@ private function displayLogo( bot : float , left : float , w : float , h : float
 	*init screen
 */
 private function initScreen(){
-	var r : Rect = Rect( 0.5 + margin_center/2 , margin_top , width_logo , 0.5 - margin_top - margin_betw_media );
+	var r : Rect = Rect( (0.5 + margin_center/2)*Screen.width , ( 0.5 + margin_betw_media)*Screen.height , width_logo*Screen.width , (0.5 - margin_top - margin_betw_media )*Screen.height );
 	
 	// load asset
 	var path : String = "StreamingAssets/defaultDatas/credits/zkm_movie";
@@ -189,7 +189,7 @@ private function initScreen(){
 	
 	// calculate a new rectangle that fit the ratio of movie
 	var newR : Rect = strip.optimalSize( ratio , r );
-	
+	Debug.Log("r   " + newR);
 	// set parameters of screen
 	setScreen( newR , videoScreen );
 	
