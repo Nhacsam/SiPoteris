@@ -709,7 +709,7 @@ private function setDefaultSystemValues() {
 	have2DAnd3D = true ;
 	
 	// Les plans sont poisitionnnés automatiquements
-	placeRectAuto = true ;
+	placeRectAuto = false ;
 	
 	// Champ de vision de la camera
 	fieldOfView2D = 60.0 ;

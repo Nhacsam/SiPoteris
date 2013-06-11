@@ -120,6 +120,7 @@ public function compute( placeRect : function(Hashtable, String) ) {
 		if( ! params.ContainsKey( 'name') )
 			params['name'] = 'name'+i ;
 		placeRect(params, img);
+		Console.Test('placement auto', 100);
 	}
 	Destroy(obj);
 }

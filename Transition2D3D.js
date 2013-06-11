@@ -83,7 +83,7 @@ function  OnGUI2D3D(){
 
 	if(Videos.OnPlay() && !enable && exitFinished){
 	
-		var Rectangle : Rect = new Rect(Screen.width/2 +310 , Screen.height-60, camera.pixelWidth , camera.pixelHeight);		
+		var Rectangle : Rect = new Rect(Screen.width/2 +310 , Screen.height-60, camera.pixelWidth , camera.pixelHeight);	
 		GUI.Label(Rectangle,"Click anywhere on the screen \n   to get further information.");
 		
 		if(Videos.GetOtherView()){		
@@ -275,7 +275,6 @@ function UpdateEnding(){
 		light.intensity+=0.02;
 		if(light.intensity >= 0.88){enableEnding=false;end=true;zoom.enableEvents();Videos.EndFlagOff();}
 	}
-
 }
 
 //called in Transition2D3D
