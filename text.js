@@ -1,86 +1,73 @@
 /*
 Creation : 02/04/2013
-Last update : 24/04/2013
+Last update : 11/06/2013
 
-Author : Fabien Daoulas
-
-This script contains functions justificating a text.
+Author : Fabien Daoulas / Kevin Guillaumond
 
 Use: placeText(...) is called once, and displayText(...) is called at every frame afterwards
 
 */
 
-/* text to display ===> I ASSUME ALL \t ARE PRECEDED BY \n */  
+/*
+*	Text to display
+*	I ASSUME ALL \t ARE PRECEDED BY \n (all other \t will be ignored, except if first character)
+*	Multiple tags must be separated by NOTHING: e.g. <tag1><tag2> is fine, <tag1><tag2> is NOT
+*/  
 private var textToDisplay : String;
  
-// array of rects containing the position of the GUILabel of each letter -- aboutLetter[i] is corresponding to textToDisplay[i]
-private var letterSpots : Rect[];
 
-// borders in x-position of text 
+/*
+*	Layout
+*/
 private var lBorder : int;
 private var rBorder : int;
-
-// border in y-position of text
 private var uBorder : int;
 private var dBorder : int;
 
-// width of text
 private var widthText : float;
 
-/* width and height of a letter */
 private var widthLetter : int = 11;
 private var heightLetter : int = 20;
+private var spacing : int = 25; // between lines
+private var widthTab = 4; // width of a tabulation (in spaces)
+private var styleLetterMiddle : GUIStyle = new GUIStyle(); // style of letter
 
-// spacing (interligne)
-private var spacing : int = 25;
+private var indexFirstChar ; // Index of the first character displayed (0 except if it is '<')
 
-/* width of a tabulation (in spaces) */
-private var widthTab = 4;
+private var upArrow : Texture; // Showing possible scrolling
+private var downArrow : Texture; // Idem
 
-// rectangle of reference -- this is the place of the first letter at the top-left of the text
-private var REF_RECT : Rect;
 
-// style of letter
-private var styleLetterMiddle : GUIStyle = new GUIStyle();
+/*
+*	Placing the text
+*/
+private var letterSpots : Rect[]; // array of rects containing the position of the GUILabel of each letter -- aboutLetter[i] is corresponding to textToDisplay[i]
+private var REF_RECT : Rect; // rectangle of reference -- this is the place of the first letter at the top-left of the text
+private var moveToNext : Array ; // values of i which corresponds to a move to the next line
+private var toJustify : Array ; // Indicates for each line wether we need to justify it or not
+private var nbLines : int ;
+private var myTags : Array ; // All the tags (e.g: <iAmATag>) in the text
 
-// values of i which corresponds to a move to the next line
-private var moveToNext = new Array();
 
-/* Indicates wether we need to justify the line or not */
-private var toJustify = new Array();
-
-// number of lines
-private var nbLines : int = 0;
-
-private var textInitialized : boolean = false;
-
-// event and display activate or not
+/*
+*	Events
+*/
 private var eventEnable : boolean ;
 private var textIsHidden : boolean ;
+private var coefDragging : float = 1.0 ; // How fast is the dragging ?
 
-/* How fast is the dragging ? */
-private var coefDragging : float = 1.0 ;
-
-/* Arrows showing possible scrolling */
-private var upArrow : Texture;
-private var downArrow : Texture;
-
+private var textInitialized : boolean = false;
 
 
 
 /*
-	*this function will create label for each letter and place at the right position them to justify the text
+*	This function will create label for each letter and place at the right position them to justify the text
 */
-
-function OnGUIText(){
-	if( !textIsHidden && textInitialized)
-		displayText();
-}
 
 private function initText(u: int, d: int, l: int, r: int) {
 
 	letterSpots = new Rect[textToDisplay.Length];
-
+	
 	/* Calculate margin sizes */
 	uBorder = u;
 	dBorder = d;
@@ -93,13 +80,11 @@ private function initText(u: int, d: int, l: int, r: int) {
 	upArrow = Resources.Load("Pictures/up_arrow");
 	downArrow = Resources.Load("Pictures/down_arrow");
 	
-	// enable event and dispy the text
-	enableAll();
-
+	enableAll(); // enable event and dispy the text
 }
 
 /*
-	*calculate the position of rectangle for each letter. Input: Coordinates of up left (1) and bottom right (2) corners
+*	Calculate the position of rectangle for each letter. Input: Coordinates of up left (1) and bottom right (2) corners
 */
 function placeText(u: int, d: int, l: int, r: int, text: String) {
 	
@@ -109,51 +94,78 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 		return ;
 	}
 	
+	// reset values
+	indexFirstChar = 0;
+	moveToNext = new Array();
+	toJustify = new Array();
+	nbLines  = 0;
+	myTags = new Array();
+	
 	
 	textToDisplay = text;
 	initText(u, d, l, r);
-	
-	// this variable contains the number of spaces in a sentence
-	var nbOfSpace : int;
+		
+	var nbOfSpace : int; // contains the number of spaces in a sentence
 	
 	var rectLetter : Rect = REF_RECT;
 	
 	styleLetterMiddle.alignment = TextAnchor.MiddleCenter;
 	styleLetterMiddle.normal.textColor = Color.white;
 	
-	/* The script below this one does not handle the case when the 1st character is \t. Let us do it now. */
-
-	if (textToDisplay[0] == "\t")
-		rectLetter.x += (widthTab-1) * widthLetter; // -1 because \t adds a space
+	var firstTimeInWhileLoop = true;
 	
-	// for each letter
+	/* for each letter */
 	for(var i : int = 0; i < textToDisplay.Length; i++){
+	
+		/* If the current character is '<', let the extractTag function handle the tag */
+		while (textToDisplay[i] == "<") { // "while", not "if", in case of several tags in a row
+			var tempTag : String = "";
+			tempTag = extractTag(i);
+			i+=tempTag.Length; // Do not display the tag
+			
+			/* If first char is "<" and we are handling the first (group of) tag(s), then the first displayed character is the next one ! */
+			if (textToDisplay[0] == "<" && firstTimeInWhileLoop)
+				indexFirstChar = i;
+
+			myTags.push(tempTag);
+			
+		}
 		
-		/* if the sentence does not reach the right edge AND the character is NOT \n */
+		/* Case when text begins with one or several tags, then \t */
+		if (firstTimeInWhileLoop && textToDisplay[i] == "\t")
+			rectLetter.x += (widthTab-1) * widthLetter; // -1 because \t adds a space
+		
+		firstTimeInWhileLoop = false;
+
+		/*
+		*	if the sentence does not reach the right edge AND the character is NOT \n
+		*/
 		if ((rectLetter.x <= widthText + lBorder) && (textToDisplay[i] != "\n")){
 			letterSpots[i] = rectLetter;
-			// translate the label to draw a new letter
-			rectLetter.x += widthLetter;
+			rectLetter.x += widthLetter; // translate the label to draw a new letter
 		}
-		/* end of line */
+		
+		/* 
+		*	end of line, either if the text reaches the right edge or we find a \n
+		*/
 		else {
 			var cursor : int = i;
 			rectLetter.x = REF_RECT.x;
-			// to the next sentence
-			rectLetter.y += spacing;
+			rectLetter.y += spacing; // to the next sentence
 			
-			if (textToDisplay[i] != "\n") {
+			if (textToDisplay[i] != "\n") { // if we reach the end of the line while the sentence is not over (no \n found)
 				while(textToDisplay[cursor] !=" " && cursor > 0) // get the beginning of the word
 					cursor--;
-				toJustify.push(true); // We do not need to justify that line
+				toJustify.push(true); // We do need to justify that line
 			}
+			
 			else {
 				toJustify.push(false);
 				if (i < (textToDisplay.Length-1) && textToDisplay[i+1] == "\t")
 					rectLetter.x += (widthTab-1) * widthLetter; // -1 because \t adds a space
 			}
 			
-			// get position of switch lines
+			/* get position of switch lines */
 			moveToNext.push(cursor);
 			nbLines++;
 			
@@ -174,6 +186,7 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 				
 		}
 	}
+	
 	/* Justify certain lines of the text */
 	for(i = 0; i < nbLines; i++) {
 		if (toJustify[i])
@@ -181,7 +194,6 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 	}
 	
 	textInitialized = true;
-
 }
 
 function placeTextFactor (u: float, d: float, l: float, r: float, text: String) {
@@ -189,15 +201,15 @@ function placeTextFactor (u: float, d: float, l: float, r: float, text: String) 
 }
 
 /*
-	*get number of spaces in numLine line
+*	Get number of spaces in line numLine
 */
 function GetNumberOfSpaces(numLine : int){
 	var numOfSpace : int = 0;
 	
-	var finLigne : int = moveToNext[numLine]; // real end is finLigne-1
+	var endLine : int = moveToNext[numLine]; // real end is endLine-1
 	
 	if(numLine == 0){
-		for(var i : int = 0; i < finLigne; i++) {	
+		for(var i : int = 0; i < endLine; i++) {	
 			if(textToDisplay[i] == " ") {
 				if(letterSpots[i].x > REF_RECT.x)
 					numOfSpace++;
@@ -206,7 +218,7 @@ function GetNumberOfSpaces(numLine : int){
 	}
 	else{
 		var debutLigne : int = moveToNext[numLine-1]; // index of the beginning of the line
-		for(i = debutLigne; i < finLigne; i++) {
+		for(i = debutLigne; i < endLine; i++) {
 			if(textToDisplay[i] == " " && i != debutLigne)
 				numOfSpace++;
 		}
@@ -216,7 +228,7 @@ function GetNumberOfSpaces(numLine : int){
 }
 
 /*
-	*calculate space between the last letter and the right edge
+*	Calculate space between the last letter and the right edge
 */
 function CalculateSpace(numLine : int){
 	var moveToNextInt : int = moveToNext[numLine];
@@ -227,7 +239,7 @@ function CalculateSpace(numLine : int){
 }
 
 /*
-	*justify text by adding spaces between words
+*	Justify text by adding spaces between words
 */
 function JustifyText(numLine : int){
 
@@ -261,15 +273,56 @@ function JustifyText(numLine : int){
 	
 	}
 }
+
+/*
+*	Input: index of a '<' Output: The entire tag, or "" if there is no '>'
+*/
+function extractTag(i : int) {
+	var myTag : String = "";
+	var j : int = i; // to run through tab
 	
+	while (textToDisplay[j] != ">") {
+		if (j == textToDisplay.Length-1) { // if the tag never ends
+			Console.CriticalError("There is a fake beginning of tag at index #" + i + " of the texte which statrs with \"" + textToDisplay.Substring(0,25) + "\"");
+			return "";
+		}
+		j++;
+	}
+	
+	/*
+	*	Substring(i,j) does not work so let's improvise a little bit
+	*/
+	for (k=i; k<=j; k++)
+		myTag += textToDisplay[k];
+	
+	return myTag;
+}
+
+/*
+*	Scroll the text until the tag <myTag>
+*	Does not change scrolling if <myTag> does not exist
+*	When the text is initialized, an array of all the tags is created
+*/
+function toTag (myTag: String) {
+
+}
+
+/*
+*	 Two functions to display the text
+*/
+function OnGUIText(){
+	if( !textIsHidden && textInitialized)
+		displayText();
+}
+
 function displayText() {
-	for (var i : int = 0; i < textToDisplay.Length; i++) {
+	for (var i : int = indexFirstChar; i < textToDisplay.Length; i++) {
 		if (letterSpots[i].y >= uBorder && (letterSpots[i].y + heightLetter) <= Screen.height - dBorder)
 			GUI.Label (letterSpots[i], ""+textToDisplay[i], styleLetterMiddle);
 	}
 	
 	/* Arrows to show possible scrolling */
-	if (letterSpots[0].y < uBorder)
+	if (letterSpots[indexFirstChar].y < uBorder)
 		GUI.Label ( Rect (lBorder - 15, uBorder - 15, 15, 15), upArrow);
 	if (letterSpots[textToDisplay.Length-1].y > Screen.height - dBorder - heightLetter)
 		GUI.Label ( Rect (lBorder - 15, Screen.height - dBorder, 15, 15), downArrow);
@@ -280,7 +333,12 @@ function removeText() {
 	textInitialized = false;
 }
 
-	
+
+/***********************
+	Dealing with events
+***********************/
+
+
 /* Enable touch events */
 function OnEnable(){
 	Gesture.onDraggingE += onDragging;
@@ -308,8 +366,8 @@ function onDragging(dragData : DragInfo) {
 				block = true;
 		}
 		
-		if ( letterSpots[0].y >= uBorder) {// Blocking Up
-			gap = letterSpots[0].y - uBorder;
+		if ( letterSpots[indexFirstChar].y >= uBorder) {// Blocking Up
+			gap = letterSpots[indexFirstChar].y - uBorder;
 			if (gap > heightLetter / 2) { // Then we have to realign the text
 				for (var j : int = 0; j < textToDisplay.Length; j++) {
 					letterSpots[j].y -= gap;
