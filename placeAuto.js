@@ -92,7 +92,7 @@ public function compute( placeRect : function(Hashtable, String) ) {
 		// init variables of script
 		s.InitScript( pDatasList[i] as Hashtable );
 		
-		var imgs : Array = s.getImages();
+		var imgs : Array = s.getHandler().getImages();
 		var img : String = null ;
 		
 		if( imgs.length > 0) {

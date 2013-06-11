@@ -5,7 +5,7 @@
 
 
 // Affiche les infos ?
-static var displayInfo : boolean = false ;
+static var displayInfo : boolean = true ;
 
 // Affiche les warning ?
 static var displayWarning : boolean = true ;

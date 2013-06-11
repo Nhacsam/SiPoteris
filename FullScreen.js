@@ -47,6 +47,9 @@ private var returnTexture : Texture;
 private var creditsTexture : Texture;
 
 
+// Langue courante de l'application
+private var lang : String ;
+
 /* Variables qui régissent la disposition du full screen en proportion de la hauteur / largeur (donc entre 0 et 1) */
 /* Le point (0,0) est en bas à gauche. */
 /* Attention aux dépendances ! */
@@ -99,7 +102,7 @@ private var pictureTop : float ;
  * Initialisation des variables
  */
 
-function InitFullScreen( ) {
+function InitFullScreen( Initlang  : String ) {
 	
 	slideshow =		gameObject.AddComponent("slideShow")		as slideShow ;
 	windows =		gameObject.AddComponent("showingWindow")	as showingWindow ;
@@ -119,6 +122,8 @@ function InitFullScreen( ) {
 		Console.Warning("Pas de texture pour le bouton crédits");
 		
 	customGUISkin = Resources.Load("mySkin");
+	
+	lang = Initlang ;
 }
 
 function OnGUIFullScreen(){
@@ -219,13 +224,13 @@ function CreateGUI() {
 	 */
 	
 	
-	var stripPath : String = Datas.getStripImg();
+	var stripPath : String = Datas.getHandler().getStripImg();
 	
-	var slideShowImgs : Array = Datas.getImages();
-	var slideShowMin : Array = Datas.getMiniatures();
-	var slideShowVideo : Array = Datas.getVideos();
-	var slideShowVideoRight : Array = Datas.getVideosRight();
-	var slideShowVideoLeft : Array = Datas.getVideosLeft();
+	var slideShowImgs : Array = Datas.getHandler().getImages();
+	var slideShowMin : Array = Datas.getHandler().getMiniatures();
+	var slideShowVideo : Array = Datas.getHandler().getVideos();
+	var slideShowVideoRight : Array = Datas.getHandler().getVideosRight();
+	var slideShowVideoLeft : Array = Datas.getHandler().getVideosLeft();
 	
 	var slideShowTempElmt : SLIDESHOWELMT ;
 	var slideShowElmts : Array = Array() ;
@@ -317,8 +322,8 @@ function CreateGUI() {
 	slideshow.InitSlideShowFactor(slideShowElmts.length, Rect( slideLeft , slideBottom , slideRight - slideLeft , slideTop - slideBottom), 20);
 	windows.InitWindowFactor( Rect( pictureLeft , 1-pictureTop , pictureRight-pictureLeft, pictureTop-pictureBottom), 20 );
 	
-	textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getText()); // u d l r (margins) + Text to display
-	audioPlayer.placeMusicFactor (1-musicTop, musicBottom, musicLeft, 1-musicRight, Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
+	textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getHandler().getText( lang )); // u d l r (margins) + Text to display
+	audioPlayer.placeMusicFactor (1-musicTop, musicBottom, musicLeft, 1-musicRight, Datas.getHandler().getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
 	
 	// On donne les infos au slideShow
 	for (i = 0; i < slideShowElmts.length; i++ ) {

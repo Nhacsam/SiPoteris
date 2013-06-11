@@ -50,7 +50,7 @@ private var zoomType2D : String ;			// Type d'effet de Zoom 2D <-> GUI
 private var zoomType3D : String ;			// Type d'effet de Zoom 3D <-> GUI
 private var zoomLength : float ;			// Logueur du Zoom
 
-
+private var lang  : String ;				// Langue de la GUI : Valeurs possibles : 'fr', 'en'
 
 
 
@@ -70,18 +70,20 @@ function Start () {
 	getXML.getElementFromXML( 'system.xml', systemXmlWrapper ) ;
 	
 	
+	Console.Info( 'Application chargée en '+ lang );
+	
 	/*
 	 * Si on a que l'interface, on l'instancie vite fait et on squezze le reste
 	 */
 	if( !haveUniver ) {
 		GUI= gameObject.AddComponent("FullScreen") as FullScreen;
-		GUI.InitFullScreen();
+		GUI.InitFullScreen( lang );
 		
 		var obj : GameObject = new GameObject() ;
 		var s : scriptForPlane = obj.AddComponent ("scriptForPlane");
 		s.InitScript( new Hashtable() );
 		if( ! isOnIpad() )
-			s.createParsedFile();
+			s.getHandler().createParsedFile();
 		
 		CameraConfigGUI();
 		
@@ -170,7 +172,7 @@ function Start () {
 	hideObj( !beginBy2D );
 	
 	// Initialisation de l'interface.
-	GUI.InitFullScreen();
+	GUI.InitFullScreen( lang );
 	 
 	 
 	 
@@ -585,7 +587,7 @@ private function placeMeshHashPolar ( t : Hashtable ){
 			// génère les fichiers comprenant l'architecture des ressources
 			// si on est sur l'ordinateur
 			if( ! isOnIpad() )
-				s.createParsedFile();
+				s.getHandler().createParsedFile();
 		}//if
 	}//if
 	
@@ -618,7 +620,7 @@ private function placeMeshHashPolar ( t : Hashtable ){
 			// génère les fichiers comprenant l'architecture des ressources
 			// si on est sur l'ordinateur
 			if( ! isOnIpad() )
-				s3D.createParsedFile();
+				s3D.getHandler().createParsedFile();
 		}//if
 	}//if
 }
@@ -651,6 +653,11 @@ public function placeRectHash( t : Hashtable, texturePath : String ){
 			s2.InitOrientedTo( p );
 				
 			AllGO2D.Push( obj2D );
+			
+			// génère les fichiers comprenant l'architecture des ressources
+			// si on est sur l'ordinateur
+			if( ! isOnIpad() )
+				s2.getHandler().createParsedFile();
 		}//if
 		
 		if(obj3D){// check if the plane is created and init script for plane
@@ -658,21 +665,24 @@ public function placeRectHash( t : Hashtable, texturePath : String ){
 			if( ! s3)// if no script found, scriptforplane is added to the gameobject
 				s3 = obj3D.AddComponent ("scriptForPlane") as scriptForPlane;
 				
-				// init variables of script
-				s3.InitScript( t );
+			// init variables of script
+			s3.InitScript( t );
+			
+			// Ajout de la position réelle du plan dans le script d'extension
+			s3.InitPosPlane( obj3D.transform.position );
+			
+			// configure les plan comme étant invisible
+			s3.setVisible( (texturePath != null) );
+			
+			// Ajout du point vers lequel le plan est orienté dans le script d'extension
+			s3.InitOrientedTo( Videos.getSpherePos() );
+			
+			AllGO3D.Push( obj3D );
 		
-				// Ajout de la position réelle du plan dans le script d'extension
-				s3.InitPosPlane( obj3D.transform.position );
-				
-				// configure les plan comme étant invisible
-				s3.setVisible( (texturePath != null) );
-		
-				// Ajout du point vers lequel le plan est orienté dans le script d'extension
-				s3.InitOrientedTo( Videos.getSpherePos() );
-				
-				AllGO3D.Push( obj3D );
-		
-		
+			// génère les fichiers comprenant l'architecture des ressources
+			// si on est sur l'ordinateur
+			if( ! isOnIpad() )
+				s3.getHandler().createParsedFile();
 		}//if
 	}//if
 }
@@ -721,6 +731,9 @@ private function setDefaultSystemValues() {
 	zoomType3D = 'GO_ON_PLANE' ;
 	// durée du zoom : 1s
 	zoomLength = 1.0 ;
+	
+	// Langue de la GUI
+	lang = 'fr' ;
 }
 
 /*
@@ -825,6 +838,16 @@ public function systemXmlWrapper( tagName : String, content : Hashtable ) {
 					zoomLength = float.Parse(content['zoomlength']) ;
 			}
 			
+		break ;
+		
+		// Paramètre de <GUI>
+		case 'gui' :
+			
+			if( content.ContainsKey( 'lang' )  ) {
+				
+				if( content['lang'] == 'fr' || content['lang'] == 'en' )
+					lang = content['lang'] ;
+			}
 		break ;
 	}
 	
