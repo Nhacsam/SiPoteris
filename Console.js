@@ -5,7 +5,7 @@
 
 
 // Affiche les infos ?
-static var displayInfo : boolean = false ;
+static var displayInfo : boolean = true ;
 
 // Affiche les warning ?
 static var displayWarning : boolean = true ;
@@ -18,7 +18,7 @@ static var displayCriticalError : boolean = true ;
 static var displayPrivateDebug : boolean = true ;
 
 // lesquels ?
-static var PrivateDebugToDisplay : int = 0 ;
+static var PrivateDebugToDisplay : int = 100 ;
 
 
 
