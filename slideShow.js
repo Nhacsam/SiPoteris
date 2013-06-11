@@ -111,8 +111,8 @@ function destuctSlideShow() {
 			if( mobilesElmts[i].renderer )
 				if(mobilesElmts[i].renderer.material )
 					if( mobilesElmts[i].renderer.material.mainTexture )
-						Resources.UnloadAsset( mobilesElmts[i].renderer.material.mainTexture );
-			
+						if( mobilesElmts[i].name.IndexOf( '/min/' ) >= 0 ) // Si elle est dans le dossier min/
+							Resources.UnloadAsset( mobilesElmts[i].renderer.material.mainTexture );
 			Destroy( mobilesElmts[i] );
 		}
 	}
@@ -196,7 +196,7 @@ public function AddElmt( texture : String, info ) : boolean {
 	
 	
 	mobilesElmts[ effNbElmts].renderer.material.mainTexture = imgTex ;
-	
+	mobilesElmts[ effNbElmts].name = texture ;
 	
 	effNbElmts++ ;
 	

@@ -87,7 +87,7 @@ function InitScript( obj : GameObject , t : Hashtable ){
 	s.InitName( t['name'] );
 	s.InitHT( t );
 	if( t.ContainsKey( 'speed' ) )
-		s.InitDelta( float.Parse( t['speed'] ) );
+		s.InitDelta( '', float.Parse( t['speed'] ) );
 }
 
 /*

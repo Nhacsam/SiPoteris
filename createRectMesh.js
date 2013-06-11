@@ -18,7 +18,7 @@ private var video : videoSettings;
 
 
 // radius of sphere where th rectangle will be splited
-private var radius : float = 5;
+private var radius : float = 4;
 
 
 ///////////////////
@@ -69,35 +69,30 @@ public function createRect2D( t : Hashtable , path : String ){
 		
 		if( path ){
 			// load asset
-			var texture = Resources.Load( path );
-				
-			if( texture ){// if file exists
-				//test if the asset has the appropriate type
-				if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
-					// add texture to display on the plane
-					obj.renderer.material.mainTexture = texture;
-					obj.renderer.enabled = true;
-					// get ratio of texture
-					var ratio : float = (texture as Texture).width/(texture as Texture).height;
-					// calculate optimal size
-					var SIZE : float[] = optimalSize( sizeX , sizeY , ratio );
-					
-					// set position of plane
-					setRect2D( posX , posY , SIZE[0] , SIZE[1] , obj );
-					
-					return obj;
-				}//if
-				else{
-					// disable renderer
-					obj.renderer.enabled = false;
-					// set position of plane
-					setRect2D( posX , posY , sizeX , sizeY , obj );
-					Console.Warning("File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D");
-					return obj;
-				}
-			}//if
-			else
+			try {
+				// load asset
+				var texture : Texture2D = Resources.Load( path,Texture2D ) as Texture2D;
+			} catch( e) {
+				texture = null;
+			}
+			// texture invalide
+			if(! texture) {
 				Console.Warning("No file found at path : " + path);
+			}
+			
+			// add texture to display on the plane
+			obj.renderer.material.mainTexture = texture;
+			obj.renderer.enabled = true;
+			// get ratio of texture
+			var ratio : float = texture.width*1.0/texture.height;
+			// calculate optimal size
+			var opSize : Vector2 = optimalSize( sizeX , sizeY , ratio );
+			
+			// set position of plane
+			setRect2D( posX , posY , opSize.x , opSize.y, obj );
+			
+			return obj;
+		
 		}//if
 		else{
 			// disable/enable renderer
@@ -125,14 +120,18 @@ private function setRect2D( posX : float , posY : float , sizex : float , sizey 
 	
 	// set the rotation of plane
 	g.transform.rotation = surface.transform.rotation;
+	g.transform.Rotate(0,180,0);
 	
-	g.transform.position.x = posX*meshVideo.bounds.size.x + meshVideo.bounds.size.x/2 + surface.transform.position.x;
+	g.transform.position.x = posX*meshVideo.bounds.size.x - meshVideo.bounds.size.x/2 + surface.transform.position.x;
+	g.transform.position.y = surface.transform.position.y - 0.1;
 	g.transform.position.z = posY*meshVideo.bounds.size.z - meshVideo.bounds.size.z/2 + surface.transform.position.z;
+	
 	
 	// set scale of plane
 	// get scale of videoplane
 	var v : Vector3 = surface.transform.localScale;
 	var vPlane : Vector3;
+	
 	vPlane.x = v.x*sizex;
 	vPlane.y = v.y;
 	vPlane.z = v.z*sizey;
@@ -142,11 +141,11 @@ private function setRect2D( posX : float , posY : float , sizex : float , sizey 
 /*
 	*calculate optimal size of height and width to fit the area 
 */
-private function optimalSize( sizex : float , sizey : float , ratio ){
+private function optimalSize( sizex : float , sizey : float , ratio ) : Vector2 {
 	var ratioMax : float = sizex/sizey;
 	var width : float;
 	var height : float;
-	var SIZE : float[] = new float[2];
+	var SIZE : Vector2 ;
 	// resize plane to fit ratio
 	if( ratio >= 1 ){
 		height = sizex/ratio;
@@ -165,8 +164,8 @@ private function optimalSize( sizex : float , sizey : float , ratio ){
 		}
 	}
 	
-	SIZE[0] = width;
-	SIZE[1] = height;
+	SIZE.x = width;
+	SIZE.y = height;
 	
 	return SIZE;
 }
@@ -193,31 +192,30 @@ function createRect3DParam(theta : float , phi : float , scale : float , ratiote
 	// set position, scale, rotation of rectangle
 	var obj : GameObject = setRect3D( theta , phi , scale , ratiotexture , name );
 	if( path ){
-		// load asset
-		var texture = Resources.Load( path );
-				
-		if( texture ){// if file exists
-			//test if the asset has the appropriate type
-			if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
-				// add texture to display on the plane
-				obj.renderer.material.mainTexture = texture;
-				obj.renderer.enabled = true;
-				// get ratio of texture
-				var ratio : float = (texture as Texture).width/(texture as Texture).height;
-				// apply this ratio to the rectangle
-				obj.transform.localScale = Vector3( scale*Mathf.Sqrt(ratio) , 0 , scale/Mathf.Sqrt(ratio) );
-				
-				return obj;
-			}//if
-			else{
-				// disable renderer
-				obj.renderer.enabled = false;
-				Console.Warning("File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D");
-				return obj;
-			}
-		}//if
-		else
+		
+		try {
+			// load asset
+			var texture : Texture2D = Resources.Load( path,Texture2D ) as Texture2D;
+		} catch( e) {
+			texture = null;
+		}
+		// texture invalide
+		if(! texture) {
 			Console.Warning("No file found at path : " + path);
+		}
+		
+		// add texture to display on the plane
+		obj.renderer.material = Resources.Load('GUI/window/mat');
+		obj.renderer.material.mainTexture = texture;
+		obj.renderer.enabled = true;
+		
+		// get ratio of texture
+		var ratio : float = 1.0*texture.width/texture.height;
+		// apply this ratio to the rectangle
+		obj.transform.localScale = Vector3( scale*Mathf.Sqrt(ratio) , 0 , scale/Mathf.Sqrt(ratio) );
+		
+		return obj;
+			
 	}//if
 	else{
 		// disable/enable renderer
@@ -264,8 +262,8 @@ function createRect3D( t : Hashtable , path : String ) : GameObject {
 			
 			var name : String = t['name'];
 			return createRect3DParam(theta, phi, scale, ratiotexture, name, path);
-	}
-	else{// return null if a parameter is missing in the xml file - the gameobject is not created
+	
+	} else{// return null if a parameter is missing in the xml file - the gameobject is not created
 		Console.Warning("An element is missing in xml_data to create the mesh");
 		return null ;
 		
@@ -293,8 +291,9 @@ private function setRect3D( theta : float , phi : float , scale : float , ratiot
 	obj.transform.localEulerAngles += Vector3(90,0,0);
 		
 	// set scale
-	if( ratiotexture ){
-		obj.transform.localScale = Vector3( scale*Mathf.Sqrt(ratiotexture) , 0 , scale/Mathf.Sqrt(ratiotexture) );
+	if( ratiotexture > 0){
+		Console.Test(scale + '   -   ' + ratiotexture + '  -  ' + Mathf.Sqrt(ratiotexture) + ' --- ' + scale*1.0/Mathf.Sqrt(ratiotexture), 100);
+		obj.transform.localScale = Vector3( scale*Mathf.Sqrt(ratiotexture) , 0 , scale*1.0/Mathf.Sqrt(ratiotexture) );
 	}
 	else
 		obj.transform.localScale = Vector3( scale , 0 , scale );		

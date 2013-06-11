@@ -319,7 +319,7 @@ function test(){
 }*/
 
 
-//revoi largeur et auteur de la video
+//revoi largeur et hauteur de la video
 public function VideoWH() : Vector2 {
 	var controllerScene:SceneController;
 	controllerScene = MovieController2.GetComponent("SceneController");

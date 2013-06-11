@@ -18,7 +18,7 @@ public function moveSurface( t : GameObject , OnPlay : boolean){
     if( OnPlay ){
         var dt = Time.time-s.getLastMoveTime();
 		// rotate around y axis because plane where movie is displayed is perpendicular to y axis
-        t.transform.eulerAngles += Vector3( 0 , -s.getDelta()*dt , 0 );
+        t.transform.eulerAngles += Vector3( 0 , -s.getDelta('')*dt , 0 );
 		// always refresh the time of last move then the planes will move continuously
         s.updateLastMoveTime();
     } else 
@@ -28,34 +28,40 @@ public function moveSurface( t : GameObject , OnPlay : boolean){
 /*
 	*move a mesh around the y axis and the center of the sphere
 */
-public function rotateY_3D( g : GameObject ){
+public function rotateY_3D( g : GameObject, OnPlay : boolean ){
 	video = gameObject.GetComponent("videoSettings") as videoSettings;
 	var s : scriptForPlane = g.GetComponent( "scriptForPlane" );
 	
-	// rotate the gameobject around y axis at speed s.getdelta
-	g.transform.RotateAround( video.getSpherePos() , Vector3.up , s.getDelta()*Time.deltaTime );
+	if( OnPlay ){
+		// rotate the gameobject around y axis at speed s.getdelta
+		g.transform.RotateAround( video.getSpherePos() , Vector3.up , s.getDelta('x')*Time.deltaTime );
+	}
 }
 
 /*
 	*move a mesh around the x axis and the center of the sphere
 */
-public function rotateX_3D( g : GameObject ){
+public function rotateX_3D( g : GameObject, OnPlay : boolean ){
 	video = gameObject.GetComponent("videoSettings") as videoSettings;
 	var s : scriptForPlane = g.GetComponent( "scriptForPlane" );
 	
-	// rotate the gameobject around x axis at speed s.getdelta
-	g.transform.RotateAround( video.getSpherePos() , Vector3.right , s.getDelta()*Time.deltaTime );
+	if( OnPlay ){
+		// rotate the gameobject around x axis at speed s.getdelta
+		g.transform.RotateAround( video.getSpherePos() , Vector3.right , s.getDelta('y')*Time.deltaTime );
+	}
 }
 
 /*
 	*move a mesh around the z axis and the center of the sphere
 */
-public function rotateZ_3D( g : GameObject ){
+public function rotateZ_3D( g : GameObject, OnPlay : boolean ){
 	video = gameObject.GetComponent("videoSettings") as videoSettings;
 	var s : scriptForPlane = g.GetComponent( "scriptForPlane" );
 	
-	// rotate the gameobject around z axis at speed s.getdelta
-	g.transform.RotateAround( video.getSpherePos() , Vector3.forward , s.getDelta()*Time.deltaTime );
+	if( OnPlay ){
+		// rotate the gameobject around z axis at speed s.getdelta
+		g.transform.RotateAround( video.getSpherePos() , Vector3.forward , s.getDelta('z')*Time.deltaTime );
+	}
 }
 
 /*
@@ -65,7 +71,15 @@ public function resetPlane( t : GameObject ){
 	t.transform.eulerAngles = Vector3( 0 , 0 , 0);
 }
 
-
+/*
+ * garde l'axe z vers le haut
+ */
+public function keepRotation( obj : GameObject) {
+	
+	obj.transform.rotation = camera.transform.rotation ;
+	obj.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
+	obj.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );
+}
 
 
 
