@@ -40,7 +40,7 @@ public function compute( placeRect : function(Hashtable, String) ) {
 		var nbOnThisFloor : int ;
 		
 		// Random value !! I have no idea what I'm doing !
-		params['scale'] = 0.14 ;
+		params['scale'] = 0.1 ;
 		
 		var randomVariation : float = Random.Range(0, latVariationRange);
 		randomVariation -= latVariationRange/2 ;
@@ -51,43 +51,36 @@ public function compute( placeRect : function(Hashtable, String) ) {
 		if( i < nbOnFloor[0] && nbOnFloor[0] > 0) {
 			
 			nbOnThisFloor = nbOnFloor[0] ;
-			PositionningFactor = 1.0*i / nbOnThisFloor ;
+			
+			PositionningFactor = (nbOnThisFloor == 1 ) ? 1 : (1.0*i / (nbOnThisFloor-1) ) ;
 			
 			params['latitude'] = firstFloorLat + randomVariation ;
-			params['posy'] = -0.666 ;
-			params['sizey'] = 0.333 ;
+			params['posy'] = 1.0/6;
+			params['sizey'] = 1.0/3 ;
 			
 		} else if( i < nbOnFloor[0] + nbOnFloor[1] && nbOnFloor[1] > 0) {
 			
 			nbOnThisFloor = nbOnFloor[1] ;
-			PositionningFactor = (1.0*i - nbOnFloor[0]) / nbOnFloor[1];
+			PositionningFactor = (1.0*i - nbOnFloor[0]) / (nbOnFloor[1]-1);
 			
 			params['latitude'] = secondFloorLat + randomVariation ;
-			params['posy'] = 0;
-			params['sizey'] = 0.333 ;
+			params['posy'] = 3.0/6 ;
+			params['sizey'] = 1.0/3 ;
 			
 		} else if( i < nbOnFloor[0] + nbOnFloor[1]+ nbOnFloor[2] && nbOnFloor[2] > 0) {
 			
 			nbOnThisFloor = nbOnFloor[2] ;
-			PositionningFactor = (1.0*i - nbOnFloor[0] - nbOnFloor[1]) / nbOnFloor[2];
+			PositionningFactor = (1.0*i - nbOnFloor[0] - nbOnFloor[1]) / (nbOnFloor[2]-1);
 			
 			params['latitude'] = thirdFloorLat + randomVariation ;
-			params['posy'] = 0.666 ;
-			params['sizey'] = 0.334 ;
+			params['posy'] = 5.0/6 ;
+			params['sizey'] = 1.0/3 ;
 			
 		}
 		
-		
-		
-		
-		
-		params['posx'] = (PositionningFactor+1/nbOnThisFloor) *2 - 1 ;
-		
-		
-		params['sizex'] = 1.0/(nbOnThisFloor-1) ;
-		
-		
-
+		// positionnement en 2D
+		params['posx'] = PositionningFactor ;
+		params['sizex'] = 1.0/(nbOnThisFloor) ;
 		
 		// écart entre deux elmts consécutifs
 		var longdistance : float = 360.0/nbOnThisFloor ;
@@ -95,6 +88,8 @@ public function compute( placeRect : function(Hashtable, String) ) {
 		randomVariation -= longdistance/4 ;
 		
 		params['longitude'] = 360.0*PositionningFactor + randomVariation ;
+		
+		Console.Warning(params['longitude'] + '  *  ' + 360.0*PositionningFactor +'  *  ' );
 		
 		
 		// init variables of script
@@ -107,9 +102,20 @@ public function compute( placeRect : function(Hashtable, String) ) {
 			img = imgs[0];
 		}
 		params['ratiotexture'] = 1.0 ;
-		params['deltax'] = 3.0 ;
-		params['deltay'] = 5.0 ;
-		params['deltaz'] = 8.0 ;
+		params['deltax'] = 0;
+		params['deltay'] = 0;
+		params['deltaz'] = 0;
+		
+		params['maxdeltax'] = 3 ;
+		params['maxdeltay'] = 3 ;
+		params['maxdeltaz'] = 3 ;
+		
+		if( params.ContainsKey( 'maxdeltax') )
+			params['deltax'] = Random.Range(0, params['maxdeltax'] );
+		if( params.ContainsKey( 'maxdeltay') )
+			params['deltay'] = Random.Range(0, params['maxdeltay'] );
+		if( params.ContainsKey( 'maxdeltaz') )
+			params['deltaz'] = Random.Range(0, params['maxdeltaz'] );
 		
 		if( ! params.ContainsKey( 'name') )
 			params['name'] = 'name'+i ;

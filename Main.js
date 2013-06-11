@@ -40,7 +40,8 @@ private var beginBy2D : boolean ;			// on commence par la vue 2D (sinon 3D)
 private var have2DAnd3D : boolean ;			// on a une vue 2D et une vue 3D (sinon que la première)
 
 private var placeRectAuto : boolean ;		// Place automatiquement les plans rectangles
-
+private var fieldOfView2D : float ;			// Champ de vision de la camera en 2D
+private var fieldOfView3D : float ;			// Champ de vision de la camera en 3D
 
 private var soundEnable : boolean ;			// Les sons 3D sont activé
 
@@ -149,7 +150,7 @@ function Start () {
 	
 	// Initialise la transition 2D / 3D
 	if( Trans )
-		Trans.init();
+		Trans.init(fieldOfView2D, fieldOfView3D);
 	
 	// parse le fichier et appelle la fonction correspondante
 	getXML.getElementFromXML( 'xml_data', datasXmlWrapper ) ;
@@ -164,6 +165,9 @@ function Start () {
 	else
 		Zoom.Init(AllGO3D, zoomType3D ,Vector3.zero );
 	Zoom.setTransitionTime(zoomLength);
+	
+	// Affiche les plan ou non
+	hideObj( !beginBy2D );
 	
 	// Initialisation de l'interface.
 	GUI.InitFullScreen();
@@ -203,9 +207,10 @@ function Start () {
 	// Au click sur le boutton retour de l'interface
 	GUI.SetLeaveCallback( Zoom.toOnDeZoom );	// Dezoom vers l'univers
 	
-	// A la fin de la transition 2D/3D
+	// A la fin ou au début de la transition 2D/3D
 	if( Trans ) {
 		Trans.AddOnBeginTrans( disableMouseLook );
+		Trans.AddOnBeginTrans( hideObj );
 		
 		Trans.AddOnEndTrans( changeZoomPlane );			// Changement des plans clickables
 		Trans.AddOnEndTrans( CameraConfigUniv );		// Changement des paramètre de caméra
@@ -214,6 +219,8 @@ function Start () {
 	
 	// Paramètrage de la caméra
 	CameraConfigUniv( beginBy2D );
+	
+	
 }
 
 
@@ -239,19 +246,26 @@ function Update () {
 	// Déplacement des plan en 2D (si il y en a)
 	for( var i =0; i < AllGO2D.length; i++) {
 	
-		if(!Videos.getFlagEndVideo())
+		if(!Videos.getFlagEndVideo() && !placeRectAuto)
 			move.moveSurface( AllGO2D[i] as GameObject, Videos.OnPlay() ) ;
 		else
 			move.resetPlane(AllGO2D[i] as GameObject);
+		
+		if(placeRectAuto)
+			move.keepRotation( AllGO2D[i] );
 	}
 	
 	for( i = 0; i < AllGO3D.length; i++) {
 		move.rotateY_3D( AllGO3D[i] as GameObject, true ) ;
+		move.rotateX_3D( AllGO3D[i] as GameObject, true ) ;
+		move.rotateZ_3D( AllGO3D[i] as GameObject, true ) ;
 		
-		if( !isOn2D() ) {
-			move.rotateX_3D( AllGO3D[i] as GameObject, true ) ;
-			move.rotateZ_3D( AllGO3D[i] as GameObject, true ) ;
-		}
+		if(placeRectAuto)
+			move.keepRotation( AllGO3D[i] );
+		
+		var s = ((AllGO3D[i] as GameObject ).GetComponent("scriptForPlane") as scriptForPlane) ;
+		s.InitPosPlane( (AllGO3D[i] as GameObject ).transform.position );
+		
 	}
 }
 
@@ -325,6 +339,32 @@ public function changeZoomPlane( is2D : boolean ) {
 	}
 }
 
+
+/*
+ * Cache les plans non concerné si besoins
+ */
+public function hideObj( from2D : boolean ) {
+	
+	var i : int = 0 ;
+	
+	if( !from2D ) {
+		for( i = 0; i < AllGO3D.length; i ++)
+			(AllGO3D[i] as GameObject).renderer.enabled = false ;
+		for( i = 0; i < AllGO2D.length; i ++)
+			(AllGO2D[i] as GameObject).renderer.enabled = ((AllGO2D[i] as GameObject ).GetComponent("scriptForPlane") as scriptForPlane).getVisible() ;
+		
+	} else {
+		for( i = 0; i < AllGO3D.length; i ++)
+			(AllGO3D[i] as GameObject).renderer.enabled = ((AllGO2D[i] as GameObject ).GetComponent("scriptForPlane") as scriptForPlane).getVisible() ;
+		for( i = 0; i < AllGO2D.length; i ++)
+			(AllGO2D[i] as GameObject).renderer.enabled = false ;
+		
+	}
+	
+	
+}
+
+
 /*
  * Renvoie true si pos est sur un élément de type gui de l'interface
  * (pour ne pas mettre deux événements sur un click au même endroit)
@@ -369,10 +409,10 @@ public function CameraConfigUniv( is2D : boolean) {
 	if( is2D ) {
 	
 		camera.orthographic = false ;
-		
+		camera.fieldOfView  = fieldOfView2D ;
 		light.type=LightType.Point;
 		light.intensity=0.88;
-		
+		Console.Test('1',100);
 		light.cookie=null ;
 		
 		// desactive le déplacement de la caméra
@@ -381,7 +421,8 @@ public function CameraConfigUniv( is2D : boolean) {
 	} else {
 		
 		camera.orthographic = false ;
-		
+		camera.fieldOfView  = fieldOfView3D ;
+		Console.Test('2',100);
 		//light
 		light.type=LightType.Spot;
 		light.intensity=0.88;
@@ -436,7 +477,6 @@ public function CameraConfigTrans() {
 private function CameraSharedConfig() {
 	
 	camera.backgroundColor = Color.black ;
-	camera.fieldOfView  = 60 ;
 	camera.farClipPlane = 60 ;
 	camera.nearClipPlane = 0.01 ;
 	
@@ -539,6 +579,9 @@ private function placeMeshHashPolar ( t : Hashtable ){
 			// Ajout du point vers lequel le plan est orienté dans le script d'extension
 			p = createPolar.getOrientedTo( t , gameObject );
 			s.InitOrientedTo( p );
+			
+			// configure les plan comme étant invisible
+			s.setVisible(false);
 		
 			// add new gameobject to array
 			AllGO2D.Push( obj );
@@ -569,6 +612,9 @@ private function placeMeshHashPolar ( t : Hashtable ){
 		
 			// Ajout du point vers lequel le plan est orienté dans le script d'extension
 			s3D.InitOrientedTo( mesh3D.getOrientedTo() );
+			
+			// configure les plan comme étant invisible
+			s3D.setVisible(false);
 		
 			// add new gameobject to array
 			AllGO3D.Push( obj3D );
@@ -600,6 +646,9 @@ public function placeRectHash( t : Hashtable, texturePath : String ){
 		
 			// Ajout de la position réelle du plan dans le script d'extension
 			s2.InitPosPlane( obj2D.transform.position );
+			
+			// configure les plan comme étant invisible si pas de texture
+			s2.setVisible( (texturePath != null) );
 		
 			// Ajout du point vers lequel le plan est orienté dans le script d'extension
 			var p = meshRect.getOrientedTo( t , gameObject );
@@ -618,6 +667,9 @@ public function placeRectHash( t : Hashtable, texturePath : String ){
 		
 				// Ajout de la position réelle du plan dans le script d'extension
 				s3.InitPosPlane( obj3D.transform.position );
+				
+				// configure les plan comme étant invisible
+				s3.setVisible( (texturePath != null) );
 		
 				// Ajout du point vers lequel le plan est orienté dans le script d'extension
 				s3.InitOrientedTo( Videos.getSpherePos() );
@@ -658,6 +710,10 @@ private function setDefaultSystemValues() {
 	
 	// Les plans sont poisitionnnés automatiquements
 	placeRectAuto = true ;
+	
+	// Champ de vision de la camera
+	fieldOfView2D = 60.0 ;
+	fieldOfView3D = 35.0 ;
 	
 	// les sons dans la 3D sont activé
 	soundEnable = true ;
@@ -704,6 +760,27 @@ public function systemXmlWrapper( tagName : String, content : Hashtable ) {
 						break ;
 				}
 			}
+			
+			/*
+			 * Enregistre le champ de vision de la camera contenu entre <fieldOfView2D> et </fieldOfView2D>
+			 * valeur par défaut : 40.0
+			 */			
+			if( content.ContainsKey( 'fieldofview2d' ) ) {
+				if( float.Parse(content['fieldofview2d']) != 'NaN' )
+					fieldOfView2D = float.Parse(content['fieldofview2d']) ;
+			}
+			
+			/*
+			 * Enregistre le champ de vision de la camera contenu entre <fieldOfView3D> et </fieldOfView3D>
+			 * valeur par défaut : 40.0
+			 */	
+			if( content.ContainsKey( 'fieldofview3d' ) ) {
+				if( float.Parse(content['fieldofview3d']) != 'NaN' )
+					fieldOfView3D = float.Parse(content['fieldofview3d']) ;
+			}
+			
+			// si <placeRectAuto/> alors les plans rectangulaires sont placés automatiquement
+			placeRectAuto = ( content.ContainsKey( 'placerectauto' ) ) ? true : false ;
 			
 			// si <oneuniv/> alors on ne peux pas switcher entre 2D et 3D sinon on peux
 			have2DAnd3D = ( content.ContainsKey( 'oneuniv' ) ) ? false : true ;

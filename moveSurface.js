@@ -71,7 +71,15 @@ public function resetPlane( t : GameObject ){
 	t.transform.eulerAngles = Vector3( 0 , 0 , 0);
 }
 
-
+/*
+ * garde l'axe z vers le haut
+ */
+public function keepRotation( obj : GameObject) {
+	
+	obj.transform.rotation = camera.transform.rotation ;
+	obj.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
+	obj.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );
+}
 
 
 

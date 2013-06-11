@@ -28,6 +28,8 @@ private var deltaX : float = 0;
 private var deltaY : float = 0;
 private var deltaZ : float = 0;
 
+// plan is visible
+private var visible : boolean ;
 
 // Time when the object have been moved last
 private var lastMoveTime : float = 0;
@@ -161,7 +163,6 @@ public function getDelta( coord : String ){
 	}
 }
 
-
 /*
  * Accessors of lastMoveTime
  */
@@ -172,6 +173,18 @@ public function updateLastMoveTime() {
 
 public function getLastMoveTime() : float {
 	return lastMoveTime ;
+}
+
+
+
+/*
+ * The plan could be visible ?
+ */
+public function setVisible ( b : boolean ) {
+	visible = b ;
+}
+public function getVisible() : boolean {
+	return visible ;
 }
 
 

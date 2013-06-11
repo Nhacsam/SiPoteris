@@ -68,12 +68,14 @@ private var musicTop : float = marginBottom + sizeButtons;
 private var musicLeft : float = marginLeft + sizeButtons;
 private var musicRight : float = 0.48 - sizeButtons;
 
-private var textTop : float = stripBottom - 0.05;
+private var textTopWithStrip : float = stripBottom - 0.05;
+private var textTopWithoutStrip : float = marginTop;
 private var textBottom : float = musicTop + 0.05;
 private var textLeft : float = marginLeft;
 private var textRight : float = musicRight + sizeButtons;
 
-private var pictureTop : float = textTop;
+private var pictureTopWithStrip : float = textTopWithStrip ;
+private var pictureTopWithoutStrip : float = textTopWithoutStrip ;
 private var pictureBottom : float = textBottom;
 private var pictureLeft : float = 0.52;
 private var pictureRight : float = stripRight;
@@ -86,6 +88,10 @@ private var slideRight : float = marginRight;
 private var sizeButtonsPix : int = sizeButtons * Screen.height; // Taille boutons = hauteur strip = hauteur slide
 private var returnRectangle : Rect = new Rect(Screen.width*marginLeft, Screen.height*(1-marginBottom)-sizeButtonsPix, sizeButtonsPix, sizeButtonsPix);
 private var creditsRectangle : Rect = new Rect(Screen.width*textRight-sizeButtonsPix, Screen.height*(1-marginBottom)-sizeButtonsPix, sizeButtonsPix, sizeButtonsPix);
+
+
+private var textTop : float ;
+private var pictureTop : float ;
 
 
 /*
@@ -292,14 +298,15 @@ function CreateGUI() {
 	
 	/* Initialisation de tous les éléments du full screen */
 	
-	try { // On teste s'il y a un strip du bon format ou pas
+	// On teste s'il y a un strip du bon format ou pas
+	textTop = textTopWithStrip;
+	pictureTop = textTopWithStrip;
+	try {
 	strip.InitVideoScreen( stripPath , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
-	}
-	
-	catch (str) {
+	} catch (str) {
 		Console.Warning(str);
-		textTop = marginTop;
-		pictureTop = marginTop;
+		textTop = textTopWithoutStrip;
+		pictureTop = textTopWithoutStrip;
 	}
 	
 	slideshow.InitSlideShowFactor(slideShowElmts.length, Rect( slideLeft , slideBottom , slideRight - slideLeft , slideTop - slideBottom), 20);
