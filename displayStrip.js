@@ -143,7 +143,6 @@ function InitVideoScreen( path : String , r : Rect ){
 */
 private function createStripPlane( path : String , r : Rect ){
 	window = 		gameObject.GetComponent("showingWindow") as showingWindow;
-	videoSet = 		gameObject.GetComponent("videoSettings") as videoSettings;
 	
 	// create plane
 	videoScreen = new GameObject.CreatePrimitive( PrimitiveType.Plane );
@@ -195,7 +194,7 @@ function placeStripFactor( stripTop : float , stripBottom :float , stripLeft : f
 	*calculate new rect 
 	*ratio = width/height
 */
-private function optimalSize( ratio : float , r : Rect ) : Rect {
+static function optimalSize( ratio : float , r : Rect ) : Rect {
 	var newR : Rect;
 	var ratioMax : float = r.width/r.height;
 	
