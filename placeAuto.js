@@ -89,9 +89,6 @@ public function compute( placeRect : function(Hashtable, String) ) {
 		
 		params['longitude'] = 360.0*PositionningFactor + randomVariation ;
 		
-		Console.Warning(params['longitude'] + '  *  ' + 360.0*PositionningFactor +'  *  ' );
-		
-		
 		// init variables of script
 		s.InitScript( pDatasList[i] as Hashtable );
 		
@@ -120,7 +117,7 @@ public function compute( placeRect : function(Hashtable, String) ) {
 		if( ! params.ContainsKey( 'name') )
 			params['name'] = 'name'+i ;
 		placeRect(params, img);
-		Console.Test('placement auto', 100);
+		
 	}
 	Destroy(obj);
 }

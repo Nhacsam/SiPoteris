@@ -412,7 +412,6 @@ public function CameraConfigUniv( is2D : boolean) {
 		camera.fieldOfView  = fieldOfView2D ;
 		light.type=LightType.Point;
 		light.intensity=0.88;
-		Console.Test('1',100);
 		light.cookie=null ;
 		
 		// desactive le déplacement de la caméra
@@ -422,7 +421,6 @@ public function CameraConfigUniv( is2D : boolean) {
 		
 		camera.orthographic = false ;
 		camera.fieldOfView  = fieldOfView3D ;
-		Console.Test('2',100);
 		//light
 		light.type=LightType.Spot;
 		light.intensity=0.88;
@@ -441,8 +439,6 @@ public function CameraConfigUniv( is2D : boolean) {
  * pour la GUI
  */
 public function CameraConfigGUI() {
-	
-	Console.Test( 'CameraConfigGUI', 50);
 	
 	CameraSharedConfig();
 	

@@ -209,8 +209,6 @@ function createRect3DParam(theta : float , phi : float , scale : float , ratiote
 		obj.renderer.material.mainTexture = texture;
 		obj.renderer.enabled = true;
 		
-		Console.Test(  texture.width + ' - ' + texture.height,101);
-		
 		// get ratio of texture
 		var ratio : float = 1.0*texture.width/texture.height;
 		// apply this ratio to the rectangle
