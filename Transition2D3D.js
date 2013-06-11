@@ -31,10 +31,13 @@ private var exitFinished: boolean = true;
 private var OnBeginTrans : Array ;
 private var OnEndTrans : Array ;
 
+// champ de vision de la cam en 2D et en 3D
+private var fieldOfView2D : float ;
+private var fieldOfView3D : float ;
 
 
 //instantiate items
-function init(){
+function init(fieldOfView_2D : float , fieldOfView_3D : float ){
 	
 	control = gameObject.GetComponent("CameraControl");
 	if (!control)	
@@ -48,6 +51,9 @@ function init(){
 	control.enabled = false ;
 	
 	scene2D = Videos.GetFirstView();
+	
+	fieldOfView2D = fieldOfView_2D ;
+	fieldOfView3D = fieldOfView_3D ;
 	
 	// Initialisation des Callback
 	OnBeginTrans = new Array();
@@ -77,7 +83,7 @@ function  OnGUI2D3D(){
 
 	if(Videos.OnPlay() && !enable && exitFinished){
 	
-		var Rectangle : Rect = new Rect(Screen.width/2 +310 , Screen.height-60, camera.pixelWidth , camera.pixelHeight);		
+		var Rectangle : Rect = new Rect(Screen.width/2 +310 , Screen.height-60, camera.pixelWidth , camera.pixelHeight);	
 		GUI.Label(Rectangle,"Click anywhere on the screen \n   to get further information.");
 		
 		if(Videos.GetOtherView()){		
@@ -172,6 +178,7 @@ function Update2D3D(){
 	}
 	//load the pshere and reincrease light
 	if(!scene2D && !done && lightFlag){
+		camera.fieldOfView = fieldOfView3D ;
 		Videos.changeSettings(true);
 		camera.transform.eulerAngles=Vector3(270,0,0);
 		if(light.intensity <= 0.88)light.intensity+=0.02;
@@ -223,6 +230,7 @@ function Update3D2D(){
 	}
 	//load the plane 
 	if(scene2D && next ){
+		camera.fieldOfView = fieldOfView2D ;
 		
 		if(camera.transform.position.y >= -10)camera.transform.position.y -= 1/TransitionTime;
 		else{done3=true;
@@ -267,7 +275,6 @@ function UpdateEnding(){
 		light.intensity+=0.02;
 		if(light.intensity >= 0.88){enableEnding=false;end=true;zoom.enableEvents();Videos.EndFlagOff();}
 	}
-
 }
 
 //called in Transition2D3D
