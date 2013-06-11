@@ -153,9 +153,11 @@ function UpDateFullScreen() {
 	if( onFullScreen && LoadObj && LoadObj.renderer.enabled && FrameElapsedSinceGUIInitialized < 0) {
 		CreateGUI();
 		disableOthers('');
+		
 	} else if ( onFullScreen && LoadObj && LoadObj.renderer.enabled && FrameElapsedSinceGUIInitialized > 20 ) {
 		LoadObj.renderer.enabled = false ;
 		enableOthers('');
+		
 	} else if( onFullScreen ) {
 		slideshow.UpDateSlideShow();
 		windows.SetNewTextureObj( slideshow.getCurrentAssociedInfo() );

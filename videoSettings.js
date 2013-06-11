@@ -220,7 +220,7 @@ function videoHDZoomQuit(plane : GameObject){
 /*
 * Set the parameters for the video (see the plug to know how to do it), here the video is supposed to be in the format .mov
 */
-function putVideo( focus: GameObject, nom : String){
+function putVideo( focus: GameObject, nom : String, sound: boolean){
 
 	if(!iOS){
 	iOS = new GameObject(); 
@@ -255,7 +255,7 @@ function putVideo( focus: GameObject, nom : String){
 	controllerScene2.movieClass[0].movieIndex = 1;
 	controllerScene2.movieName[0] = nom +".mov";
 
-	controllerScene2.movieClass[0].PlayMovie(nom +".mov");
+	controllerScene2.movieClass[0].PlayMovie(nom +".mov",sound);
 
 	return true;
 	

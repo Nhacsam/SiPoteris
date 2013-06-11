@@ -176,7 +176,10 @@ private function createStripPlane( path : String , r : Rect ){
 		videoScreen.AddComponent(Renderer);
 	
 	// add texture to the plane
-	videoScreen.renderer.material.mainTexture = Resources.Load( path );
+	var mat : Material = Resources.Load("basic");//videoScreen.renderer.material = Resources.Load('basic');
+	mat.mainTexture = Resources.Load( path );
+	videoScreen.renderer.material = mat;
+	//videoScreen.renderer.material.mainTexture = Resources.Load( path );
 }
 
 /*
@@ -345,7 +348,7 @@ private function getRectPlane() : Rect {
 ///////////////////////////////////
 /////run / stop video on plane/////
 ///////////////////////////////////
-
+/*
 function runMovie( name : String ){
 	videoSet.putVideo( videoScreen , name );
 }
@@ -353,7 +356,7 @@ function runMovie( name : String ){
 function stopMovie(){
 	videoSet.stopVideo( videoScreen );
 }
-
+*/
 ////////////////////////////////////////////////
 /////destruct when leaving full screen mode/////
 ////////////////////////////////////////////////
