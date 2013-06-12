@@ -1,3 +1,4 @@
+#pragma strict
 /*
 	*Creation : 29/04/2013
 	*Author : Fabien Daoulas
@@ -130,28 +131,6 @@ function InitVideoScreen( path : String , r : Rect ){
 	}
 	else
 		throw ("No strip file found here or type of file is not texture2D");
-	
-	/*if( texture ){
-		if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
-			// get ratio of strip
-			ratioPlane = (texture as Texture).width/(texture as Texture).height;
-				
-			rectOUT = optimalSize( ratioPlane , r );
-			createStripPlane( path , rectOUT );
-	
-			// compute scale and position when plane is widen
-			getInParameters();
-			enableAll();
-		}
-		else{
-			videoScreen = new GameObject.CreatePrimitive( PrimitiveType.Plane );
-			videoScreen.name = "GUI_stripPlane";
-			disableAll();
-			throw ("File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D");
-		}
-	}
-	else
-		throw ("No strip file found here ");*/
 		
 }
 

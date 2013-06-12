@@ -1,3 +1,4 @@
+#pragma strict
 /*
 Creation : 02/04/2013
 Last update : 11/06/2013
@@ -292,7 +293,7 @@ function extractTag(i : int) {
 	/*
 	*	Substring(i,j) does not work so let's improvise a little bit
 	*/
-	for (k=i; k<=j; k++)
+	for (var k=i; k<=j; k++)
 		myTag += textToDisplay[k];
 	
 	return myTag;
