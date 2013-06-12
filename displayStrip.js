@@ -109,10 +109,29 @@ private function initZoom(){
 function InitVideoScreen( path : String , r : Rect ){
 	// init state of the state machine
 	states = STATES_OF_STRIP.STATE_OUT;
+	// load asset and test if texture exists and has the right type
+	try{
+		var texture = Resources.Load( path , Texture2D );
+	}
+	catch(err){
+		texture = null;
+	}	
 	
-	var texture = Resources.Load( path );
+	if(texture){
+		// get ratio of strip
+		ratioPlane = (texture as Texture).width/(texture as Texture).height;
+				
+		rectOUT = optimalSize( ratioPlane , r );
+		createStripPlane( path , rectOUT );
 	
-	if( path ){
+		// compute scale and position when plane is widen
+		getInParameters();
+		enableAll();
+	}
+	else
+		throw ("No strip file found here or type of file is not texture2D");
+	
+	/*if( texture ){
 		if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
 			// get ratio of strip
 			ratioPlane = (texture as Texture).width/(texture as Texture).height;
@@ -132,7 +151,7 @@ function InitVideoScreen( path : String , r : Rect ){
 		}
 	}
 	else
-		throw ("No strip file found here ");
+		throw ("No strip file found here ");*/
 		
 }
 
@@ -175,7 +194,10 @@ private function createStripPlane( path : String , r : Rect ){
 		videoScreen.AddComponent(Renderer);
 	
 	// add texture to the plane
-	videoScreen.renderer.material.mainTexture = Resources.Load( path );
+	var mat : Material = Resources.Load("basic");//videoScreen.renderer.material = Resources.Load('basic');
+	mat.mainTexture = Resources.Load( path );
+	videoScreen.renderer.material = mat;
+	//videoScreen.renderer.material.mainTexture = Resources.Load( path );
 }
 
 /*
@@ -344,7 +366,7 @@ private function getRectPlane() : Rect {
 ///////////////////////////////////
 /////run / stop video on plane/////
 ///////////////////////////////////
-
+/*
 function runMovie( name : String ){
 	videoSet.putVideo( videoScreen , name );
 }
@@ -352,7 +374,7 @@ function runMovie( name : String ){
 function stopMovie(){
 	videoSet.stopVideo( videoScreen );
 }
-
+*/
 ////////////////////////////////////////////////
 /////destruct when leaving full screen mode/////
 ////////////////////////////////////////////////
