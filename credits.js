@@ -150,22 +150,22 @@ function exitCredits() {
 private function displayLogo( bot : float , left : float , w : float , h : float , path : String ){
 	// rectangle where the logo is displayed
 	var r  : Rect = Rect( Screen.width*left , Screen.height*bot , Screen.width*w , Screen.height*h );
-	// load logo
-	var texture = Resources.Load("defaultDatas/credits/logos/"+path);
+	// load logo and test if texture exists and has the right type
+	try {
+		var texture = Resources.Load("defaultDatas/credits/logos/"+path , Texture2D);
+	} catch( e) {
+		texture = null;
+	}
 	
 	if( texture ){// check if path is not empty
-		if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){// check if the asset has the right type
 			// get ratio of asset
 			var ratio : float = (texture as Texture).width/(texture as Texture).height;
 			// calculate a new rectangle
 			var newR : Rect = strip.optimalSize( ratio , r );
 			GUI.DrawTexture( newR , texture as Texture );
-		}
-		else
-			Console.Warning( "File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D" );
 	}
 	else
-		Console.Warning("No path available for logos");
+		Console.Warning("No path available for logos or type of file is not texture2D");
 }
 
 /*
