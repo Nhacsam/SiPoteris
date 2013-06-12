@@ -81,6 +81,14 @@ private function initText(u: int, d: int, l: int, r: int) {
 	upArrow = Resources.Load("Pictures/up_arrow");
 	downArrow = Resources.Load("Pictures/down_arrow");
 	
+	/* Reset values */
+	
+	indexFirstChar = 0;
+	moveToNext = new Array();
+	toJustify = new Array();
+	nbLines  = 0;
+	myTags = new Array();
+	
 	enableAll(); // enable event and dispy the text
 }
 
@@ -95,14 +103,6 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 		return ;
 	}
 	
-	// reset values
-	indexFirstChar = 0;
-	moveToNext = new Array();
-	toJustify = new Array();
-	nbLines  = 0;
-	myTags = new Array();
-	
-	
 	textToDisplay = text;
 	initText(u, d, l, r);
 		
@@ -115,21 +115,26 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 	
 	var firstTimeInWhileLoop = true;
 	
-	/* for each letter */
+	/* For each letter */
 	for(var i : int = 0; i < textToDisplay.Length; i++){
 	
 		/* If the current character is '<', let the extractTag function handle the tag */
-		while (textToDisplay[i] == "<") { // "while", not "if", in case of several tags in a row
+		while (textToDisplay[i] == "<") {
 			var tempTag : String = "";
 			tempTag = extractTag(i);
-			i+=tempTag.Length; // Do not display the tag
+			
+			if (tempTag != "")
+				i+=tempTag.Length; // Do not display the tag
+			else if (i < textToDisplay.Length-1)
+				i++; // Do not stay in the loop...
+			else
+				break; // end of text
 			
 			/* If first char is "<" and we are handling the first (group of) tag(s), then the first displayed character is the next one ! */
 			if (textToDisplay[0] == "<" && firstTimeInWhileLoop)
 				indexFirstChar = i;
 
 			myTags.push(tempTag);
-			
 		}
 		
 		/* Case when text begins with one or several tags, then \t */
@@ -283,10 +288,12 @@ function extractTag(i : int) {
 	var j : int = i; // to run through tab
 	
 	while (textToDisplay[j] != ">") {
-		if (j == textToDisplay.Length-1) { // if the tag never ends
+		if (j >= textToDisplay.Length-1) { // if the tag never ends
 			Console.CriticalError("There is a fake beginning of tag at index #" + i + " of the texte which statrs with \"" + textToDisplay.Substring(0,25) + "\"");
 			return "";
 		}
+		if (textToDisplay[j+1] == "<")
+			Console.Warning("Problem parsing tags: several \"<\" in a row");
 		j++;
 	}
 	
@@ -295,7 +302,7 @@ function extractTag(i : int) {
 	*/
 	for (var k=i; k<=j; k++)
 		myTag += textToDisplay[k];
-	
+		
 	return myTag;
 }
 

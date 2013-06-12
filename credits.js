@@ -117,13 +117,13 @@ function OnGUICredits () {
 		}
 		// display text
 		textViewer.OnGUIText();
-		// display logos
+		/* display logos
 		for( var i = 0 ; i < logoPath.length ; i++ )
 			displayLogo( 	1 - ( margin_bot + i*( height_logo + margin_betw_media ) ),
 							0.5 + margin_center/2,
 							width_logo,
 							height_logo,
-							logoPath[i]);
+							logoPath[i]);*/
 	}
 }
 
