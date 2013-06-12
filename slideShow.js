@@ -205,7 +205,7 @@ public function AddElmt( texture : String, info ) : boolean {
 
 
 /*
- * déplace le slideShow ver l'élément suivant
+ * déplace le slideShow vers l'élément suivant
  */
 public function next( slowly : boolean ) {
 	
@@ -220,7 +220,7 @@ public function next( slowly : boolean ) {
 }
 
 /*
- * déplace le slideShow ver l'élément précédent
+ * déplace le slideShow vers l'élément précédent
  */
 public function previous( slowly : boolean ) {
 	
@@ -232,6 +232,52 @@ public function previous( slowly : boolean ) {
 		if (currentPage > 0 )
 			currentPage-- ;
 	}
+}
+
+/*
+ * déplace le slideShow vers l'élément dont l'adresse est donnée
+ */
+public function goToWithPath( path : String ) {
+	
+	var index : int = -1 ;
+	
+	// Ensuite on cheche ceux qui contiennent s
+	for (var i = 0; i < effNbElmts; i++) {
+		if( (mobilesElmts[i] as GameObject).name.IndexOf( path ) >= 0 ) {
+			index = i ;
+			break;
+		}
+	}
+	
+	if( index == -1 )
+		Console.Warning( 'Failed to find the image ' + path + ' in slideShow.');
+	
+	decalTo( index );
+	useSpeed = false ;
+	delta = 0 ;
+}
+
+/*
+ * déplace le slideShow vers l'élément dont le nom est donnée
+ */
+public function goTo( filename : String ) {
+	
+	var index : int = -1 ;
+	
+	// Ensuite on cheche ceux qui contiennent s
+	for (var i = 0; i < effNbElmts; i++) {
+		if( fileSystem.getName( (mobilesElmts[i] as GameObject).name ).IndexOf( filename ) >= 0 ) {
+			index = i ;
+			break;
+		}
+	}
+	
+	if( index == -1 )
+		Console.Warning( 'Failed to find the image ' + filename + ' in slideShow.');
+	
+	decalTo( index );
+	useSpeed = false ;
+	delta = 0 ;
 }
 
 

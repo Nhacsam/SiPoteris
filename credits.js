@@ -182,7 +182,7 @@ private function initScreen(){
 	var videoScreen : GameObject = new GameObject.CreatePrimitive( PrimitiveType.Plane );
 	
 	// load movie
-	videoSet.putVideo( videoScreen , path );
+	videoSet.putVideo( videoScreen , path , true);
 	
 	// get ratio of movie
 	var v : Vector2 = videoSet.VideoWH();
