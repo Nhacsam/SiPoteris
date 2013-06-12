@@ -5,6 +5,8 @@
 // dépendences
 private var wVideoSettings : videoSettings ;
 
+// CallBacks appelés lors d'un changement d'élément
+private var wOnChange : Array = Array();
 
 // Proriétés de l'objet
 private var wPos : Rect ;
@@ -75,6 +77,7 @@ function InitWindow( pos : Rect, z : float ) {
 	wZ = z ;
 	wState = W_STATE.ONGUI ;
 	wId = -1;
+	wOnChange = Array();
 	
 	wVideoSettings = gameObject.GetComponent("videoSettings");
 	if( ! wVideoSettings)
@@ -181,7 +184,20 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 			SetTextureImg(path, size);
 			break ;
 	}
+	
+	// Appel des callbacks
+	for( var j = 0; j < wOnChange.length; j++){
+		(wOnChange[j] as function(SLIDESHOWELMT) )( new SLIDESHOWELMT(path, type, size, id, alsoUseAway)  ) ;
+	}
+
+	
 }
+
+
+public function AddOnChangeCallback( f : function(SLIDESHOWELMT) ) {
+	wOnChange.Push(f);
+}
+
 
 /*****************************************
 **** Gestion des texture video et img ****
