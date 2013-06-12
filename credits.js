@@ -116,13 +116,13 @@ function OnGUICredits () {
 		}
 		// display text
 		textViewer.OnGUIText();
-		/* display logos
+		/*display logos*/
 		for( var i = 0 ; i < logoPath.length ; i++ )
 			displayLogo( 	1 - ( margin_bot + i*( height_logo + margin_betw_media ) ),
 							0.5 + margin_center/2,
 							width_logo,
 							height_logo,
-							logoPath[i]);*/
+							logoPath[i]);
 	}
 }
 
@@ -185,7 +185,7 @@ private function initScreen(){
 	
 	// get ratio of movie
 	var v : Vector2 = videoSet.VideoWH();
-	var ratio : float = v.x/v.y;
+	var ratio : float = 1;//v.y/v.x;
 	// calculate a new rectangle that fit the ratio of movie
 	var newR : Rect = strip.optimalSize( ratio , r );
 	// set parameters of screen

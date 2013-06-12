@@ -92,7 +92,7 @@ function videoSettings (beginBy2D : boolean, have2DAnd3D : boolean) {
 		plane2D.AddComponent("PlayFileBasedMovieDefault");
 		controllerScene2D3D.movieClass[0] =  plane2D.GetComponent("PlayFileBasedMovieDefault");
 		controllerScene2D3D.movieClass[0].movieIndex = 0;
-		controllerScene2D3D.movieName[0] ="SIPO_full.mov";
+		controllerScene2D3D.movieName[0] ="SP.mov";
 		//set iOS forwarding
 		controllerIOS.movie[0]=plane2D.GetComponent("PlayFileBasedMovieDefault");		
 		if(otherView){
@@ -115,7 +115,7 @@ function videoSettings (beginBy2D : boolean, have2DAnd3D : boolean) {
 		sphere3D.AddComponent("PlayFileBasedMovieDefault");
 		controllerScene2D3D.movieClass[0] =  sphere3D.GetComponent("PlayFileBasedMovieDefault");
 		controllerScene2D3D.movieClass[0].movieIndex=0;
-		controllerScene2D3D.movieName[0] ="SIPO_full.mov";
+		controllerScene2D3D.movieName[0] ="SP.mov";
 		//set iOS forwarding
 		controllerIOS.movie[0]=sphere3D.GetComponent("PlayFileBasedMovieDefault");
 		if(otherView){
@@ -164,7 +164,7 @@ function generateScene3D(){
 	var rot:Quaternion=Quaternion.identity;
 	sphere3D_pos = Vector3(0,2,0);
 	//load .fbx sphere on scene
-	sphere3D=Instantiate(Resources.Load("SphereFULL"),sphere3D_pos,rot);
+	sphere3D=Instantiate(Resources.Load("DOME"),sphere3D_pos,rot);
 	Destroy(sphere3D.GetComponent("Animator"));
 	//set it at the right position
 	sphere3D.transform.Rotate(-90,180,0);
