@@ -320,6 +320,14 @@ function extractTag(i : int) {
 }
 
 /*
+*	Takes a SLIDESHOWELMT, turns it into a tag and calls toTag function which will scroll the text
+*/
+function takeSSelement (s : SLIDESHOWELMT) {
+	Console.Test(fileSystem.getName(s.path), 102) ;
+	toTag("<" + fileSystem.getName(s.path) + ">");
+}
+
+/*
 *	Scroll the text until the tag <myTag>
 *	Does not change scrolling if <myTag> does not exist
 *	When the text is initialized, an array of all the tags is created
@@ -376,16 +384,6 @@ function displayText() {
 		GUI.Label ( Rect (lBorder - 15, uBorder - 15, 15, 15), upArrow);
 	if (letterSpots[textToDisplay.Length-1].y > Screen.height - dBorder - heightLetter)
 		GUI.Label ( Rect (lBorder - 15, Screen.height - dBorder, 15, 15), downArrow);
-		
-	/* Test button */
-	if( GUI.Button( Rect (0, 0, 75, 20), "NOPE") )
-		toTag("<tesdfght2>");
-	if( GUI.Button( Rect (75, 0, 50, 20), "INTRO") )
-		toTag("<intro>");
-	if( GUI.Button( Rect (125, 0, 100, 20), "COUPLET2") )
-		toTag("<couplet2>");
-	if( GUI.Button( Rect (225, 0, 60, 20), "OUTRO") )
-		toTag("<outro>");
 }
 
 function removeText() {

@@ -294,12 +294,9 @@ function CreateGUI() {
 	}
 	
 	///////////////// EXEMPLE POUR KEVIN ///////////////////
-	windows.AddOnChangeCallback(exampleRecuperationNomImageAffiche);
+	windows.AddOnChangeCallback(textViewer.takeSSelement);
 }
 
-function exampleRecuperationNomImageAffiche (s : SLIDESHOWELMT) {
-	Console.Test(s.path, 102) ;
-}
 	/////////////////////////////////////////////////////////
 
 
