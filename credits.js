@@ -32,7 +32,7 @@ private var margin_center : float = 0.1;
 private var margin_right : float = 0.1;
 private var margin_left : float = 0.1;
 private var margin_top : float = 0.1;
-private var margin_bot : float = 0.1;
+private var margin_bot : float = 0.15;
 private var number_logo : int = 5;// five logos will be displayed
 private var margin_betw_media : float = 0.05; // déterminer suivant le nombre de médias
 private var width_logo : float = 0.5 - margin_right - margin_center/2;
@@ -42,7 +42,7 @@ private var height_logo : float = (0.5 - margin_bot - 4*margin_betw_media)/numbe
 private var z_coor : float = 20;
 
 /*tableau contenant les noms des logos*/
-private var logoPath : String[] = new String[number_logo];
+private var logoPath : String[];
 
 //////////////
 /////INIT/////
@@ -71,7 +71,7 @@ function initCredits ( returnRectangle : Rect) {
 	}
 	else
 		audioWasPlaying = false;
-	
+
 	/* Placement bouton */
 	myReturnRectangle = returnRectangle;
 	myReturnTexture = Resources.Load("GUI/back");
@@ -85,7 +85,7 @@ function initCredits ( returnRectangle : Rect) {
 	if (slideshow)
 		slideshow.disableAll();
 	displayCredits = true;
-	
+
 	/* Retour GUI si pas de fichier texte, placement du texte sinon */
 	if (fileSystem.getTextFromFile(fileSystem.getResourcesPath() + pathCredits ) == (-1))
 		exitCredits();
@@ -93,15 +93,15 @@ function initCredits ( returnRectangle : Rect) {
 		textViewer.placeTextFactor( margin_top , margin_bot , margin_left , 0.5 , fileSystem.getTextFromFile(fileSystem.getResourcesPath() + pathCredits)); // u d l r (margins) + Text to display
 
 	/*init nom des logos*/
+	logoPath = new String[number_logo];
 	logoPath[0] = "EMSE";
 	logoPath[1] = "LFKS";
 	logoPath[2] = "ZKM";
 	logoPath[3] = "MP2013";
 	logoPath[4] = "softPredictions";
-	
-	/*init plane where mivie is displayed*/
+
+	/*init plane where movie is displayed*/
 	initScreen();
-	
 }
 
 /* Getter */
@@ -153,7 +153,7 @@ private function displayLogo( bot : float , left : float , w : float , h : float
 	// load logo
 	var texture = Resources.Load("defaultDatas/credits/logos/"+path);
 	
-	if( path ){// check if path is not empty
+	if( texture ){// check if path is not empty
 		if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){// check if the asset has the right type
 			// get ratio of asset
 			var ratio : float = (texture as Texture).width/(texture as Texture).height;
@@ -186,10 +186,8 @@ private function initScreen(){
 	// get ratio of movie
 	var v : Vector2 = videoSet.VideoWH();
 	var ratio : float = v.x/v.y;
-	
 	// calculate a new rectangle that fit the ratio of movie
 	var newR : Rect = strip.optimalSize( ratio , r );
-	Debug.Log("r   " + newR);
 	// set parameters of screen
 	setScreen( newR , videoScreen );
 	
