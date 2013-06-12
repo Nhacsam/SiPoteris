@@ -1,3 +1,4 @@
+#pragma strict
 /*
 credits.js
 ----------
@@ -116,13 +117,13 @@ function OnGUICredits () {
 		}
 		// display text
 		textViewer.OnGUIText();
-		// display logos
+		/* display logos
 		for( var i = 0 ; i < logoPath.length ; i++ )
 			displayLogo( 	1 - ( margin_bot + i*( height_logo + margin_betw_media ) ),
 							0.5 + margin_center/2,
 							width_logo,
 							height_logo,
-							logoPath[i]);
+							logoPath[i]);*/
 	}
 }
 
@@ -181,7 +182,7 @@ private function initScreen(){
 	var videoScreen : GameObject = new GameObject.CreatePrimitive( PrimitiveType.Plane );
 	
 	// load movie
-	videoSet.putVideo( videoScreen , path );
+	videoSet.putVideo( videoScreen , path , true);
 	
 	// get ratio of movie
 	var v : Vector2 = videoSet.VideoWH();

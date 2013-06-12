@@ -242,9 +242,10 @@ private function SetTextureVideo(path : String, size : Vector2 ) : boolean {
 	
 	wVideoIsLoading = true ;	
 	// Applique la video sur l'objet
-	wVideoSettings.putVideo( wObj, path );
+	wVideoSettings.putVideo( wObj, path ,false);
 
 	wVideoSizeGiven = size ;
+	wObj.renderer.enabled =  false ;
 	return true;
 }
 

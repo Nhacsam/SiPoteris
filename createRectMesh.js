@@ -1,3 +1,6 @@
+#pragma strict
+
+
 /*
 	Creation : 04/06/2013
 	Author : Fabien Daoulas
@@ -141,7 +144,7 @@ private function setRect2D( posX : float , posY : float , sizex : float , sizey 
 /*
 	*calculate optimal size of height and width to fit the area 
 */
-private function optimalSize( sizex : float , sizey : float , ratio ) : Vector2 {
+private function optimalSize( sizex : float , sizey : float , ratio : float ) : Vector2 {
 	var ratioMax : float = sizex/sizey;
 	var width : float;
 	var height : float;
