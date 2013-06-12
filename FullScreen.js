@@ -68,7 +68,7 @@ private var stripRight : float = marginRight;
 
 private var musicBottom : float = marginBottom;
 private var musicTop : float = marginBottom + sizeButtons;
-private var musicLeft : float = marginLeft + sizeButtons;
+private var musicLeft : float = marginLeft + sizeButtons/2;
 private var musicRight : float = 0.48 - sizeButtons;
 
 private var textTopWithStrip : float = stripBottom - 0.05;
@@ -184,6 +184,9 @@ function UpDateFullScreen() {
 		windows.updateWindow();
 		strip.updateStrip();
 	}
+	// update of credits
+	if (myCredits.isDisplayed())
+		myCredits.updateCredits();
 }
 
 
