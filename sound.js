@@ -38,7 +38,7 @@ private var heightLetter : int = 20;
 private var eventEnable : boolean ;
 private var soundIsHidden : boolean ;
 
-private var chooseNextSoundRandomly: boolean = true;
+private var chooseNextSoundRandomly: boolean = false;
 
 private var repeatButton : Texture;
 
@@ -136,6 +136,13 @@ function displayMusic() {
 	if (displayChangeButton) {
 		if (GUI.Button(Rect( Screen.width-rBorder-2*buttonSize, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), repeatButton) && eventEnable)
 			changeMusic("");
+	}
+	
+	/* Change musique si terminée */
+	if (!audio.isPlaying && (currentBtn == pauseBtn || !displayPlayButton)) {
+		changeMusic("");
+		if(displayPlayButton)	currentBtn = pauseBtn;
+		audio.Play();
 	}
 		
 	/* Name of the song: Does NOT handle the case when the name is too LONG */
