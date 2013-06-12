@@ -229,6 +229,106 @@ function CreateGUI() {
 	
 	
 	var stripPath : String = Datas.getHandler().getStripImg();
+	var slideShowElmts : Array = createSlideshowDatas();
+		
+	/* Initialisation de tous les éléments du full screen */
+	
+	// On teste s'il y a un strip du bon format ou pas
+	textTop = textTopWithStrip;
+	pictureTop = textTopWithStrip;
+	try {
+	strip.InitVideoScreen( stripPath , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
+	} catch (str) {
+		Console.Warning(str);
+		textTop = textTopWithoutStrip;
+		pictureTop = textTopWithoutStrip;
+	}
+	
+	slideshow.InitSlideShowFactor(slideShowElmts.length, Rect( slideLeft , slideBottom , slideRight - slideLeft , slideTop - slideBottom), 20);
+	windows.InitWindowFactor( Rect( pictureLeft , 1-pictureTop , pictureRight-pictureLeft, pictureTop-pictureBottom), 20 );
+	
+	textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getHandler().getText( lang )); // u d l r (margins) + Text to display
+	audioPlayer.placeMusicFactor (1-musicTop, musicBottom, musicLeft, 1-musicRight, Datas.getHandler().getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
+	
+	// On donne les infos au slideShow
+	for (var i: int = 0; i < slideShowElmts.length; i++ ) {
+		var tempArray = slideShowElmts[i] as Array ;
+		slideshow.AddElmt(tempArray[0], tempArray[1] );
+	}
+	
+	FrameElapsedSinceGUIInitialized = 0 ;
+	
+	
+	windows.AddOnChangeCallback(exampleRecuperationNomImageAffiche);
+}
+
+function exampleRecuperationNomImageAffiche (s : SLIDESHOWELMT) {
+	Console.Test(s.path, 102) ;
+}
+
+function LeaveFullScreen( Video : GameObject ) {
+	
+	// Restitution des positions
+	Video.transform.position = VideoInitialPos ;
+	Video.transform.eulerAngles = VideoInitialRot;
+	camera.transform.position = CameraInitialPos ;
+
+
+	audioPlayer.removeMusic();
+	textViewer.removeText();
+	
+	slideshow.destuctSlideShow();
+	windows.destuctWindow();
+	
+	// for strip
+	strip.destructStrip();
+	firstTimeInUpdate = true;
+	
+	onFullScreen = false ;
+	FrameElapsedSinceGUIInitialized = -1 ;
+}
+
+/*
+ * Crée un plan avec la texture de chargement
+ */
+private function CreateLoadingPlane() {
+	
+	// Création
+	if( !LoadObj) {
+		LoadObj = new GameObject.CreatePrimitive(PrimitiveType.Plane);
+		
+		LoadObj.name = "LOADING" ;
+	
+		// ajoute un renderer si tel n'est pas le cas
+		var testRenderer = LoadObj.GetComponent(Renderer);
+		if( !testRenderer)
+			LoadObj.AddComponent(Renderer);
+	
+		LoadObj.renderer.material.mainTexture = Resources.Load('GUI/Loading') ;
+	}
+	
+	
+	LoadObj.transform.position = camera.ScreenToWorldPoint( Vector3(camera.pixelWidth/2, camera.pixelHeight/2, 50 ) ) ;
+	
+	LoadObj.transform.rotation = new Quaternion();
+	
+	// Application des dimentions
+	var boundsize = LoadObj.renderer.bounds.size ;
+	var size = showingWindow.getRealSize( Vector2(camera.pixelWidth,  camera.pixelHeight), Vector2( camera.pixelWidth/2, camera.pixelHeight/2 ), 50, camera ) ;
+	var scale = LoadObj.transform.localScale ;
+	LoadObj.transform.localScale  = Vector3(scale.x* size.x/boundsize.x, scale.y ,scale.z* size.y/boundsize.z );
+	
+	LoadObj.transform.rotation = camera.transform.rotation ;
+	LoadObj.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
+	LoadObj.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );
+	
+}
+
+
+/*
+ * Crée et renvoie le tableau de SLIDESHOWELMT pour le slideshow
+ */
+private function createSlideshowDatas() : Array {
 	
 	var slideShowImgs : Array = Datas.getHandler().getImages();
 	var slideShowMin : Array = Datas.getHandler().getMiniatures();
@@ -310,91 +410,7 @@ function CreateGUI() {
 		id++ ;
 	}
 	
-	/* Initialisation de tous les éléments du full screen */
-	
-	// On teste s'il y a un strip du bon format ou pas
-	textTop = textTopWithStrip;
-	pictureTop = textTopWithStrip;
-	try {
-	strip.InitVideoScreen( stripPath , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
-	} catch (str) {
-		Console.Warning(str);
-		textTop = textTopWithoutStrip;
-		pictureTop = textTopWithoutStrip;
-	}
-	
-	slideshow.InitSlideShowFactor(slideShowElmts.length, Rect( slideLeft , slideBottom , slideRight - slideLeft , slideTop - slideBottom), 20);
-	windows.InitWindowFactor( Rect( pictureLeft , 1-pictureTop , pictureRight-pictureLeft, pictureTop-pictureBottom), 20 );
-	
-	textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getHandler().getText( lang )); // u d l r (margins) + Text to display
-	audioPlayer.placeMusicFactor (1-musicTop, musicBottom, musicLeft, 1-musicRight, Datas.getHandler().getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
-	
-	// On donne les infos au slideShow
-	for (i = 0; i < slideShowElmts.length; i++ ) {
-		var tempArray = slideShowElmts[i] as Array ;
-		slideshow.AddElmt(tempArray[0], tempArray[1] );
-	}
-	
-	FrameElapsedSinceGUIInitialized = 0 ;
-	
-}
-
-function LeaveFullScreen( Video : GameObject ) {
-	
-	// Restitution des positions
-	Video.transform.position = VideoInitialPos ;
-	Video.transform.eulerAngles = VideoInitialRot;
-	camera.transform.position = CameraInitialPos ;
-
-
-	audioPlayer.removeMusic();
-	textViewer.removeText();
-	
-	slideshow.destuctSlideShow();
-	windows.destuctWindow();
-	
-	// for strip
-	strip.destructStrip();
-	firstTimeInUpdate = true;
-	
-	onFullScreen = false ;
-	FrameElapsedSinceGUIInitialized = -1 ;
-}
-
-/*
- * Crée un plan avec la texture de chargement
- */
-private function CreateLoadingPlane() {
-	
-	// Création
-	if( !LoadObj) {
-		LoadObj = new GameObject.CreatePrimitive(PrimitiveType.Plane);
-		
-		LoadObj.name = "LOADING" ;
-	
-		// ajoute un renderer si tel n'est pas le cas
-		var testRenderer = LoadObj.GetComponent(Renderer);
-		if( !testRenderer)
-			LoadObj.AddComponent(Renderer);
-	
-		LoadObj.renderer.material.mainTexture = Resources.Load('GUI/Loading') ;
-	}
-	
-	
-	LoadObj.transform.position = camera.ScreenToWorldPoint( Vector3(camera.pixelWidth/2, camera.pixelHeight/2, 50 ) ) ;
-	
-	LoadObj.transform.rotation = new Quaternion();
-	
-	// Application des dimentions
-	var boundsize = LoadObj.renderer.bounds.size ;
-	var size = showingWindow.getRealSize( Vector2(camera.pixelWidth,  camera.pixelHeight), Vector2( camera.pixelWidth/2, camera.pixelHeight/2 ), 50, camera ) ;
-	var scale = LoadObj.transform.localScale ;
-	LoadObj.transform.localScale  = Vector3(scale.x* size.x/boundsize.x, scale.y ,scale.z* size.y/boundsize.z );
-	
-	LoadObj.transform.rotation = camera.transform.rotation ;
-	LoadObj.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
-	LoadObj.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );
-	
+	return slideShowElmts ;
 }
 
 
@@ -473,7 +489,6 @@ public function changeLangToEn() {
 	if( textViewer && onFullScreen ) {
 	
 		textViewer.removeText();
-		Console.Test(Datas.getHandler().getText( lang ), 102);
 		textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getHandler().getText( lang ));
 	
 	}

@@ -299,3 +299,5 @@ static function getStringContainInArray( A : Array, s : String ) {
 	return matchedString ;
 }
 
+
+
