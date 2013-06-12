@@ -1,3 +1,4 @@
+#pragma strict
 /*
 	*Creation : 29/04/2013
 	*Author : Fabien Daoulas
@@ -41,6 +42,9 @@ private var zoomLength : float = 2;
 
 // events are enabled ?
 private var eventEnable : boolean = false;
+
+// path of asset
+private var Path : String;
 
 
 /**************** listeners ****************/
@@ -107,6 +111,8 @@ private function initZoom(){
 	*on the event OnFullScreen this method is called
 */
 function InitVideoScreen( path : String , r : Rect ){
+
+	Path = path;
 	// init state of the state machine
 	states = STATES_OF_STRIP.STATE_OUT;
 	// load asset and test if texture exists and has the right type
@@ -128,30 +134,9 @@ function InitVideoScreen( path : String , r : Rect ){
 		getInParameters();
 		enableAll();
 	}
-	else
+	else{
 		throw ("No strip file found here or type of file is not texture2D");
-	
-	/*if( texture ){
-		if( typeof( texture ) == typeof(Texture) || typeof( texture ) == typeof(Texture2D) ){
-			// get ratio of strip
-			ratioPlane = (texture as Texture).width/(texture as Texture).height;
-				
-			rectOUT = optimalSize( ratioPlane , r );
-			createStripPlane( path , rectOUT );
-	
-			// compute scale and position when plane is widen
-			getInParameters();
-			enableAll();
-		}
-		else{
-			videoScreen = new GameObject.CreatePrimitive( PrimitiveType.Plane );
-			videoScreen.name = "GUI_stripPlane";
-			disableAll();
-			throw ("File is typeof "+typeof(texture)+" whereas it should be typeof Texture or Texture2D");
-		}
 	}
-	else
-		throw ("No strip file found here ");*/
 		
 }
 
@@ -194,10 +179,7 @@ private function createStripPlane( path : String , r : Rect ){
 		videoScreen.AddComponent(Renderer);
 	
 	// add texture to the plane
-	var mat : Material = Resources.Load("basic");//videoScreen.renderer.material = Resources.Load('basic');
-	mat.mainTexture = Resources.Load( path );
-	videoScreen.renderer.material = mat;
-	//videoScreen.renderer.material.mainTexture = Resources.Load( path );
+	videoScreen.renderer.material.mainTexture = Resources.Load(Path);
 }
 
 /*
@@ -275,8 +257,10 @@ private function getInParameters(){
 ////////////////
 
 function updateStrip(){
-	if( states == STATES_OF_STRIP.ZOOM_IN )
+	if( states == STATES_OF_STRIP.ZOOM_IN ){
 		Update_ZOOM_IN();
+		videoScreen.renderer.material.mainTexture = Resources.Load(Path);
+	}
 	
 	if( states == STATES_OF_STRIP.ZOOM_OUT )
 		Update_ZOOM_OUT();
@@ -363,18 +347,7 @@ private function getRectPlane() : Rect {
 	return r;
 }
 
-///////////////////////////////////
-/////run / stop video on plane/////
-///////////////////////////////////
-/*
-function runMovie( name : String ){
-	videoSet.putVideo( videoScreen , name );
-}
 
-function stopMovie(){
-	videoSet.stopVideo( videoScreen );
-}
-*/
 ////////////////////////////////////////////////
 /////destruct when leaving full screen mode/////
 ////////////////////////////////////////////////
