@@ -92,7 +92,7 @@ function initCredits ( returnRectangle : Rect) {
 	else
 		textViewer.placeTextFactor( margin_top , margin_bot , margin_left , 0.5 , fileSystem.getTextFromFile(fileSystem.getResourcesPath() + pathCredits)); // u d l r (margins) + Text to display
 
-	/*init nom des logos*/
+		/*init nom des logos*/
 	logoPath[0] = "EMSE";
 	logoPath[1] = "LFKS";
 	logoPath[2] = "ZKM";
@@ -100,7 +100,7 @@ function initCredits ( returnRectangle : Rect) {
 	logoPath[4] = "softPredictions";
 	
 	/*init plane where mivie is displayed*/
-	initScreen();
+	//initScreen();
 	
 }
 
@@ -116,13 +116,13 @@ function OnGUICredits () {
 		}
 		// display text
 		textViewer.OnGUIText();
-		// display logos
+		/* display logos
 		for( var i = 0 ; i < logoPath.length ; i++ )
 			displayLogo( 	1 - ( margin_bot + i*( height_logo + margin_betw_media ) ),
 							0.5 + margin_center/2,
 							width_logo,
 							height_logo,
-							logoPath[i]);
+							logoPath[i]);*/
 	}
 }
 
