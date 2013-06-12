@@ -32,7 +32,7 @@ private var spacing : int = 25; // between lines
 private var widthTab = 4; // width of a tabulation (in spaces)
 private var styleLetterMiddle : GUIStyle = new GUIStyle(); // style of letter
 
-private var indexFirstChar : int = 0; // Index of the first character displayed (0 except if it is '<')
+private var indexFirstChar ; // Index of the first character displayed (0 except if it is '<')
 
 private var upArrow : Texture; // Showing possible scrolling
 private var downArrow : Texture; // Idem
@@ -43,10 +43,10 @@ private var downArrow : Texture; // Idem
 */
 private var letterSpots : Rect[]; // array of rects containing the position of the GUILabel of each letter -- aboutLetter[i] is corresponding to textToDisplay[i]
 private var REF_RECT : Rect; // rectangle of reference -- this is the place of the first letter at the top-left of the text
-private var moveToNext = new Array(); // values of i which corresponds to a move to the next line
-private var toJustify = new Array(); // Indicates for each line wether we need to justify it or not
-private var nbLines : int = 0;
-private var myTags = new Array(); // All the tags (e.g: <iAmATag>) in the text
+private var moveToNext : Array ; // values of i which corresponds to a move to the next line
+private var toJustify : Array ; // Indicates for each line wether we need to justify it or not
+private var nbLines : int ;
+private var myTags : Array ; // All the tags (e.g: <iAmATag>) in the text
 
 
 /*
@@ -67,7 +67,7 @@ private var textInitialized : boolean = false;
 private function initText(u: int, d: int, l: int, r: int) {
 
 	letterSpots = new Rect[textToDisplay.Length];
-
+	
 	/* Calculate margin sizes */
 	uBorder = u;
 	dBorder = d;
@@ -93,7 +93,15 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 		Debug.LogWarning('Empty text given');
 		return ;
 	}
-		
+	
+	// reset values
+	indexFirstChar = 0;
+	moveToNext = new Array();
+	toJustify = new Array();
+	nbLines  = 0;
+	myTags = new Array();
+	
+	
 	textToDisplay = text;
 	initText(u, d, l, r);
 		

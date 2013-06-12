@@ -35,16 +35,15 @@ private var FrameElapsedSinceGUIInitialized : int = -1 ;
 private var VideoInitialPos : Vector3 ;
 private var VideoInitialRot : Vector3 ;
 private var CameraInitialPos : Vector3 ;
-private var CameraInitialOrthographic : boolean ;
-private var CameraInitialLightType ;
-private var CameraInitialLightIntesity : float ;
 
 
 // A appeller pour sortir
 private var toOnDeZoom : function() ;
 
+// Textures des bouttons
 private var returnTexture : Texture;
 private var creditsTexture : Texture;
+private var langTexture : Texture;
 
 
 // Langue courante de l'application
@@ -92,7 +91,7 @@ private var slideRight : float = marginRight;
 private var sizeButtonsPix : int = sizeButtons * Screen.height; // Taille boutons = hauteur strip = hauteur slide
 private var returnRectangle : Rect = new Rect(Screen.width*marginLeft, Screen.height*(1-marginBottom)-sizeButtonsPix, sizeButtonsPix, sizeButtonsPix);
 private var creditsRectangle : Rect = new Rect(Screen.width*textRight-sizeButtonsPix, Screen.height*(1-marginBottom)-sizeButtonsPix, sizeButtonsPix, sizeButtonsPix);
-
+private var langRectangle : Rect = new Rect(Screen.width*textRight-2*sizeButtonsPix, Screen.height*(1-marginBottom)-sizeButtonsPix, sizeButtonsPix, sizeButtonsPix);
 
 private var textTop : float ;
 private var pictureTop : float ;
@@ -124,6 +123,7 @@ function InitFullScreen( Initlang  : String ) {
 	customGUISkin = Resources.Load("mySkin");
 	
 	lang = Initlang ;
+	switchLang( false );
 }
 
 function OnGUIFullScreen(){
@@ -143,6 +143,10 @@ function OnGUIFullScreen(){
 			
 			if( GUI.Button( creditsRectangle, creditsTexture ) ) {
 				myCredits.initCredits(returnRectangle);
+			}
+			
+			if( GUI.Button( langRectangle, langTexture ) ) {
+				switchLang( true ) ;
 			}
 			
 			audioPlayer.OnGUISound();
@@ -396,7 +400,86 @@ private function CreateLoadingPlane() {
 }
 
 
+/*
+ * Change la langue courante en fonction de sa valeur
+ */
+public function switchLang( changeCurrent : boolean ) {
+	
+	switch(lang) {
+		
+		case 'fr' :
+			
+			if( changeCurrent )
+				changeLangToEn() ;
+			else
+				changeLangToFr() ;
+				
+			break ;
+		
+		case 'en' :
+		
+			if( changeCurrent )
+				changeLangToFr() ;
+			else
+				changeLangToEn() ;
+				
+			break ;
+		
+		default :
+			lang = 'en' ;
+			changeLangToEn() ;
+			break ;
+	}
+}
 
+/*
+ * Met la GUI en français
+ */
+public function changeLangToFr() {
+	// changement du paramètre
+	lang = 'fr' ;
+	
+	// changement du boutton
+	if( langTexture )
+		Resources.UnloadAsset( langTexture );
+	
+	langTexture = Resources.Load("GUI/en");
+	if (!langTexture)
+		Console.Warning("Pas de texture avec le drapeau britanique pour le bouton de langue");
+	
+	// changement du texte
+	if( textViewer && onFullScreen ) {
+	
+		textViewer.removeText();
+		textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getHandler().getText( lang ));
+	
+	}
+}
+
+/*
+ * Met la GUI en englais
+ */
+public function changeLangToEn() {
+	// changement du paramètre
+	lang = 'en' ;
+	
+	// changement du boutton
+	if( langTexture )
+		Resources.UnloadAsset( langTexture );
+	
+	langTexture = Resources.Load("GUI/fr");
+	if (!langTexture)
+		Console.Warning("Pas de texture avec le drapeau français pour le bouton de langue");
+	
+	// changement du texte
+	if( textViewer && onFullScreen ) {
+	
+		textViewer.removeText();
+		Console.Test(Datas.getHandler().getText( lang ), 102);
+		textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getHandler().getText( lang ));
+	
+	}
+}
 
 
 /*
