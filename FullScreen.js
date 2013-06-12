@@ -25,7 +25,7 @@ private var isolate : boolean = true ;
 private var toMove : Vector3 = new Vector3( -2000, -2000, -2000) ;
 
 // Donnée pour la GUI
-private var Datas : scriptForPlane ;
+private var Datas : dataFolderHandler ;
 
 // pour l'ecran de chargement
 private var LoadObj : GameObject = null ;
@@ -44,6 +44,9 @@ private var toOnDeZoom : function() ;
 private var returnTexture : Texture;
 private var creditsTexture : Texture;
 private var langTexture : Texture;
+
+// Miniature par défaut des video :
+private var defaultVideoIcon : String = 'Pictures/play' ;
 
 
 // Langue courante de l'application
@@ -100,9 +103,9 @@ private var pictureTop : float ;
 /*
  * Initialisation des variables
  */
-
 function InitFullScreen( Initlang  : String ) {
 	
+	// Ajout des composant nécessaires
 	slideshow =		gameObject.AddComponent("slideShow")		as slideShow ;
 	windows =		gameObject.AddComponent("showingWindow")	as showingWindow ;
 	audioPlayer =	gameObject.AddComponent("sound")			as sound ;
@@ -110,8 +113,10 @@ function InitFullScreen( Initlang  : String ) {
 	strip = 		gameObject.AddComponent("displayStrip")		as displayStrip;
 	myCredits = 	gameObject.AddComponent("credits")			as credits;
 	
+	// initialise l'état de la GUI
 	onFullScreen = false ;
 	
+	// Initialisation des textures des bouttons
 	returnTexture = Resources.Load('GUI/back');
 	if (!returnTexture)
 		Console.Warning("Pas de texture pour le bouton return");
@@ -122,18 +127,25 @@ function InitFullScreen( Initlang  : String ) {
 		
 	customGUISkin = Resources.Load("mySkin");
 	
+	// Configure la langue par défaut
 	lang = Initlang ;
 	switchLang( false );
 }
 
+/*
+ * Affiche les boutton et les élément de GUI 2D
+ */
 function OnGUIFullScreen(){
 	
+	// si en plein écran
 	if( onFullScreen ) {
 	
 		GUI.skin = customGUISkin; // Transparent buttons
-	
+		
+		// Si visible
 		if( !GUIIsHidden) {
 			
+			// boutton de retour associé au callback du Zoom
 			if( toOnDeZoom ) {
 				if( GUI.Button( returnRectangle, returnTexture ) ) {
 					Debug.Log( 'Sortie de l\'interface demandée' );
@@ -141,18 +153,22 @@ function OnGUIFullScreen(){
 				}
 			} // end bouton retour
 			
+			// Boutton de crédit
 			if( GUI.Button( creditsRectangle, creditsTexture ) ) {
 				myCredits.initCredits(returnRectangle);
 			}
 			
+			// Boutton de langue
 			if( GUI.Button( langRectangle, langTexture ) ) {
 				switchLang( true ) ;
 			}
 			
+			// Lecteur audio et texte
 			audioPlayer.OnGUISound();
 			textViewer.OnGUIText();
 		} // end if GUI showed
 		
+		// Affichage des crédit suivant l'état des crédits
 		if (myCredits.isDisplayed())
 			myCredits.OnGUICredits();
 	}
@@ -166,17 +182,28 @@ function OnGUIFullScreen(){
  */
 function UpDateFullScreen() {
 	
+	// Maj du nombre de frame écoulé depuis le lancement de la fonction CreateGUI
 	if( FrameElapsedSinceGUIInitialized >= 0 )
 		FrameElapsedSinceGUIInitialized++ ;
 	
-	
+	// SI on est dans la GUI mais que les objet n'ont pas encore été initialisé
 	if( onFullScreen && LoadObj && LoadObj.renderer.enabled && FrameElapsedSinceGUIInitialized < 0) {
-		CreateGUI();
-		disableOthers('');
+		CreateGUI();		// On les initialise
+		disableOthers('');	// On les désactive pendant quelques frames
+		FrameElapsedSinceGUIInitialized = 0 ;
+	
+	// Si les éléments on été initialisé, et que les quelques frame ne sont pas encore écoulé
+	} else if ( onFullScreen && LoadObj && LoadObj.renderer.enabled && FrameElapsedSinceGUIInitialized < 20 ) {
+		disableOthers('');	// On s'assure que rien n'est réapparu
+		
+	// Si les éléments on été initialisé, après quelques frames ... (permet de cacher quelques glitchs
 	} else if ( onFullScreen && LoadObj && LoadObj.renderer.enabled && FrameElapsedSinceGUIInitialized > 20 ) {
-		LoadObj.renderer.enabled = false ;
-		enableOthers('');
+		LoadObj.renderer.enabled = false ;		// on retire l'écran de chargement
+		enableOthers('');						// On affiche le reste
+	
+	//Si on est en plein écran et que tout est initialisé
 	} else if( onFullScreen ) {
+		// On met à jour les éléments
 		slideshow.UpDateSlideShow();
 		windows.SetNewTextureObj( slideshow.getCurrentAssociedInfo() );
 		windows.updateWindow();
@@ -193,7 +220,9 @@ public function SetLeaveCallback( f : function() ) {
 	toOnDeZoom = f ;
 }
 
-
+/*
+ * Commence l'initialisation de la GUI et affiche l'écran de chargement
+ */
 public function EnterOnFullScreen(Video : GameObject ) {
 	
 	// On retient les positions initiale pour pouvoir les restituer
@@ -201,54 +230,59 @@ public function EnterOnFullScreen(Video : GameObject ) {
 	VideoInitialRot = Video.transform.eulerAngles ;
 	CameraInitialPos = camera.transform.position ;
 	
-	// On déplace le tout pour l'isoler ds autres éléments
+	// On déplace le tout pour l'isoler des autres éléments
 	if( isolate ) {
 		camera.transform.position += toMove ;
 	}
 	
+	// met à jour l'état
 	onFullScreen = true ;
 	
-	Datas = Video.GetComponent('scriptForPlane');
+	// on récupère le gestionnaire des dossiers et fichiers de resources
+	Datas = ( Video.GetComponent('scriptForPlane') as scriptForPlane ).getHandler();
 	
-	
+	// Création et affichage de l'écran de chargement
 	CreateLoadingPlane();
-	
 	LoadObj.renderer.enabled = true ;
 	hideGUI();
 }
 
 
 /*
- * Les CallBack des entrées et sorties
+ * Initialise les éléments de la GUI
  */
 function CreateGUI() {
 		
 	/*
 	 * Récupération des données
 	 */
-	
-	
-	var stripPath : String = Datas.getHandler().getStripImg();
+	var stripPath : String = Datas.getStripImg();
 	var slideShowElmts : Array = createSlideshowDatas();
 		
-	/* Initialisation de tous les éléments du full screen */
+	/*
+	 * Initialisation de tous les éléments du full screen
+	 */
 	
-	// On teste s'il y a un strip du bon format ou pas
+	// On teste s'il y a un strip du bon format
 	textTop = textTopWithStrip;
 	pictureTop = textTopWithStrip;
 	try {
-	strip.InitVideoScreen( stripPath , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
+		// On affiche le strip si c'est bon
+		strip.InitVideoScreen( stripPath , strip.placeStripFactor( stripTop , stripBottom , stripLeft , stripRight ) );
 	} catch (str) {
+		// On décale le reste sinon
 		Console.Warning(str);
 		textTop = textTopWithoutStrip;
 		pictureTop = textTopWithoutStrip;
 	}
 	
+	// Initialisation du slideshow et de la fenêtre
 	slideshow.InitSlideShowFactor(slideShowElmts.length, Rect( slideLeft , slideBottom , slideRight - slideLeft , slideTop - slideBottom), 20);
 	windows.InitWindowFactor( Rect( pictureLeft , 1-pictureTop , pictureRight-pictureLeft, pictureTop-pictureBottom), 20 );
 	
-	textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getHandler().getText( lang )); // u d l r (margins) + Text to display
-	audioPlayer.placeMusicFactor (1-musicTop, musicBottom, musicLeft, 1-musicRight, Datas.getHandler().getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
+	// Initialisation du texte et de l'audio
+	textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getText( lang )); // u d l r (margins) + Text to display
+	audioPlayer.placeMusicFactor (1-musicTop, musicBottom, musicLeft, 1-musicRight, Datas.getSounds() ); // Coordinates of the music layout. U D L R. The button is always a square
 	
 	// On donne les infos au slideShow
 	for (var i: int = 0; i < slideShowElmts.length; i++ ) {
@@ -256,16 +290,19 @@ function CreateGUI() {
 		slideshow.AddElmt(tempArray[0], tempArray[1] );
 	}
 	
-	FrameElapsedSinceGUIInitialized = 0 ;
-	
-	
+	///////////////// EXEMPLE POUR KEVIN ///////////////////
 	windows.AddOnChangeCallback(exampleRecuperationNomImageAffiche);
 }
 
 function exampleRecuperationNomImageAffiche (s : SLIDESHOWELMT) {
 	Console.Test(s.path, 102) ;
 }
+	/////////////////////////////////////////////////////////
 
+
+/*
+ * Supprime/Cache tous les éléments de la fenêtre
+ */
 function LeaveFullScreen( Video : GameObject ) {
 	
 	// Restitution des positions
@@ -273,20 +310,23 @@ function LeaveFullScreen( Video : GameObject ) {
 	Video.transform.eulerAngles = VideoInitialRot;
 	camera.transform.position = CameraInitialPos ;
 
-
+	// Suppression de l'audio et du texte
 	audioPlayer.removeMusic();
 	textViewer.removeText();
 	
+	// Suppression de la fenêtre et du slideshow
 	slideshow.destuctSlideShow();
 	windows.destuctWindow();
 	
-	// for strip
+	// Suppression du strip
 	strip.destructStrip();
-	firstTimeInUpdate = true;
 	
+	// remet à zeor les états
+	firstTimeInUpdate = true;
 	onFullScreen = false ;
 	FrameElapsedSinceGUIInitialized = -1 ;
 }
+
 
 /*
  * Crée un plan avec la texture de chargement
@@ -307,7 +347,7 @@ private function CreateLoadingPlane() {
 		LoadObj.renderer.material.mainTexture = Resources.Load('GUI/Loading') ;
 	}
 	
-	
+	// positionnement
 	LoadObj.transform.position = camera.ScreenToWorldPoint( Vector3(camera.pixelWidth/2, camera.pixelHeight/2, 50 ) ) ;
 	
 	LoadObj.transform.rotation = new Quaternion();
@@ -318,6 +358,7 @@ private function CreateLoadingPlane() {
 	var scale = LoadObj.transform.localScale ;
 	LoadObj.transform.localScale  = Vector3(scale.x* size.x/boundsize.x, scale.y ,scale.z* size.y/boundsize.z );
 	
+	// rotation
 	LoadObj.transform.rotation = camera.transform.rotation ;
 	LoadObj.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
 	LoadObj.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );
@@ -330,87 +371,103 @@ private function CreateLoadingPlane() {
  */
 private function createSlideshowDatas() : Array {
 	
-	var slideShowImgs : Array = Datas.getHandler().getImages();
-	var slideShowMin : Array = Datas.getHandler().getMiniatures();
-	var slideShowVideo : Array = Datas.getHandler().getVideos();
-	var slideShowVideoRight : Array = Datas.getHandler().getVideosRight();
-	var slideShowVideoLeft : Array = Datas.getHandler().getVideosLeft();
+	// Récupération des données
+	var slideShowImgs : Array = Datas.getImages();
+	var slideShowMin : Array = Datas.getMiniatures();
+	var slideShowVideo : Array = Datas.getVideos();
+	var slideShowVideoRight : Array = Datas.getVideosRight();
+	var slideShowVideoLeft : Array = Datas.getVideosLeft();
 	
+	// Déclaration des variables
 	var slideShowTempElmt : SLIDESHOWELMT ;
 	var slideShowElmts : Array = Array() ;
 	var id : int = 1 ;
 	
-	// Remplis un tableau d'éléments pour le slideshow et la fenètre
+	/*
+	 *  Remplis un tableau d'éléments pour le slideshow et la fenètre
+	 *  Avec chaque type de donnée
+	 */
+	
+	// Pour les Images
 	for (var i = 0; i < slideShowImgs.length; i++ ) {
-		
-		
-		
+		// On récupère la miniature associé à l'image
 		var min = fileSystem.getAssociatedMin( slideShowImgs[i], slideShowMin ) ;
+		// On crée un SLIDESHOWELMT
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowImgs[i],
 													WINDOWTYPES.IMG,
-													Vector2.zero,
-													id,
+													Vector2.zero, id,
 													(min == slideShowImgs[i]) );
-		
-		if( i == 0)
+		if( i == 0) // la première image est pe utilisé dans l'univer (voir placeAuto)
 			slideShowTempElmt.alsoUseAway = true ;
-		
+		// finalisation
 		slideShowElmts.Push( new Array( min, slideShowTempElmt ) );
 		id++ ;
 	}
+	
+	// Pour les Video droites
 	for (i = 0; i < slideShowVideo.length; i++ ) {
-		
-		
-		// On verifie qu'il y a une miniature associé à la video
+		// Si il n'y a pas de miniature associé à la video, on met celle par défaut
 		min = fileSystem.getAssociatedMin( slideShowVideo[i], slideShowMin ) ;
 		if( min == slideShowVideo[i])
-			min = 'Pictures/play';
-		
+			min = defaultVideoIcon ;
+		// On crée un SLIDESHOWELMT
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
 													WINDOWTYPES.VIDEO,
-													Vector2.zero,
-													id,
-													false );
-		
-		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
-		id++ ;
-	}
-	for (i = 0; i < slideShowVideoRight.length; i++ ) {
-		
-		
-		// On verifie qu'il y a une miniature associé à la video
-		min = fileSystem.getAssociatedMin( slideShowVideoRight[i], slideShowMin ) ;
-		if( min == slideShowVideoRight[i])
-			min = 'Pictures/play';
-		
-		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideoRight[i],
-													WINDOWTYPES.VIDEORIGHT,
-													Vector2.zero,
-													id,
-													false );
-		
-		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
-		id++ ;
-	}
-	for (i = 0; i < slideShowVideoLeft.length; i++ ) {
-		
-		
-		// On verifie qu'il y a une miniature associé à la video
-		min = fileSystem.getAssociatedMin( slideShowVideoLeft[i], slideShowMin ) ;
-		if( min == slideShowVideoLeft[i])
-			min = 'Pictures/play';
-		
-		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideoLeft[i],
-													WINDOWTYPES.VIDEOLEFT,
-													Vector2.zero,
-													id,
-													false );
-		
+													Vector2.zero, id, false );
+		// finalisation
 		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
 		id++ ;
 	}
 	
+	// Pour les Video orientés à droite
+	for (i = 0; i < slideShowVideoRight.length; i++ ) {
+		// Si il n'y a pas de miniature associé à la video, on met celle par défaut
+		min = fileSystem.getAssociatedMin( slideShowVideoRight[i], slideShowMin ) ;
+		if( min == slideShowVideoRight[i])
+			min = defaultVideoIcon ;
+		// On crée un SLIDESHOWELMT
+		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideoRight[i],
+													WINDOWTYPES.VIDEORIGHT,
+													Vector2.zero, id, false );
+		// finalisation
+		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
+		id++ ;
+	}
+	
+	// Pour les Video orientés à gauche
+	for (i = 0; i < slideShowVideoLeft.length; i++ ) {
+		// Si il n'y a pas de miniature associé à la video, on met celle par défaut
+		min = fileSystem.getAssociatedMin( slideShowVideoLeft[i], slideShowMin ) ;
+		if( min == slideShowVideoLeft[i])
+			min = defaultVideoIcon ;
+		// On crée un SLIDESHOWELMT
+		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideoLeft[i],
+													WINDOWTYPES.VIDEOLEFT,
+													Vector2.zero, id, false );
+		// finalisation
+		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
+		id++ ;
+	}
+	slideShowElmts.Sort(nameLesserThan);
 	return slideShowElmts ;
+}
+
+
+/*
+ * Renvoie vrai si le nom du fichier 1
+ * est avant dans l'ordre alphabétique que le 2
+ * Les données passé sont au même format que les éléments
+ * du taleau de la fonction createSlideshowDatas
+ */
+static function nameLesserThan( p1 : Array , p2 : Array ) : int {
+	
+	var file1emlt : SLIDESHOWELMT = p1[1] ;
+	var file2emlt : SLIDESHOWELMT = p2[1] ;
+	
+	var file1 : String = file1emlt.path ;
+	var file2 : String = file2emlt.path ;
+	
+	return String.Compare( fileSystem.getName(file1), fileSystem.getName(file2)) ;
 }
 
 
@@ -419,28 +476,30 @@ private function createSlideshowDatas() : Array {
  */
 public function switchLang( changeCurrent : boolean ) {
 	
+	// suivant la langue en cours
 	switch(lang) {
 		
 		case 'fr' :
-			
+			// si il faut qu'on change la langue en cours ou pas
 			if( changeCurrent )
-				changeLangToEn() ;
+				changeLangToEn() ;	// met en anglais
 			else
-				changeLangToFr() ;
+				changeLangToFr() ;	// met en français
 				
 			break ;
 		
 		case 'en' :
-		
+			// si il faut qu'on change la langue en cours ou pas
 			if( changeCurrent )
-				changeLangToFr() ;
+				changeLangToFr() ;	// met en français
 			else
-				changeLangToEn() ;
+				changeLangToEn() ;	// met en anglais
 				
 			break ;
 		
+		// si invalide
 		default :
-			lang = 'en' ;
+			lang = 'en' ;			// met en anglais
 			changeLangToEn() ;
 			break ;
 	}
@@ -465,7 +524,7 @@ public function changeLangToFr() {
 	if( textViewer && onFullScreen ) {
 	
 		textViewer.removeText();
-		textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getHandler().getText( lang ));
+		textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getText( lang ));
 	
 	}
 }
@@ -489,11 +548,10 @@ public function changeLangToEn() {
 	if( textViewer && onFullScreen ) {
 	
 		textViewer.removeText();
-		textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getHandler().getText( lang ));
+		textViewer.placeTextFactor(1-textTop, textBottom, textLeft, 1-textRight, Datas.getText( lang ));
 	
 	}
 }
-
 
 /*
  * Affiche et active le(s) boutton(s) géré par fullscreen

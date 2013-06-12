@@ -186,6 +186,8 @@ private function initScreen(){
 	// get ratio of movie
 	var v : Vector2 = videoSet.VideoWH();
 	var ratio : float = v.x/v.y;
+	Console.Test(v ,102);
+	
 	// calculate a new rectangle that fit the ratio of movie
 	var newR : Rect = strip.optimalSize( ratio , r );
 	// set parameters of screen
