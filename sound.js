@@ -42,6 +42,10 @@ private var chooseNextSoundRandomly: boolean = true;
 
 private var repeatButton : Texture;
 
+private var displaySongName : boolean = false;
+private var displayPlayButton : boolean = true;
+private var displayChangeButton : boolean = false;
+
 
 function OnGUISound() {
 	if( !soundIsHidden )
@@ -65,12 +69,15 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
 	audio.Play();
 			
 	enableAll();
-		
-	playBtn = Resources.Load("Pictures/play");
-	pauseBtn = Resources.Load("Pictures/pause");
-	currentBtn = pauseBtn;
 	
-	repeatButton = Resources.Load("Pictures/repeat_music");
+	if (displayPlayButton) {
+		playBtn = Resources.Load("Pictures/play");
+		pauseBtn = Resources.Load("Pictures/pause");
+		currentBtn = pauseBtn;
+	}
+	
+	if (displayChangeButton)
+		repeatButton = Resources.Load("Pictures/repeat_music");
 	
 	if (buttonSizeFactor > 1)
 		buttonSizeFactor = 1;
@@ -80,15 +87,21 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
 	lBorder = l;
 	rBorder = r;
 	
-	soundNameStr = fileSystem.getName(tab[0]);
-	audio.loop = true;
+	if (displaySongName)
+		soundNameStr = fileSystem.getName(tab[0]);
 	
-	if (!playBtn) {
+	audio.loop = false;
+	
+	if (!playBtn && displayPlayButton) {
         Debug.LogError("No texture for play button");
         return;
     }
-    if (!pauseBtn) {
+    if (!pauseBtn && displayPlayButton) {
         Debug.LogError("No texture for pause button");
+        return;
+    }
+    if (!repeatButton && displayChangeButton) {
+        Debug.LogError("No texture for change music button");
         return;
     }
 }
@@ -100,36 +113,40 @@ function placeMusicFactor (u: float, d: float, l: float, r: float, tab: Array) {
 function displayMusic() {
 
 	/* Do not display anything for music if play btn is not loaded or if there is no sound to play */	
-	if( !playBtn || (nbSounds == 0))
+	if( (displayPlayButton && !playBtn) || (nbSounds == 0))
 		return;
 	
 	var buttonSize = (Screen.height - uBorder - dBorder ) * buttonSizeFactor;  // size of the square
 
 	/* The button is centered regarding the y axis */
-	if (GUI.Button(Rect(lBorder, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), currentBtn) && eventEnable ) { // Rect: left top width height
-		if (currentBtn == pauseBtn) { // Sound playing
-			currentBtn = playBtn;
-			audio.Pause();
-		}
-		else {
-			currentBtn = pauseBtn;
-			audio.Play();
+	if (displayPlayButton) {
+		if (GUI.Button(Rect(lBorder, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), currentBtn) && eventEnable ) { // Rect: left top width height
+			if (currentBtn == pauseBtn) { // Sound playing
+				currentBtn = playBtn;
+				audio.Pause();
+			}
+			else {
+				currentBtn = pauseBtn;
+				audio.Play();
+			}
 		}
 	}
 		
-	/* Test bouton changer musique, amené à disparaitre un jour */
-	if (GUI.Button(Rect( Screen.width-rBorder-buttonSize, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), repeatButton) && eventEnable) {
-		changeMusic("");
+	/* Bouton changer musique */
+	if (displayChangeButton) {
+		if (GUI.Button(Rect( Screen.width-rBorder-2*buttonSize, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), repeatButton) && eventEnable)
+			changeMusic("");
 	}
 		
-		/* Name of the song */
-		
-	GUI.Label( Rect(lBorder + buttonSize + 10,
-					uBorder + buttonSize/(2*buttonSizeFactor) - widthLetter,
-					Screen.width - lBorder - rBorder,
-					heightLetter
-					),
-			soundNameStr);
+	/* Name of the song: Does NOT handle the case when the name is too LONG */
+	if (displaySongName) {
+		GUI.Label( Rect(lBorder + buttonSize + 10,
+						uBorder + buttonSize/(2*buttonSizeFactor) - widthLetter,
+						Screen.width - lBorder - rBorder,
+						heightLetter
+						),
+				soundNameStr);
+	}
 }
 
 /* If soundName = "", the function chooses the next sound to play (random or not). If not, plays the sound named soundName */
@@ -163,15 +180,19 @@ function changeMusic(soundName) {
 	* Load and play the selected sound
 	*/
 	audio.clip = Resources.Load(newSoundPath) as AudioClip;
-	soundNameStr = fileSystem.getName(newSoundPath);
 	
-	if (audioIsPlaying) {
-		audio.Play();
-		currentBtn = pauseBtn;
-	}
-	else {
-		audio.Pause();
-		currentBtn = playBtn;
+	if (displaySongName)
+		soundNameStr = fileSystem.getName(newSoundPath);
+	
+	if (displayPlayButton) {
+		if (audioIsPlaying) {
+			audio.Play();
+			currentBtn = pauseBtn;
+		}
+		else {
+			audio.Pause();
+			currentBtn = playBtn;
+		}
 	}
 }
 
@@ -197,7 +218,7 @@ function removeMusic() {
 public function enableAll() {
 	show() ;
 	enableEvents() ;
-	if (currentBtn == pauseBtn)
+	if (currentBtn == pauseBtn || !displayPlayButton)
 		audio.Play();
 }
 
