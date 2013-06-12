@@ -1,3 +1,4 @@
+#pragma strict
 /*
 Creation : 02/04/2013
 Last update : 11/06/2013
