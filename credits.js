@@ -68,13 +68,13 @@ function initCredits ( returnRectangle : Rect) {
 	strip = 		gameObject.GetComponent("displayStrip")		as displayStrip;
 	windows = 		gameObject.GetComponent("showingWindow") 	as showingWindow;
 	slideshow = 	gameObject.GetComponent("slideShow")		as slideShow;
-	videoSet = 		gameObject.GetComponent("videoSettings") as videoSettings;
+	videoSet = 		gameObject.GetComponent("videoSettings") 	as videoSettings;
 	
 	// manage audio of GUI
-	gameObject.GetComponent("AudioSource");
+	audioPlayer =	gameObject.GetComponent("AudioSource")		as sound;
 	if (audio.isPlaying) {
 		audioWasPlaying = true;
-		audio.Pause();
+		audio.mute = true;
 	}
 	else
 		audioWasPlaying = false;
@@ -163,7 +163,7 @@ function exitCredits() {
 	Destroy(videoScreen);
 	
 	if (audioWasPlaying)
-		audio.Play();
+		audio.mute = false;
 }
 
 /*

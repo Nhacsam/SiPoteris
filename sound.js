@@ -146,14 +146,14 @@ function displayMusic() {
 	}
 		
 	/* Name of the song: Does NOT handle the case when the name is too LONG */
-/*	if (displaySongName) {
+	if (displaySongName) {
 		GUI.Label( Rect(lBorder + buttonSize + 10,
 						uBorder + buttonSize/(2*buttonSizeFactor) - widthLetter,
 						Screen.width - lBorder - rBorder,
 						heightLetter
 						),
 				soundNameStr);
-	}*/
+	}
 }
 
 /* If soundName = "", the function chooses the next sound to play (random or not). If not, plays the sound named soundName */
