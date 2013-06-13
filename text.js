@@ -13,6 +13,7 @@ Use: placeText(...) is called once, and displayText(...) is called at every fram
 *	Text to display
 *	I ASSUME ALL \t ARE PRECEDED BY \n (all other \t will be ignored, except if first character)
 *	Multiple tags must be separated by NOTHING: e.g. <tag1><tag2> is fine, <tag1><tag2> is NOT
+*	Not tag at the end !
 */  
 private var textToDisplay : String;
  
@@ -43,11 +44,13 @@ private var downArrow : Texture; // Idem
 *	Placing the text
 */
 private var letterSpots : Rect[]; // array of rects containing the position of the GUILabel of each letter -- aboutLetter[i] is corresponding to textToDisplay[i]
+private var displayChar : boolean[]; // TRUE if we display the char
 private var REF_RECT : Rect; // rectangle of reference -- this is the place of the first letter at the top-left of the text
 private var moveToNext : Array ; // values of i which corresponds to a move to the next line
 private var toJustify : Array ; // Indicates for each line wether we need to justify it or not
 private var nbLines : int ;
-private var myTags : Array ; // All the tags (e.g: <iAmATag>) in the text
+private var myTags : Array ; // Strings: All the tags (e.g: <iAmATag>) in the text
+private var myTagIndexes : Array ; // Integers: All the indexes of (beginnings of the) the tags
 
 
 /*
@@ -68,6 +71,9 @@ private var textInitialized : boolean = false;
 private function initText(u: int, d: int, l: int, r: int) {
 
 	letterSpots = new Rect[textToDisplay.Length];
+	displayChar = new boolean [textToDisplay.Length];
+	for (var i : int = 0; i < textToDisplay.length; i++)
+		displayChar[i] = true;
 	
 	/* Calculate margin sizes */
 	uBorder = u;
@@ -88,6 +94,7 @@ private function initText(u: int, d: int, l: int, r: int) {
 	toJustify = new Array();
 	nbLines  = 0;
 	myTags = new Array();
+	myTagIndexes = new Array ();
 	
 	enableAll(); // enable event and dispy the text
 }
@@ -123,8 +130,16 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 			var tempTag : String = "";
 			tempTag = extractTag(i);
 			
-			if (tempTag != "")
-				i+=tempTag.Length; // Do not display the tag
+			if (tempTag != "") {
+				myTagIndexes.push(i);
+				
+				/* Do not display the tag */
+				for (var k : int = i; k < i+tempTag.Length; k++)
+					displayChar[k] = false;
+				i+=tempTag.Length;
+				
+				myTags.push(tempTag);
+			}
 			else if (i < textToDisplay.Length-1)
 				i++; // Do not stay in the loop...
 			else
@@ -133,8 +148,6 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 			/* If first char is "<" and we are handling the first (group of) tag(s), then the first displayed character is the next one ! */
 			if (textToDisplay[0] == "<" && firstTimeInWhileLoop)
 				indexFirstChar = i;
-
-			myTags.push(tempTag);
 		}
 		
 		/* Case when text begins with one or several tags, then \t */
@@ -307,12 +320,49 @@ function extractTag(i : int) {
 }
 
 /*
+*	Takes a SLIDESHOWELMT, turns it into a tag and calls toTag function which will scroll the text
+*/
+function takeSSelement (s : SLIDESHOWELMT) {
+	Console.Test(fileSystem.getName(s.path), 102) ;
+	toTag("<" + fileSystem.getName(s.path) + ">");
+}
+
+/*
 *	Scroll the text until the tag <myTag>
 *	Does not change scrolling if <myTag> does not exist
 *	When the text is initialized, an array of all the tags is created
 */
 function toTag (myTag: String) {
-
+	var tagNumber = (-1);
+	for (var i : int = 0; i < myTags.length; i++) {
+		if (myTags[i] == myTag) {
+			tagNumber = i;
+			break;
+		}
+	}
+	
+	if (tagNumber == (-1))
+		return;
+	
+	/* Index of the character after myTag in the text. If it is a "<", it must be the character after the next tag, etc. */
+	var index : int = myTagIndexes[tagNumber];
+	do {
+		while (textToDisplay[index] != ">") { // Go to the end of the tag
+			index++;
+			if (index >= textToDisplay.Length-1) // EOF
+				return;
+		}
+		index++;
+	} while ( textToDisplay[index] == "<" ); // If there is another tag just after
+	
+	var gap = letterSpots[index].y - uBorder;
+	
+	if (gap > ((letterSpots[textToDisplay.Length-1].y - uBorder) - ( Screen.height - uBorder - dBorder ) ) + heightLetter) // gap < height of text - height of screen, we scroll to max
+		gap = (letterSpots[textToDisplay.Length-1].y - uBorder) - ( Screen.height - uBorder - dBorder ) + heightLetter;
+	
+	for (var j : int = 0; j < textToDisplay.Length; j++) {
+		letterSpots[j].y -= gap;
+	}
 }
 
 /*
@@ -325,7 +375,7 @@ function OnGUIText(){
 
 function displayText() {
 	for (var i : int = indexFirstChar; i < textToDisplay.Length; i++) {
-		if (letterSpots[i].y >= uBorder && (letterSpots[i].y + heightLetter) <= Screen.height - dBorder)
+		if (letterSpots[i].y >= uBorder && (letterSpots[i].y + heightLetter) <= Screen.height - dBorder && displayChar[i])
 			GUI.Label (letterSpots[i], ""+textToDisplay[i], styleLetterMiddle);
 	}
 	

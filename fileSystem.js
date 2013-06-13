@@ -262,15 +262,14 @@ static function getName( path : String ) : String {
 
 static function getAssociatedMin( img : String, minTab : Array) {
 	
-	var imgName = removeExtension( getName(img) ) + '_' ;
+	var imgName = removeExtension( getName(img) ) ;
 	
 	for (var i = 0; i < minTab.length; i++) {
-		if( (minTab[i] as String).IndexOf(imgName) != -1 )
+		if( removeExtension( getName(minTab[i] as String) ) == imgName )
 			return minTab[i] ;
 	}
 	return img ;
 }
-
 
 
 /************************/

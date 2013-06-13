@@ -28,16 +28,22 @@ private var displayCredits : boolean = false;
 
 private var audioWasPlaying : boolean = false;
 
+private var VideoIsLoading : boolean;
+
+private var screenIsSet : boolean;
+
+private var videoScreen : GameObject;
+
 /*disposition des éléments des crédits en pourcentage de l'écran*/
-private var margin_center : float = 0.1;
-private var margin_right : float = 0.1;
-private var margin_left : float = 0.1;
-private var margin_top : float = 0.1;
-private var margin_bot : float = 0.15;
+private var margin_center : float = 0.05;
+private var margin_right : float = 0.05;
+private var margin_left : float = 0.05;
+private var margin_top : float = 0.10;
+private var margin_bot : float = 0.10;
 private var number_logo : int = 5;// five logos will be displayed
-private var margin_betw_media : float = 0.05; // déterminer suivant le nombre de médias
-private var width_logo : float = 0.5 - margin_right - margin_center/2;
-private var height_logo : float = (0.5 - margin_bot - 4*margin_betw_media)/number_logo;
+private var margin_betw_media : float = 0.01; // déterminer suivant le nombre de médias
+private var width_logo : float = (0.5 - margin_right - margin_center/2 - 2*margin_betw_media)/3;// 3 : three columns
+private var height_logo : float = (0.5 - margin_bot - margin_betw_media)/2;//2 : two lines
 
 /* position of plane along z axis */
 private var z_coor : float = 20;
@@ -100,7 +106,11 @@ function initCredits ( returnRectangle : Rect) {
 	logoPath[2] = "ZKM";
 	logoPath[3] = "MP2013";
 	logoPath[4] = "softPredictions";
-
+	
+	/* init bool */
+	VideoIsLoading = false;
+	screenIsSet = false;
+	
 	/*init plane where movie is displayed*/
 	initScreen();
 }
@@ -117,6 +127,7 @@ function OnGUICredits () {
 		}
 		// display text
 		textViewer.OnGUIText();
+<<<<<<< HEAD
 		/*display logos*/
 		for( var i = 0 ; i < logoPath.length ; i++ )
 			displayLogo( 	1 - ( margin_bot + i*( height_logo + margin_betw_media ) ),
@@ -124,6 +135,26 @@ function OnGUICredits () {
 							width_logo,
 							height_logo,
 							logoPath[i]);
+=======
+		/* display logos */
+		var num : int = 0;
+		for( var i = 0 ; i < logoPath.length ; i++ ){
+			num++;
+			if( num > 3 ){
+				displayLogo( 	1 - margin_bot - height_logo,
+								0.5 + margin_center/2 + (i-3)*(width_logo + margin_betw_media),
+								width_logo,
+								height_logo,
+								logoPath[i]);
+			}
+			else
+				displayLogo( 	1 - ( margin_bot + 2*height_logo + margin_betw_media),
+								0.5 + margin_center/2 + i*(width_logo + margin_betw_media),
+								width_logo,
+								height_logo,
+								logoPath[i]);
+		}
+>>>>>>> 47d14ca6e0c3adf51515ef7b6f055cd6c783ba77
 	}
 }
 
@@ -139,11 +170,31 @@ function exitCredits() {
 	displayCredits = false;
 	
 	Destroy(textViewer);
+	Destroy(videoScreen);
 	
 	if (audioWasPlaying)
 		audio.Play();
 }
 
+/*
+	*test video loaded in update
+*/
+function updateCredits(){
+	if( VideoIsLoading ) {
+		if(videoSet.isVideoReady() && !screenIsSet ) {// loading is finished
+			var r : Rect = Rect( (0.5 + margin_center/2)*Screen.width , ( 0.5 + margin_betw_media)*Screen.height , width_logo*Screen.width , (0.5 - margin_top - margin_betw_media )*Screen.height );
+			var v : Vector2 = videoSet.VideoWH();
+			var ratio : float = v.x/v.y;
+			// calculate a new rectangle that fit the ratio of movie
+			var newR : Rect = strip.optimalSize( ratio , r );
+			// set parameters of screen
+			setScreen( newR , videoScreen );
+			
+			// to avoid doing this at each call of update
+			screenIsSet = true;
+		}
+	}
+}
 
 /*
 	*display logo on credits screen
@@ -173,17 +224,16 @@ private function displayLogo( bot : float , left : float , w : float , h : float
 	*init screen
 */
 private function initScreen(){
-	var r : Rect = Rect( (0.5 + margin_center/2)*Screen.width , ( 0.5 + margin_betw_media)*Screen.height , width_logo*Screen.width , (0.5 - margin_top - margin_betw_media )*Screen.height );
-	
 	// load asset
 	var path : String = "StreamingAssets/defaultDatas/credits/zkm_movie";
 	
 	// create gameobject for movie
-	var videoScreen : GameObject = new GameObject.CreatePrimitive( PrimitiveType.Plane );
+	videoScreen = new GameObject.CreatePrimitive( PrimitiveType.Plane );
 	
 	// load movie
 	videoSet.putVideo( videoScreen , path , true);
 	
+<<<<<<< HEAD
 	// get ratio of movie
 	var v : Vector2 = videoSet.VideoWH();
 	var ratio : float = 1;//v.y/v.x;
@@ -192,6 +242,9 @@ private function initScreen(){
 	// set parameters of screen
 	setScreen( newR , videoScreen );
 	
+=======
+	VideoIsLoading = true;
+>>>>>>> 47d14ca6e0c3adf51515ef7b6f055cd6c783ba77
 }
 
 /*

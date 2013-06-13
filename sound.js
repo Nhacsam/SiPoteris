@@ -116,11 +116,11 @@ function displayMusic() {
 	if( (displayPlayButton && !playBtn) || (nbSounds == 0))
 		return;
 	
-	var buttonSize = (Screen.height - uBorder - dBorder ) * buttonSizeFactor;  // size of the square
+	var buttonSize = (Screen.height - uBorder - dBorder )/* * buttonSizeFactor*/;  // size of the square
 
 	/* The button is centered regarding the y axis */
 	if (displayPlayButton) {
-		if (GUI.Button(Rect(lBorder, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), currentBtn) && eventEnable ) { // Rect: left top width height
+		if (GUI.Button(Rect(lBorder, uBorder, buttonSize, buttonSize), currentBtn) && eventEnable ) { // Rect: left top width height
 			if (currentBtn == pauseBtn) { // Sound playing
 				currentBtn = playBtn;
 				audio.Pause();
@@ -146,14 +146,14 @@ function displayMusic() {
 	}
 		
 	/* Name of the song: Does NOT handle the case when the name is too LONG */
-	if (displaySongName) {
+/*	if (displaySongName) {
 		GUI.Label( Rect(lBorder + buttonSize + 10,
 						uBorder + buttonSize/(2*buttonSizeFactor) - widthLetter,
 						Screen.width - lBorder - rBorder,
 						heightLetter
 						),
 				soundNameStr);
-	}
+	}*/
 }
 
 /* If soundName = "", the function chooses the next sound to play (random or not). If not, plays the sound named soundName */
