@@ -56,7 +56,7 @@ private var lang : String ;
 /* Le point (0,0) est en bas à gauche. */
 /* Attention aux dépendances ! */
 
-private var hauteurStripSlide : float = 9.0; // % de la hauteur de l'écran
+private var hauteurStripSlide : float = 8.0; // % de la hauteur de l'écran
 private var sizeButtons : float = hauteurStripSlide / 100; // Taille boutons = hauteur strip = hauteur slide
 
 private var marginTop : float = 0.97;
@@ -294,12 +294,9 @@ function CreateGUI() {
 	}
 	
 	///////////////// EXEMPLE POUR KEVIN ///////////////////
-	windows.AddOnChangeCallback( exampleRecuperationNomImageAffiche );
+	windows.AddOnChangeCallback(textViewer.takeSSelement);
 }
 
-function exampleRecuperationNomImageAffiche (s : SLIDESHOWELMT) {
-	Console.Test(s.path, 102) ;
-}
 	/////////////////////////////////////////////////////////
 
 
