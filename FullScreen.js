@@ -294,7 +294,7 @@ function CreateGUI() {
 	}
 	
 	///////////////// EXEMPLE POUR KEVIN ///////////////////
-	windows.AddOnChangeCallback(exampleRecuperationNomImageAffiche);
+	windows.AddOnChangeCallback( exampleRecuperationNomImageAffiche );
 }
 
 function exampleRecuperationNomImageAffiche (s : SLIDESHOWELMT) {
