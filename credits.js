@@ -163,10 +163,7 @@ function exitCredits() {
 	Destroy(textViewer);
 	
 	// unload video
-	videoSet.stopVideo( videoScreen );
-	
-	// destroy gameobject where movie is displayed
-	Destroy(videoScreen);
+	//videoSet.stopVideo( videoScreen );
 	
 	if (audioWasPlaying)
 		audio.mute = false;
@@ -189,6 +186,9 @@ function updateCredits(){
 			var newR : Rect = strip.optimalSize( ratio , r );
 			// set parameters of screen
 			setScreen( newR , videoScreen );
+			
+			// enable renderer
+			videoScreen.renderer.enabled = true;
 			
 			// to avoid doing this at each call of update
 			screenIsSet = true;
@@ -227,14 +227,16 @@ private function initScreen(){
 	// load asset
 	var path : String = "defaultDatas/credits/zkm_movie";
 	
-	// create gameobject for movie
-	videoScreen = new GameObject.CreatePrimitive( PrimitiveType.Plane );
+	if( !videoScreen ){
+		// create gameobject for movie
+		videoScreen = new GameObject.CreatePrimitive( PrimitiveType.Plane );
 	
-	// name
-	videoScreen.name = "GUI_creditMovie";
+		// name
+		videoScreen.name = "GUI_creditMovie";
+	}
 	
 	// load movie
-	videoSet.putVideo( videoScreen , path , true);
+	videoSet.creditsVideo( videoScreen , path , true);
 	
 	VideoIsLoading = true;
 }
@@ -266,11 +268,6 @@ private function setScreen( r : Rect , videoScreen : GameObject ){
 	
 	// rotate plane along y axis
 	videoScreen.transform.eulerAngles += Vector3(0,180,0);
-	
-	// test and set renderer
-	var testRenderer = videoScreen.GetComponent(Renderer);
-	if( !testRenderer)
-		videoScreen.AddComponent(Renderer);
 }
 
 

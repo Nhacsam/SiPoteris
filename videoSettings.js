@@ -253,7 +253,48 @@ function putVideo( focus: GameObject, nom : String, sound: boolean){
 	temp.enabled = true;  
 	controllerScene2.movieClass[0] =  focus.GetComponent("PlayFileBasedMovieDefault");
 	controllerScene2.movieClass[0].movieIndex = 1;
-	controllerScene2.movieName[0] = nom +".mov";
+	controllerScene2.movieName[0] = nom + ".mov";
+
+	controllerScene2.movieClass[0].PlayMovie(nom +".mov",sound);
+
+	return true;
+	
+}
+
+function creditsVideo( focus: GameObject, nom : String, sound: boolean){
+
+	if(!iOS){
+	iOS = new GameObject(); 
+	iOS.transform.position= Vector3(10,0,0);
+	iOS.name="iOS";
+	iOS.AddComponent("ForwardiOSMessages");
+	controllerIOS = iOS.GetComponent("ForwardiOSMessages");
+	controllerIOS.movie = new PlayHardwareMovieClassPro[2]; 
+	}
+	controllerIOS = iOS.GetComponent("ForwardiOSMessages");
+	
+	if(!MovieController2){
+	MovieController2 = new GameObject(); 
+	MovieController2.transform.position= Vector3(10,0,0);
+	MovieController2.name = "MovieControllerBis";
+	MovieController2.AddComponent("SceneController");          
+	}
+	controllerScene2 = MovieController2.GetComponent("SceneController");
+	
+	if(!controllerScene2.movieClass){
+	controllerScene2.movieClass = new PlayHardwareMovieClassPro[1];
+	controllerScene2.movieName = new  String[1];
+	controllerScene2.seekTime = new float[1];
+	}
+	
+	if(!focus.GetComponent("PlayFileBasedMovieDefault"))focus.AddComponent("PlayFileBasedMovieDefault");
+  	focus.renderer.material = Resources.Load("Movie2");
+	controllerIOS.movie[1] = focus.GetComponent("PlayFileBasedMovieDefault"); 
+	var temp: PlayFileBasedMovieDefault =  focus.GetComponent("PlayFileBasedMovieDefault");
+	temp.enabled = true;  
+	controllerScene2.movieClass[0] =  focus.GetComponent("PlayFileBasedMovieDefault");
+	controllerScene2.movieClass[0].movieIndex = 1;
+	controllerScene2.movieName[0] = nom + ".mov";
 
 	controllerScene2.movieClass[0].PlayMovie(nom +".mov",sound);
 
@@ -268,6 +309,7 @@ function stopVideo(focus: GameObject){
 	
 	if(focus!= null && focus.GetComponent("PlayFileBasedMovieDefault")){
 	var temp:PlayFileBasedMovieDefault = focus.GetComponent("PlayFileBasedMovieDefault");
+	controllerScene2.movieClass[0] =  focus.GetComponent("PlayFileBasedMovieDefault");
 	controllerScene2.movieClass[0].PauseMovie();
 	temp.enabled = false;
 	focus.renderer.enabled = false;

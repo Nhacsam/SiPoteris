@@ -17,6 +17,7 @@ private var rotated : boolean = false ;
 private var wObj : GameObject ;
 
 // Texture
+private var wPath : String ;
 private var material : Material ;
 private var wImgTex : Texture2D = null ;
 private var wTexAlsoUseAway : boolean = true ; // La texture est-elle utilisé par qq1 d'autre
@@ -171,6 +172,7 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 	var previousType = wType ;
 	wType = type ;
 	wVideoIsLoading = false ;
+	wPath = path ;
 	
 	switch( wType ) {
 		
@@ -327,15 +329,26 @@ public function show() {
 		wType == WINDOWTYPES.VIDEO) &&
 		wVideoSettings)
 		
-		wVideoSettings.putVideo( wObj, wObj.name ,false);
+		wVideoSettings.putVideo( wObj, wPath ,false);
+		Console.Test( "put:" + wPath,0);
 }
 
 /*
  * Cache l'objet
  */
 public function hide() {
+	
 	wObj.renderer.enabled = false ;
 	wVisible = false ;
+	
+			
+	if((wType == WINDOWTYPES.VIDEORIGHT ||
+		wType == WINDOWTYPES.VIDEOLEFT ||
+		wType == WINDOWTYPES.VIDEO) &&
+		wVideoSettings)
+		
+		wVideoSettings.stopVideo( wObj);
+		Console.Test( "nom objet:" + wObj.name,0);
 }
 
 /*
