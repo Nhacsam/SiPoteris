@@ -261,6 +261,8 @@ function updateStrip(){
 		Update_ZOOM_IN();
 		videoScreen.renderer.material.mainTexture = Resources.Load(Path);
 	}
+	if( states == STATES_OF_STRIP.STATE_IN )// force texture -- problem with plugin displaying the video on showingwindow while zooming in and state in
+		videoScreen.renderer.material.mainTexture = Resources.Load(Path);
 	
 	if( states == STATES_OF_STRIP.ZOOM_OUT )
 		Update_ZOOM_OUT();
