@@ -579,7 +579,8 @@ private function placeMeshHashPolar ( t : Hashtable ){
 			s.InitOrientedTo( p );
 			
 			// configure les plan comme étant invisible
-			s.setVisible(false);
+			if( obj.name.IndexOf("0") != -1 )
+				s.setVisible(true);
 		
 			// add new gameobject to array
 			AllGO2D.Push( obj );
@@ -612,7 +613,7 @@ private function placeMeshHashPolar ( t : Hashtable ){
 			s3D.InitOrientedTo( mesh3D.getOrientedTo() );
 			
 			// configure les plan comme étant invisible
-			s3D.setVisible(false);
+			s3D.setVisible(true);
 		
 			// add new gameobject to array
 			AllGO3D.Push( obj3D );

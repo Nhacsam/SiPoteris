@@ -190,10 +190,6 @@ private function CreateSphericMesh( thetaMin : float , phiMin : float , thetaMax
 	g.GetComponent( MeshCollider ).sharedMesh = meshSphere;
 	
 	g.transform.position += VerticesInMiddle;
-	
-	// disable renderer if false, true if you want to check the position of gameobject in scene
-	g.renderer.enabled = false;
-
 	return g;
 }
 

@@ -160,10 +160,12 @@ function exitCredits() {
 	displayCredits = false;
 	
 	Destroy(textViewer);
-	Destroy(videoScreen);
 	
 	// unload video
 	videoSet.stopVideo( videoScreen );
+	
+	// destroy gameobject where movie is displayed
+	Destroy(videoScreen);
 	
 	if (audioWasPlaying)
 		audio.mute = false;
