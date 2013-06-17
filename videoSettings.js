@@ -291,7 +291,6 @@ function creditsVideo( focus: GameObject, nom : String, sound: boolean){
   	focus.renderer.material = Resources.Load("Movie2");
 	controllerIOS.movie[1] = focus.GetComponent("PlayFileBasedMovieDefault"); 
 	var temp: PlayFileBasedMovieDefault =  focus.GetComponent("PlayFileBasedMovieDefault");
-	temp.enabled = true;  
 	controllerScene2.movieClass[0] =  focus.GetComponent("PlayFileBasedMovieDefault");
 	controllerScene2.movieClass[0].movieIndex = 1;
 	controllerScene2.movieName[0] = nom + ".mov";
@@ -310,8 +309,7 @@ function stopVideo(focus: GameObject){
 	if(focus!= null && focus.GetComponent("PlayFileBasedMovieDefault")){
 	var temp:PlayFileBasedMovieDefault = focus.GetComponent("PlayFileBasedMovieDefault");
 	controllerScene2.movieClass[0] =  focus.GetComponent("PlayFileBasedMovieDefault");
-	controllerScene2.movieClass[0].PauseMovie();
-	temp.enabled = false;
+	controllerScene2.movieClass[0].StopMovie();
 	focus.renderer.enabled = false;
 	controllerScene2.movieClass[0].videoShutter();
 	}

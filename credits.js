@@ -163,7 +163,9 @@ function exitCredits() {
 	Destroy(textViewer);
 	
 	// unload video
-	//videoSet.stopVideo( videoScreen );
+	videoSet.stopVideo( videoScreen );
+	
+	videoScreen.renderer.enabled = false;
 	
 	if (audioWasPlaying)
 		audio.mute = false;
