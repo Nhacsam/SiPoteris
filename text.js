@@ -16,7 +16,12 @@ Use: placeText(...) is called once, and displayText(...) is called at every fram
 *	Not tag at the end !
 */  
 private var textToDisplay : String;
- 
+
+/*
+*	Dépendances
+*/
+private var slideshow  : slideShow ;
+
 
 /*
 *	Layout
@@ -34,7 +39,7 @@ private var spacing : int = 25; // between lines
 private var widthTab = 4; // width of a tabulation (in spaces)
 private var styleLetterMiddle : GUIStyle = new GUIStyle(); // style of letter
 
-private var indexFirstChar ; // Index of the first character displayed (0 except if it is '<')
+private var indexFirstChar : int ; // Index of the first character displayed (0 except if it is '<')
 
 private var upArrow : Texture; // Showing possible scrolling
 private var downArrow : Texture; // Idem
@@ -50,7 +55,7 @@ private var moveToNext : Array ; // values of i which corresponds to a move to t
 private var toJustify : Array ; // Indicates for each line wether we need to justify it or not
 private var nbLines : int ;
 private var myTags : Array ; // Strings: All the tags (e.g: <iAmATag>) in the text
-private var myTagIndexes : Array ; // Integers: All the indexes of (beginnings of the) the tags
+private var myTagIndexes : Array ; // Integers: All the indexes of (the first characters after) the tags
 
 
 /*
@@ -68,7 +73,7 @@ private var textInitialized : boolean = false;
  */
 private var gapToMove : float ;
 private var coefSpeed : float = 70.0 ; // % /s
-private var constSpeed : float = 10.0 ; // line /s
+private var constSpeed : float = 7.0 ; // line /s
 
 /*
 *	This function will create label for each letter and place at the right position them to justify the text
@@ -93,14 +98,14 @@ private function initText(u: int, d: int, l: int, r: int) {
 	upArrow = Resources.Load("Pictures/up_arrow");
 	downArrow = Resources.Load("Pictures/down_arrow");
 	
-	/* Reset values */
-	
+	/* Reset values */	
 	indexFirstChar = 0;
 	moveToNext = new Array();
 	toJustify = new Array();
 	nbLines  = 0;
 	myTags = new Array();
 	myTagIndexes = new Array ();
+	slideshow =	gameObject.GetComponent("slideShow") as slideShow;
 	
 	enableAll(); // enable event and dispy the text
 }
@@ -138,7 +143,19 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 			tempTag = extractTag(i);
 			
 			if (tempTag != "") {
-				myTagIndexes.push(i);
+				
+				/* Index of the character after the tag in the text. If it is a "<", it must be the character after the next tag, etc. */
+				var index : int = i;
+				do {
+					while (textToDisplay[index] != ">") { // Go to the end of the tag
+						index++;
+						if (index >= textToDisplay.Length-1) // EOF
+							return;
+					}
+					index++;
+				} while ( textToDisplay[index] == "<" ); // If there is another tag just after
+				myTagIndexes.push(index); // It is the first character of the tag, we will later turn it into the character just after the tag
+				
 				
 				/* Do not display the tag */
 				for (var k : int = i; k < i+tempTag.Length; k++)
@@ -330,7 +347,6 @@ function extractTag(i : int) {
 *	Takes a SLIDESHOWELMT, turns it into a tag and calls toTag function which will scroll the text
 */
 function takeSSelement (s : SLIDESHOWELMT) {
-	Console.Test(fileSystem.getName(s.path), 102) ;
 	toTag("<" + fileSystem.getName(s.path) + ">");
 }
 
@@ -351,28 +367,23 @@ function toTag (myTag: String) {
 	if (tagNumber == (-1))
 		return;
 	
-	/* Index of the character after myTag in the text. If it is a "<", it must be the character after the next tag, etc. */
-	var index : int = myTagIndexes[tagNumber];
-	do {
-		while (textToDisplay[index] != ">") { // Go to the end of the tag
-			index++;
-			if (index >= textToDisplay.Length-1) // EOF
-				return;
-		}
-		index++;
-	} while ( textToDisplay[index] == "<" ); // If there is another tag just after
-	
-	var gap = letterSpots[index].y + gapToMove - uBorder;
+	var index : int = myTagIndexes[tagNumber]; // Index of the character after myTag in the text
+	var gap = letterSpots[index].y - uBorder + gapToMove;
 	
 	if (gap > ((letterSpots[textToDisplay.Length-1].y + gapToMove - uBorder) - ( Screen.height - uBorder - dBorder ) ) + heightLetter) // gap < height of text - height of screen, we scroll to max
 		gap = (letterSpots[textToDisplay.Length-1].y + gapToMove - uBorder) - ( Screen.height - uBorder - dBorder ) + heightLetter;
 	
 	gapToMove -= gap ;
-	
-	/*
-	for (var j : int = 0; j < textToDisplay.Length; j++) {
-		letterSpots[j].y -= gap;
-	}*/
+}
+
+/*
+*	Tag in input, the function removes the < >
+*/
+function tagToName (tag : String) {
+	var bufferTag : String = "";
+	for (var i=1; i<tag.Length-1; i++)
+		bufferTag += tag[i];
+	return bufferTag;
 }
 
 /*
@@ -385,6 +396,8 @@ function OnGUIText(){
 
 function displayText() {
 	transitionMove();
+	replaceOutOfBoundText();
+	
 	for (var i : int = indexFirstChar; i < textToDisplay.Length; i++) {
 		if (letterSpots[i].y >= uBorder && (letterSpots[i].y + heightLetter) <= Screen.height - dBorder && displayChar[i])
 			GUI.Label (letterSpots[i], ""+textToDisplay[i], styleLetterMiddle);
@@ -416,15 +429,8 @@ private function transitionMove() {
 	var speed = gapToMove*coefSpeed/100 + constSpeed*sens ;
 	var elapsedTime = Time.deltaTime ;
 	
-	Console.Test('sens : ' + sens ,103);
-	Console.Test('speed : ' + speed ,103);
-	Console.Test('elapsedTime : ' + elapsedTime ,103);
-	Console.Test('gapToMove : ' + gapToMove ,103);
-	
 	// maj de ce qu'il reste à bouger
 	gapToMove -= speed*elapsedTime ;
-	
-	Console.Test('gapToMove : ' + gapToMove ,103);
 	
 	// si on a changé de signe
 	if(gapToMove > 0 && sens < 0 ) {
@@ -436,9 +442,6 @@ private function transitionMove() {
 		gapToMove = 0 ;
 	}
 	
-	Console.Test('gapToMove : ' + gapToMove ,103);
-	Console.Test('speed : ' + speed ,103);
-	
 	// déplacement des lettres
 	for (var j : int = 0; j < textToDisplay.Length; j++) {
 		letterSpots[j].y += speed*elapsedTime ;
@@ -446,6 +449,32 @@ private function transitionMove() {
 	
 }
 
+
+/*
+ * S'assure que le texte n'a pas été trop scrollé et le replace sinon
+ */
+private function replaceOutOfBoundText() {
+	
+	var gap : float ;
+	
+	if ( letterSpots[textToDisplay.Length-1].y <= Screen.height - dBorder - heightLetter) {// Blocking Down
+		gap = Screen.height - dBorder - heightLetter - letterSpots[textToDisplay.Length-1].y;
+		if (gap > heightLetter / 2) { // Then we have to realign the text
+			for (var k : int = 0; k < textToDisplay.Length; k++) {
+				letterSpots[k].y += gap;
+			}
+		}
+	}
+	
+	if ( letterSpots[indexFirstChar].y >= uBorder) {// Blocking Up
+		gap = letterSpots[indexFirstChar].y - uBorder;
+		if (gap > heightLetter / 2) { // Then we have to realign the text
+			for (var j : int = 0; j < textToDisplay.Length; j++) {
+				letterSpots[j].y -= gap;
+			}
+		}
+	}
+}
 
 /***********************
 	Dealing with events
@@ -464,42 +493,51 @@ function OnDisable(){
 
 /* Scrolling text with dragging event ! (Finger KO Mouse OK) */
 function onDragging(dragData : DragInfo) {
-	if (textInitialized && eventEnable) {
+
+	if (	textInitialized && eventEnable 	// évenements activé
+			&& gapToMove == 0				// pas en mouvement
+			&& isIn(dragData.pos) ) {		// souris dans le texte
+		
 		var block = false; // If true, you cannot scroll
-		var gap = 0; // gap between the top (resp bottom) of the text, and the top (resp bottom) of the frame
+		var gap : float = 0; // gap between the top (resp bottom) of the text, and the top (resp bottom) of the frame
 		
-		if ( letterSpots[textToDisplay.Length-1].y <= Screen.height - dBorder - heightLetter) {// Blocking Down
-			gap = Screen.height - dBorder - heightLetter - letterSpots[textToDisplay.Length-1].y;
-			if (gap > heightLetter / 2) { // Then we have to realign the text
-				for (var k : int = 0; k < textToDisplay.Length; k++) {
-					letterSpots[k].y += gap;
-				}
-			}
-			if (dragData.delta.y > 0)
-				block = true;
-		}
-		
-		if ( letterSpots[indexFirstChar].y >= uBorder) {// Blocking Up
-			gap = letterSpots[indexFirstChar].y - uBorder;
-			if (gap > heightLetter / 2) { // Then we have to realign the text
-				for (var j : int = 0; j < textToDisplay.Length; j++) {
-					letterSpots[j].y -= gap;
-				}
-			}
-			if (dragData.delta.y < 0)
+		if ( 	(letterSpots[indexFirstChar].y >= uBorder && dragData.delta.y < 0) || // Blocking Up
+				( letterSpots[textToDisplay.Length-1].y <= Screen.height - dBorder - heightLetter && dragData.delta.y > 0) ) {// Blocking Down
 				block = true;
 		}
 		
 		/* If finger/mouse on the text and if not blocked */	
-		if (dragData.pos.x > lBorder && dragData.pos.x < Screen.width - rBorder && dragData.pos.y < Screen.height - uBorder && dragData.pos.y > dBorder && !block) {
+		if (!block) {
 			for (var i : int = 0; i < textToDisplay.Length; i++) {
 				letterSpots[i].y -= dragData.delta.y * coefDragging;
+			}
+		}
+		replaceOutOfBoundText();
+		
+		/* Looking for the tag highest placed, in the top half of the frame */
+		for (var l : int = 0; l < myTags.length; l++) {
+			/* If we find the tag */
+			if ( letterSpots[myTagIndexes[l]].y > uBorder && letterSpots[myTagIndexes[l]].y < uBorder + 2 * heightLetter) {
+				if (slideshow) {
+					slideshow.goTo(tagToName(myTags[l]));
+					Console.Test('slideshow.goTo(tagToName( '+myTags[l]+' )) ;' ,103 );
+				}
+				break;
 			}
 		}
 	}
 }
 
-
+/*
+ * True if pos is in text
+ */
+public function isIn( pos : Vector2 ) : boolean {
+	
+	return (	pos.x > lBorder &&
+			 	pos.x < Screen.width - rBorder &&
+				pos.y < Screen.height - uBorder &&
+				pos.y > dBorder ) ;
+}
 
 
 /*******************************************************

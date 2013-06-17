@@ -78,6 +78,7 @@ function InitWindow( pos : Rect, z : float ) {
 	wState = W_STATE.ONGUI ;
 	wId = -1;
 	wOnChange = Array();
+	wType = WINDOWTYPES.NONE;
 	
 	wVideoSettings = gameObject.GetComponent("videoSettings");
 	if( ! wVideoSettings)
@@ -85,6 +86,7 @@ function InitWindow( pos : Rect, z : float ) {
 	
 	material = Resources.Load('GUI/window/mat') ;
 	placeRenderingPlane();
+	
 	
 	// affichage et activation des événement
 	enableAll();
@@ -165,7 +167,8 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 	
 
 	wVideoSettings.stopVideo(wObj);
-
+	
+	var previousType = wType ;
 	wType = type ;
 	wVideoIsLoading = false ;
 	
@@ -186,8 +189,10 @@ function SetNewTexture ( path : String, type : WINDOWTYPES, size : Vector2, id :
 	}
 	
 	// Appel des callbacks
-	for( var j = 0; j < wOnChange.length; j++){
-		(wOnChange[j] as function(SLIDESHOWELMT) )( new SLIDESHOWELMT(path, type, size, id, alsoUseAway)  ) ;
+	if (previousType != WINDOWTYPES.NONE ) {
+		for( var j = 0; j < wOnChange.length; j++){
+			(wOnChange[j] as function(SLIDESHOWELMT) )( new SLIDESHOWELMT(path, type, size, id, alsoUseAway)  ) ;
+		}
 	}
 
 	
@@ -316,8 +321,12 @@ public function disableEvents() {
 public function show() {
 	wObj.renderer.enabled = true ;
 	wVisible = true ;
-	
-	if( wType != WINDOWTYPES.IMG && wVideoSettings)
+		
+	if((wType == WINDOWTYPES.VIDEORIGHT ||
+		wType == WINDOWTYPES.VIDEOLEFT ||
+		wType == WINDOWTYPES.VIDEO) &&
+		wVideoSettings)
+		
 		wVideoSettings.putVideo( wObj, wObj.name ,false);
 }
 
