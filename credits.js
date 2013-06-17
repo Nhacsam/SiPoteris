@@ -51,6 +51,9 @@ private var z_coor : float = 20;
 /*tableau contenant les noms des logos*/
 private var logoPath : String[];
 
+/*ratio de la video des crédits*/
+private var ratioVideoCredit : float;
+
 //////////////
 /////INIT/////
 //////////////
@@ -178,14 +181,17 @@ function updateCredits(){
 	if( VideoIsLoading ) {
 		if(videoSet.isVideoReady() && !screenIsSet ) {// loading is finished
 			var r : Rect = Rect( 	(0.5 + margin_center/2)*Screen.width , 
-									( 0.5 + margin_betw_media)*Screen.height , 
+									(0.5 + margin_betw_media)*Screen.height , 
 									(0.5 - margin_right - margin_center/2)*Screen.width , 
 									(0.5 - margin_top - margin_betw_media )*Screen.height );
 		
-			var v : Vector2 = videoSet.VideoWH();
-			var ratio : float = v.x/v.y;
+
+			if( !ratioVideoCredit ){
+				var v : Vector2 = videoSet.VideoWH();
+				ratioVideoCredit = v.x/v.y;
+			}
 			// calculate a new rectangle that fit the ratio of movie
-			var newR : Rect = strip.optimalSize( ratio , r );
+			var newR : Rect = strip.optimalSize( ratioVideoCredit , r );
 			// set parameters of screen
 			setScreen( newR , videoScreen );
 			
