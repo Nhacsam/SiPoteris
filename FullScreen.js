@@ -293,11 +293,8 @@ function CreateGUI() {
 		slideshow.AddElmt(tempArray[0], tempArray[1] );
 	}
 	
-	///////////////// EXEMPLE POUR KEVIN ///////////////////
 	windows.AddOnChangeCallback(textViewer.takeSSelement);
 }
-
-	/////////////////////////////////////////////////////////
 
 
 /*
