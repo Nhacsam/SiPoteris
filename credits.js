@@ -68,13 +68,13 @@ function initCredits ( returnRectangle : Rect) {
 	strip = 		gameObject.GetComponent("displayStrip")		as displayStrip;
 	windows = 		gameObject.GetComponent("showingWindow") 	as showingWindow;
 	slideshow = 	gameObject.GetComponent("slideShow")		as slideShow;
-	videoSet = 		gameObject.GetComponent("videoSettings") as videoSettings;
+	videoSet = 		gameObject.GetComponent("videoSettings") 	as videoSettings;
 	
 	// manage audio of GUI
-	gameObject.GetComponent("AudioSource");
+	audioPlayer =	gameObject.GetComponent("AudioSource")		as sound;
 	if (audio.isPlaying) {
 		audioWasPlaying = true;
-		audio.Pause();
+		audio.mute = true;
 	}
 	else
 		audioWasPlaying = false;
@@ -163,8 +163,11 @@ function exitCredits() {
 	Destroy(textViewer);
 	Destroy(videoScreen);
 	
+	// unload video
+	videoSet.stopVideo( videoScreen );
+	
 	if (audioWasPlaying)
-		audio.Play();
+		audio.mute = false;
 }
 
 /*
@@ -173,7 +176,11 @@ function exitCredits() {
 function updateCredits(){
 	if( VideoIsLoading ) {
 		if(videoSet.isVideoReady() && !screenIsSet ) {// loading is finished
-			var r : Rect = Rect( (0.5 + margin_center/2)*Screen.width , ( 0.5 + margin_betw_media)*Screen.height , width_logo*Screen.width , (0.5 - margin_top - margin_betw_media )*Screen.height );
+			var r : Rect = Rect( 	(0.5 + margin_center/2)*Screen.width , 
+									( 0.5 + margin_betw_media)*Screen.height , 
+									(0.5 - margin_right - margin_center/2)*Screen.width , 
+									(0.5 - margin_top - margin_betw_media )*Screen.height );
+		
 			var v : Vector2 = videoSet.VideoWH();
 			var ratio : float = v.x/v.y;
 			// calculate a new rectangle that fit the ratio of movie
@@ -232,7 +239,6 @@ private function initScreen(){
 	*a movie is displayed there
 */
 private function setScreen( r : Rect , videoScreen : GameObject ){
-	
 	// name
 	videoScreen.name = "GUI_creditMovie";
 	
@@ -252,6 +258,9 @@ private function setScreen( r : Rect , videoScreen : GameObject ){
 	videoScreen.transform.rotation = camera.transform.rotation;
 	videoScreen.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
 	videoScreen.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );
+	
+	// rotate plane along y axis
+	videoScreen.transform.eulerAngles += Vector3(0,180,0);
 	
 	// test and set renderer
 	var testRenderer = videoScreen.GetComponent(Renderer);

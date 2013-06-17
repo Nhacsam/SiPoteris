@@ -16,7 +16,12 @@ Use: placeText(...) is called once, and displayText(...) is called at every fram
 *	Not tag at the end !
 */  
 private var textToDisplay : String;
- 
+
+/*
+*	Dépendances
+*/
+private var slideshow  : slideShow ;
+
 
 /*
 *	Layout
@@ -34,7 +39,7 @@ private var spacing : int = 25; // between lines
 private var widthTab = 4; // width of a tabulation (in spaces)
 private var styleLetterMiddle : GUIStyle = new GUIStyle(); // style of letter
 
-private var indexFirstChar ; // Index of the first character displayed (0 except if it is '<')
+private var indexFirstChar : int ; // Index of the first character displayed (0 except if it is '<')
 
 private var upArrow : Texture; // Showing possible scrolling
 private var downArrow : Texture; // Idem
@@ -50,7 +55,7 @@ private var moveToNext : Array ; // values of i which corresponds to a move to t
 private var toJustify : Array ; // Indicates for each line wether we need to justify it or not
 private var nbLines : int ;
 private var myTags : Array ; // Strings: All the tags (e.g: <iAmATag>) in the text
-private var myTagIndexes : Array ; // Integers: All the indexes of (beginnings of the) the tags
+private var myTagIndexes : Array ; // Integers: All the indexes of (the first characters after) the tags
 
 
 /*
@@ -87,14 +92,14 @@ private function initText(u: int, d: int, l: int, r: int) {
 	upArrow = Resources.Load("Pictures/up_arrow");
 	downArrow = Resources.Load("Pictures/down_arrow");
 	
-	/* Reset values */
-	
+	/* Reset values */	
 	indexFirstChar = 0;
 	moveToNext = new Array();
 	toJustify = new Array();
 	nbLines  = 0;
 	myTags = new Array();
 	myTagIndexes = new Array ();
+	slideshow =	gameObject.GetComponent("slideShow") as slideShow;
 	
 	enableAll(); // enable event and dispy the text
 }
@@ -131,7 +136,19 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 			tempTag = extractTag(i);
 			
 			if (tempTag != "") {
-				myTagIndexes.push(i);
+				
+				/* Index of the character after the tag in the text. If it is a "<", it must be the character after the next tag, etc. */
+				var index : int = i;
+				do {
+					while (textToDisplay[index] != ">") { // Go to the end of the tag
+						index++;
+						if (index >= textToDisplay.Length-1) // EOF
+							return;
+					}
+					index++;
+				} while ( textToDisplay[index] == "<" ); // If there is another tag just after
+				myTagIndexes.push(index); // It is the first character of the tag, we will later turn it into the character just after the tag
+				
 				
 				/* Do not display the tag */
 				for (var k : int = i; k < i+tempTag.Length; k++)
@@ -323,7 +340,6 @@ function extractTag(i : int) {
 *	Takes a SLIDESHOWELMT, turns it into a tag and calls toTag function which will scroll the text
 */
 function takeSSelement (s : SLIDESHOWELMT) {
-	Console.Test(fileSystem.getName(s.path), 102) ;
 	toTag("<" + fileSystem.getName(s.path) + ">");
 }
 
@@ -344,17 +360,7 @@ function toTag (myTag: String) {
 	if (tagNumber == (-1))
 		return;
 	
-	/* Index of the character after myTag in the text. If it is a "<", it must be the character after the next tag, etc. */
-	var index : int = myTagIndexes[tagNumber];
-	do {
-		while (textToDisplay[index] != ">") { // Go to the end of the tag
-			index++;
-			if (index >= textToDisplay.Length-1) // EOF
-				return;
-		}
-		index++;
-	} while ( textToDisplay[index] == "<" ); // If there is another tag just after
-	
+	var index : int = myTagIndexes[tagNumber]; // Index of the character after myTag in the text
 	var gap = letterSpots[index].y - uBorder;
 	
 	if (gap > ((letterSpots[textToDisplay.Length-1].y - uBorder) - ( Screen.height - uBorder - dBorder ) ) + heightLetter) // gap < height of text - height of screen, we scroll to max
@@ -363,6 +369,16 @@ function toTag (myTag: String) {
 	for (var j : int = 0; j < textToDisplay.Length; j++) {
 		letterSpots[j].y -= gap;
 	}
+}
+
+/*
+*	Tag in input, the function removes the < >
+*/
+function tagToName (tag : String) {
+	var bufferTag : String = "";
+	for (var i=1; i<tag.Length-1; i++)
+		bufferTag += tag[i];
+	return bufferTag;
 }
 
 /*
@@ -439,6 +455,16 @@ function onDragging(dragData : DragInfo) {
 		if (dragData.pos.x > lBorder && dragData.pos.x < Screen.width - rBorder && dragData.pos.y < Screen.height - uBorder && dragData.pos.y > dBorder && !block) {
 			for (var i : int = 0; i < textToDisplay.Length; i++) {
 				letterSpots[i].y -= dragData.delta.y * coefDragging;
+			}
+		}
+		
+		/* Looking for the tag highest placed, in the top half of the frame */
+		for (var l : int = 0; l < myTags.length; l++) {
+			/* If we find the tag */
+			if ( letterSpots[myTagIndexes[l]].y > uBorder && letterSpots[myTagIndexes[l]].y < uBorder + 2 * heightLetter) {
+				if (slideshow)
+					slideshow.goTo(tagToName(myTags[l]));
+				break;
 			}
 		}
 	}
