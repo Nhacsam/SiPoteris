@@ -164,7 +164,7 @@ function generateScene3D(){
 	var rot:Quaternion=Quaternion.identity;
 	sphere3D_pos = Vector3(0,2,0);
 	//load .fbx sphere on scene
-	sphere3D=Instantiate(Resources.Load("DOME"),sphere3D_pos,rot);
+	sphere3D=Instantiate(Resources.Load("SphereFULL"),sphere3D_pos,rot);
 	Destroy(sphere3D.GetComponent("Animator"));
 	//set it at the right position
 	sphere3D.transform.Rotate(-90,180,0);
@@ -268,6 +268,7 @@ function stopVideo(focus: GameObject){
 	
 	if(focus!= null && focus.GetComponent("PlayFileBasedMovieDefault")){
 	var temp:PlayFileBasedMovieDefault = focus.GetComponent("PlayFileBasedMovieDefault");
+	controllerScene2.movieClass[0].PauseMovie();
 	temp.enabled = false;
 	focus.renderer.enabled = false;
 	controllerScene2.movieClass[0].videoShutter();
