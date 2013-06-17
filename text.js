@@ -63,6 +63,12 @@ private var coefDragging : float = 1.0 ; // How fast is the dragging ?
 private var textInitialized : boolean = false;
 
 
+/*
+ * Animation
+ */
+private var gapToMove : float ;
+private var coefSpeed : float = 70.0 ; // % /s
+private var constSpeed : float = 10.0 ; // line /s
 
 /*
 *	This function will create label for each letter and place at the right position them to justify the text
@@ -110,6 +116,7 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 		return ;
 	}
 	
+	gapToMove = 0.0 ;
 	textToDisplay = text;
 	initText(u, d, l, r);
 		
@@ -355,14 +362,17 @@ function toTag (myTag: String) {
 		index++;
 	} while ( textToDisplay[index] == "<" ); // If there is another tag just after
 	
-	var gap = letterSpots[index].y - uBorder;
+	var gap = letterSpots[index].y + gapToMove - uBorder;
 	
-	if (gap > ((letterSpots[textToDisplay.Length-1].y - uBorder) - ( Screen.height - uBorder - dBorder ) ) + heightLetter) // gap < height of text - height of screen, we scroll to max
-		gap = (letterSpots[textToDisplay.Length-1].y - uBorder) - ( Screen.height - uBorder - dBorder ) + heightLetter;
+	if (gap > ((letterSpots[textToDisplay.Length-1].y + gapToMove - uBorder) - ( Screen.height - uBorder - dBorder ) ) + heightLetter) // gap < height of text - height of screen, we scroll to max
+		gap = (letterSpots[textToDisplay.Length-1].y + gapToMove - uBorder) - ( Screen.height - uBorder - dBorder ) + heightLetter;
 	
+	gapToMove -= gap ;
+	
+	/*
 	for (var j : int = 0; j < textToDisplay.Length; j++) {
 		letterSpots[j].y -= gap;
-	}
+	}*/
 }
 
 /*
@@ -374,6 +384,7 @@ function OnGUIText(){
 }
 
 function displayText() {
+	transitionMove();
 	for (var i : int = indexFirstChar; i < textToDisplay.Length; i++) {
 		if (letterSpots[i].y >= uBorder && (letterSpots[i].y + heightLetter) <= Screen.height - dBorder && displayChar[i])
 			GUI.Label (letterSpots[i], ""+textToDisplay[i], styleLetterMiddle);
@@ -389,6 +400,50 @@ function displayText() {
 function removeText() {
 	disableAll();
 	textInitialized = false;
+}
+
+/*
+ * Déplace le texte pour les transitions ///////////////////////////////////////////////////////
+ */
+private function transitionMove() {
+	
+	// si ya rien à faire, on ne s'attarde pas
+	if(gapToMove == 0 )
+		return ;
+	
+	// calcul de la vitesse en fonction de ce qu'il reste à déplacer
+	var sens = (gapToMove > 0 ) ? 1 : -1 ;
+	var speed = gapToMove*coefSpeed/100 + constSpeed*sens ;
+	var elapsedTime = Time.deltaTime ;
+	
+	Console.Test('sens : ' + sens ,103);
+	Console.Test('speed : ' + speed ,103);
+	Console.Test('elapsedTime : ' + elapsedTime ,103);
+	Console.Test('gapToMove : ' + gapToMove ,103);
+	
+	// maj de ce qu'il reste à bouger
+	gapToMove -= speed*elapsedTime ;
+	
+	Console.Test('gapToMove : ' + gapToMove ,103);
+	
+	// si on a changé de signe
+	if(gapToMove > 0 && sens < 0 ) {
+		speed = 0 ;
+		gapToMove = 0 ;
+		
+	} else if(gapToMove < 0 && sens > 0 ) {
+		speed -= gapToMove/elapsedTime ;
+		gapToMove = 0 ;
+	}
+	
+	Console.Test('gapToMove : ' + gapToMove ,103);
+	Console.Test('speed : ' + speed ,103);
+	
+	// déplacement des lettres
+	for (var j : int = 0; j < textToDisplay.Length; j++) {
+		letterSpots[j].y += speed*elapsedTime ;
+	}
+	
 }
 
 

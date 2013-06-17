@@ -316,6 +316,9 @@ public function disableEvents() {
 public function show() {
 	wObj.renderer.enabled = true ;
 	wVisible = true ;
+	
+	if( wType != WINDOWTYPES.IMG && wVideoSettings)
+		wVideoSettings.putVideo( wObj, wObj.name ,false);
 }
 
 /*
