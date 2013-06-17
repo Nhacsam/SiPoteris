@@ -35,11 +35,11 @@ private var screenIsSet : boolean;
 private var videoScreen : GameObject;
 
 /*disposition des éléments des crédits en pourcentage de l'écran*/
-private var margin_center : float = 0.05;
+private var margin_center : float = 0.1;
 private var margin_right : float = 0.05;
 private var margin_left : float = 0.05;
 private var margin_top : float = 0.10;
-private var margin_bot : float = 0.10;
+private var margin_bot : float = 0.15;
 private var number_logo : int = 5;// five logos will be displayed
 private var margin_betw_media : float = 0.01; // déterminer suivant le nombre de médias
 private var width_logo : float = (0.5 - margin_right - margin_center/2 - 2*margin_betw_media)/3;// 3 : three columns
@@ -161,10 +161,12 @@ function exitCredits() {
 	displayCredits = false;
 	
 	Destroy(textViewer);
-	Destroy(videoScreen);
 	
 	// unload video
 	videoSet.stopVideo( videoScreen );
+	
+	// destroy gameobject where movie is displayed
+	Destroy(videoScreen);
 	
 	if (audioWasPlaying)
 		audio.mute = false;
@@ -227,6 +229,9 @@ private function initScreen(){
 	
 	// create gameobject for movie
 	videoScreen = new GameObject.CreatePrimitive( PrimitiveType.Plane );
+	
+	// name
+	videoScreen.name = "GUI_creditMovie";
 	
 	// load movie
 	videoSet.putVideo( videoScreen , path , true);

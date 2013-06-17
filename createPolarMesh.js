@@ -166,9 +166,6 @@ private function CreatePolarMesh(thetaMin : float, thetaMax : float, Rmin : floa
 	// add mesh collider
 	obj.GetComponent(MeshCollider).sharedMesh = meshBuilding;
 
-	// true if you want to see your gameobject and place it well
-	obj.renderer.enabled = false;
-
 	return obj;
 }
 
