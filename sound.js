@@ -116,11 +116,11 @@ function displayMusic() {
 	if( (displayPlayButton && !playBtn) || (nbSounds == 0))
 		return;
 	
-	var buttonSize = (Screen.height - uBorder - dBorder )/* * buttonSizeFactor*/;  // size of the square
+	var buttonSize = (Screen.height - uBorder - dBorder ) * buttonSizeFactor;  // size of the square
 
 	/* The button is centered regarding the y axis */
 	if (displayPlayButton) {
-		if (GUI.Button(Rect(lBorder, uBorder, buttonSize, buttonSize), currentBtn) && eventEnable ) { // Rect: left top width height
+		if (GUI.Button(Rect(lBorder + 0.5 * buttonSize, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), currentBtn) && eventEnable ) { // Rect: left top width height
 			if (currentBtn == pauseBtn) { // Sound playing
 				currentBtn = playBtn;
 				audio.Pause();
