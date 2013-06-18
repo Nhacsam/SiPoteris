@@ -146,7 +146,7 @@ function generateScene2D(){
     plane2D.name = "screen";
     plane2D.transform.Rotate(Vector3(0,0,180));
     plane2D.transform.position = Vector3(0,0,0);
-  	plane2D.renderer.material = Resources.Load("MovieTexture");
+  	plane2D.renderer.material = Resources.Load("movieMat/MovieTexture");
   
 	Destroy(plane2D.collider);
 	/*
@@ -169,7 +169,7 @@ function generateScene3D(){
 	//set it at the right position
 	sphere3D.transform.Rotate(-90,180,0);
 	sphere3D.transform.localScale = Vector3(500,500,500);
-	sphere3D.renderer.material = Resources.Load("MovieTexture");
+	sphere3D.renderer.material = Resources.Load("movieMat/MovieTexture");
 }
 
 
@@ -247,7 +247,7 @@ function putVideo( focus: GameObject, nom : String, sound: boolean){
 	}
 	
 	if(!focus.GetComponent("PlayFileBasedMovieDefault"))focus.AddComponent("PlayFileBasedMovieDefault");
-  	focus.renderer.material = Resources.Load("Movie3");
+  	focus.renderer.material = Resources.Load("movieMat/Movie3");
 	controllerIOS.movie[1] = focus.GetComponent("PlayFileBasedMovieDefault"); 
 	var temp: PlayFileBasedMovieDefault =  focus.GetComponent("PlayFileBasedMovieDefault");
 	temp.enabled = true;  
@@ -288,7 +288,7 @@ function creditsVideo( focus: GameObject, nom : String, sound: boolean){
 	}
 	
 	if(!focus.GetComponent("PlayFileBasedMovieDefault"))focus.AddComponent("PlayFileBasedMovieDefault");
-  	focus.renderer.material = Resources.Load("Movie2");
+  	focus.renderer.material = Resources.Load("movieMat/Movie2");
 	controllerIOS.movie[1] = focus.GetComponent("PlayFileBasedMovieDefault"); 
 	var temp: PlayFileBasedMovieDefault =  focus.GetComponent("PlayFileBasedMovieDefault");
 	controllerScene2.movieClass[0] =  focus.GetComponent("PlayFileBasedMovieDefault");
