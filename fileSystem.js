@@ -105,6 +105,7 @@ static function getTextFromFile( path : String ) {
 
 /*
  * renvoie true si le dossier existe
+ * le crée sinon
  */
 
 static function isDirExisting( path : String ) : boolean {
@@ -134,6 +135,39 @@ static function isDirExisting( path : String ) : boolean {
 }
 
 /*
+ * renvoie true si le fichier existe
+ * le crée sinon
+ */
+
+static function isFileExisting( path : String ) : boolean {
+	
+	var exist  : boolean = false ;
+	
+	// Le test d'existance ne marche pas sur iPad. On croise les doigts :
+	if( scriptForPlane.isOnIpad() )
+			return true ;
+			
+	try {
+		
+		exist = File.Exists(path) ;
+		
+		if( ! exist ) {
+			
+			var file = File.CreateText( path ) ;
+			file.Close();
+			exist = File.Exists(path) ;
+			Console.Warning( 	'Le fichier "'+ path + "\" est inexistant \n" +
+								 'Le fichier à été crée !' );
+		}
+	} catch (e :  System.Exception ) {
+		Console.Warning("Erreur (sur iPad ?): \n" + e);
+	}
+	
+	return exist ;
+}
+
+
+/*
  * Parse le fichier en renvoyant un tableau contenant chaque lignes
  */
 
@@ -156,8 +190,10 @@ static function createParsedFile( 	parsedFilePath : String,
 								) {
 	var i : int = 0 ;
 	var j : int = 0 ;
+	var parsedFile : StreamWriter ;
 	
-	var parsedFile = StreamWriter(parsedFilePath);
+	if( isFileExisting )
+		parsedFile = new StreamWriter(parsedFilePath);
 	Console.Info('Creating parsed file ' + parsedFilePath );
 		
 	

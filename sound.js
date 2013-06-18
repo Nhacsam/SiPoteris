@@ -225,7 +225,7 @@ function removeMusic() {
 public function enableAll() {
 	show() ;
 	enableEvents() ;
-	if (currentBtn == pauseBtn || !displayPlayButton)
+	if ((currentBtn == pauseBtn || !displayPlayButton) && audio )
 		audio.Play();
 }
 
@@ -235,7 +235,8 @@ public function enableAll() {
 public function disableAll() {
 	hide() ;
 	disableEvents();
-	audio.Pause();
+	if( audio )
+		audio.Pause();
 }
 
 /*
