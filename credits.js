@@ -264,9 +264,9 @@ private function setScreen( r : Rect , videoScreen : GameObject ){
 													camera ) ;
 	
 	var size = videoScreen.renderer.bounds.size ;
-	videoScreen.transform.localScale = Vector3( elmtsSize.x/size.x, 
+	videoScreen.transform.localScale = Vector3( videoScreen.transform.localScale.x * elmtsSize.x/size.x, 
 												1, 
-												elmtsSize.y/size.z ) ;
+												videoScreen.transform.localScale.z * elmtsSize.y/size.z ) ;
 	
 	// set position of plane
 	videoScreen.transform.position = camera.ScreenToWorldPoint( Vector3( r.x + r.width/2 , r.y + r.height/2 , z_coor ) );
