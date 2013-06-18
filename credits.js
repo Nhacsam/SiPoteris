@@ -51,8 +51,6 @@ private var z_coor : float = 20;
 /*tableau contenant les noms des logos*/
 private var logoPath : String[];
 
-/*ratio de la video des crédits*/
-private var ratioVideoCredit : float;
 
 //////////////
 /////INIT/////
@@ -185,13 +183,11 @@ function updateCredits(){
 									(0.5 - margin_right - margin_center/2)*Screen.width , 
 									(0.5 - margin_top - margin_betw_media )*Screen.height );
 		
-
-			if( !ratioVideoCredit ){
-				var v : Vector2 = videoSet.VideoWH();
-				ratioVideoCredit = v.x/v.y;
-			}
+			var v : Vector2 = videoSet.VideoWH();
+			var ratio : float = v.x/v.y;
+				
 			// calculate a new rectangle that fit the ratio of movie
-			var newR : Rect = strip.optimalSize( ratioVideoCredit , r );
+			var newR : Rect = strip.optimalSize( ratio , r );
 			// set parameters of screen
 			setScreen( newR , videoScreen );
 			
@@ -256,6 +252,10 @@ private function initScreen(){
 private function setScreen( r : Rect , videoScreen : GameObject ){
 	// name
 	videoScreen.name = "GUI_creditMovie";
+	
+	// rotation has to be a default one when changing the scale
+	var rotation = videoScreen.transform.rotation ;
+	videoScreen.transform.rotation = Quaternion();
 	
 	// extend plane
 	var elmtsSize : Vector2 = windows.getRealSize(	Vector2( r.width , r.height ),
