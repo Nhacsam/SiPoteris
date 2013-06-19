@@ -427,7 +427,7 @@ public function CameraConfigUniv( is2D : boolean) {
 		light.type=LightType.Spot;
 		light.intensity=0.88;
 		
-		light.cookie=Resources.Load("camMask");
+		//light.cookie=Resources.Load("camMask");
 		light.spotAngle=50;
 		
 		// active le déplacement de la caméra

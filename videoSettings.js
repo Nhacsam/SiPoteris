@@ -170,6 +170,7 @@ function generateScene3D(){
 	sphere3D.transform.Rotate(-90,180,0);
 	sphere3D.transform.localScale = Vector3(1000,1000,1000);
 	sphere3D.renderer.material = Resources.Load("movieMat/MovieTexture");
+	sphere3D.renderer.material.mainTexture = Resources.Load("test");
 }
 
 
