@@ -46,7 +46,7 @@ private var creditsTexture : Texture;
 private var langTexture : Texture;
 
 // Miniature par défaut des video :
-private var defaultVideoIcon : String = 'Pictures/play' ;
+private var defaultVideoIcon : String = 'Pictures/playmovie' ;
 
 
 // Langue courante de l'application
