@@ -33,9 +33,9 @@ private var dBorder : int;
 
 private var widthText : float;
 
-private var widthLetter : int = 11;
-private var heightLetter : int = 20;
-private var spacing : int = 25; // between lines
+private var widthLetter : int = Screen.width / 72;
+private var heightLetter : int = Screen.height / 30;
+private var spacing : int = Screen.height / 23; // between lines
 private var widthTab = 4; // width of a tabulation (in spaces)
 private var letterStyleNormal : GUIStyle; // style of letter
 private var letterStyleHighlighted : GUIStyle; // idem
@@ -120,7 +120,7 @@ private function initText(u: int, d: int, l: int, r: int) {
 	
 	letterStyleHighlighted = new GUIStyle();
 	letterStyleHighlighted.alignment = TextAnchor.MiddleCenter;
-	letterStyleHighlighted.normal.textColor = Color.yellow;
+	letterStyleHighlighted.normal.textColor = Color.white;
 	letterStyleHighlighted.fontStyle = FontStyle.BoldAndItalic;
 
 	slideshow =	gameObject.GetComponent("slideShow") as slideShow;
