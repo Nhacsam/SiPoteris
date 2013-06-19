@@ -259,8 +259,6 @@ function Update () {
 	
 	for( i = 0; i < AllGO3D.length; i++) {
 		move.rotateY_3D( AllGO3D[i] as GameObject, true ) ;
-		move.rotateX_3D( AllGO3D[i] as GameObject, true ) ;
-		move.rotateZ_3D( AllGO3D[i] as GameObject, true ) ;
 		
 		if(placeRectAuto)
 			move.keepRotation( AllGO3D[i] );
@@ -579,7 +577,7 @@ private function placeMeshHashPolar ( t : Hashtable ){
 			s.InitOrientedTo( p );
 			
 			// configure les plan comme étant invisible
-			if( obj.name.IndexOf("0") != -1 )
+		//	if( obj.name.IndexOf("0") != -1 )
 				s.setVisible(true);
 		
 			// add new gameobject to array
@@ -613,7 +611,7 @@ private function placeMeshHashPolar ( t : Hashtable ){
 			s3D.InitOrientedTo( mesh3D.getOrientedTo() );
 			
 			// configure les plan comme étant invisible
-			s3D.setVisible(true);
+			s3D.setVisible(false);
 		
 			// add new gameobject to array
 			AllGO3D.Push( obj3D );
