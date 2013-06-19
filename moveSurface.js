@@ -34,7 +34,7 @@ public function rotateY_3D( g : GameObject, OnPlay : boolean ){
 	
 	if( OnPlay ){
 		// rotate the gameobject around y axis at speed s.getdelta
-		g.transform.RotateAround( video.getSpherePos() , Vector3.up , s.getDelta('x')*Time.deltaTime );
+		g.transform.RotateAround( video.getSpherePos() , Vector3.up , s.getDelta('y')*Time.deltaTime );
 	}
 }
 
@@ -47,7 +47,7 @@ public function rotateX_3D( g : GameObject, OnPlay : boolean ){
 	
 	if( OnPlay ){
 		// rotate the gameobject around x axis at speed s.getdelta
-		g.transform.RotateAround( video.getSpherePos() , Vector3.right , s.getDelta('y')*Time.deltaTime );
+		g.transform.RotateAround( video.getSpherePos() , Vector3.right , s.getDelta('x')*Time.deltaTime );
 	}
 }
 
