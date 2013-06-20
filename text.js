@@ -36,9 +36,9 @@ private var widthText : float;
 private var letterStyleNormal : GUIStyle;
 private var letterStyleHighlighted : GUIStyle;
 
-private var widthLetter : int = Screen.width / 72;
+private var widthLetter : int = Screen.width / 125;
 private var heightLetter : int = Screen.height / 30;
-private var spacing : int = Screen.height / 40; // between lines
+private var spacing : int = heightLetter * 0.75; // between lines
 private var widthTab = 4; // width of a tabulation (in spaces)
 
 private var indexFirstChar : int ; // Index of the first character displayed (0 except if it is '<')
@@ -119,17 +119,18 @@ private function initText(u: int, d: int, l: int, r: int) {
 	letterStyleNormal.fontStyle = FontStyle.Normal;
 	letterStyleNormal.fixedHeight = heightLetter;
 	letterStyleNormal.fixedWidth = widthLetter;
+	letterStyleNormal.margin = new RectOffset (0,0,0,0);
 	if (isOnIpad())
-		letterStyleNormal.fontSize = 25; // Default: 13
+		letterStyleNormal.fontSize = 27; // Default: 13
 	
 	letterStyleHighlighted = new GUIStyle();
 	letterStyleHighlighted.alignment = TextAnchor.MiddleCenter;
-	letterStyleHighlighted.normal.textColor = Color.white;
+	letterStyleHighlighted.normal.textColor = Color.gray;
 	letterStyleHighlighted.fontStyle = FontStyle.BoldAndItalic;
 	letterStyleHighlighted.fixedHeight = heightLetter;
 	letterStyleHighlighted.fixedWidth = widthLetter;
 	if (isOnIpad())
-		letterStyleHighlighted.fontSize = 25; // Default: 13
+		letterStyleHighlighted.fontSize = 27; // Default: 13
 	
 	slideshow =	gameObject.GetComponent("slideShow") as slideShow;
 	
@@ -478,9 +479,9 @@ function displayText() {
 	
 	/* Arrows to show possible scrolling */
 	if (letterSpots[indexFirstChar].y < uBorder)
-		GUI.Label ( Rect (lBorder - 15, uBorder - 15, 15, 15), upArrow);
+		GUI.Label ( Rect (lBorder - widthLetter, uBorder - widthLetter, widthLetter, widthLetter), upArrow);
 	if (letterSpots[textToDisplay.Length-1].y > Screen.height - dBorder - heightLetter)
-		GUI.Label ( Rect (lBorder - 15, Screen.height - dBorder, 15, 15), downArrow);
+		GUI.Label ( Rect (lBorder - widthLetter, Screen.height - dBorder, widthLetter, widthLetter), downArrow);
 }
 
 function removeText() {
@@ -569,6 +570,11 @@ function onDragging(dragData : DragInfo) {
 
 	if (	textInitialized && eventEnable
 			&& isIn(dragData.pos) ) {		// Mouse / finger inside the frame of the text
+		
+		/* We stop the automatic scrolling */
+		if( gapToMove )
+			gapToMove = 0 ;
+
 		
 		var block = false; // If true, you cannot scroll
 		var gap : float = 0; // gap between the top (resp bottom) of the text, and the top (resp bottom) of the frame

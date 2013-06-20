@@ -60,8 +60,10 @@ function init(fieldOfView_2D : float , fieldOfView_3D : float ){
 	
 	letterStyle = new GUIStyle();
 	letterStyle.fixedHeight = Screen.height / 30; // Recopié salement de text.js
-	letterStyle.fixedWidth = Screen.width / 72; // pareil
+	letterStyle.fixedWidth = Screen.width / 125; // pareil
 	letterStyle.normal.textColor = Color.white;
+	if (isOnIpad())
+		letterStyle.fontSize = 27; // Default: 13
 	
 	mySkin = new GUISkin();
 	mySkin.textArea = letterStyle;
@@ -94,7 +96,7 @@ function  OnGUI2D3D(){
 
 	if(Videos.OnPlay() && !enable && exitFinished){
 	
-		var Rectangle : Rect = new Rect(Screen.width * 0.75 , Screen.height * 0.88, camera.pixelWidth , camera.pixelHeight);	
+		var Rectangle : Rect = new Rect(Screen.width * 0.85 , Screen.height * 0.90, camera.pixelWidth , camera.pixelHeight);	
 		GUI.Label(Rectangle,"Click anywhere on the screen \n   to get further information.", letterStyle);
 		
 		if(Videos.GetOtherView()){		

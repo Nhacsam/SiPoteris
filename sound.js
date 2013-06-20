@@ -123,7 +123,7 @@ function displayMusic() {
 
 	/* The button is centered regarding the y axis */
 	if (displayPlayButton) {
-		if (GUI.Button(Rect(lBorder + 0.5 * buttonSize, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), currentBtn) && eventEnable ) { // Rect: left top width height
+		if (GUI.Button(Rect(lBorder + buttonSize, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), currentBtn) && eventEnable ) { // Rect: left top width height
 			if (currentBtn == pauseBtn) { // Sound playing
 				currentBtn = playBtn;
 				audio.Pause();
