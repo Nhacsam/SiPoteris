@@ -120,17 +120,17 @@ private function initText(u: int, d: int, l: int, r: int) {
 	letterStyleNormal.fixedHeight = heightLetter;
 	letterStyleNormal.fixedWidth = widthLetter;
 	letterStyleNormal.margin = new RectOffset (0,0,0,0);
-	if (isOnIpad())
-		letterStyleNormal.fontSize = 27; // Default: 13
+	//if (isOnIpad())
+		//letterStyleNormal.fontSize = 27; // Default: 13
 	
 	letterStyleHighlighted = new GUIStyle();
 	letterStyleHighlighted.alignment = TextAnchor.MiddleCenter;
-	letterStyleHighlighted.normal.textColor = Color.gray;
+	letterStyleHighlighted.normal.textColor = Color(0.8, 0.85, 0.85, 1);
 	letterStyleHighlighted.fontStyle = FontStyle.BoldAndItalic;
 	letterStyleHighlighted.fixedHeight = heightLetter;
 	letterStyleHighlighted.fixedWidth = widthLetter;
-	if (isOnIpad())
-		letterStyleHighlighted.fontSize = 27; // Default: 13
+	//if (isOnIpad())
+		//letterStyleHighlighted.fontSize = 27; // Default: 13
 	
 	slideshow =	gameObject.GetComponent("slideShow") as slideShow;
 	
