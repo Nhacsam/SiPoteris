@@ -38,7 +38,7 @@ private var letterStyleHighlighted : GUIStyle;
 
 private var widthLetter : int = Screen.width / 72;
 private var heightLetter : int = Screen.height / 30;
-private var spacing : int = Screen.height / 23; // between lines
+private var spacing : int = Screen.height / 40; // between lines
 private var widthTab = 4; // width of a tabulation (in spaces)
 
 private var indexFirstChar : int ; // Index of the first character displayed (0 except if it is '<')
@@ -119,6 +119,8 @@ private function initText(u: int, d: int, l: int, r: int) {
 	letterStyleNormal.fontStyle = FontStyle.Normal;
 	letterStyleNormal.fixedHeight = heightLetter;
 	letterStyleNormal.fixedWidth = widthLetter;
+	if (isOnIpad())
+		letterStyleNormal.fontSize = 25; // Default: 13
 	
 	letterStyleHighlighted = new GUIStyle();
 	letterStyleHighlighted.alignment = TextAnchor.MiddleCenter;
@@ -126,6 +128,8 @@ private function initText(u: int, d: int, l: int, r: int) {
 	letterStyleHighlighted.fontStyle = FontStyle.BoldAndItalic;
 	letterStyleHighlighted.fixedHeight = heightLetter;
 	letterStyleHighlighted.fixedWidth = widthLetter;
+	if (isOnIpad())
+		letterStyleHighlighted.fontSize = 25; // Default: 13
 	
 	slideshow =	gameObject.GetComponent("slideShow") as slideShow;
 	
@@ -666,4 +670,6 @@ public function isHidden() : boolean {
 	return textIsHidden ;
 }
 
-
+function isOnIpad() : boolean {
+	return ( SystemInfo.deviceType == DeviceType.Handheld );
+}

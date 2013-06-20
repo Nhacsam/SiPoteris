@@ -36,6 +36,7 @@ private var fieldOfView2D : float ;
 private var fieldOfView3D : float ;
 
 private var letterStyle : GUIStyle; // style of text
+private var mySkin : GUISkin;
 
 
 //instantiate items
@@ -60,6 +61,10 @@ function init(fieldOfView_2D : float , fieldOfView_3D : float ){
 	letterStyle = new GUIStyle();
 	letterStyle.fixedHeight = Screen.height / 30; // Recopié salement de text.js
 	letterStyle.fixedWidth = Screen.width / 72; // pareil
+	letterStyle.normal.textColor = Color.white;
+	
+	mySkin = new GUISkin();
+	mySkin.textArea = letterStyle;
 		
 	// Initialisation des Callback
 	OnBeginTrans = new Array();

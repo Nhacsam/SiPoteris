@@ -53,7 +53,7 @@ private var zoomLength : float ;			// Logueur du Zoom
 private var lang  : String ;				// Langue de la GUI : Valeurs possibles : 'fr', 'en'
 
 
-
+private var videoTimer = 0.0 ;				// Timer correspondant à ou on en est dans al video
 private var plane2D : GameObject;
 
 
@@ -162,10 +162,13 @@ function Start () {
 	
 	
 	// Initialise le Zoom avec les plans qui vont bien.
-	if( beginBy2D )
-		Zoom.Init(AllGO2D, zoomType2D ,Vector3.zero );
-	else
-		Zoom.Init(AllGO3D, zoomType3D ,Vector3.zero );
+	if( beginBy2D ) {
+		Zoom.Init(Array(), zoomType2D ,Vector3.zero );
+		setZoomPlanes(AllGO2D) ;
+	} else {
+		Zoom.Init(Array(), zoomType3D ,Vector3.zero );
+		setZoomPlanes(AllGO3D) ;
+	}
 	Zoom.setTransitionTime(zoomLength);
 	
 	// Affiche les plan ou non
@@ -221,8 +224,8 @@ function Start () {
 	
 	// Paramètrage de la caméra
 	CameraConfigUniv( beginBy2D );
-	
-	
+	videoTimer = 0.0 ;
+		
 }
 
 
@@ -232,7 +235,16 @@ function Start () {
  */
 function Update () {
 	
-	GUI.UpDateFullScreen();				// maj de l'interface
+	if(!Videos.getFlagEndVideo() ) {
+		if(  Videos.OnPlay() )
+			videoTimer += Time.deltaTime ;
+	} else
+		videoTimer = 0.0 ;
+		
+	var i : int;
+	var s : scriptForPlane;
+	
+	GUI.UpDateFullScreen();					// maj de l'interface
 	if( !haveUniver )						// si on a que l'interface, on update pas le reste
 		return ;
 	
@@ -245,8 +257,41 @@ function Update () {
 		sound3D.updateSounds( !isOn2D(), AllAudio3D );	// maj des sons 3D
 	
 	
+	// change certains plan en fonction du Timer
+	if( isOn2D() ) {
+		for( i = 0; i < AllGO2D.length; i++) {
+			
+			
+			
+			s = ((AllGO2D[i] as GameObject ).GetComponent("scriptForPlane") as scriptForPlane) ;
+			
+			if( s.getBeginTime() <= videoTimer &&
+				s.getBeginTime() > videoTimer - Time.deltaTime ) {
+				Zoom.addClickableElmt(AllGO2D[i]) ;
+		
+			} else if( s.getEndTime() <= videoTimer &&
+				s.getEndTime() > videoTimer - Time.deltaTime ) {
+				Zoom.removeClickableElmts(AllGO2D[i]) ;
+			}
+		}
+	} else {
+		for( i = 0; i < AllGO3D.length; i++) {
+		
+			s = ((AllGO3D[i] as GameObject ).GetComponent("scriptForPlane") as scriptForPlane) ;
+		
+			if( s.getBeginTime() <= videoTimer &&
+				s.getBeginTime() > videoTimer - Time.deltaTime )
+				Zoom.addClickableElmt(AllGO3D[i]) ;
+			
+			else if( s.getEndTime() <= videoTimer &&
+				s.getEndTime() > videoTimer - Time.deltaTime )
+				Zoom.removeClickableElmts(AllGO3D[i]) ;
+		}
+	}
+	
+	
 	// Déplacement des plan en 2D (si il y en a)
-	for( var i =0; i < AllGO2D.length; i++) {
+	for( i =0; i < AllGO2D.length; i++) {
 	
 		if(!Videos.getFlagEndVideo() && !placeRectAuto){
 			if( !GUI.isOnGUI() )// if not on gui
@@ -270,7 +315,7 @@ function Update () {
 		if(placeRectAuto)
 			move.keepRotation( AllGO3D[i] );
 		
-		var s = ((AllGO3D[i] as GameObject ).GetComponent("scriptForPlane") as scriptForPlane) ;
+		s = ((AllGO3D[i] as GameObject ).GetComponent("scriptForPlane") as scriptForPlane) ;
 		s.InitPosPlane( (AllGO3D[i] as GameObject ).transform.position );
 		
 	}
@@ -338,14 +383,32 @@ public function isOn2D() {
 public function changeZoomPlane( is2D : boolean ) {
 	
 	if( is2D ) {
-		Zoom.changeClickableElmts( AllGO2D );
+		setZoomPlanes( AllGO2D );
 		Zoom.changeType( zoomType2D, Vector3.zero );
 	} else {
-		Zoom.changeClickableElmts( AllGO3D );
+		setZoomPlanes( AllGO3D );
 		Zoom.changeType( zoomType3D, Vector3.zero  );
 	}
 }
 
+
+/*
+ * Met les plans clickables dans le zoom
+ * en enlevant les ancien et en tenant compte du Timer
+ */
+public function setZoomPlanes( planes : Array ) {
+	
+	Zoom.clearClickableElmts() ;
+	
+	for( var i = 0 ; i < planes.length; i++ ) {
+		
+		var s = ((planes[i] as GameObject ).GetComponent("scriptForPlane") as scriptForPlane) ;
+		// si le temps de début et le temps de fin correspondent
+		if( s.getBeginTime() <= videoTimer && ( s.getEndTime() > videoTimer || s.getEndTime() < 0 ) )
+			Zoom.addClickableElmt( planes[i] as GameObject ) ;
+	}
+	
+}
 
 /*
  * Cache les plans non concerné si besoins
@@ -520,6 +583,10 @@ public function datasXmlWrapper( tagName : String, content : Hashtable ) {
 		case 'diane' :
 		case 'acteon' :
 		case 'middle' :
+		case 'pilier' :
+		case 'cavite1' :
+		case 'cavite2' :
+		case 'cavite3' :
 			if( placeRectAuto )
 					autoPlacer.addPlane( content );
 			else if(!content.ContainsKey( 'shape'))
@@ -585,7 +652,7 @@ private function placeMeshHash ( t : Hashtable ){
 			
 			// configure les plan comme étant invisible
 		//	if( obj.name.IndexOf("0") != -1 )
-				s.setVisible(true);
+				s.setVisible(false);
 		
 			// add new gameobject to array
 			AllGO2D.Push( obj );

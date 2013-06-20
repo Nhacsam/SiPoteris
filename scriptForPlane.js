@@ -35,6 +35,10 @@ private var visible : boolean ;
 // Time when the object have been moved last
 private var lastMoveTime : float = 0;
 
+private var beginTime : float ;
+private var endTime : float ;
+
+
 // gestionnaire des fichiers
 private var datasHandler : dataFolderHandler ;
 
@@ -61,6 +65,16 @@ function InitScript( t : Hashtable ){
 		InitDelta( 'y', float.Parse( t['deltay']+'' ) );
 	if( t.ContainsKey( 'deltaz' ) )
 		InitDelta( 'z', float.Parse( t['deltaz']+'' ) );
+	
+	if( t.ContainsKey( 'begint' ) )
+		beginTime = float.Parse( t['begint']+'' ) ;
+	else
+		beginTime = -1 ;
+		
+	if( t.ContainsKey( 'endt' ) )
+		endTime = float.Parse( t['endt']+'' ) ;
+	else
+		endTime = -1 ;
 	
 	
 	// Initialisatiion du gestionnaire de l'architecture de fichier
@@ -200,6 +214,13 @@ public function getVisible() : boolean {
 }
 
 
+public function getBeginTime() {
+	return beginTime ;
+}
+
+public function getEndTime() {
+	return endTime ;
+}
 
 
 static function isOnIpad() : boolean {
