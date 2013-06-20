@@ -45,15 +45,16 @@ private var margin_bot : float = 0.15;
 private var margin_bot_button : float = 0.03;
 private var number_logo : int = 3;// five logos will be displayed
 private var margin_betw_media : float = 0.03; // déterminer suivant le nombre de médias
-private var width_logo : float = (0.5 - margin_right - margin_center/2 - 2*margin_betw_media)/3;// 3 : three columns
-private var height_logo : float = (0.5 - margin_bot - margin_betw_media)/2;//2 : two lines
+private var width_logo : float = (0.5 - margin_right - margin_center/2 - margin_betw_media);// 2 columns
+private var height_logo : float = (0.5 - margin_bot_button - margin_betw_media)/3;//2 : two lines
 
-private var height_picture : float = height_logo + margin_bot - margin_bot_button;
 /* position of plane along z axis */
 private var z_coor : float = 20;
 
 /*tableau contenant les noms des logos*/
 private var logoPath : String[];
+/*tableau contenant la position des logos sous forme de rectangle*/
+private var logoRect : Rect[];
 
 
 //////////////
@@ -108,10 +109,25 @@ function initCredits ( returnRectangle : Rect) {
 
 	/*init nom des logos*/
 	logoPath = new String[number_logo];
-	logoPath[0] = "EMSE";
-	logoPath[1] = "LFKS";
-	logoPath[2] = "ZKM";
+	logoPath[0] = "LFKS";
+	logoPath[1] = "ZKM";
+	logoPath[2] = "EMSE";
 	
+	/*init rect des logos*/
+	logoRect = new Rect[number_logo];
+	logoRect[0] = Rect( (	0.5 + margin_center/2)*Screen.width , 
+							(1 - margin_bot_button - 3*height_logo - 2*margin_betw_media)*Screen.height , 
+							width_logo*Screen.width , 
+							height_logo*Screen.height );
+	logoRect[1] = Rect( (	0.5 + margin_center/2)*Screen.width , 
+							(1 - margin_bot_button - 2*height_logo - margin_betw_media)*Screen.height  , 
+							width_logo*Screen.width, 
+							height_logo*Screen.height );
+	logoRect[2] = Rect( (	0.5 + margin_center/2)*Screen.width ,
+							(1 - margin_bot_button - height_logo)*Screen.height  , 
+							width_logo*Screen.width , 
+							height_logo*Screen.height );
+
 	/* init bool */
 	VideoIsLoading = false;
 	screenIsSet = false;
@@ -136,16 +152,8 @@ function OnGUICredits () {
 		
 		// display logos
 		for( var i = 0 ; i < logoPath.length ; i++ )
-			displayLogo( 	1 - ( margin_bot + 2*height_logo + margin_betw_media),
-							0.5 + margin_center/2 + i*(width_logo + margin_betw_media),
-							width_logo,
-							height_logo,
+			displayLogo( 	logoRect[i],
 							logoPath[i]);
-		// display picture
-		displayPicture(	1 - margin_bot_button - height_picture,
-						0.5 + margin_center/2,
-						0.5 - margin_center/2 - margin_right,
-						height_picture );
 	}
 }
 
@@ -199,9 +207,7 @@ function updateCredits(){
 /*
 	*display logo on credits screen
 */
-private function displayLogo( bot : float , left : float , w : float , h : float , path : String ){
-	// rectangle where the logo is displayed
-	var r  : Rect = Rect( Screen.width*left , Screen.height*bot , Screen.width*w , Screen.height*h );
+private function displayLogo( r : Rect , path : String ){
 	// load logo and test if texture exists and has the right type
 	try {
 		var texture = Resources.Load("defaultDatas/credits/logos/"+path , Texture2D);
@@ -225,35 +231,6 @@ private function displayLogo( bot : float , left : float , w : float , h : float
 	}
 }
 
-/*
-	*display picture of academical tutor, industrial tutor, students
-*/
-private function displayPicture( bot : float , left : float , w : float , h : float ){
-	// rectangle where the picture is displayed
-	var r  : Rect = Rect( Screen.width*left , Screen.height*bot , Screen.width*w , Screen.height*h );
-	// load logo and test if texture exists and has the right type
-	try {
-		var texture = Resources.Load("defaultDatas/credits/picture/picture" , Texture2D);
-	} catch( e) {
-		texture = null;
-	}
-	
-	if( texture ){// check if path is not empty
-			// get ratio of asset
-			var ratio : float = (texture as Texture).width/(texture as Texture).height;
-			// calculate a new rectangle
-			var newR : Rect = strip.optimalSize( ratio , r );
-			GUI.DrawTexture( newR , texture as Texture );
-	}
-	else{
-		if( firstWarning ){
-			// avoid to spam console
-			firstWarning = false;
-			Console.Warning("No path available for logos or type of file is not texture2D - picture");
-		}
-	}
-
-}
 /*
 	*init screen
 */
