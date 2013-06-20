@@ -32,6 +32,8 @@ private var VideoIsLoading : boolean;
 
 private var screenIsSet : boolean;
 
+private var firstWarning : boolean;//to avoid spamming console
+
 private var videoScreen : GameObject;
 
 /*disposition des éléments des crédits en pourcentage de l'écran*/
@@ -40,19 +42,19 @@ private var margin_right : float = 0.05;
 private var margin_left : float = 0.05;
 private var margin_top : float = 0.10;
 private var margin_bot : float = 0.15;
-private var number_logo : int = 5;// five logos will be displayed
-private var margin_betw_media : float = 0.01; // déterminer suivant le nombre de médias
+private var margin_bot_button : float = 0.03;
+private var number_logo : int = 3;// five logos will be displayed
+private var margin_betw_media : float = 0.03; // déterminer suivant le nombre de médias
 private var width_logo : float = (0.5 - margin_right - margin_center/2 - 2*margin_betw_media)/3;// 3 : three columns
 private var height_logo : float = (0.5 - margin_bot - margin_betw_media)/2;//2 : two lines
 
+private var height_picture : float = height_logo + margin_bot - margin_bot_button;
 /* position of plane along z axis */
 private var z_coor : float = 20;
 
 /*tableau contenant les noms des logos*/
 private var logoPath : String[];
 
-/*ratio de la video des crédits*/
-private var ratioVideoCredit : float;
 
 //////////////
 /////INIT/////
@@ -107,12 +109,11 @@ function initCredits ( returnRectangle : Rect) {
 	logoPath[0] = "EMSE";
 	logoPath[1] = "LFKS";
 	logoPath[2] = "ZKM";
-	logoPath[3] = "MP2013";
-	logoPath[4] = "softPredictions";
 	
 	/* init bool */
 	VideoIsLoading = false;
 	screenIsSet = false;
+	firstWarning = true;
 	
 	/*init plane where movie is displayed*/
 	initScreen();
@@ -131,24 +132,18 @@ function OnGUICredits () {
 		// display text
 		textViewer.OnGUIText();
 		
-		/* display logos */
-		var num : int = 0;
-		for( var i = 0 ; i < logoPath.length ; i++ ){
-			num++;
-			if( num > 3 ){
-				displayLogo( 	1 - margin_bot - height_logo,
-								0.5 + margin_center/2 + (i-3)*(width_logo + margin_betw_media),
-								width_logo,
-								height_logo,
-								logoPath[i]);
-			}
-			else
-				displayLogo( 	1 - ( margin_bot + 2*height_logo + margin_betw_media),
-								0.5 + margin_center/2 + i*(width_logo + margin_betw_media),
-								width_logo,
-								height_logo,
-								logoPath[i]);
-		}
+		// display logos
+		for( var i = 0 ; i < logoPath.length ; i++ )
+			displayLogo( 	1 - ( margin_bot + 2*height_logo + margin_betw_media),
+							0.5 + margin_center/2 + i*(width_logo + margin_betw_media),
+							width_logo,
+							height_logo,
+							logoPath[i]);
+		// display picture
+		displayPicture(	1 - margin_bot_button - height_picture,
+						0.5 + margin_center/2,
+						0.5 - margin_center/2 - margin_right,
+						height_picture );
 	}
 }
 
@@ -165,8 +160,7 @@ function exitCredits() {
 	
 	Destroy(textViewer);
 	
-	// unload video
-	//videoSet.stopVideo( videoScreen );
+	Destroy(videoScreen);
 	
 	if (audioWasPlaying)
 		audio.mute = false;
@@ -183,13 +177,11 @@ function updateCredits(){
 									(0.5 - margin_right - margin_center/2)*Screen.width , 
 									(0.5 - margin_top - margin_betw_media )*Screen.height );
 		
-
-			if( !ratioVideoCredit ){
-				var v : Vector2 = videoSet.VideoWH();
-				ratioVideoCredit = v.x/v.y;
-			}
+			var v : Vector2 = videoSet.VideoWH();
+			var ratio : float = v.x/v.y;
+				
 			// calculate a new rectangle that fit the ratio of movie
-			var newR : Rect = strip.optimalSize( ratioVideoCredit , r );
+			var newR : Rect = strip.optimalSize( ratio , r );
 			// set parameters of screen
 			setScreen( newR , videoScreen );
 			
@@ -222,10 +214,44 @@ private function displayLogo( bot : float , left : float , w : float , h : float
 			var newR : Rect = strip.optimalSize( ratio , r );
 			GUI.DrawTexture( newR , texture as Texture );
 	}
-	else
-		Console.Warning("No path available for logos or type of file is not texture2D");
+	else{
+		if( firstWarning ){
+			// avoid to spam console
+			firstWarning = false;
+			Console.Warning("No path available for logos or type of file is not texture2D - logo");
+		}
+	}
 }
 
+/*
+	*display picture of academical tutor, industrial tutor, students
+*/
+private function displayPicture( bot : float , left : float , w : float , h : float ){
+	// rectangle where the picture is displayed
+	var r  : Rect = Rect( Screen.width*left , Screen.height*bot , Screen.width*w , Screen.height*h );
+	// load logo and test if texture exists and has the right type
+	try {
+		var texture = Resources.Load("defaultDatas/credits/picture/picture" , Texture2D);
+	} catch( e) {
+		texture = null;
+	}
+	
+	if( texture ){// check if path is not empty
+			// get ratio of asset
+			var ratio : float = (texture as Texture).width/(texture as Texture).height;
+			// calculate a new rectangle
+			var newR : Rect = strip.optimalSize( ratio , r );
+			GUI.DrawTexture( newR , texture as Texture );
+	}
+	else{
+		if( firstWarning ){
+			// avoid to spam console
+			firstWarning = false;
+			Console.Warning("No path available for logos or type of file is not texture2D - picture");
+		}
+	}
+
+}
 /*
 	*init screen
 */
@@ -255,6 +281,9 @@ private function setScreen( r : Rect , videoScreen : GameObject ){
 	// name
 	videoScreen.name = "GUI_creditMovie";
 	
+	var rotation = videoScreen.transform.rotation ;
+	videoScreen.transform.rotation = Quaternion();
+	
 	// extend plane
 	var elmtsSize : Vector2 = windows.getRealSize(	Vector2( r.width , r.height ),
 													Vector2( r.x , r.y ),
@@ -262,18 +291,15 @@ private function setScreen( r : Rect , videoScreen : GameObject ){
 													camera ) ;
 	
 	var size = videoScreen.renderer.bounds.size ;
-	videoScreen.transform.localScale = Vector3( elmtsSize.x/size.x, 
+	videoScreen.transform.localScale = Vector3( videoScreen.transform.localScale.x * elmtsSize.x/size.x, 
 												1, 
-												elmtsSize.y/size.z ) ;
+												videoScreen.transform.localScale.z * elmtsSize.y/size.z ) ;
 	
 	// set position of plane
 	videoScreen.transform.position = camera.ScreenToWorldPoint( Vector3( r.x + r.width/2 , r.y + r.height/2 , z_coor ) );
 	videoScreen.transform.rotation = camera.transform.rotation;
 	videoScreen.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
 	videoScreen.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );
-	
-	// rotate plane along y axis
-	videoScreen.transform.eulerAngles += Vector3(0,180,0);
 }
 
 

@@ -21,10 +21,10 @@ private var rot;
 private var scene2D : boolean = true;
 
 /* Coordinates of the 2D/3D button */
-private var buttonUp : int = Screen.height - 100;
-private var buttonLeft : int = 0;
-private var buttonHeight : int = 100;
-private var buttonWidth : int = 100;
+private var buttonUp : int = Screen.height * 0.85;
+private var buttonLeft : int = Screen.width * 0.05;
+private var buttonHeight : int = Screen.height * 0.12;
+private var buttonWidth : int = Screen.height * 0.12;
 private var exitFinished: boolean = true;
 
 // CallBacks appelés lors d'un changement de vue
@@ -34,6 +34,9 @@ private var OnEndTrans : Array ;
 // champ de vision de la cam en 2D et en 3D
 private var fieldOfView2D : float ;
 private var fieldOfView3D : float ;
+
+private var letterStyle : GUIStyle; // style of text
+private var mySkin : GUISkin;
 
 
 //instantiate items
@@ -55,6 +58,14 @@ function init(fieldOfView_2D : float , fieldOfView_3D : float ){
 	fieldOfView2D = fieldOfView_2D ;
 	fieldOfView3D = fieldOfView_3D ;
 	
+	letterStyle = new GUIStyle();
+	letterStyle.fixedHeight = Screen.height / 30; // Recopié salement de text.js
+	letterStyle.fixedWidth = Screen.width / 72; // pareil
+	letterStyleNormal.normal.textColor = Color.white;
+	
+	mySkin = new GUISkin();
+	mySkin.textArea = letterStyle;
+		
 	// Initialisation des Callback
 	OnBeginTrans = new Array();
 	OnEndTrans = new Array();
@@ -83,11 +94,11 @@ function  OnGUI2D3D(){
 
 	if(Videos.OnPlay() && !enable && exitFinished){
 	
-		var Rectangle : Rect = new Rect(Screen.width/2 +310 , Screen.height-60, camera.pixelWidth , camera.pixelHeight);	
-		GUI.Label(Rectangle,"Click anywhere on the screen \n   to get further information.");
+		var Rectangle : Rect = new Rect(Screen.width * 0.75 , Screen.height * 0.88, camera.pixelWidth , camera.pixelHeight);	
+		GUI.Label(Rectangle,"Click anywhere on the screen \n   to get further information.", letterStyle);
 		
 		if(Videos.GetOtherView()){		
- 	 		if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), scene2D ? "3D view" : "2D view" )){
+ 	 		if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), scene2D ? "3D view" : "2D view")){
 				zoom.disableEvents();
 				Change2D3D();
 				//Videos.test();

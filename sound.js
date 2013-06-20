@@ -38,7 +38,7 @@ private var heightLetter : int = 20;
 private var eventEnable : boolean ;
 private var soundIsHidden : boolean ;
 
-private var chooseNextSoundRandomly: boolean = false;
+private var chooseNextSoundRandomly: boolean = true;
 
 private var repeatButton : Texture;
 
@@ -67,6 +67,9 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
 	gameObject.AddComponent("AudioSource");
 	audio.clip = Resources.Load(tab[0]) as AudioClip;
 	audio.Play();
+	
+	if (chooseNextSoundRandomly)
+		changeMusic(""); // Randomise 1st sound
 			
 	enableAll();
 	

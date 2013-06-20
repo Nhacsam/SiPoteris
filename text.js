@@ -1,7 +1,7 @@
 #pragma strict
 /*
 Creation : 02/04/2013
-Last update : 11/06/2013
+Last update : 20/06/2013
 
 Author : Fabien Daoulas / Kevin Guillaumond
 
@@ -18,7 +18,7 @@ Use: placeText(...) is called once, and displayText(...) is called at every fram
 private var textToDisplay : String;
 
 /*
-*	Dépendances
+*	Dependencies
 */
 private var slideshow  : slideShow ;
 
@@ -33,11 +33,13 @@ private var dBorder : int;
 
 private var widthText : float;
 
-private var widthLetter : int = 11;
-private var heightLetter : int = 20;
-private var spacing : int = 25; // between lines
+private var letterStyleNormal : GUIStyle;
+private var letterStyleHighlighted : GUIStyle;
+
+private var widthLetter : int = Screen.width / 72;
+private var heightLetter : int = Screen.height / 30;
+private var spacing : int = Screen.height / 23; // between lines
 private var widthTab = 4; // width of a tabulation (in spaces)
-private var styleLetterMiddle : GUIStyle = new GUIStyle(); // style of letter
 
 private var indexFirstChar : int ; // Index of the first character displayed (0 except if it is '<')
 
@@ -50,6 +52,7 @@ private var downArrow : Texture; // Idem
 */
 private var letterSpots : Rect[]; // array of rects containing the position of the GUILabel of each letter -- aboutLetter[i] is corresponding to textToDisplay[i]
 private var displayChar : boolean[]; // TRUE if we display the char
+private var highlightChar : boolean[]; // TRUE if the char is highlighted (italic)
 private var REF_RECT : Rect; // rectangle of reference -- this is the place of the first letter at the top-left of the text
 private var moveToNext : Array ; // values of i which corresponds to a move to the next line
 private var toJustify : Array ; // Indicates for each line wether we need to justify it or not
@@ -83,8 +86,12 @@ private function initText(u: int, d: int, l: int, r: int) {
 
 	letterSpots = new Rect[textToDisplay.Length];
 	displayChar = new boolean [textToDisplay.Length];
-	for (var i : int = 0; i < textToDisplay.length; i++)
+	highlightChar = new boolean [textToDisplay.Length];
+	
+	for (var i : int = 0; i < textToDisplay.length; i++) {
 		displayChar[i] = true;
+		highlightChar[i] = false;
+	}
 	
 	/* Calculate margin sizes */
 	uBorder = u;
@@ -105,6 +112,25 @@ private function initText(u: int, d: int, l: int, r: int) {
 	nbLines  = 0;
 	myTags = new Array();
 	myTagIndexes = new Array ();
+	
+	letterStyleNormal = new GUIStyle();
+	letterStyleNormal.alignment = TextAnchor.MiddleCenter;
+	letterStyleNormal.normal.textColor = Color.white;
+	letterStyleNormal.fontStyle = FontStyle.Normal;
+	letterStyleNormal.fixedHeight = heightLetter;
+	letterStyleNormal.fixedWidth = widthLetter;
+	if (isOnIpad())
+		letterStyleNormal.fontSize = 25; // Default: 13
+	
+	letterStyleHighlighted = new GUIStyle();
+	letterStyleHighlighted.alignment = TextAnchor.MiddleCenter;
+	letterStyleHighlighted.normal.textColor = Color.white;
+	letterStyleHighlighted.fontStyle = FontStyle.BoldAndItalic;
+	letterStyleHighlighted.fixedHeight = heightLetter;
+	letterStyleHighlighted.fixedWidth = widthLetter;
+	if (isOnIpad())
+		letterStyleHighlighted.fontSize = 25; // Default: 13
+	
 	slideshow =	gameObject.GetComponent("slideShow") as slideShow;
 	
 	enableAll(); // enable event and dispy the text
@@ -128,9 +154,6 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 	var nbOfSpace : int; // contains the number of spaces in a sentence
 	
 	var rectLetter : Rect = REF_RECT;
-	
-	styleLetterMiddle.alignment = TextAnchor.MiddleCenter;
-	styleLetterMiddle.normal.textColor = Color.white;
 	
 	var firstTimeInWhileLoop = true;
 	
@@ -236,6 +259,8 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 			JustifyText(i);
 	}
 	
+	handleHighlight();
+	
 	textInitialized = true;
 }
 
@@ -317,6 +342,14 @@ function JustifyText(numLine : int){
 	}
 }
 
+
+/*
+*
+*	Several funcitons to handle tags
+*
+*/
+
+
 /*
 *	Input: index of a '<' Output: The entire tag, or "" if there is no '>'
 */
@@ -371,7 +404,7 @@ function toTag (myTag: String) {
 	var gap = letterSpots[index].y - uBorder + gapToMove;
 	
 	if (gap > ((letterSpots[textToDisplay.Length-1].y + gapToMove - uBorder) - ( Screen.height - uBorder - dBorder ) ) + heightLetter) // gap < height of text - height of screen, we scroll to max
-		gap = (letterSpots[textToDisplay.Length-1].y + gapToMove - uBorder) - ( Screen.height - uBorder - dBorder ) + heightLetter;
+		gap = (letterSpots[textToDisplay.Length-1].y + gapToMove - uBorder) - ( Screen.height - uBorder - dBorder ) + heightLetter + 1;
 	
 	gapToMove -= gap ;
 }
@@ -387,6 +420,46 @@ function tagToName (tag : String) {
 }
 
 /*
+*	Looks for <i> and </i> tags
+*/
+function handleHighlight () {
+	var watchDog : int = 0; // To check correct parsing
+	var startIndex : int = (-1); // Where does italic starts ?
+	
+	for ( var index : int = 0; index < myTags.length; index++) { // for each tag
+		
+		if (myTags[index] == "<i>") {
+			watchDog++;
+			if (watchDog > 1)
+				Console.Warning("Problème de parsing de balises <i> à l'index " + myTagIndexes[index] + ", tag #" + (index+1));
+			else {
+				if (startIndex == (-1)) // should be useless
+					startIndex = myTagIndexes[index];
+			}
+		}
+		
+		if (myTags[index] == "</i>") {
+			watchDog--;
+			if (watchDog != 0)
+				Console.Warning("Problème de parsing de balises </i> à l'index " + myTagIndexes[index] + ", tag #" + (index+1));
+			else {
+				if (startIndex != (-1)) { // If there was a <i> before
+					var endIndex : int = myTagIndexes[index];
+					for ( var i : int = startIndex; i < endIndex; i++) {
+						highlightChar[i] = true;
+					}
+					startIndex = (-1);
+				}
+			}
+		}		
+	} // end for
+	
+	if (watchDog != 0)
+			Console.Warning( (watchDog > 0) ? "Il y a trop de <i>" : "Il y a trop de </i>");
+}
+
+
+/*
 *	 Two functions to display the text
 */
 function OnGUIText(){
@@ -400,7 +473,7 @@ function displayText() {
 	
 	for (var i : int = indexFirstChar; i < textToDisplay.Length; i++) {
 		if (letterSpots[i].y >= uBorder && (letterSpots[i].y + heightLetter) <= Screen.height - dBorder && displayChar[i])
-			GUI.Label (letterSpots[i], ""+textToDisplay[i], styleLetterMiddle);
+			GUI.Label (letterSpots[i], ""+textToDisplay[i], highlightChar[i] ? letterStyleHighlighted : letterStyleNormal);
 	}
 	
 	/* Arrows to show possible scrolling */
@@ -416,33 +489,33 @@ function removeText() {
 }
 
 /*
- * Déplace le texte pour les transitions ///////////////////////////////////////////////////////
- */
+*	Moves the text for transitions
+*/
 private function transitionMove() {
 	
-	// si ya rien à faire, on ne s'attarde pas
+	/* No move needed */
 	if(gapToMove == 0 )
 		return ;
 	
-	// calcul de la vitesse en fonction de ce qu'il reste à déplacer
-	var sens = (gapToMove > 0 ) ? 1 : -1 ;
-	var speed = gapToMove*coefSpeed/100 + constSpeed*sens ;
+	/* Calculaes speed regarding the distance to go */
+	var direction = (gapToMove > 0 ) ? 1 : -1 ; // 1 = scrolling up
+	var speed = gapToMove*coefSpeed/100 + constSpeed*direction ;
 	var elapsedTime = Time.deltaTime ;
 	
-	// maj de ce qu'il reste à bouger
+	/* Update the remaining distance */
 	gapToMove -= speed*elapsedTime ;
 	
-	// si on a changé de signe
-	if(gapToMove > 0 && sens < 0 ) {
-		speed = 0 ;
-		gapToMove = 0 ;
-		
-	} else if(gapToMove < 0 && sens > 0 ) {
-		speed -= gapToMove/elapsedTime ;
+	/* If the sign changes */
+	if (gapToMove > 0 && direction < 0 ) {
+		speed = 0;
+		gapToMove = 0;
+	}
+	else if ( gapToMove < 0 && direction > 0 ) {
+		speed -= gapToMove/elapsedTime;
 		gapToMove = 0 ;
 	}
 	
-	// déplacement des lettres
+	/* Moving letters */
 	for (var j : int = 0; j < textToDisplay.Length; j++) {
 		letterSpots[j].y += speed*elapsedTime ;
 	}
@@ -451,8 +524,8 @@ private function transitionMove() {
 
 
 /*
- * S'assure que le texte n'a pas été trop scrollé et le replace sinon
- */
+*	Replaces text if out of bounds
+*/
 private function replaceOutOfBoundText() {
 	
 	var gap : float ;
@@ -494,9 +567,8 @@ function OnDisable(){
 /* Scrolling text with dragging event ! (Finger KO Mouse OK) */
 function onDragging(dragData : DragInfo) {
 
-	if (	textInitialized && eventEnable 	// évenements activé
-			&& gapToMove == 0				// pas en mouvement
-			&& isIn(dragData.pos) ) {		// souris dans le texte
+	if (	textInitialized && eventEnable
+			&& isIn(dragData.pos) ) {		// Mouse / finger inside the frame of the text
 		
 		var block = false; // If true, you cannot scroll
 		var gap : float = 0; // gap between the top (resp bottom) of the text, and the top (resp bottom) of the frame
@@ -514,7 +586,7 @@ function onDragging(dragData : DragInfo) {
 		}
 		replaceOutOfBoundText();
 		
-		/* Looking for the tag highest placed, in the top half of the frame */
+		/* Looking for the tag highest placed, in the top of the frame */
 		for (var l : int = 0; l < myTags.length; l++) {
 			/* If we find the tag */
 			if ( letterSpots[myTagIndexes[l]].y > uBorder && letterSpots[myTagIndexes[l]].y < uBorder + 2 * heightLetter) {
@@ -540,50 +612,50 @@ public function isIn( pos : Vector2 ) : boolean {
 }
 
 
-/*******************************************************
-**** Cacher / desactiver les evennements de l'objet ****
-********************************************************/
+/*****************************
+	Hide / Disable text events
+*****************************/
 
 /*
- * Affiche l'objet et active les evenements
- */
+*	Displays the text ans enables events
+*/
 public function enableAll() {
 	show() ;
 	enableEvents() ;
 }
 
 /*
- * Cache l'objet et desactive les evenements
- */
+*	Hides the text ans disables events
+*/
 public function disableAll() {
 	hide() ;
 	disableEvents() ;
 }
 
 /*
- * Active les evenements
- */
+*	Enables events
+*/
 public function enableEvents() {
 	eventEnable = true ;
 }
 
 /*
- * Desactive les evenements
- */
+*	Disables events
+*/
 public function disableEvents() {
 	eventEnable = false ;
 }
 
 /*
- * Affiche l'objet
- */
+*	Displays the text
+*/
 public function show() {
 	textIsHidden = false ;
 }
 
 /*
- * Cache l'objet
- */
+*	Hides the text
+*/
 public function hide() {
 	textIsHidden = true ;
 }
@@ -598,4 +670,6 @@ public function isHidden() : boolean {
 	return textIsHidden ;
 }
 
-
+function isOnIpad() : boolean {
+	return ( SystemInfo.deviceType == DeviceType.Handheld );
+}

@@ -18,7 +18,7 @@ static var displayCriticalError : boolean = true ;
 static var displayPrivateDebug : boolean = true ;
 
 // lesquels ?
-static var PrivateDebugToDisplay : int = 104 ;
+static var PrivateDebugToDisplay : int = 04 ;
 
 
 
