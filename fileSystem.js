@@ -153,7 +153,7 @@ static function isFileExisting( path : String ) : boolean {
 		
 		if( ! exist ) {
 			
-			var file = File.CreateText( path ) ;
+			var file = File.Create( path ) ;
 			file.Close();
 			exist = File.Exists(path) ;
 			Console.Warning( 	'Le fichier "'+ path + "\" est inexistant \n" +

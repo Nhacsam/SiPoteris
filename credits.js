@@ -163,10 +163,7 @@ function exitCredits() {
 	
 	Destroy(textViewer);
 	
-	// unload video
-	videoSet.stopVideo( videoScreen );
-	
-	videoScreen.renderer.enabled = false;
+	Destroy(videoScreen);
 	
 	if (audioWasPlaying)
 		audio.mute = false;
@@ -252,10 +249,6 @@ private function initScreen(){
 private function setScreen( r : Rect , videoScreen : GameObject ){
 	// name
 	videoScreen.name = "GUI_creditMovie";
-	
-	// rotation has to be a default one when changing the scale
-	var rotation = videoScreen.transform.rotation ;
-	videoScreen.transform.rotation = Quaternion();
 	
 	// extend plane
 	var elmtsSize : Vector2 = windows.getRealSize(	Vector2( r.width , r.height ),

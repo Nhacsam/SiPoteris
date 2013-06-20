@@ -262,6 +262,10 @@ public function goToWithPath( path : String ) {
  */
 public function goTo( filename : String ) {
 	
+	/* Ces deux noms sont réservés aux balises italique */
+	if (filename == "i" || filename == "/i")
+		return;
+	
 	var index : int = -1 ;
 	
 	// Ensuite on cheche ceux qui contiennent s
