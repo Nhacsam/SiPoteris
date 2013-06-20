@@ -21,10 +21,10 @@ private var rot;
 private var scene2D : boolean = true;
 
 /* Coordinates of the 2D/3D button */
-private var buttonUp : int = Screen.height - 100;
+private var buttonUp : int = Screen.height - Screen.height/7;
 private var buttonLeft : int = 0;
-private var buttonHeight : int = 100;
-private var buttonWidth : int = 100;
+private var buttonHeight : int = Screen.height/7;
+private var buttonWidth : int = Screen.height/7;
 private var exitFinished: boolean = true;
 
 // CallBacks appelés lors d'un changement de vue
@@ -82,8 +82,8 @@ function endingEnable(){
 function  OnGUI2D3D(){
 
 	if(Videos.OnPlay() && !enable && exitFinished){
-	
-		var Rectangle : Rect = new Rect(Screen.width/2 +310 , Screen.height-60, camera.pixelWidth , camera.pixelHeight);	
+
+		var Rectangle : Rect = new Rect(Screen.width/2 +310 , Screen.height-60,Screen.width  , Screen.height);	
 		GUI.Label(Rectangle,"Click anywhere on the screen \n   to get further information.");
 		
 		if(Videos.GetOtherView()){		

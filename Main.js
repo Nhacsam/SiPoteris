@@ -52,7 +52,7 @@ private var zoomLength : float ;			// Logueur du Zoom
 
 private var lang  : String ;				// Langue de la GUI : Valeurs possibles : 'fr', 'en'
 
-
+private var isOnGui : boolean=false;
 
 private var plane2D : GameObject;
 
@@ -258,7 +258,11 @@ function Update () {
 	}
 	
 	for( i = 0; i < AllGO3D.length; i++) {
-		move.rotateY_3D( AllGO3D[i] as GameObject, true ) ;
+		if(!Videos.getFlagEndVideo() && !placeRectAuto){
+			move.rotateY_3D( AllGO3D[i] as GameObject, !isOnGui ) ;
+		}
+		else
+			move.resetPlane(AllGO3D[i] as GameObject);
 		
 		if(placeRectAuto)
 			move.keepRotation( AllGO3D[i] );
@@ -577,8 +581,7 @@ private function placeMeshHashPolar ( t : Hashtable ){
 			s.InitOrientedTo( p );
 			
 			// configure les plan comme étant invisible
-		//	if( obj.name.IndexOf("0") != -1 )
-				s.setVisible(true);
+				s.setVisible(false);
 		
 			// add new gameobject to array
 			AllGO2D.Push( obj );

@@ -203,7 +203,7 @@ static function calculatePHI( ratio : float , b : boolean) : float {
 		// ratio min can be lower than 0.66 and ratio max higher
 		if( ratio > 0.66 ){
 			// dome is about 3/4 of a sphere that is why 7*Mathf.PI/4
-			var v : float = 7*Mathf.PI/4 + ( 1 - ratio ) * ( Mathf.PI/2 ) / 0.66 ;
+			var v : float = Mathf.PI*11/6 + ( 1 - ratio ) * ( Mathf.PI/2 ) / 0.66 ;
 		}
 		else{
 			v = 2*Mathf.PI + Mathf.PI/2*((0.66-ratio)/0.66);
