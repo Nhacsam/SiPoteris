@@ -516,13 +516,13 @@ public function datasXmlWrapper( tagName : String, content : Hashtable ) {
 			if( placeRectAuto )
 					autoPlacer.addPlane( content );
 			else if(!content.ContainsKey( 'shape'))
-				placeMeshHashPolar( content );
+				placeMeshHash( content );
 			else if( content['shape'] == 'polar' )
-				placeMeshHashPolar( content );
+				placeMeshHash( content );
 			else if( content['shape'] == 'rectangle' )
 				placeRectHash( content, null );
 			else
-				placeMeshHashPolar( content );
+				placeMeshHash( content );
 			
 			
 			break ;
@@ -531,13 +531,13 @@ public function datasXmlWrapper( tagName : String, content : Hashtable ) {
 			 if( placeRectAuto )
 					autoPlacer.addPlane( content );
 			else if(!content.ContainsKey( 'shape'))
-				placeMeshHashPolar( content );
+				placeMeshHash( content );
 			else if( content['shape'] == 'polar' )
-				placeMeshHashPolar( content );
+				placeMeshHash( content );
 			else if( content['shape'] == 'rectangle' )
 				placeRectHash( content, null );
 			else
-				placeMeshHashPolar( content );
+				placeMeshHash( content );
 			
 			
 			break ;
@@ -552,7 +552,7 @@ public function datasXmlWrapper( tagName : String, content : Hashtable ) {
 	*place piece of circle according to xml
 	*init hashtable in the script attached to the plane
 */
-private function placeMeshHashPolar ( t : Hashtable ){
+private function placeMeshHash ( t : Hashtable ){
 	
 	/*
 	 * Création des éléments clickable en 2D

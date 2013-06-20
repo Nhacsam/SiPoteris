@@ -294,10 +294,8 @@ private function setRect3D( theta : float , phi : float , scale : float , ratiot
 	obj.transform.localEulerAngles += Vector3(90,0,0);
 		
 	// set scale
-	if( ratiotexture > 0){
-		Console.Test(scale + '   -   ' + ratiotexture + '  -  ' + Mathf.Sqrt(ratiotexture) + ' --- ' + scale*1.0/Mathf.Sqrt(ratiotexture), 100);
+	if( ratiotexture > 0)
 		obj.transform.localScale = Vector3( scale*Mathf.Sqrt(ratiotexture) , 0 , scale*1.0/Mathf.Sqrt(ratiotexture) );
-	}
 	else
 		obj.transform.localScale = Vector3( scale , 0 , scale );		
 					

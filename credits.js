@@ -32,6 +32,8 @@ private var VideoIsLoading : boolean;
 
 private var screenIsSet : boolean;
 
+private var firstWarning : boolean;//to avoid spamming console
+
 private var videoScreen : GameObject;
 
 /*disposition des éléments des crédits en pourcentage de l'écran*/
@@ -111,6 +113,7 @@ function initCredits ( returnRectangle : Rect) {
 	/* init bool */
 	VideoIsLoading = false;
 	screenIsSet = false;
+	firstWarning = true;
 	
 	/*init plane where movie is displayed*/
 	initScreen();
@@ -163,8 +166,7 @@ function exitCredits() {
 	
 	Destroy(textViewer);
 	
-	// unload video
-	//videoSet.stopVideo( videoScreen );
+	Destroy(videoScreen);
 	
 	if (audioWasPlaying)
 		audio.mute = false;
@@ -218,8 +220,13 @@ private function displayLogo( bot : float , left : float , w : float , h : float
 			var newR : Rect = strip.optimalSize( ratio , r );
 			GUI.DrawTexture( newR , texture as Texture );
 	}
-	else
-		Console.Warning("No path available for logos or type of file is not texture2D");
+	else{
+		if( firstWarning ){
+			// avoid to spam console
+			firstWarning = false;
+			Console.Warning("No path available for logos or type of file is not texture2D");
+		}
+	}
 }
 
 /*
@@ -250,10 +257,6 @@ private function initScreen(){
 private function setScreen( r : Rect , videoScreen : GameObject ){
 	// name
 	videoScreen.name = "GUI_creditMovie";
-	
-	// rotation has to be a default one when changing the scale
-	var rotation = videoScreen.transform.rotation ;
-	videoScreen.transform.rotation = Quaternion();
 	
 	// extend plane
 	var elmtsSize : Vector2 = windows.getRealSize(	Vector2( r.width , r.height ),
