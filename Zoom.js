@@ -3,7 +3,7 @@
 
 
 // Eléments cliquables
-private var zClickableElmts : Array ;	// Liste des Elements cliquables
+private var zClickableElmts : Array = Array() ;	// Liste des Elements cliquables
 private var zSelected : GameObject ;	// élément sélectionné
 
 
@@ -170,7 +170,15 @@ function AddOnEndDezoom ( f : function(GameObject) ) {
  * Change les éléments cliquables
  */
 public function setClickableElmts( e : Array ) {
-	zClickableElmts = e ;
+	
+	zClickableElmts.Clear();
+	
+	for( var i = 0; i < e.length; i++) {
+		zClickableElmts.Push( e[i] ) ;
+	}
+	
+	//for( i = 0; i < e.length; i++){ (e[i] as GameObject).renderer.enabled = true; }
+	//for( i = 0; i < zClickableElmts.length; i++){ (zClickableElmts[i] as GameObject).renderer.enabled = false; }
 }
 public function changeClickableElmts( e : Array ) { // équivalent 
 	setClickableElmts(e);
@@ -181,6 +189,7 @@ public function changeClickableElmts( e : Array ) { // équivalent
  */
 public function addClickableElmt( e : GameObject ) {
 	zClickableElmts.Push(e);
+	//e.renderer.enabled = true ;
 }
 
 /*
@@ -188,6 +197,30 @@ public function addClickableElmt( e : GameObject ) {
  */
 public function addClickableElmts( e : Array ) {
 	changeClickableElmts( zClickableElmts.Concat(e) );
+}
+
+
+/*
+ * retire un élément
+ */
+public function removeClickableElmts( e : GameObject ) : boolean {
+	
+	for( var i = 0 ; i < zClickableElmts.length; i++ ) {
+		if( zClickableElmts[i] == e ) {
+			//(zClickableElmts[i] as GameObject).renderer.enabled = false ;
+			zClickableElmts.RemoveAt( i );
+			return true ;
+		}
+	}
+	return false ;
+}
+
+/*
+ * retire tous les éléments
+ */
+public function clearClickableElmts() {
+	//for( var i = 0; i < zClickableElmts.length; i++){ (zClickableElmts[i] as GameObject).renderer.enabled = false; }
+	zClickableElmts.Clear();
 }
 
 

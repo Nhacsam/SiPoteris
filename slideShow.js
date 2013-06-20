@@ -249,8 +249,10 @@ public function goToWithPath( path : String ) {
 		}
 	}
 	
-	if( index == -1 )
+	if( index == -1 ) {
 		Console.Warning( 'Failed to find the image ' + path + ' in slideShow.');
+		return ;
+	}
 	
 	decalTo( index );
 	useSpeed = false ;
@@ -272,8 +274,10 @@ public function goTo( filename : String ) {
 		}
 	}
 	
-	if( index == -1 )
+	if( index == -1 ) {
 		Console.Warning( 'Failed to find the image ' + filename + ' in slideShow.');
+		return ;
+	}
 	
 	decalTo( index );
 	useSpeed = false ;

@@ -3,103 +3,173 @@
 <root>
 	
 	<!--position meshCollider vue 2D-->
-	
+		<!--INTRODUCTION-->
+		<introduction>
+			<name> introduction </name>
+			<shape>polar</shape>
+			<theta_min> 0 </theta_min>
+			<theta_max> 360 </theta_max>
+			<ratioRmin> 0 </ratioRmin>
+			<ratioRmax> 0.15 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
+			<GUI>
+				<folder>datas/intro</folder>
+			</GUI>
+		</introduction>
+		
+		<!-- Video de fin -->
+		<endVideo>
+			<name> videoDeFin </name>
+			<shape>polar</shape>
+			<theta_min> 0 </theta_min>
+			<theta_max> 361 </theta_max>
+			<ratioRmin> 0 </ratioRmin>
+			<ratioRmax> 1 </ratioRmax>
+			
+			<begint>60.01</begint>
+			<endt>-1</endt>
+			
+			<GUI>
+				<folder>datas/fin</folder>
+			</GUI>
+		</endVideo>
+		
+		
 		<!--DIANE-->
 		<diane>
 			<name> diane0 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 348 </theta_min>
 			<theta_max> 368 </theta_max>
 			<ratioRmin> 0.75 </ratioRmin>
 			<ratioRmax> 0.92 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/diane</folder>
 			</GUI>
 		</diane>
 		<diane>
 			<name> diane1 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 328 </theta_min>
 			<theta_max> 348 </theta_max>
 			<ratioRmin> 0.75 </ratioRmin>
 			<ratioRmax> 0.92 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/diane</folder>
 			</GUI>
 		</diane>
 		<diane>
 			<name> diane2 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 310 </theta_min>
 			<theta_max> 328 </theta_max>
 			<ratioRmin> 0.75 </ratioRmin>
 			<ratioRmax> 0.92 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/diane</folder>
 			</GUI>
 		</diane>
 		<diane>
 			<name> diane3 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 290 </theta_min>
 			<theta_max> 310 </theta_max>
 			<ratioRmin> 0.75 </ratioRmin>
 			<ratioRmax> 0.92 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/diane</folder>
 			</GUI>
 		</diane>
 		<diane>
 			<name> diane4 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 270 </theta_min>
 			<theta_max> 288 </theta_max>
 			<ratioRmin> 0.75 </ratioRmin>
 			<ratioRmax> 0.92 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/diane</folder>
 			</GUI>
 		</diane>
 		<diane>
 			<name> diane5 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 248 </theta_min>
 			<theta_max> 268 </theta_max>
 			<ratioRmin> 0.75 </ratioRmin>
 			<ratioRmax> 0.92 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/diane</folder>
 			</GUI>
 		</diane>
 		<diane>
 			<name> diane6 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 228 </theta_min>
 			<theta_max> 248 </theta_max>
 			<ratioRmin> 0.75 </ratioRmin>
 			<ratioRmax> 0.92 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/diane</folder>
 			</GUI>
 		</diane>
 		<diane>
 			<name> diane7 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 208 </theta_min>
 			<theta_max> 228 </theta_max>
 			<ratioRmin> 0.75 </ratioRmin>
 			<ratioRmax> 0.92 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/diane</folder>
 			</GUI>
 		</diane>
 		<diane>
 			<name> diane8 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 188 </theta_min>
 			<theta_max> 208 </theta_max>
 			<ratioRmin> 0.75 </ratioRmin>
 			<ratioRmax> 0.92 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/diane</folder>
 			</GUI>
@@ -110,322 +180,464 @@
 		<!--ACTEON-->
 		<acteon>
 			<name> acteon0 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 340 </theta_min>
 			<theta_max> 380 </theta_max>
 			<ratioRmin> 0.25 </ratioRmin>
 			<ratioRmax> 0.42 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/acteon</folder>
 			</GUI>
 		</acteon>
 		<acteon>
 			<name> acteon1 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 20 </theta_min>
 			<theta_max> 60 </theta_max>
 			<ratioRmin> 0.25 </ratioRmin>
 			<ratioRmax> 0.42 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/acteon</folder>
 			</GUI>
 		</acteon>
 		<acteon>
 			<name> acteon2 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 60 </theta_min>
 			<theta_max> 100 </theta_max>
 			<ratioRmin> 0.25 </ratioRmin>
 			<ratioRmax> 0.42 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/acteon</folder>
 			</GUI>
 		</acteon>
 		<acteon>
 			<name> acteon3 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 100 </theta_min>
 			<theta_max> 140 </theta_max>
 			<ratioRmin> 0.25 </ratioRmin>
 			<ratioRmax> 0.42 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/acteon</folder>
 			</GUI>
 		</acteon>
 		<acteon>
 			<name> acteon4 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 140 </theta_min>
 			<theta_max> 180 </theta_max>
 			<ratioRmin> 0.25 </ratioRmin>
 			<ratioRmax> 0.42 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/acteon</folder>
 			</GUI>
 		</acteon>
 		<acteon>
 			<name> acteon5 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 180 </theta_min>
 			<theta_max> 220 </theta_max>
 			<ratioRmin> 0.25 </ratioRmin>
 			<ratioRmax> 0.42 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/acteon</folder>
 			</GUI>
 		</acteon>
 		<acteon>
 			<name> acteon6 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 220 </theta_min>
 			<theta_max> 260 </theta_max>
 			<ratioRmin> 0.25 </ratioRmin>
 			<ratioRmax> 0.42 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/acteon</folder>
 			</GUI>
 		</acteon>
 		<acteon>
 			<name> acteon7 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 260 </theta_min>
 			<theta_max> 300 </theta_max>
 			<ratioRmin> 0.25 </ratioRmin>
 			<ratioRmax> 0.42 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/acteon</folder>
 			</GUI>
 		</acteon>
 		<acteon>
 			<name> acteon8 </name>
-			<shape>pie</shape>
+			<shape>polar</shape>
 			<theta_min> 300 </theta_min>
 			<theta_max> 340 </theta_max>
 			<ratioRmin> 0.25 </ratioRmin>
 			<ratioRmax> 0.42 </ratioRmax>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
 				<folder>datas/acteon</folder>
 			</GUI>
 		</acteon>
 		
-		<!--MIDDLE-->
-		<middle>
-			<name> middle0 </name>
-			<shape>pie</shape>
+		
+		
+		
+		
+		
+		<cavite1>
+			<name> cavite1-1 </name>
+			<shape>polar</shape>
 			<theta_min> 346 </theta_min>
 			<theta_max> 369 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
-				<folder>datas/middle0</folder>
+				<folder>datas/cavite1</folder>
+				<tag> Cavite 1 01 01 </tag>
 			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
-		<middle>
-			<name> middle1 </name>
-			<shape>pie</shape>
-			<theta_min> 329 </theta_min>
-			<theta_max> 348 </theta_max>
-			<ratioRmin> 0.42 </ratioRmin>
-			<ratioRmax> 0.75 </ratioRmax>
-			<GUI>
-				<folder>datas/middle1</folder>
-			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
-		<middle>
-			<name> middle2 </name>
-			<shape>pie</shape>
-			<shape>pie</shape>
-			<theta_min> 307 </theta_min>
-			<theta_max> 329 </theta_max>
-			<ratioRmin> 0.42 </ratioRmin>
-			<ratioRmax> 0.75 </ratioRmax>
-			<GUI>
-				<folder>datas/middle2</folder>
-			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
-		<middle>
-			<name> middle3 </name>
-			<shape>pie</shape>
-			<theta_min> 289 </theta_min>
-			<theta_max> 308 </theta_max>
-			<ratioRmin> 0.42 </ratioRmin>
-			<ratioRmax> 0.75 </ratioRmax>
-			<GUI>
-				<folder>datas/middle3</folder>
-			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
-		<middle>
-			<name> middle4 </name>
-			<shape>pie</shape>
-			<theta_min> 266 </theta_min>
-			<theta_max> 289 </theta_max>
-			<ratioRmin> 0.42 </ratioRmin>
-			<ratioRmax> 0.75 </ratioRmax>
-			<GUI>
-				<folder>datas/middle4</folder>
-			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
-		<middle>
-			<name> middle5 </name>
-			<shape>pie</shape>
-			<theta_min> 249 </theta_min>
-			<theta_max> 266 </theta_max>
-			<ratioRmin> 0.42 </ratioRmin>
-			<ratioRmax> 0.75 </ratioRmax>
-			<GUI>
-				<folder>datas/middle5</folder>
-			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
-		<middle>
-			<name> middle6 </name>
-			<shape>pie</shape>
+		</cavite1>
+		<cavite1>
+			<name> cavite1-2 </name>
+			<shape>polar</shape>
 			<theta_min> 226 </theta_min>
 			<theta_max> 249 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
-				<folder>datas/middle6</folder>
+				<folder>datas/cavite1</folder>
+				<tag> Cavite 1 04 01 </tag>
 			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
-		<middle>
-			<name> middle7 </name>
-			<shape>pie</shape>
-			<theta_min> 209 </theta_min>
-			<theta_max> 227 </theta_max>
-			<ratioRmin> 0.42 </ratioRmin>
-			<ratioRmax> 0.75 </ratioRmax>
-			<GUI>
-				<folder>datas/middle7</folder>
-			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
-		<middle>
-			<name> middle8 </name>
-			<shape>pie</shape>
-			<theta_min> 186 </theta_min>
-			<theta_max> 209 </theta_max>
-			<ratioRmin> 0.42 </ratioRmin>
-			<ratioRmax> 0.75 </ratioRmax>
-			<GUI>
-				<folder>datas/middle8</folder>
-			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
-		<middle>
-			<name> middle9 </name>
-			<shape>pie</shape>
-			<theta_min> 169 </theta_min>
-			<theta_max> 187 </theta_max>
-			<ratioRmin> 0.42 </ratioRmin>
-			<ratioRmax> 0.75 </ratioRmax>
-			<GUI>
-				<folder>datas/middle9</folder>
-			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
-		<middle>
-			<name> middle10 </name>
-			<shape>pie</shape>
-			<theta_min> 146 </theta_min>
-			<theta_max> 169 </theta_max>
-			<ratioRmin> 0.42 </ratioRmin>
-			<ratioRmax> 0.75 </ratioRmax>
-			<GUI>
-				<folder>datas/middle10</folder>
-			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
-		<middle>
-			<name> middle11 </name>
-			<shape>pie</shape>
-			<theta_min> 129 </theta_min>
-			<theta_max> 147 </theta_max>
-			<ratioRmin> 0.42 </ratioRmin>
-			<ratioRmax> 0.75 </ratioRmax>
-			<GUI>
-				<folder>datas/middle11</folder>
-			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
-		<middle>
-			<name> middle12 </name>
-			<shape>pie</shape>
+		</cavite1>
+		<cavite1>
+			<name> cavite1-3 </name>
+			<shape>polar</shape>
 			<theta_min> 106 </theta_min>
 			<theta_max> 129 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
 			<GUI>
-				<folder>datas/middle12</folder>
+				<folder>datas/cavite1</folder>
+				<tag> Cavite 1 07 01 </tag>
 			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
-		<middle>
-			<name> middle13 </name>
-			<shape>pie</shape>
-			<theta_min> 89 </theta_min>
-			<theta_max> 107 </theta_max>
+		</cavite1>
+		
+		
+		
+		<cavite2>
+			<name> cavite2-1 </name>
+			<shape>polar</shape>
+			<theta_min> 307 </theta_min>
+			<theta_max> 329 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
-				<folder>datas/middle13</folder>
+				<folder>datas/cavite2</folder>
+				<tag> Cavite 2 01 02 </tag>
 			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
-		<middle>
-			<name> middle14 </name>
-			<shape>pie</shape>
+		</cavite2>
+		<cavite2>
+			<name> cavite2-2 </name>
+			<shape>polar</shape>
+			<theta_min> 186 </theta_min>
+			<theta_max> 209 </theta_max>
+			<ratioRmin> 0.42 </ratioRmin>
+			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
+			<GUI>
+				<folder>datas/cavite2</folder>
+				<tag> Cavite 2 02 02 </tag>
+			</GUI>
+		</cavite2>
+		<cavite2>
+			<name> cavite2-3 </name>
+			<shape>polar</shape>
 			<theta_min> 66 </theta_min>
 			<theta_max> 89 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
-				<folder>datas/middle14</folder>
+				<folder>datas/cavite2</folder>
+				<tag> Cavite 2 03 02 </tag>
 			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
-		<middle>
-			<name> middle15 </name>
-			<shape>pie</shape>
-			<theta_min> 49 </theta_min>
-			<theta_max> 67 </theta_max>
+		</cavite2>
+		
+		
+		<cavite3>
+			<name> cavite3-1 </name>
+			<shape>polar</shape>
+			<theta_min> 266 </theta_min>
+			<theta_max> 289 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
-				<folder>datas/middle15</folder>
+				<folder>datas/cavite3</folder>
+				<tag> Cavite 3 01 </tag>
 			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
-		<middle>
-			<name> middle16 </name>
-			<shape>pie</shape>
+		</cavite3>
+		
+		<cavite3>
+			<name> cavite3-2 </name>
+			<shape>polar</shape>
+			<theta_min> 146 </theta_min>
+			<theta_max> 169 </theta_max>
+			<ratioRmin> 0.42 </ratioRmin>
+			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
+			<GUI>
+				<folder>datas/cavite3</folder>
+				<tag> Cavite 3 02 </tag>
+			</GUI>
+		</cavite3>
+		
+		<cavite3>
+			<name> cavite3-3 </name>
+			<shape>polar</shape>
 			<theta_min> 26 </theta_min>
 			<theta_max> 49 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
-				<folder>datas/middle16</folder>
+				<folder>datas/cavite3</folder>
+				<tag> Cavite 3 03 </tag>
 			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
-		<middle>
-			<name> middle17 </name>
-			<shape>pie</shape>
+		</cavite3>
+		
+		
+		
+		<!--PILIERS-->
+		<pilier><!--1-->
+			<name> pilier3 </name>
+			<shape>polar</shape>
+			<theta_min> 329 </theta_min>
+			<theta_max> 348 </theta_max>
+			<ratioRmin> 0.42 </ratioRmin>
+			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
+			<GUI>
+				<folder>datas/piliers</folder>
+				<tag> Chiron 03 </tag>
+			</GUI>
+		</pilier>
+		
+		<pilier><!--2-->
+			<name> pilier </name>
+			<shape>polar</shape>
+			<theta_min> 289 </theta_min>
+			<theta_max> 308 </theta_max>
+			<ratioRmin> 0.42 </ratioRmin>
+			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
+			<GUI>
+				<folder>datas/piliers</folder>
+				<tag> Chiron 01 </tag>
+			</GUI>
+		</pilier>
+		
+		<pilier><!--3-->
+			<name> pilier4 </name>
+			<shape>polar</shape>
+			<theta_min> 249 </theta_min>
+			<theta_max> 266 </theta_max>
+			<ratioRmin> 0.42 </ratioRmin>
+			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
+			<GUI>
+				<folder>datas/piliers</folder>
+				<tag> Chiron 04 </tag>
+			</GUI>
+		</pilier>
+		
+		<pilier><!--4-->
+			<name> pilier5 </name>
+			<shape>polar</shape>
+			<theta_min> 209 </theta_min>
+			<theta_max> 227 </theta_max>
+			<ratioRmin> 0.42 </ratioRmin>
+			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
+			<GUI>
+				<folder>datas/piliers</folder>
+				<tag> Chiron 05 </tag>
+			</GUI>
+		</pilier>
+		
+		<pilier><!--5-->
+			<name> pilier8 </name>
+			<shape>polar</shape>
+			<theta_min> 169 </theta_min>
+			<theta_max> 187 </theta_max>
+			<ratioRmin> 0.42 </ratioRmin>
+			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
+			<GUI>
+				<folder>datas/piliers</folder>
+				<tag> Chiron 08 </tag>
+			</GUI>
+		</pilier>
+		
+		<pilier><!--6-->
+			<name> pilier7 </name>
+			<shape>polar</shape>
+			<theta_min> 129 </theta_min>
+			<theta_max> 147 </theta_max>
+			<ratioRmin> 0.42 </ratioRmin>
+			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
+			<GUI>
+				<folder>datas/piliers</folder>
+				<tag> Chiron 07 </tag>
+			</GUI>
+		</pilier>
+		
+		<pilier><!--7-->
+			<name> pilier6 </name>
+			<shape>polar</shape>
+			<theta_min> 89 </theta_min>
+			<theta_max> 107 </theta_max>
+			<ratioRmin> 0.42 </ratioRmin>
+			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
+			<GUI>
+				<folder>datas/piliers</folder>
+				<tag> Chiron 06 </tag>
+			</GUI>
+		</pilier>
+		
+		<pilier><!--8-->
+			<name> pilier1 </name>
+			<shape>polar</shape>
+			<theta_min> 49 </theta_min>
+			<theta_max> 67 </theta_max>
+			<ratioRmin> 0.42 </ratioRmin>
+			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
+			<GUI>
+				<folder>datas/piliers</folder>
+				<tag> Chiron 08 </tag>
+			</GUI>
+		</pilier>
+		
+		<pilier><!--9-->
+			<name> pilier2 </name>
+			<shape>polar</shape>
 			<theta_min> 9 </theta_min>
 			<theta_max> 27 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
+			<speed>0.253</speed>
+			
+			<begint>0</begint>
+			<endt>60.01</endt>
+			
 			<GUI>
-				<folder>datas/middle17</folder>
+				<folder>datas/piliers</folder>
+				<tag> Chiron 02 </tag>
 			</GUI>
-			<speed> 0.253 </speed>
-		</middle>
+		</pilier>
+		
+		
 	<!--position son vue 3D-->
 	
 		<!--SON-->
