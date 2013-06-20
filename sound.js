@@ -67,7 +67,9 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
 	gameObject.AddComponent("AudioSource");
 	audio.clip = Resources.Load(tab[0]) as AudioClip;
 	audio.Play();
-	changeMusic(""); // Randomise 1st sound
+	
+	if (chooseNextSoundRandomly)
+		changeMusic(""); // Randomise 1st sound
 			
 	enableAll();
 	
