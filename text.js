@@ -125,7 +125,7 @@ private function initText(u: int, d: int, l: int, r: int) {
 	
 	letterStyleHighlighted = new GUIStyle();
 	letterStyleHighlighted.alignment = TextAnchor.MiddleCenter;
-	letterStyleHighlighted.normal.textColor = Color.white;
+	letterStyleHighlighted.normal.textColor = Color.gray;
 	letterStyleHighlighted.fontStyle = FontStyle.BoldAndItalic;
 	letterStyleHighlighted.fixedHeight = heightLetter;
 	letterStyleHighlighted.fixedWidth = widthLetter;
