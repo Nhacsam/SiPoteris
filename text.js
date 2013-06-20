@@ -33,11 +33,12 @@ private var dBorder : int;
 
 private var widthText : float;
 
-private var widthLetter : int = 11;
-private var heightLetter : int = 20;
-private var spacing : int = 25; // between lines
+private var widthLetter : int = Screen.width / 72;
+private var heightLetter : int = Screen.height / 30;
+private var spacing : int = Screen.height / 23; // between lines
 private var widthTab = 4; // width of a tabulation (in spaces)
-private var styleLetterMiddle : GUIStyle = new GUIStyle(); // style of letter
+private var letterStyleNormal : GUIStyle; // style of letter
+private var letterStyleHighlighted : GUIStyle; // idem
 
 private var indexFirstChar : int ; // Index of the first character displayed (0 except if it is '<')
 
@@ -50,6 +51,7 @@ private var downArrow : Texture; // Idem
 */
 private var letterSpots : Rect[]; // array of rects containing the position of the GUILabel of each letter -- aboutLetter[i] is corresponding to textToDisplay[i]
 private var displayChar : boolean[]; // TRUE if we display the char
+private var highlightChar : boolean[]; // TRUE if the char is highlighted (italic)
 private var REF_RECT : Rect; // rectangle of reference -- this is the place of the first letter at the top-left of the text
 private var moveToNext : Array ; // values of i which corresponds to a move to the next line
 private var toJustify : Array ; // Indicates for each line wether we need to justify it or not
@@ -83,8 +85,12 @@ private function initText(u: int, d: int, l: int, r: int) {
 
 	letterSpots = new Rect[textToDisplay.Length];
 	displayChar = new boolean [textToDisplay.Length];
-	for (var i : int = 0; i < textToDisplay.length; i++)
+	highlightChar = new boolean [textToDisplay.Length];
+	
+	for (var i : int = 0; i < textToDisplay.length; i++) {
 		displayChar[i] = true;
+		highlightChar[i] = false;
+	}
 	
 	/* Calculate margin sizes */
 	uBorder = u;
@@ -105,6 +111,18 @@ private function initText(u: int, d: int, l: int, r: int) {
 	nbLines  = 0;
 	myTags = new Array();
 	myTagIndexes = new Array ();
+	
+	letterStyleNormal = new GUIStyle();
+	letterStyleNormal.alignment = TextAnchor.MiddleCenter;
+	letterStyleNormal.normal.textColor = Color.white;
+	letterStyleNormal.fontStyle = FontStyle.Normal;
+
+	
+	letterStyleHighlighted = new GUIStyle();
+	letterStyleHighlighted.alignment = TextAnchor.MiddleCenter;
+	letterStyleHighlighted.normal.textColor = Color.white;
+	letterStyleHighlighted.fontStyle = FontStyle.BoldAndItalic;
+
 	slideshow =	gameObject.GetComponent("slideShow") as slideShow;
 	
 	enableAll(); // enable event and dispy the text
@@ -128,9 +146,6 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 	var nbOfSpace : int; // contains the number of spaces in a sentence
 	
 	var rectLetter : Rect = REF_RECT;
-	
-	styleLetterMiddle.alignment = TextAnchor.MiddleCenter;
-	styleLetterMiddle.normal.textColor = Color.white;
 	
 	var firstTimeInWhileLoop = true;
 	
@@ -236,6 +251,8 @@ function placeText(u: int, d: int, l: int, r: int, text: String) {
 			JustifyText(i);
 	}
 	
+	handleHighlight();
+	
 	textInitialized = true;
 }
 
@@ -317,6 +334,14 @@ function JustifyText(numLine : int){
 	}
 }
 
+
+/*
+*
+*	Several funcitons to handle tags
+*
+*/
+
+
 /*
 *	Input: index of a '<' Output: The entire tag, or "" if there is no '>'
 */
@@ -387,6 +412,46 @@ function tagToName (tag : String) {
 }
 
 /*
+*	Looks for <i> and </i> tags
+*/
+function handleHighlight () {
+	var watchDog : int = 0; // To check correct parsing
+	var startIndex : int = (-1); // Where does italic starts ?
+	
+	for ( var index : int = 0; index < myTags.length; index++) { // for each tag
+		
+		if (myTags[index] == "<i>") {
+			watchDog++;
+			if (watchDog > 1)
+				Console.Warning("Problème de parsing de balises <i> à l'index " + myTagIndexes[index] + ", tag #" + (index+1));
+			else {
+				if (startIndex == (-1)) // should be useless
+					startIndex = myTagIndexes[index];
+			}
+		}
+		
+		if (myTags[index] == "</i>") {
+			watchDog--;
+			if (watchDog != 0)
+				Console.Warning("Problème de parsing de balises </i> à l'index " + myTagIndexes[index] + ", tag #" + (index+1));
+			else {
+				if (startIndex != (-1)) { // If there was a <i> before
+					var endIndex : int = myTagIndexes[index];
+					for ( var i : int = startIndex; i < endIndex; i++) {
+						highlightChar[i] = true;
+					}
+					startIndex = (-1);
+				}
+			}
+		}		
+	} // end for
+	
+	if (watchDog != 0)
+			Console.Warning( (watchDog > 0) ? "Il y a trop de <i>" : "Il y a trop de </i>");
+}
+
+
+/*
 *	 Two functions to display the text
 */
 function OnGUIText(){
@@ -400,7 +465,7 @@ function displayText() {
 	
 	for (var i : int = indexFirstChar; i < textToDisplay.Length; i++) {
 		if (letterSpots[i].y >= uBorder && (letterSpots[i].y + heightLetter) <= Screen.height - dBorder && displayChar[i])
-			GUI.Label (letterSpots[i], ""+textToDisplay[i], styleLetterMiddle);
+			GUI.Label (letterSpots[i], ""+textToDisplay[i], highlightChar[i] ? letterStyleHighlighted : letterStyleNormal);
 	}
 	
 	/* Arrows to show possible scrolling */
