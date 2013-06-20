@@ -570,6 +570,11 @@ function onDragging(dragData : DragInfo) {
 	if (	textInitialized && eventEnable
 			&& isIn(dragData.pos) ) {		// Mouse / finger inside the frame of the text
 		
+		/* We stop the automatic scrolling */
+		if( gapToMove )
+			gapToMove = 0 ;
+
+		
 		var block = false; // If true, you cannot scroll
 		var gap : float = 0; // gap between the top (resp bottom) of the text, and the top (resp bottom) of the frame
 		
