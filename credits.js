@@ -302,6 +302,8 @@ private function setScreen( r : Rect , videoScreen : GameObject ){
 	videoScreen.transform.rotation = camera.transform.rotation;
 	videoScreen.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
 	videoScreen.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );
+	
+	videoScreen.transform.eulerAngles = Vector3( 0 , 180 , 0 );
 }
 
 

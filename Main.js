@@ -293,8 +293,10 @@ function Update () {
 	// Déplacement des plan en 2D (si il y en a)
 	for( i =0; i < AllGO2D.length; i++) {
 	
-		if(!Videos.getFlagEndVideo() && !placeRectAuto)
-			move.moveSurface( AllGO2D[i] as GameObject, Videos.OnPlay() ) ;
+		if(!Videos.getFlagEndVideo() && !placeRectAuto){
+			if( !GUI.isOnGUI() )// if not on gui
+				move.moveSurface( AllGO2D[i] as GameObject, Videos.OnPlay() ) ;
+		}
 		else
 			move.resetPlane(AllGO2D[i] as GameObject);
 		
@@ -303,7 +305,12 @@ function Update () {
 	}
 	
 	for( i = 0; i < AllGO3D.length; i++) {
-		move.rotateY_3D( AllGO3D[i] as GameObject, true ) ;
+		if(!Videos.getFlagEndVideo() && !placeRectAuto){// if video has not end yet
+			if( !GUI.isOnGUI() )// if not on gui
+				move.rotateY_3D( AllGO3D[i] as GameObject, Videos.OnPlay() ) ;
+		}
+		else
+			move.resetPlane(AllGO3D[i] as GameObject);
 		
 		if(placeRectAuto)
 			move.keepRotation( AllGO3D[i] );
