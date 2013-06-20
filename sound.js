@@ -46,6 +46,8 @@ private var displaySongName : boolean = false;
 private var displayPlayButton : boolean = true;
 private var displayChangeButton : boolean = false;
 
+private var mySkin : GUISkin;
+
 
 function OnGUISound() {
 	if( !soundIsHidden )
@@ -70,7 +72,11 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
 	
 	if (chooseNextSoundRandomly)
 		changeMusic(""); // Randomise 1st sound
-			
+	
+	/* Transparent buttons */
+	mySkin = new GUISkin ();
+	mySkin.button.normal.background = null;
+	
 	enableAll();
 	
 	if (displayPlayButton) {
@@ -123,7 +129,7 @@ function displayMusic() {
 
 	/* The button is centered regarding the y axis */
 	if (displayPlayButton) {
-		if (GUI.Button(Rect(lBorder + buttonSize, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), currentBtn) && eventEnable ) { // Rect: left top width height
+		if (GUI.Button(Rect(lBorder + buttonSize, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), currentBtn, mySkin.button) && eventEnable ) { // Rect: left top width height
 			if (currentBtn == pauseBtn) { // Sound playing
 				currentBtn = playBtn;
 				audio.Pause();
@@ -137,7 +143,7 @@ function displayMusic() {
 		
 	/* Bouton changer musique */
 	if (displayChangeButton) {
-		if (GUI.Button(Rect( Screen.width-rBorder-2*buttonSize, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), repeatButton) && eventEnable)
+		if (GUI.Button(Rect( Screen.width-rBorder-2*buttonSize, uBorder + (((buttonSize / buttonSizeFactor) - buttonSize) / 2), buttonSize, buttonSize), repeatButton, mySkin.button) && eventEnable)
 			changeMusic("");
 	}
 	

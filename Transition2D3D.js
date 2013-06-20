@@ -21,7 +21,7 @@ private var rot;
 private var scene2D : boolean = true;
 
 /* Coordinates of the 2D/3D button */
-private var buttonUp : int = Screen.height * 0.85;
+private var buttonUp : int = Screen.height * 0.90;
 private var buttonLeft : int = Screen.width * 0.05;
 private var buttonHeight : int = Screen.height * 0.12;
 private var buttonWidth : int = Screen.height * 0.12;
@@ -96,11 +96,11 @@ function  OnGUI2D3D(){
 
 	if(Videos.OnPlay() && !enable && exitFinished){
 	
-		var Rectangle : Rect = new Rect(Screen.width * 0.85 , Screen.height * 0.90, camera.pixelWidth , camera.pixelHeight);	
+		var Rectangle : Rect = new Rect(Screen.width * 0.8 , Screen.height * 0.9, camera.pixelWidth , camera.pixelHeight);	
 		GUI.Label(Rectangle,"Click anywhere on the screen \n   to get further information.", letterStyle);
 		
 		if(Videos.GetOtherView()){		
- 	 		if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), scene2D ? "3D view" : "2D view")){
+ 	 		if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), scene2D ? "3D view" : "2D view", letterStyle)){
 				zoom.disableEvents();
 				Change2D3D();
 				//Videos.test();

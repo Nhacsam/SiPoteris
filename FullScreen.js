@@ -9,7 +9,7 @@ private var textViewer : text ;
 private var strip : displayStrip;
 private var myCredits : credits;
 
-private var customGUISkin : GUISkin;
+private var mySkin : GUISkin;
 
 /* On est en mode plein écran ? */
 private var onFullScreen : boolean;
@@ -126,8 +126,10 @@ function InitFullScreen( Initlang  : String ) {
 	creditsTexture = Resources.Load("Pictures/credits");
 	if (!creditsTexture)
 		Console.Warning("Pas de texture pour le bouton crédits");
-		
-	customGUISkin = Resources.Load("mySkin");
+
+	/* Transparent buttons */
+	mySkin = new GUISkin ();
+	mySkin.button.normal.background = null;
 	
 	// Configure la langue par défaut
 	lang = Initlang ;
@@ -141,27 +143,25 @@ function OnGUIFullScreen(){
 	
 	// si en plein écran
 	if( onFullScreen ) {
-	
-		GUI.skin = customGUISkin; // Transparent buttons
 		
 		// Si visible
 		if( !GUIIsHidden) {
 			
 			// boutton de retour associé au callback du Zoom
 			if( toOnDeZoom ) {
-				if( GUI.Button( returnRectangle, returnTexture ) ) {
+				if( GUI.Button( returnRectangle, returnTexture, mySkin.button ) ) {
 					Debug.Log( 'Sortie de l\'interface demandée' );
 					toOnDeZoom();
 				}
 			} // end bouton retour
 			
 			// Boutton de crédit
-			if( GUI.Button( creditsRectangle, creditsTexture ) ) {
+			if( GUI.Button( creditsRectangle, creditsTexture, mySkin.button ) ) {
 				myCredits.initCredits(returnRectangle);
 			}
 			
 			// Boutton de langue
-			if( GUI.Button( langRectangle, langTexture ) ) {
+			if( GUI.Button( langRectangle, langTexture, mySkin.button ) ) {
 				switchLang( true ) ;
 			}
 			
