@@ -77,12 +77,14 @@ function initCredits ( returnRectangle : Rect) {
 	
 	// manage audio of GUI
 	audioPlayer =	gameObject.GetComponent("AudioSource")		as sound;
-	if (audio.isPlaying) {
-		audioWasPlaying = true;
-		audio.mute = true;
+	audioWasPlaying = false;
+	if( audio ) {
+		if (audio.isPlaying) {
+			audioWasPlaying = true;
+			audio.mute = true;
+		}
 	}
-	else
-		audioWasPlaying = false;
+			
 
 	/* Placement bouton */
 	myReturnRectangle = returnRectangle;
@@ -300,6 +302,8 @@ private function setScreen( r : Rect , videoScreen : GameObject ){
 	videoScreen.transform.rotation = camera.transform.rotation;
 	videoScreen.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
 	videoScreen.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );
+	
+	videoScreen.transform.eulerAngles = Vector3( 0 , 180 , 0 );
 }
 
 

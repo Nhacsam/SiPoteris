@@ -236,9 +236,10 @@ function Start () {
  */
 function Update () {
 	
-	if(!Videos.getFlagEndVideo() )
-		videoTimer += Time.deltaTime ;
-	else
+	if(!Videos.getFlagEndVideo() ) {
+		if(  Videos.OnPlay() )
+			videoTimer += Time.deltaTime ;
+	} else
 		videoTimer = 0.0 ;
 		
 	var i : int;
@@ -293,8 +294,10 @@ function Update () {
 	// Déplacement des plan en 2D (si il y en a)
 	for( i =0; i < AllGO2D.length; i++) {
 	
-		if(!Videos.getFlagEndVideo() && !placeRectAuto)
-			move.moveSurface( AllGO2D[i] as GameObject, Videos.OnPlay() ) ;
+		if(!Videos.getFlagEndVideo() && !placeRectAuto){
+			if( !GUI.isOnGUI() )// if not on gui
+				move.moveSurface( AllGO2D[i] as GameObject, Videos.OnPlay() ) ;
+		}
 		else
 			move.resetPlane(AllGO2D[i] as GameObject);
 		
@@ -303,8 +306,9 @@ function Update () {
 	}
 	
 	for( i = 0; i < AllGO3D.length; i++) {
-		if(!Videos.getFlagEndVideo() && !placeRectAuto){
-			move.rotateY_3D( AllGO3D[i] as GameObject, !isOnGui ) ;
+		if(!Videos.getFlagEndVideo() && !placeRectAuto){// if video has not end yet
+			if( !GUI.isOnGUI() )// if not on gui
+				move.rotateY_3D( AllGO3D[i] as GameObject, Videos.OnPlay() ) ;
 		}
 		else
 			move.resetPlane(AllGO3D[i] as GameObject);
@@ -648,6 +652,7 @@ private function placeMeshHash ( t : Hashtable ){
 			s.InitOrientedTo( p );
 			
 			// configure les plan comme étant invisible
+		//	if( obj.name.IndexOf("0") != -1 )
 				s.setVisible(false);
 		
 			// add new gameobject to array

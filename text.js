@@ -38,7 +38,7 @@ private var letterStyleHighlighted : GUIStyle;
 
 private var widthLetter : int = Screen.width / 72;
 private var heightLetter : int = Screen.height / 30;
-private var spacing : int = Screen.height / 23; // between lines
+private var spacing : int = heightLetter / 2; // between lines
 private var widthTab = 4; // width of a tabulation (in spaces)
 
 private var indexFirstChar : int ; // Index of the first character displayed (0 except if it is '<')
@@ -119,7 +119,7 @@ private function initText(u: int, d: int, l: int, r: int) {
 	letterStyleNormal.fontStyle = FontStyle.Normal;
 	letterStyleNormal.fixedHeight = heightLetter;
 	letterStyleNormal.fixedWidth = widthLetter;
-	if (isOnIpad())
+	if (Screen.width() > 2000)
 		letterStyleNormal.fontSize = 25; // Default: 13
 	
 	letterStyleHighlighted = new GUIStyle();
@@ -128,7 +128,7 @@ private function initText(u: int, d: int, l: int, r: int) {
 	letterStyleHighlighted.fontStyle = FontStyle.BoldAndItalic;
 	letterStyleHighlighted.fixedHeight = heightLetter;
 	letterStyleHighlighted.fixedWidth = widthLetter;
-	if (isOnIpad())
+	if (Screen.width() > 2000)
 		letterStyleHighlighted.fontSize = 25; // Default: 13
 	
 	slideshow =	gameObject.GetComponent("slideShow") as slideShow;
@@ -569,6 +569,11 @@ function onDragging(dragData : DragInfo) {
 
 	if (	textInitialized && eventEnable
 			&& isIn(dragData.pos) ) {		// Mouse / finger inside the frame of the text
+		
+		/* We stop the automatic scrolling */
+		if( gapToMove )
+			gapToMove = 0 ;
+
 		
 		var block = false; // If true, you cannot scroll
 		var gap : float = 0; // gap between the top (resp bottom) of the text, and the top (resp bottom) of the frame
