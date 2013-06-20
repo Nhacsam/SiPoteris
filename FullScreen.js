@@ -638,6 +638,10 @@ public function previousImg() {
 }
 
 
+public function isOnGUI() {
+	return onFullScreen ;
+}
+
 
 /*
 	*getter

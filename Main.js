@@ -235,9 +235,10 @@ function Start () {
  */
 function Update () {
 	
-	if(!Videos.getFlagEndVideo() )
-		videoTimer += Time.deltaTime ;
-	else
+	if(!Videos.getFlagEndVideo() ) {
+		if(  Videos.OnPlay() )
+			videoTimer += Time.deltaTime ;
+	} else
 		videoTimer = 0.0 ;
 		
 	var i : int;
@@ -644,7 +645,7 @@ private function placeMeshHash ( t : Hashtable ){
 			
 			// configure les plan comme étant invisible
 		//	if( obj.name.IndexOf("0") != -1 )
-				s.setVisible(true);
+				s.setVisible(false);
 		
 			// add new gameobject to array
 			AllGO2D.Push( obj );

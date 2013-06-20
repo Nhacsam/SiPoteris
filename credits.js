@@ -77,12 +77,14 @@ function initCredits ( returnRectangle : Rect) {
 	
 	// manage audio of GUI
 	audioPlayer =	gameObject.GetComponent("AudioSource")		as sound;
-	if (audio.isPlaying) {
-		audioWasPlaying = true;
-		audio.mute = true;
+	audioWasPlaying = false;
+	if( audio ) {
+		if (audio.isPlaying) {
+			audioWasPlaying = true;
+			audio.mute = true;
+		}
 	}
-	else
-		audioWasPlaying = false;
+			
 
 	/* Placement bouton */
 	myReturnRectangle = returnRectangle;
