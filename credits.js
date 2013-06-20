@@ -32,6 +32,8 @@ private var VideoIsLoading : boolean;
 
 private var screenIsSet : boolean;
 
+private var firstWarning : boolean;//to avoid spamming console
+
 private var videoScreen : GameObject;
 
 /*disposition des éléments des crédits en pourcentage de l'écran*/
@@ -111,6 +113,7 @@ function initCredits ( returnRectangle : Rect) {
 	/* init bool */
 	VideoIsLoading = false;
 	screenIsSet = false;
+	firstWarning = true;
 	
 	/*init plane where movie is displayed*/
 	initScreen();
@@ -217,8 +220,11 @@ private function displayLogo( bot : float , left : float , w : float , h : float
 			var newR : Rect = strip.optimalSize( ratio , r );
 			GUI.DrawTexture( newR , texture as Texture );
 	}
-	else
+	else{
+		// avoid to spam console
+		firstWarning = false;
 		Console.Warning("No path available for logos or type of file is not texture2D");
+	}
 }
 
 /*
