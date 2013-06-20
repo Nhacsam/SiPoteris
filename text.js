@@ -116,12 +116,15 @@ private function initText(u: int, d: int, l: int, r: int) {
 	letterStyleNormal.alignment = TextAnchor.MiddleCenter;
 	letterStyleNormal.normal.textColor = Color.white;
 	letterStyleNormal.fontStyle = FontStyle.Normal;
-
+	letterStyleNormal.fixedHeight = Screen.height / 30;
+	letterStyleNormal.fixedWidth = Screen.width / 72;
 	
 	letterStyleHighlighted = new GUIStyle();
 	letterStyleHighlighted.alignment = TextAnchor.MiddleCenter;
 	letterStyleHighlighted.normal.textColor = Color.white;
 	letterStyleHighlighted.fontStyle = FontStyle.BoldAndItalic;
+	letterStyleHighlighted.fixedHeight = Screen.height / 30;
+	letterStyleHighlighted.fixedWidth = Screen.width / 72;
 
 	slideshow =	gameObject.GetComponent("slideShow") as slideShow;
 	
