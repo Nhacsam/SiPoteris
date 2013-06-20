@@ -173,7 +173,7 @@ function exitCredits() {
 */
 function updateCredits(){
 	if( VideoIsLoading ) {
-		if(videoSet.isVideoReady() && !screenIsSet ) {// loading is finished
+		if( videoSet.isVideoReady() && !screenIsSet ) {// loading is finished
 			var r : Rect = Rect( 	(0.5 + margin_center/2)*Screen.width , 
 									(0.5 + margin_betw_media)*Screen.height , 
 									(0.5 - margin_right - margin_center/2)*Screen.width , 
@@ -301,9 +301,7 @@ private function setScreen( r : Rect , videoScreen : GameObject ){
 	videoScreen.transform.position = camera.ScreenToWorldPoint( Vector3( r.x + r.width/2 , r.y + r.height/2 , z_coor ) );
 	videoScreen.transform.rotation = camera.transform.rotation;
 	videoScreen.transform.rotation *= Quaternion.AngleAxis(-90, Vector3( 1,0,0) );
-	videoScreen.transform.rotation *= Quaternion.AngleAxis(180, Vector3( 0,1,0) );
-	
-	//videoScreen.transform.eulerAngles = Vector3( 0 , 180 , 0 );
+	videoScreen.transform.rotation *= Quaternion.AngleAxis(0, Vector3( 0,1,0) );
 }
 
 
