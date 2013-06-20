@@ -652,7 +652,7 @@ private function placeMeshHash ( t : Hashtable ){
 			
 			// configure les plan comme étant invisible
 		//	if( obj.name.IndexOf("0") != -1 )
-				s.setVisible(false);
+				s.setVisible(true);
 		
 			// add new gameobject to array
 			AllGO2D.Push( obj );
