@@ -221,9 +221,11 @@ private function displayLogo( bot : float , left : float , w : float , h : float
 			GUI.DrawTexture( newR , texture as Texture );
 	}
 	else{
-		// avoid to spam console
-		firstWarning = false;
-		Console.Warning("No path available for logos or type of file is not texture2D");
+		if( firstWarning ){
+			// avoid to spam console
+			firstWarning = false;
+			Console.Warning("No path available for logos or type of file is not texture2D");
+		}
 	}
 }
 
