@@ -119,7 +119,7 @@ private function initText(u: int, d: int, l: int, r: int) {
 	letterStyleNormal.fontStyle = FontStyle.Normal;
 	letterStyleNormal.fixedHeight = heightLetter;
 	letterStyleNormal.fixedWidth = widthLetter;
-	if (Screen.width() > 2000)
+	if (isOnIpad())
 		letterStyleNormal.fontSize = 25; // Default: 13
 	
 	letterStyleHighlighted = new GUIStyle();
@@ -128,7 +128,7 @@ private function initText(u: int, d: int, l: int, r: int) {
 	letterStyleHighlighted.fontStyle = FontStyle.BoldAndItalic;
 	letterStyleHighlighted.fixedHeight = heightLetter;
 	letterStyleHighlighted.fixedWidth = widthLetter;
-	if (Screen.width() > 2000)
+	if (isOnIpad())
 		letterStyleHighlighted.fontSize = 25; // Default: 13
 	
 	slideshow =	gameObject.GetComponent("slideShow") as slideShow;
