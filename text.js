@@ -38,7 +38,7 @@ private var letterStyleHighlighted : GUIStyle;
 
 private var widthLetter : int = Screen.width / 125;
 private var heightLetter : int = Screen.height / 30;
-private var spacing : int = heightLetter; // between lines
+private var spacing : int = heightLetter * 0.75; // between lines
 private var widthTab = 4; // width of a tabulation (in spaces)
 
 private var indexFirstChar : int ; // Index of the first character displayed (0 except if it is '<')
@@ -121,7 +121,7 @@ private function initText(u: int, d: int, l: int, r: int) {
 	letterStyleNormal.fixedWidth = widthLetter;
 	letterStyleNormal.margin = new RectOffset (0,0,0,0);
 	if (isOnIpad())
-		letterStyleNormal.fontSize = 25; // Default: 13
+		letterStyleNormal.fontSize = 27; // Default: 13
 	
 	letterStyleHighlighted = new GUIStyle();
 	letterStyleHighlighted.alignment = TextAnchor.MiddleCenter;
@@ -130,7 +130,7 @@ private function initText(u: int, d: int, l: int, r: int) {
 	letterStyleHighlighted.fixedHeight = heightLetter;
 	letterStyleHighlighted.fixedWidth = widthLetter;
 	if (isOnIpad())
-		letterStyleHighlighted.fontSize = 25; // Default: 13
+		letterStyleHighlighted.fontSize = 27; // Default: 13
 	
 	slideshow =	gameObject.GetComponent("slideShow") as slideShow;
 	
