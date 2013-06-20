@@ -92,7 +92,7 @@ function videoSettings (beginBy2D : boolean, have2DAnd3D : boolean) {
 		plane2D.AddComponent("PlayFileBasedMovieDefault");
 		controllerScene2D3D.movieClass[0] =  plane2D.GetComponent("PlayFileBasedMovieDefault");
 		controllerScene2D3D.movieClass[0].movieIndex = 0;
-		controllerScene2D3D.movieName[0] ="SP.mov";
+		controllerScene2D3D.movieName[0] ="final.mov";
 		//set iOS forwarding
 		controllerIOS.movie[0]=plane2D.GetComponent("PlayFileBasedMovieDefault");		
 		if(otherView){
@@ -114,8 +114,8 @@ function videoSettings (beginBy2D : boolean, have2DAnd3D : boolean) {
 		//set the scene
 		sphere3D.AddComponent("PlayFileBasedMovieDefault");
 		controllerScene2D3D.movieClass[0] =  sphere3D.GetComponent("PlayFileBasedMovieDefault");
-		controllerScene2D3D.movieClass[0].movieIndex=0;
-		controllerScene2D3D.movieName[0] ="SP.mov";
+		controllerScene2D3D.movieClass[0].movieIndex = 0;
+		controllerScene2D3D.movieName[0] ="final.mov";
 		//set iOS forwarding
 		controllerIOS.movie[0]=sphere3D.GetComponent("PlayFileBasedMovieDefault");
 		if(otherView){

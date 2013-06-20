@@ -1,7 +1,7 @@
 #pragma strict
 /*
 Creation : 02/04/2013
-Last update : 11/06/2013
+Last update : 20/06/2013
 
 Author : Fabien Daoulas / Kevin Guillaumond
 
@@ -18,7 +18,7 @@ Use: placeText(...) is called once, and displayText(...) is called at every fram
 private var textToDisplay : String;
 
 /*
-*	Dépendances
+*	Dependencies
 */
 private var slideshow  : slideShow ;
 
@@ -33,12 +33,13 @@ private var dBorder : int;
 
 private var widthText : float;
 
+private var letterStyleNormal : GUIStyle;
+private var letterStyleHighlighted : GUIStyle;
+
 private var widthLetter : int = Screen.width / 72;
 private var heightLetter : int = Screen.height / 30;
 private var spacing : int = Screen.height / 23; // between lines
 private var widthTab = 4; // width of a tabulation (in spaces)
-private var letterStyleNormal : GUIStyle; // style of letter
-private var letterStyleHighlighted : GUIStyle; // idem
 
 private var indexFirstChar : int ; // Index of the first character displayed (0 except if it is '<')
 
@@ -116,16 +117,20 @@ private function initText(u: int, d: int, l: int, r: int) {
 	letterStyleNormal.alignment = TextAnchor.MiddleCenter;
 	letterStyleNormal.normal.textColor = Color.white;
 	letterStyleNormal.fontStyle = FontStyle.Normal;
-	letterStyleNormal.fixedHeight = Screen.height / 30;
-	letterStyleNormal.fixedWidth = Screen.width / 72;
+	letterStyleNormal.fixedHeight = heightLetter;
+	letterStyleNormal.fixedWidth = widthLetter;
+	if (isOnIpad())
+		letterStyleNormal.fontSize = 25; // Default: 13
 	
 	letterStyleHighlighted = new GUIStyle();
 	letterStyleHighlighted.alignment = TextAnchor.MiddleCenter;
 	letterStyleHighlighted.normal.textColor = Color.white;
 	letterStyleHighlighted.fontStyle = FontStyle.BoldAndItalic;
-	letterStyleHighlighted.fixedHeight = Screen.height / 30;
-	letterStyleHighlighted.fixedWidth = Screen.width / 72;
-
+	letterStyleHighlighted.fixedHeight = heightLetter;
+	letterStyleHighlighted.fixedWidth = widthLetter;
+	if (isOnIpad())
+		letterStyleHighlighted.fontSize = 25; // Default: 13
+	
 	slideshow =	gameObject.GetComponent("slideShow") as slideShow;
 	
 	enableAll(); // enable event and dispy the text
@@ -399,7 +404,7 @@ function toTag (myTag: String) {
 	var gap = letterSpots[index].y - uBorder + gapToMove;
 	
 	if (gap > ((letterSpots[textToDisplay.Length-1].y + gapToMove - uBorder) - ( Screen.height - uBorder - dBorder ) ) + heightLetter) // gap < height of text - height of screen, we scroll to max
-		gap = (letterSpots[textToDisplay.Length-1].y + gapToMove - uBorder) - ( Screen.height - uBorder - dBorder ) + heightLetter;
+		gap = (letterSpots[textToDisplay.Length-1].y + gapToMove - uBorder) - ( Screen.height - uBorder - dBorder ) + heightLetter + 1;
 	
 	gapToMove -= gap ;
 }
@@ -484,33 +489,33 @@ function removeText() {
 }
 
 /*
- * Déplace le texte pour les transitions ///////////////////////////////////////////////////////
- */
+*	Moves the text for transitions
+*/
 private function transitionMove() {
 	
-	// si ya rien à faire, on ne s'attarde pas
+	/* No move needed */
 	if(gapToMove == 0 )
 		return ;
 	
-	// calcul de la vitesse en fonction de ce qu'il reste à déplacer
-	var sens = (gapToMove > 0 ) ? 1 : -1 ;
-	var speed = gapToMove*coefSpeed/100 + constSpeed*sens ;
+	/* Calculaes speed regarding the distance to go */
+	var direction = (gapToMove > 0 ) ? 1 : -1 ; // 1 = scrolling up
+	var speed = gapToMove*coefSpeed/100 + constSpeed*direction ;
 	var elapsedTime = Time.deltaTime ;
 	
-	// maj de ce qu'il reste à bouger
+	/* Update the remaining distance */
 	gapToMove -= speed*elapsedTime ;
 	
-	// si on a changé de signe
-	if(gapToMove > 0 && sens < 0 ) {
-		speed = 0 ;
-		gapToMove = 0 ;
-		
-	} else if(gapToMove < 0 && sens > 0 ) {
-		speed -= gapToMove/elapsedTime ;
+	/* If the sign changes */
+	if (gapToMove > 0 && direction < 0 ) {
+		speed = 0;
+		gapToMove = 0;
+	}
+	else if ( gapToMove < 0 && direction > 0 ) {
+		speed -= gapToMove/elapsedTime;
 		gapToMove = 0 ;
 	}
 	
-	// déplacement des lettres
+	/* Moving letters */
 	for (var j : int = 0; j < textToDisplay.Length; j++) {
 		letterSpots[j].y += speed*elapsedTime ;
 	}
@@ -519,8 +524,8 @@ private function transitionMove() {
 
 
 /*
- * S'assure que le texte n'a pas été trop scrollé et le replace sinon
- */
+*	Replaces text if out of bounds
+*/
 private function replaceOutOfBoundText() {
 	
 	var gap : float ;
@@ -562,9 +567,8 @@ function OnDisable(){
 /* Scrolling text with dragging event ! (Finger KO Mouse OK) */
 function onDragging(dragData : DragInfo) {
 
-	if (	textInitialized && eventEnable 	// évenements activé
-			&& gapToMove == 0				// pas en mouvement
-			&& isIn(dragData.pos) ) {		// souris dans le texte
+	if (	textInitialized && eventEnable
+			&& isIn(dragData.pos) ) {		// Mouse / finger inside the frame of the text
 		
 		var block = false; // If true, you cannot scroll
 		var gap : float = 0; // gap between the top (resp bottom) of the text, and the top (resp bottom) of the frame
@@ -582,7 +586,7 @@ function onDragging(dragData : DragInfo) {
 		}
 		replaceOutOfBoundText();
 		
-		/* Looking for the tag highest placed, in the top half of the frame */
+		/* Looking for the tag highest placed, in the top of the frame */
 		for (var l : int = 0; l < myTags.length; l++) {
 			/* If we find the tag */
 			if ( letterSpots[myTagIndexes[l]].y > uBorder && letterSpots[myTagIndexes[l]].y < uBorder + 2 * heightLetter) {
@@ -608,50 +612,50 @@ public function isIn( pos : Vector2 ) : boolean {
 }
 
 
-/*******************************************************
-**** Cacher / desactiver les evennements de l'objet ****
-********************************************************/
+/*****************************
+	Hide / Disable text events
+*****************************/
 
 /*
- * Affiche l'objet et active les evenements
- */
+*	Displays the text ans enables events
+*/
 public function enableAll() {
 	show() ;
 	enableEvents() ;
 }
 
 /*
- * Cache l'objet et desactive les evenements
- */
+*	Hides the text ans disables events
+*/
 public function disableAll() {
 	hide() ;
 	disableEvents() ;
 }
 
 /*
- * Active les evenements
- */
+*	Enables events
+*/
 public function enableEvents() {
 	eventEnable = true ;
 }
 
 /*
- * Desactive les evenements
- */
+*	Disables events
+*/
 public function disableEvents() {
 	eventEnable = false ;
 }
 
 /*
- * Affiche l'objet
- */
+*	Displays the text
+*/
 public function show() {
 	textIsHidden = false ;
 }
 
 /*
- * Cache l'objet
- */
+*	Hides the text
+*/
 public function hide() {
 	textIsHidden = true ;
 }
@@ -666,4 +670,6 @@ public function isHidden() : boolean {
 	return textIsHidden ;
 }
 
-
+function isOnIpad() : boolean {
+	return ( SystemInfo.deviceType == DeviceType.Handheld );
+}

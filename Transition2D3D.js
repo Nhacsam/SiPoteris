@@ -36,6 +36,7 @@ private var fieldOfView2D : float ;
 private var fieldOfView3D : float ;
 
 private var letterStyle : GUIStyle; // style of text
+private var mySkin : GUISkin;
 
 
 //instantiate items
@@ -60,6 +61,10 @@ function init(fieldOfView_2D : float , fieldOfView_3D : float ){
 	letterStyle = new GUIStyle();
 	letterStyle.fixedHeight = Screen.height / 30; // Recopié salement de text.js
 	letterStyle.fixedWidth = Screen.width / 72; // pareil
+	letterStyleNormal.normal.textColor = Color.white;
+	
+	mySkin = new GUISkin();
+	mySkin.textArea = letterStyle;
 		
 	// Initialisation des Callback
 	OnBeginTrans = new Array();
@@ -93,7 +98,7 @@ function  OnGUI2D3D(){
 		GUI.Label(Rectangle,"Click anywhere on the screen \n   to get further information.", letterStyle);
 		
 		if(Videos.GetOtherView()){		
- 	 		if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), scene2D ? "3D view" : "2D view", letterStyle )){
+ 	 		if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), scene2D ? "3D view" : "2D view")){
 				zoom.disableEvents();
 				Change2D3D();
 				//Videos.test();

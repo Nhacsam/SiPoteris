@@ -26,6 +26,8 @@ private var toMove : Vector3 = new Vector3( -2000, -2000, -2000) ;
 
 // Donnée pour la GUI
 private var Datas : dataFolderHandler ;
+// balise à laquelle on doit scroller au début
+private var tagToScroll : String ;
 
 // pour l'ecran de chargement
 private var LoadObj : GameObject = null ;
@@ -248,6 +250,19 @@ public function EnterOnFullScreen(Video : GameObject ) {
 	CreateLoadingPlane();
 	LoadObj.renderer.enabled = true ;
 	hideGUI();
+	
+	// renseigne la balise à laquelle on doit scroller au début
+	var HT = ( Video.GetComponent('scriptForPlane') as scriptForPlane ).getHT();
+	
+	tagToScroll = '';
+	if( HT.Contains('gui') ) {
+		var gui = HT['gui'] ;
+		if( typeof(gui) == Hashtable ) {
+			if( (gui as Hashtable ).Contains('tag') )
+				tagToScroll = (gui as Hashtable )['tag'] as String;
+		}
+	}
+	
 }
 
 
@@ -294,6 +309,14 @@ function CreateGUI() {
 	}
 	
 	windows.AddOnChangeCallback(textViewer.takeSSelement);
+	
+	
+	// Schroll à la bonne balise si présente dans le xml
+	if (tagToScroll) {
+		textViewer.toTag( '<' + tagToScroll + '>');
+		slideshow.goTo(tagToScroll);
+	}
+	
 }
 
 
