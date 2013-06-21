@@ -108,7 +108,7 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
 		letterStyle.fixedWidth = widthLetter;
 		letterStyle.margin = new RectOffset (0,0,0,0);
 		if (isOnIpad())
-			letterStyleNormal.fontSize = 20; // Default: 13
+			letterStyle.fontSize = 20; // Default: 13
 	}
 	
 	audio.loop = false;
@@ -296,4 +296,9 @@ public function areEventEnabled() : boolean {
 }
 public function isHidden() : boolean {
 	return soundIsHidden ;
+}
+
+
+function isOnIpad() : boolean {
+	return ( SystemInfo.deviceType == DeviceType.Handheld );
 }

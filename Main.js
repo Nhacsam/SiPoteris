@@ -652,9 +652,13 @@ private function placeMeshHash ( t : Hashtable ){
 			s.InitOrientedTo( p );
 			
 			// configure les plan comme étant invisible
-		//	if( obj.name.IndexOf("0") != -1 )
+			s.setVisible(false);
+			/*
+			if(obj.name.IndexOf("cavite") != -1)
 				s.setVisible(true);
-		
+			else
+				s.setVisible(false);
+			*/
 			// add new gameobject to array
 			AllGO2D.Push( obj );
 		
