@@ -17,9 +17,10 @@ private var textViewer : text ;
 private var strip : displayStrip;
 private var videoSet : videoSettings;
 
-/* Position et texture du bouton return */
+/* Position, texture et skin du bouton return */
 private var myReturnRectangle : Rect;
 private var myReturnTexture : Texture;
+private var mySkin : GUISkin;
 
 /* Chemin du fichier texte contenant les crédits */
 private var pathCredits : String = "Resources/defaultDatas/credits/credits";
@@ -90,6 +91,10 @@ function initCredits ( returnRectangle : Rect) {
 	/* Placement bouton */
 	myReturnRectangle = returnRectangle;
 	myReturnTexture = Resources.Load("GUI/back");
+	
+	/* Bouton transparent */
+	mySkin = new GUISkin ();
+	mySkin.button.normal.background = null;
 	
 	/* Effacement de la GUI */
 	VideoFull.hideGUI();
