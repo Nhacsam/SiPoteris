@@ -67,7 +67,9 @@ function init(fieldOfView_2D : float , fieldOfView_3D : float ){
 	
 	mySkin = new GUISkin();
 	mySkin.textArea = letterStyle;
-		
+	mySkin.button = letterStyle;
+	mySkin.button.normal.background = Resources.Load('GUI/button');	
+						
 	// Initialisation des Callback
 	OnBeginTrans = new Array();
 	OnEndTrans = new Array();
@@ -100,7 +102,7 @@ function  OnGUI2D3D(){
 		GUI.Label(Rectangle,"Click anywhere on the screen \n   to get further information.", letterStyle);
 		
 		if(Videos.GetOtherView()){		
- 	 		if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), scene2D ? "3D view" : "2D view", letterStyle)){
+ 	 		if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), scene2D ? "3D view" : "2D view", mySkin.button)){
 				zoom.disableEvents();
 				Change2D3D();
 				//Videos.test();

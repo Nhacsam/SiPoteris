@@ -191,7 +191,6 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
-				<tag>Desastre 00</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -207,7 +206,6 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
-				<tag>Desastre 01</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -223,7 +221,6 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
-				<tag>Desastre 02</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -239,7 +236,6 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
-				<tag>Desastre 03</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -255,7 +251,6 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
-				<tag>Desastre 04</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -271,7 +266,6 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
-				<tag>Desastre 05</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -287,7 +281,6 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
-				<tag>Desastre 06</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -303,7 +296,6 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
-				<tag>Desastre 07</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -319,7 +311,6 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
-				<tag>Desastre 08</tag>
 			</GUI>
 		</acteon>
 		
@@ -331,8 +322,8 @@
 		<cavite1>
 			<name> cavite1-1 </name>
 			<shape>polar</shape>
-			<theta_min> 346 </theta_min>
-			<theta_max> 369 </theta_max>
+			<theta_min> 46.8 </theta_min>
+			<theta_max> 69.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -348,8 +339,8 @@
 		<cavite1>
 			<name> cavite1-2 </name>
 			<shape>polar</shape>
-			<theta_min> 226 </theta_min>
-			<theta_max> 249 </theta_max>
+			<theta_min> 286.8 </theta_min>
+			<theta_max> 309.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -365,8 +356,8 @@
 		<cavite1>
 			<name> cavite1-3 </name>
 			<shape>polar</shape>
-			<theta_min> 106 </theta_min>
-			<theta_max> 129 </theta_max>
+			<theta_min> 166.8 </theta_min>
+			<theta_max> 189.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -381,8 +372,8 @@
 		<cavite2>
 			<name> cavite2-1 </name>
 			<shape>polar</shape>
-			<theta_min> 307 </theta_min>
-			<theta_max> 329 </theta_max>
+			<theta_min> 7.8 </theta_min>
+			<theta_max> 29.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -398,8 +389,8 @@
 		<cavite2>
 			<name> cavite2-2 </name>
 			<shape>polar</shape>
-			<theta_min> 186 </theta_min>
-			<theta_max> 209 </theta_max>
+			<theta_min> 246.8 </theta_min>
+			<theta_max> 266.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -415,8 +406,8 @@
 		<cavite2>
 			<name> cavite2-3 </name>
 			<shape>polar</shape>
-			<theta_min> 66 </theta_min>
-			<theta_max> 89 </theta_max>
+			<theta_min> 126.8 </theta_min>
+			<theta_max> 149.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -434,8 +425,8 @@
 		<cavite3>
 			<name> cavite3-1 </name>
 			<shape>polar</shape>
-			<theta_min> 266 </theta_min>
-			<theta_max> 289 </theta_max>
+			<theta_min> 326.8 </theta_min>
+			<theta_max> 349.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -452,8 +443,8 @@
 		<cavite3>
 			<name> cavite3-2 </name>
 			<shape>polar</shape>
-			<theta_min> 146 </theta_min>
-			<theta_max> 169 </theta_max>
+			<theta_min> 206.8 </theta_min>
+			<theta_max> 229.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -470,8 +461,8 @@
 		<cavite3>
 			<name> cavite3-3 </name>
 			<shape>polar</shape>
-			<theta_min> 26 </theta_min>
-			<theta_max> 49 </theta_max>
+			<theta_min> 86.8 </theta_min>
+			<theta_max> 109.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -491,8 +482,8 @@
 		<pilier><!--1-->
 			<name> pilier3 </name>
 			<shape>polar</shape>
-			<theta_min> 329 </theta_min>
-			<theta_max> 348 </theta_max>
+			<theta_min> 29.8 </theta_min>
+			<theta_max> 48.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -503,10 +494,10 @@
 		</pilier>
 		
 		<pilier><!--2-->
-			<name> pilier </name>
+			<name> pilier4 </name>
 			<shape>polar</shape>
-			<theta_min> 289 </theta_min>
-			<theta_max> 308 </theta_max>
+			<theta_min> 349.8 </theta_min>
+			<theta_max> 368.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -521,10 +512,10 @@
 		</pilier>
 		
 		<pilier><!--3-->
-			<name> pilier4 </name>
+			<name> pilier5 </name>
 			<shape>polar</shape>
-			<theta_min> 249 </theta_min>
-			<theta_max> 266 </theta_max>
+			<theta_min> 309.8 </theta_min>
+			<theta_max> 326.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -539,10 +530,10 @@
 		</pilier>
 		
 		<pilier><!--4-->
-			<name> pilier5 </name>
+			<name> pilier6 </name>
 			<shape>polar</shape>
-			<theta_min> 209 </theta_min>
-			<theta_max> 227 </theta_max>
+			<theta_min> 269.8 </theta_min>
+			<theta_max> 287.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -557,10 +548,10 @@
 		</pilier>
 		
 		<pilier><!--5-->
-			<name> pilier8 </name>
+			<name> pilier7 </name>
 			<shape>polar</shape>
-			<theta_min> 169 </theta_min>
-			<theta_max> 187 </theta_max>
+			<theta_min> 229.8 </theta_min>
+			<theta_max> 247.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -575,10 +566,10 @@
 		</pilier>
 		
 		<pilier><!--6-->
-			<name> pilier7 </name>
+			<name> pilier8 </name>
 			<shape>polar</shape>
-			<theta_min> 129 </theta_min>
-			<theta_max> 147 </theta_max>
+			<theta_min> 189.8 </theta_min>
+			<theta_max> 207.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -593,10 +584,10 @@
 		</pilier>
 		
 		<pilier><!--7-->
-			<name> pilier6 </name>
+			<name> pilier9 </name>
 			<shape>polar</shape>
-			<theta_min> 89 </theta_min>
-			<theta_max> 107 </theta_max>
+			<theta_min> 149.8 </theta_min>
+			<theta_max> 167.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -613,8 +604,8 @@
 		<pilier><!--8-->
 			<name> pilier1 </name>
 			<shape>polar</shape>
-			<theta_min> 49 </theta_min>
-			<theta_max> 67 </theta_max>
+			<theta_min> 109.8 </theta_min>
+			<theta_max> 127.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -631,8 +622,8 @@
 		<pilier><!--9-->
 			<name> pilier2 </name>
 			<shape>polar</shape>
-			<theta_min> 9 </theta_min>
-			<theta_max> 27 </theta_max>
+			<theta_min> 69.8 </theta_min>
+			<theta_max> 87.8 </theta_max>
 			<ratioRmin> 0.42 </ratioRmin>
 			<ratioRmax> 0.75 </ratioRmax>
 			<speed>0.253</speed>
@@ -677,3 +668,4 @@
 </root>
 
 	
+
