@@ -298,7 +298,6 @@ public function isHidden() : boolean {
 	return soundIsHidden ;
 }
 
-
 function isOnIpad() : boolean {
 	return ( SystemInfo.deviceType == DeviceType.Handheld );
 }
