@@ -33,8 +33,8 @@ private var tabOfSounds: Array;
 private var currentIndex: int;
 
 /* width and height of a letter */
-private var widthLetter : int = 11;
-private var heightLetter : int = 20;
+private var widthLetter : int = Screen.width / 125;
+private var heightLetter : int = Screen.height / 30;
 
 // event and display activate or not
 private var eventEnable : boolean ;
