@@ -22,6 +22,8 @@ private var pauseBtn : Texture;
 private var currentBtn : Texture;
 
 private var soundNameStr: String;
+private var letterStyle : GUIStyle;
+
 
 /* Sounds to play */
 private var nbSounds: int;
@@ -31,8 +33,8 @@ private var tabOfSounds: Array;
 private var currentIndex: int;
 
 /* width and height of a letter */
-private var widthLetter : int = 11;
-private var heightLetter : int = 20;
+private var widthLetter : int = Screen.width / 125;
+private var heightLetter : int = Screen.height / 30;
 
 // event and display activate or not
 private var eventEnable : boolean ;
@@ -42,7 +44,7 @@ private var chooseNextSoundRandomly: boolean = true;
 
 private var repeatButton : Texture;
 
-private var displaySongName : boolean = false;
+private var displaySongName : boolean = true;
 private var displayPlayButton : boolean = true;
 private var displayChangeButton : boolean = false;
 
@@ -96,8 +98,18 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
 	lBorder = l;
 	rBorder = r;
 	
-	if (displaySongName)
+	if (displaySongName) {
 		soundNameStr = fileSystem.getName(tab[0]);
+		letterStyle = new GUIStyle();
+		letterStyle.alignment = TextAnchor.MiddleCenter;
+		letterStyle.normal.textColor = Color.white;
+		letterStyle.fontStyle = FontStyle.Normal;
+		letterStyle.fixedHeight = heightLetter;
+		letterStyle.fixedWidth = widthLetter;
+		letterStyle.margin = new RectOffset (0,0,0,0);
+		if (isOnIpad())
+			letterStyleNormal.fontSize = 20; // Default: 13
+	}
 	
 	audio.loop = false;
 	
