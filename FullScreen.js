@@ -487,7 +487,29 @@ static function nameLesserThan( p1 : Array , p2 : Array ) : int {
 	var file1 : String = file1emlt.path ;
 	var file2 : String = file2emlt.path ;
 	
-	return String.Compare( fileSystem.getName(file1), fileSystem.getName(file2)) ;
+	
+	file1 = fileSystem.fromFolderPath( file1, 'img' );
+	file1 = fileSystem.fromFolderPath( file1, 'video' );
+	file1 = fileSystem.fromFolderPath( file1, 'videoLeft' );
+	file1 = fileSystem.fromFolderPath( file1, 'videoRight' );
+	
+	file2 = fileSystem.fromFolderPath( file2, 'img' );
+	file2 = fileSystem.fromFolderPath( file2, 'video' );
+	file2 = fileSystem.fromFolderPath( file2, 'videoLeft' );
+	file2 = fileSystem.fromFolderPath( file2, 'videoRight' );
+	
+	var file1Tab = file1.Split('/'[0]);
+	var file2Tab = file2.Split('/'[0]);
+	
+	for( var i = 0; i < file1Tab.length && i < file2Tab.length ; i++) {
+		
+		var cmp = String.Compare( file1Tab[i], file2Tab[i]) ;
+		if ( cmp != 0 )
+			return cmp ;
+	}
+	
+	
+	return String.Compare( file1, file2) ;
 }
 
 

@@ -64,7 +64,7 @@ static function getFilesInArrayFromFolder( folder : String, extension : String, 
 	
 	if( isDirExisting(root + '/' + folder) ) {
 	
-		var fileInfo = Directory.GetFiles(root + '/' + folder + '/', "*" + extension) ;
+		var fileInfo = Directory.GetFiles(root + '/' + folder + '/', "*" + extension, SearchOption.AllDirectories) ;
 		for (file in fileInfo) {
 			
 			// On ignore les fichiers cachés
