@@ -191,6 +191,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 00</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -206,6 +207,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 01</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -221,6 +223,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 02</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -236,6 +239,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 03</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -251,6 +255,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 04</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -266,6 +271,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 05</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -281,6 +287,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 06</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -296,6 +303,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 07</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -311,6 +319,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 08</tag>
 			</GUI>
 		</acteon>
 		
@@ -489,7 +498,7 @@
 			<speed>0.253</speed>
 			<GUI>
 				<folder>datas/piliers</folder>
-				<tag> Chiron 03 </tag>
+				<tag> 03 Chiron </tag>
 			</GUI>
 		</pilier>
 		
@@ -507,7 +516,7 @@
 			
 			<GUI>
 				<folder>datas/piliers</folder>
-				<tag> Chiron 01 </tag>
+				<tag> 04 Chiron </tag>
 			</GUI>
 		</pilier>
 		
@@ -525,7 +534,7 @@
 			
 			<GUI>
 				<folder>datas/piliers</folder>
-				<tag> Chiron 04 </tag>
+				<tag> 05 Chiron </tag>
 			</GUI>
 		</pilier>
 		
@@ -543,7 +552,7 @@
 			
 			<GUI>
 				<folder>datas/piliers</folder>
-				<tag> Chiron 05 </tag>
+				<tag> 06 Chiron </tag>
 			</GUI>
 		</pilier>
 		
@@ -561,7 +570,7 @@
 			
 			<GUI>
 				<folder>datas/piliers</folder>
-				<tag> Chiron 08 </tag>
+				<tag> 07 Chiron </tag>
 			</GUI>
 		</pilier>
 		
@@ -579,7 +588,7 @@
 			
 			<GUI>
 				<folder>datas/piliers</folder>
-				<tag> Chiron 07 </tag>
+				<tag> 08 Chiron </tag>
 			</GUI>
 		</pilier>
 		
@@ -597,7 +606,7 @@
 			
 			<GUI>
 				<folder>datas/piliers</folder>
-				<tag> Chiron 06 </tag>
+				<tag> 09 Chiron </tag>
 			</GUI>
 		</pilier>
 		
@@ -615,7 +624,7 @@
 			
 			<GUI>
 				<folder>datas/piliers</folder>
-				<tag> Chiron 08 </tag>
+				<tag> 01 Chiron </tag>
 			</GUI>
 		</pilier>
 		
@@ -633,7 +642,7 @@
 			
 			<GUI>
 				<folder>datas/piliers</folder>
-				<tag> Chiron 02 </tag>
+				<tag> 02 Chiron </tag>
 			</GUI>
 		</pilier>
 		
@@ -643,25 +652,25 @@
 		<!--SON-->
 		<sound>
 			<name>son1</name>
-			<path>sound3D/DF</path>
+			<path>sound3D/Cavites</path>
 			<theta> 0 </theta>
 			<ratio> 0.7 </ratio>
 		</sound>
 		<sound>
 			<name>son2</name>
-			<path>sound3D/savane</path>
+			<path>sound3D/Cavites</path>
 			<theta> 90 </theta>
 			<ratio> 0.7 </ratio>
 		</sound>
 		<sound>
 			<name>son3</name>
-			<path>sound3D/DF</path>
+			<path>sound3D/Cavites</path>
 			<theta> 180 </theta>
 			<ratio> 0.7 </ratio>
 		</sound>
 		<sound>
 			<name>son4</name>
-			<path>sound3D/savane</path>
+			<path>sound3D/Cavites</path>
 			<theta> 270 </theta>
 			<ratio> 0.7 </ratio>
 		</sound>

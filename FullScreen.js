@@ -210,10 +210,13 @@ function UpDateFullScreen() {
 		windows.SetNewTextureObj( slideshow.getCurrentAssociedInfo() );
 		windows.updateWindow();
 		strip.updateStrip();
+		
+		// update of credits
+		if (myCredits.isDisplayed())
+			myCredits.updateCredits();
+		
 	}
-	// update of credits
-	if (myCredits.isDisplayed())
-		myCredits.updateCredits();
+	
 }
 
 
