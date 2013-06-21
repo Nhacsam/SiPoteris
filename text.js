@@ -479,9 +479,9 @@ function displayText() {
 	
 	/* Arrows to show possible scrolling */
 	if (letterSpots[indexFirstChar].y < uBorder)
-		GUI.Label ( Rect (lBorder - widthLetter, uBorder - widthLetter, widthLetter, widthLetter), upArrow);
+		GUI.Label ( Rect (lBorder - widthLetter, uBorder - widthLetter, Screen.height / 39, Screen.height / 39), upArrow);
 	if (letterSpots[textToDisplay.Length-1].y > Screen.height - dBorder - heightLetter)
-		GUI.Label ( Rect (lBorder - widthLetter, Screen.height - dBorder, widthLetter, widthLetter), downArrow);
+		GUI.Label ( Rect (lBorder - widthLetter, Screen.height - dBorder, Screen.height / 39, Screen.height / 39), downArrow);
 }
 
 function removeText() {

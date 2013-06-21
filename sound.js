@@ -44,7 +44,7 @@ private var chooseNextSoundRandomly: boolean = true;
 
 private var repeatButton : Texture;
 
-private var displaySongName : boolean = true;
+private var displaySongName : boolean = false;
 private var displayPlayButton : boolean = true;
 private var displayChangeButton : boolean = false;
 
@@ -71,9 +71,6 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
 	gameObject.AddComponent("AudioSource");
 	audio.clip = Resources.Load(tab[0]) as AudioClip;
 	audio.Play();
-	
-	if (chooseNextSoundRandomly)
-		changeMusic(""); // Randomise 1st sound
 	
 	/* Transparent buttons */
 	mySkin = new GUISkin ();
@@ -110,6 +107,9 @@ function placeMusic (u: int, d: int, l: int, r: int, tab: Array) { // 4 margins 
 		if (isOnIpad())
 			letterStyle.fontSize = 20; // Default: 13
 	}
+	
+	if (chooseNextSoundRandomly)
+		changeMusic(""); // Randomise 1st sound
 	
 	audio.loop = false;
 	
