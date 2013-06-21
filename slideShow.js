@@ -170,7 +170,7 @@ function getCurrentAssociedInfo() {
 /*
  * Ajoute des infos au dernier élément
  */
-public function AddElmt( texture : String, info ) : boolean {
+public function AddElmt( texture : String, label : String, info ) : boolean {
 	
 	
 	if( effNbElmts > mobilesElmts.length-1 ) {
@@ -196,7 +196,7 @@ public function AddElmt( texture : String, info ) : boolean {
 	
 	
 	mobilesElmts[ effNbElmts].renderer.material.mainTexture = imgTex ;
-	mobilesElmts[ effNbElmts].name = texture ;
+	mobilesElmts[ effNbElmts].name = label ;
 	
 	effNbElmts++ ;
 	
@@ -695,8 +695,6 @@ function AddElmtPlane( i : int ) {
 	
 	var size = mobilesElmts[i].renderer.bounds.size ;
 	mobilesElmts[i].transform.localScale= Vector3( elmtsSize.x/size.x, 1, elmtsSize.y/size.z ) ;
-	
-	mobilesElmts[i].name = "SlideShow Plane "+i ;
 }
 
 

@@ -305,7 +305,7 @@ function CreateGUI() {
 	// On donne les infos au slideShow
 	for (var i: int = 0; i < slideShowElmts.length; i++ ) {
 		var tempArray = slideShowElmts[i] as Array ;
-		slideshow.AddElmt(tempArray[0], tempArray[1] );
+		slideshow.AddElmt(tempArray[0], tempArray[1], tempArray[2] );
 	}
 	
 	windows.AddOnChangeCallback(textViewer.takeSSelement);
@@ -402,7 +402,7 @@ private function createSlideshowDatas() : Array {
 	var slideShowTempElmt : SLIDESHOWELMT ;
 	var slideShowElmts : Array = Array() ;
 	var id : int = 1 ;
-	
+	var label : String ;
 	/*
 	 *  Remplis un tableau d'éléments pour le slideshow et la fenètre
 	 *  Avec chaque type de donnée
@@ -420,7 +420,7 @@ private function createSlideshowDatas() : Array {
 		if( i == 0) // la première image est pe utilisé dans l'univer (voir placeAuto)
 			slideShowTempElmt.alsoUseAway = true ;
 		// finalisation
-		slideShowElmts.Push( new Array( min, slideShowTempElmt ) );
+		slideShowElmts.Push( new Array( min, min, slideShowTempElmt ) );
 		id++ ;
 	}
 	
@@ -428,14 +428,17 @@ private function createSlideshowDatas() : Array {
 	for (i = 0; i < slideShowVideo.length; i++ ) {
 		// Si il n'y a pas de miniature associé à la video, on met celle par défaut
 		min = fileSystem.getAssociatedMin( slideShowVideo[i], slideShowMin ) ;
-		if( min == slideShowVideo[i])
+		if( min == slideShowVideo[i]) {
 			min = defaultVideoIcon ;
+			label = slideShowVideo[i] ;
+		} else
+			label = min ;
 		// On crée un SLIDESHOWELMT
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideo[i],
 													WINDOWTYPES.VIDEO,
 													Vector2.zero, id, false );
 		// finalisation
-		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
+		slideShowElmts.Push( new Array(min, label, slideShowTempElmt) );
 		id++ ;
 	}
 	
@@ -443,14 +446,18 @@ private function createSlideshowDatas() : Array {
 	for (i = 0; i < slideShowVideoRight.length; i++ ) {
 		// Si il n'y a pas de miniature associé à la video, on met celle par défaut
 		min = fileSystem.getAssociatedMin( slideShowVideoRight[i], slideShowMin ) ;
-		if( min == slideShowVideoRight[i])
+		if( min == slideShowVideoRight[i]) {
 			min = defaultVideoIcon ;
+			label = slideShowVideoRight[i] ;
+		} else
+			label = min ;
+			
 		// On crée un SLIDESHOWELMT
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideoRight[i],
 													WINDOWTYPES.VIDEORIGHT,
 													Vector2.zero, id, false );
 		// finalisation
-		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
+		slideShowElmts.Push( new Array(min, label, slideShowTempElmt) );
 		id++ ;
 	}
 	
@@ -458,14 +465,18 @@ private function createSlideshowDatas() : Array {
 	for (i = 0; i < slideShowVideoLeft.length; i++ ) {
 		// Si il n'y a pas de miniature associé à la video, on met celle par défaut
 		min = fileSystem.getAssociatedMin( slideShowVideoLeft[i], slideShowMin ) ;
-		if( min == slideShowVideoLeft[i])
+		if( min == slideShowVideoLeft[i]) {
 			min = defaultVideoIcon ;
+			label = slideShowVideoLeft[i] ;
+		} else
+			label = min ;
+			
 		// On crée un SLIDESHOWELMT
 		slideShowTempElmt = new SLIDESHOWELMT	(	slideShowVideoLeft[i],
 													WINDOWTYPES.VIDEOLEFT,
 													Vector2.zero, id, false );
 		// finalisation
-		slideShowElmts.Push( new Array(min, slideShowTempElmt) );
+		slideShowElmts.Push( new Array(min, label, slideShowTempElmt) );
 		id++ ;
 	}
 	slideShowElmts.Sort(nameLesserThan);
@@ -481,8 +492,8 @@ private function createSlideshowDatas() : Array {
  */
 static function nameLesserThan( p1 : Array , p2 : Array ) : int {
 	
-	var file1emlt : SLIDESHOWELMT = p1[1] ;
-	var file2emlt : SLIDESHOWELMT = p2[1] ;
+	var file1emlt : SLIDESHOWELMT = p1[2] ;
+	var file2emlt : SLIDESHOWELMT = p2[2] ;
 	
 	var file1 : String = file1emlt.path ;
 	var file2 : String = file2emlt.path ;
