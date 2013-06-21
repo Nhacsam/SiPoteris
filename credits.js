@@ -149,7 +149,7 @@ function isDisplayed () {
 
 function OnGUICredits () {
 	if (displayCredits) {
-		if( GUI.Button( myReturnRectangle, myReturnTexture ) ) {
+		if( GUI.Button( myReturnRectangle, myReturnTexture, mySkin.button ) ) {
 			exitCredits();
 		}
 		// display text
