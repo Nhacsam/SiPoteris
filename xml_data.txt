@@ -191,6 +191,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 00</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -206,6 +207,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 01</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -221,6 +223,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 02</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -236,6 +239,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 03</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -251,6 +255,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 04</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -266,6 +271,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 05</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -281,6 +287,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 06</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -296,6 +303,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 07</tag>
 			</GUI>
 		</acteon>
 		<acteon>
@@ -311,6 +319,7 @@
 			
 			<GUI>
 				<folder>datas/acteon</folder>
+				<tag>Desastre 08</tag>
 			</GUI>
 		</acteon>
 		
