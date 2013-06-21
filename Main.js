@@ -52,6 +52,7 @@ private var zoomLength : float ;			// Logueur du Zoom
 
 private var lang  : String ;				// Langue de la GUI : Valeurs possibles : 'fr', 'en'
 
+private var isOnGui : boolean=false;
 
 private var videoTimer = 0.0 ;				// Timer correspondant à ou on en est dans al video
 private var plane2D : GameObject;
@@ -495,7 +496,7 @@ public function CameraConfigUniv( is2D : boolean) {
 		light.type=LightType.Spot;
 		light.intensity=0.88;
 		
-		light.cookie=Resources.Load("camMask");
+		//light.cookie=Resources.Load("camMask");
 		light.spotAngle=50;
 		
 		// active le déplacement de la caméra
@@ -651,9 +652,13 @@ private function placeMeshHash ( t : Hashtable ){
 			s.InitOrientedTo( p );
 			
 			// configure les plan comme étant invisible
-		//	if( obj.name.IndexOf("0") != -1 )
+			s.setVisible(false);
+			/*
+			if(obj.name.IndexOf("cavite") != -1)
 				s.setVisible(true);
-		
+			else
+				s.setVisible(false);
+			*/
 			// add new gameobject to array
 			AllGO2D.Push( obj );
 		
