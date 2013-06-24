@@ -21,7 +21,7 @@ private var rot;
 private var scene2D : boolean = true;
 
 /* Coordinates of the 2D/3D button */
-private var buttonUp : int = Screen.height * 0.90;
+private var buttonUp : int = Screen.height * 0.85;
 private var buttonLeft : int = Screen.width * 0.05;
 private var buttonHeight : int = Screen.height * 0.12;
 private var buttonWidth : int = Screen.height * 0.12;
@@ -36,8 +36,7 @@ private var fieldOfView2D : float ;
 private var fieldOfView3D : float ;
 
 private var letterStyle : GUIStyle; // style of text
-private var mySkin : GUISkin;
-
+private var letterStyleButton : GUIStyle; // style of the text in the button
 
 //instantiate items
 function init(fieldOfView_2D : float , fieldOfView_3D : float ){
@@ -65,11 +64,10 @@ function init(fieldOfView_2D : float , fieldOfView_3D : float ){
 	if (isOnIpad())
 		letterStyle.fontSize = 27; // Default: 13
 	
-	mySkin = new GUISkin();
-	mySkin.textArea = letterStyle;
-	mySkin.button = letterStyle;
-	mySkin.button.normal.background = Resources.Load('GUI/button');	
-						
+	letterStyleButton = new GUIStyle (letterStyle);
+	letterStyleButton.alignment = TextAnchor.MiddleCenter;
+
+	
 	// Initialisation des Callback
 	OnBeginTrans = new Array();
 	OnEndTrans = new Array();
@@ -102,11 +100,12 @@ function  OnGUI2D3D(){
 		GUI.Label(Rectangle,"Click anywhere on the screen \n   to get further information.", letterStyle);
 		
 		if(Videos.GetOtherView()){		
- 	 		if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), scene2D ? "3D view" : "2D view", mySkin.button)){
+ 	 		if (GUI.Button(new Rect(buttonLeft, buttonUp, buttonWidth, buttonHeight), " ")) {
 				zoom.disableEvents();
 				Change2D3D();
 				//Videos.test();
 				}
+			GUI.Label(new Rect(buttonLeft + 0.5 * buttonWidth - 0.5 * letterStyleButton.fixedWidth, buttonUp + 0.5 * buttonHeight - 0.5 * letterStyleButton.fixedHeight, buttonWidth, buttonHeight), scene2D ? "3D View" : "2D View", letterStyleButton );
 		}	
     }
         
