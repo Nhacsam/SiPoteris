@@ -2,17 +2,35 @@
 
 <root>
 	<univer>
+		<!-- Valeurs possibles : 2D, 3D, NONE -->
 		<beginby>2D</beginby>
 		<!--<oneuniv/>-->
 		<!--<disablesound/>-->
+		<!--<placeRectAuto/>-->
 	</univer>
 	
 	<transitionToGUI>
+		
+		<!-- Valeurs possibles : ZOOM, VIDEO(non implémenté) -->
 		<type>ZOOM</type>
+		
+		<!-- Valeurs possibles : 	GO_ON_PLANE,			// Fonce sur le plan
+									GO_ON_POINT,			// Fonce sur le point
+									GO_ON_PLANE_ROTATING,	// Fonce sur le plan en tournant
+									GO_ON_POINT_ROTATING,	// Fonce sur le point en tournant
+									LOOK_BEHIND,			// Regarde derrière lui
+									GO_AWAY_BACKWARD,		// fait une marche arrière
+									GO_AWAY_FORWARD 		// Fait demis tour en partant dans la direction opposée  -->
 		<zoomtype2D> GO_ON_POINT_ROTATING </zoomtype2D>
 		<zoomtype3D> GO_ON_PLANE </zoomtype3D>
+		
+		<!-- en secondes -->
 		<zoomlength>2</zoomlength>
 	</transitionToGUI>
-
+	
+	<GUI>
+		<!-- Valeurs possibles :fr, en -->
+		<lang>fr</lang>
+	</GUI>
 	
 </root>

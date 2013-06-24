@@ -46,8 +46,8 @@ private var margin_bot : float = 0.15;
 private var margin_bot_button : float = 0.03;
 private var number_logo : int = 3;// five logos will be displayed
 private var margin_betw_media : float = 0.015; // déterminer suivant le nombre de médias
-private var width_logo : float = (0.5 - margin_right - margin_center/2 - margin_betw_media);// 2 columns
-private var height_logo : float = (0.5 - margin_bot_button - margin_betw_media)/3;//2 : two lines
+private var width_logo : float = (0.5 - margin_right - margin_center/2);// 2 columns
+private var height_logo : float = (0.5 - margin_bot_button - 3*margin_betw_media)/3;//2 : two lines
 
 /* position of plane along z axis */
 private var z_coor : float = 20;
@@ -121,7 +121,7 @@ function initCredits ( returnRectangle : Rect) {
 	/*init rect des logos*/
 	logoRect = new Rect[number_logo];
 	logoRect[0] = Rect( (	0.5 + margin_center/2)*Screen.width , 
-							(1 - margin_bot_button - 3*height_logo - 2*margin_betw_media - margin_betw_media)*Screen.height , 
+							(1 - margin_bot_button - 3*height_logo - 2*margin_betw_media)*Screen.height , 
 							width_logo*Screen.width , 
 							height_logo*Screen.height );
 	logoRect[1] = Rect( (	0.5 + margin_center/2)*Screen.width , 
