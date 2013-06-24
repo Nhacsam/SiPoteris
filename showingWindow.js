@@ -267,10 +267,10 @@ private function TestVideoLoaded() {
 				wObj.transform.Rotate( Vector3( 0, 180, 0) );
 			else if ( wType == WINDOWTYPES.VIDEORIGHT ) {
 				rotated = true ;
-				wObj.transform.Rotate( Vector3( 0, 90, 0) );
+				wObj.transform.Rotate( Vector3( 0, 270, 0) );
 			} else if ( wType == WINDOWTYPES.VIDEOLEFT ) {
 				rotated = true ;
-				wObj.transform.Rotate( Vector3( 0, 270, 0) );
+				wObj.transform.Rotate( Vector3( 0, 90, 0) );
 			}
 			wVideoSizeGiven = (wVideoSizeGiven != Vector2.zero) ? wVideoSizeGiven : wVideoSettings.VideoWH() ;
 			applyNewSize(wVideoSizeGiven);
