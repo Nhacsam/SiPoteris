@@ -236,11 +236,13 @@ function Start () {
  */
 function Update () {
 	
-	if(!Videos.getFlagEndVideo() ) {
-		if(  Videos.OnPlay() )
-			videoTimer += Time.deltaTime ;
-	} else
-		videoTimer = 0.0 ;
+	if( Videos) {
+		if(!Videos.getFlagEndVideo() ) {
+			if(  Videos.OnPlay() )
+				videoTimer += Time.deltaTime ;
+		} else
+			videoTimer = 0.0 ;
+	}
 		
 	var i : int;
 	var s : scriptForPlane;
@@ -426,7 +428,7 @@ public function hideObj( from2D : boolean ) {
 		
 	} else {
 		for( i = 0; i < AllGO3D.length; i ++)
-			(AllGO3D[i] as GameObject).renderer.enabled = ((AllGO2D[i] as GameObject ).GetComponent("scriptForPlane") as scriptForPlane).getVisible() ;
+			(AllGO3D[i] as GameObject).renderer.enabled = ((AllGO3D[i] as GameObject ).GetComponent("scriptForPlane") as scriptForPlane).getVisible() ;
 		for( i = 0; i < AllGO2D.length; i ++)
 			(AllGO2D[i] as GameObject).renderer.enabled = false ;
 		
