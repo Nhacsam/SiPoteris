@@ -96,7 +96,7 @@ private var slideRight : float = marginRight;
 private var sizeButtonsPix : int = sizeButtons * Screen.height; // Taille boutons = hauteur strip = hauteur slide
 private var returnRectangle : Rect = new Rect(Screen.width*marginLeft, Screen.height*(1-marginBottom)-sizeButtonsPix, sizeButtonsPix, sizeButtonsPix);
 private var creditsRectangle : Rect = new Rect(Screen.width*textRight-sizeButtonsPix, Screen.height*(1-marginBottom)-sizeButtonsPix, sizeButtonsPix, sizeButtonsPix);
-private var langRectangle : Rect = new Rect(Screen.width*textRight-2*sizeButtonsPix, Screen.height*(1-marginBottom)-sizeButtonsPix, sizeButtonsPix, sizeButtonsPix);
+private var langRectangle : Rect = new Rect(Screen.width*textRight-2.5*sizeButtonsPix, Screen.height*(1-marginBottom)-0.80*sizeButtonsPix, 0.9*sizeButtonsPix, 0.9*sizeButtonsPix);
 
 private var textTop : float ;
 private var pictureTop : float ;
@@ -427,7 +427,7 @@ private function createSlideshowDatas() : Array {
 		id++ ;
 	}
 	
-	// Pour les Video droites
+	// Pour les Vidéos droites
 	for (i = 0; i < slideShowVideo.length; i++ ) {
 		// Si il n'y a pas de miniature associé à la video, on met celle par défaut
 		min = fileSystem.getAssociatedMin( slideShowVideo[i], slideShowMin ) ;
@@ -445,7 +445,7 @@ private function createSlideshowDatas() : Array {
 		id++ ;
 	}
 	
-	// Pour les Video orientés à droite
+	// Pour les Vidéos orientées à droite
 	for (i = 0; i < slideShowVideoRight.length; i++ ) {
 		// Si il n'y a pas de miniature associé à la video, on met celle par défaut
 		min = fileSystem.getAssociatedMin( slideShowVideoRight[i], slideShowMin ) ;
@@ -490,7 +490,7 @@ private function createSlideshowDatas() : Array {
 /*
  * Renvoie vrai si le nom du fichier 1
  * est avant dans l'ordre alphabétique que le 2
- * Les données passé sont au même format que les éléments
+ * Les données passées sont au même format que les éléments
  * du taleau de la fonction createSlideshowDatas
  */
 static function nameLesserThan( p1 : Array , p2 : Array ) : int {

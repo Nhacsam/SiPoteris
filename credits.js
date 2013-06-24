@@ -175,6 +175,8 @@ function exitCredits() {
 	
 	Destroy(textViewer);
 	
+	videoSet.stopVideo(videoScreen);
+	
 	Destroy(videoScreen);
 	
 	if (audioWasPlaying)
