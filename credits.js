@@ -47,7 +47,7 @@ private var margin_bot_button : float = 0.03;
 private var number_logo : int = 3;// five logos will be displayed
 private var margin_betw_media : float = 0.015; // déterminer suivant le nombre de médias
 private var width_logo : float = (0.5 - margin_right - margin_center/2);// 2 columns
-private var height_logo : float = (0.5 - margin_bot_button - 2*margin_betw_media)/3;//2 : two lines
+private var height_logo : float = (0.5 - margin_bot_button - 3*margin_betw_media)/3;//2 : two lines
 
 /* position of plane along z axis */
 private var z_coor : float = 20;
