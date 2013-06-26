@@ -3,6 +3,8 @@
 	*Author : Fabien Daoulas
 	*Last update : 30/05/2013
 	* this script displays sound around the sphere
+	
+	number of lines : 150
 */
 
 private var radius : float = 5;

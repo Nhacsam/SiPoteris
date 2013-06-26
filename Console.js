@@ -1,5 +1,7 @@
 /*
  * Gere les message d'erreur et d'info dans la console
+ 
+ number of lines : 80
  */
 
 

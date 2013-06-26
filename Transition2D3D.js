@@ -1,5 +1,13 @@
 #pragma strict
 
+/*
+Transition2D3D.js
+
+number of lines : 340
+
+
+*/
+
 //camera transition parameter
 private var TransitionTime : float = 10.0f ;
 

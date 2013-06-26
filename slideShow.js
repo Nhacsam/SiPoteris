@@ -1,6 +1,12 @@
 #pragma strict
 
+/*
+slideShow.js
 
+number of lines : 780
+
+
+*/
 // Position du slideShow
 private var position : Rect ;
 private var z : float ;

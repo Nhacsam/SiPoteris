@@ -3,6 +3,8 @@
 	*Creation : 26/04/2013
 	*Author : Fabien Daoulas
 	*Last update : 29/04/2013
+	
+	number of lines : 230
 */
 
 import System.IO;

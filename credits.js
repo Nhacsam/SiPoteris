@@ -4,6 +4,9 @@ credits.js
 ----------
 Affiche les crédits après appui sur bouton dans la GUI
 C'est simplement un textViewer, qui affiche le contenu du fichier Resources/defaultDatas/credits/credits
+
+
+number of lines : 290
 */
 
 

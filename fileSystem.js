@@ -2,7 +2,10 @@
 /***********************************************************/
 /******** Manipulation des dossiers et leur contenu ********/
 /***********************************************************/
+/*
+number of lines : 330
 
+*/
 
 /*
  * Retourne le chemin absolu vers le dossier Resources

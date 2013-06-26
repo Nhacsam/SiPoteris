@@ -7,6 +7,8 @@ Author : Fabien Daoulas / Kevin Guillaumond
 
 Use: placeText(...) is called once, and displayText(...) is called at every frame afterwards
 
+number of lines : 680
+
 */
 
 /*

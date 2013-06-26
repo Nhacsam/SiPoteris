@@ -8,6 +8,8 @@
 	- places it to fit on a plane watched by a camera.
 	- instantiates a script to each plane created, this script contains hashtable (text, audio, other movies...)
 	
+	number of lines : 200
+	
 */
 
 // quantum of the mesh

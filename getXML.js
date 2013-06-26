@@ -4,6 +4,7 @@
 	Last update : 08/05/2013
 This script parses xml files, informations about videos...
 	
+	number of lines : 130
 */
 #pragma strict
 

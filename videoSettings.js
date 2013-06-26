@@ -2,6 +2,9 @@
 
 /* 
 * script setting de paramters of the videos and initiate the 2D and 3D scenes
+
+
+number of lines : 430
 */
 
 

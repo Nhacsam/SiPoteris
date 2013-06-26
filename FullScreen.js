@@ -1,5 +1,8 @@
 #pragma strict
+/* 
+FullScreen.js
 
+number of lines : 690
 
 /* dépendances */
 private var slideshow  : slideShow ;

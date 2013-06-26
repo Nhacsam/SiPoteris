@@ -1,5 +1,12 @@
 #pragma strict
 
+/*
+placeAuto.js
+
+number of lines :30
+
+*/
+
 
 // Liste des donnée des plans à positionner
 private var pDatasList : Array ;

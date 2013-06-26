@@ -5,6 +5,8 @@
 	*Last update : 29/05/2013
 	
 	This script displays in full screen the picture on which the user tapped 
+	
+	number of lines : 420
 */
 
 private var window : showingWindow;

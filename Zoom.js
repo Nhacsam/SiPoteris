@@ -1,5 +1,10 @@
 #pragma strict
+/*
+zoom.js
 
+number of lines : 740
+
+*/
 
 
 // Eléments cliquables
