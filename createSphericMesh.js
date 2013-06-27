@@ -7,6 +7,8 @@ Debug : Nicolas Djambazian
 
 This script creates a piece of sphere.
 axis are those of Unity.
+
+number of lines : 220
 */
 
 private var video : videoSettings;
@@ -60,11 +62,10 @@ function placeMesh3D( t : Hashtable ){
 				phiMin = calculatePHI( float.Parse( t['ratiormax'] ) , false );
 			}
 		
-			// invert theta_max and theta_min cause of mathematical operation : 360-angle
-			// 360-angle because 2D scene looks down (along y-axis) and 3D scene looks up
-			//+93° to cover the right surface of videos
-			var theta_max : float = (360-float.Parse(t['theta_min'])) * Mathf.PI/180;
-			var theta_min : float = (360-float.Parse(t['theta_max'])) * Mathf.PI/180;
+			// invert theta_max and theta_min cause of mathematical operation : 180-angle
+			// 180-angle because 2D scene looks down (along y-axis) and 3D scene looks up
+			var theta_max : float = (180-float.Parse(t['theta_min'])) * Mathf.PI/180;
+			var theta_min : float = (180-float.Parse(t['theta_max'])) * Mathf.PI/180;
 				
 			var g : GameObject = CreateSphericMesh( theta_min , phiMin , theta_max , phiMax , t['name'] );
 

@@ -7,6 +7,8 @@ Author : Fabien Daoulas / Kevin Guillaumond
 
 Use: placeText(...) is called once, and displayText(...) is called at every frame afterwards
 
+number of lines : 680
+
 */
 
 /*
@@ -121,7 +123,7 @@ private function initText(u: int, d: int, l: int, r: int) {
 	letterStyleNormal.fixedWidth = widthLetter;
 	letterStyleNormal.margin = new RectOffset (0,0,0,0);
 	if (isOnIpad())
-		letterStyleNormal.fontSize = 20; // Default: 13
+		letterStyleNormal.fontSize = 22; // Default: 13
 	
 	letterStyleHighlighted = new GUIStyle();
 	letterStyleHighlighted.alignment = TextAnchor.MiddleCenter;
@@ -130,7 +132,7 @@ private function initText(u: int, d: int, l: int, r: int) {
 	letterStyleHighlighted.fixedHeight = heightLetter;
 	letterStyleHighlighted.fixedWidth = widthLetter;
 	if (isOnIpad())
-		letterStyleHighlighted.fontSize = 20; // Default: 13
+		letterStyleHighlighted.fontSize = 22; // Default: 13
 	
 	slideshow =	gameObject.GetComponent("slideShow") as slideShow;
 	

@@ -3,6 +3,8 @@
 	*Author : Fabien Daoulas
 	*Last update : 29/04/2013
 	*this script moves gameobject to cover the same interesting part of the movie all the time
+	
+	number of lines : 80
 */
 
 private var video : videoSettings;

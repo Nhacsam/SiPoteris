@@ -1,5 +1,10 @@
 #pragma strict
 
+/*
+number of lines : 620
+
+*/
+
 // Nom du dossier principal
 private var ResourcesFolderName : String ;
 private var StreamingFolderName : String ;

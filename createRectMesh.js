@@ -11,6 +11,8 @@
 				-center of the plane
 				-height in percentage of the height of the video
 				-width in percentage of the width of the video
+				
+	number of lines : 300
 */
 
 private var surface : GameObject;

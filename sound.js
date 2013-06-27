@@ -2,6 +2,8 @@
 Creation: 25/04/13 by Kevin Guillaumond
 
 Purpose: Manages the sound at the bottom left of the screen in 2D view
+
+number of lines :305
 */
 
 

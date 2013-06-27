@@ -1,4 +1,10 @@
-/* Le truc juste au dessus du slideshow (si on change pas la disposition) */
+/* 
+
+Le truc juste au dessus du slideshow (si on change pas la disposition) 
+
+number of lines : 720
+
+*/
 
 #pragma strict
 

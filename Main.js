@@ -1,5 +1,12 @@
 #pragma strict
 
+/*
+Main.js
+
+number of lines : 940
+
+*/
+
 
 // array of GO - meshes over movie in 2D
 var AllGO2D : Array = Array();
