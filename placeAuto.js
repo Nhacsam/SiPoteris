@@ -36,7 +36,8 @@ public function compute( placeRect : function(Hashtable, String) ) {
 	for( var i = 0 ; i < pDatasList.length; i++ ) {
 		
 		var params : Hashtable = pDatasList[i] ;
-		var PositionningFactor : float ;
+		var PositionningFactor2D : float ;
+		var PositionningFactor3D : float ;
 		var nbOnThisFloor : int ;
 		
 		// Random value !! I have no idea what I'm doing !
@@ -52,7 +53,8 @@ public function compute( placeRect : function(Hashtable, String) ) {
 			
 			nbOnThisFloor = nbOnFloor[0] ;
 			
-			PositionningFactor = (nbOnThisFloor == 1 ) ? 1 : (1.0*i / (nbOnThisFloor-1) ) ;
+			PositionningFactor2D = (nbOnThisFloor == 1 ) ? 1 : (1.0*i / (nbOnThisFloor-1) ) ;
+			PositionningFactor3D = (nbOnThisFloor == 1 ) ? 1 : (1.0*i / (nbOnThisFloor) ) ;
 			
 			params['latitude'] = firstFloorLat + randomVariation ;
 			params['posy'] = 1.0/6;
@@ -61,7 +63,8 @@ public function compute( placeRect : function(Hashtable, String) ) {
 		} else if( i < nbOnFloor[0] + nbOnFloor[1] && nbOnFloor[1] > 0) {
 			
 			nbOnThisFloor = nbOnFloor[1] ;
-			PositionningFactor = (1.0*i - nbOnFloor[0]) / (nbOnFloor[1]-1);
+			PositionningFactor2D = (1.0*i - nbOnFloor[0]) / (nbOnFloor[1]-1);
+			PositionningFactor3D = (1.0*i - nbOnFloor[0]) / (nbOnFloor[1]);
 			
 			params['latitude'] = secondFloorLat + randomVariation ;
 			params['posy'] = 3.0/6 ;
@@ -70,7 +73,8 @@ public function compute( placeRect : function(Hashtable, String) ) {
 		} else if( i < nbOnFloor[0] + nbOnFloor[1]+ nbOnFloor[2] && nbOnFloor[2] > 0) {
 			
 			nbOnThisFloor = nbOnFloor[2] ;
-			PositionningFactor = (1.0*i - nbOnFloor[0] - nbOnFloor[1]) / (nbOnFloor[2]-1);
+			PositionningFactor2D = (1.0*i - nbOnFloor[0] - nbOnFloor[1]) / (nbOnFloor[2]-1);
+			PositionningFactor3D = (1.0*i - nbOnFloor[0] - nbOnFloor[1]) / (nbOnFloor[2]);
 			
 			params['latitude'] = thirdFloorLat + randomVariation ;
 			params['posy'] = 5.0/6 ;
@@ -79,7 +83,7 @@ public function compute( placeRect : function(Hashtable, String) ) {
 		}
 		
 		// positionnement en 2D
-		params['posx'] = PositionningFactor ;
+		params['posx'] = PositionningFactor2D ;
 		params['sizex'] = 1.0/(nbOnThisFloor) ;
 		
 		// écart entre deux elmts consécutifs
@@ -87,7 +91,7 @@ public function compute( placeRect : function(Hashtable, String) ) {
 		randomVariation = Random.Range(0, longdistance/2);
 		randomVariation -= longdistance/4 ;
 		
-		params['longitude'] = 360.0*PositionningFactor + randomVariation ;
+		params['longitude'] = 360.0*PositionningFactor3D + randomVariation ;
 		
 		// init variables of script
 		s.InitScript( pDatasList[i] as Hashtable );

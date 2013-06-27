@@ -296,7 +296,7 @@ function Update () {
 	// Déplacement des plan en 2D (si il y en a)
 	for( i =0; i < AllGO2D.length; i++) {
 	
-		if(!Videos.getFlagEndVideo() && !placeRectAuto){
+		if(!Videos.getFlagEndVideo()){
 			if( !GUI.isOnGUI() )// if not on gui
 				move.moveSurface( AllGO2D[i] as GameObject, Videos.OnPlay() ) ;
 		}
@@ -305,18 +305,23 @@ function Update () {
 		
 		if(placeRectAuto)
 			move.keepRotation( AllGO2D[i] );
+		
 	}
 	
 	for( i = 0; i < AllGO3D.length; i++) {
-		if(!Videos.getFlagEndVideo() && !placeRectAuto){// if video has not end yet
+		if(!Videos.getFlagEndVideo()){// if video has not end yet
 			if( !GUI.isOnGUI() )// if not on gui
 				move.rotateY_3D( AllGO3D[i] as GameObject, Videos.OnPlay() ) ;
 		}
 		else
 			move.resetPlane(AllGO3D[i] as GameObject);
 		
-		if(placeRectAuto)
+		if(placeRectAuto) {
+			move.rotateX_3D( AllGO3D[i] as GameObject, Videos.OnPlay() ) ;
+			move.rotateY_3D( AllGO3D[i] as GameObject, Videos.OnPlay() ) ;
+			move.rotateZ_3D( AllGO3D[i] as GameObject, Videos.OnPlay() ) ;
 			move.keepRotation( AllGO3D[i] );
+		}
 		
 		s = ((AllGO3D[i] as GameObject ).GetComponent("scriptForPlane") as scriptForPlane) ;
 		s.InitPosPlane( (AllGO3D[i] as GameObject ).transform.position );
